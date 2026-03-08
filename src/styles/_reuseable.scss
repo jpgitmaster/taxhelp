@@ -1,0 +1,44 @@
+@use '@/styles/colors' as *;
+
+.actions{
+    @apply  w-[100%] flex flex-row items-center justify-center;
+    .action{
+        @apply flex flex-1 flex-col items-center justify-center;
+        span{
+            @apply text-[8px] uppercase inline-block mt-[2px];
+        }
+        &.edit{
+            span{
+                color: $darkBlue;
+            }
+            img{
+                filter: invert(31%) sepia(83%) saturate(4804%) hue-rotate(187deg) brightness(94%) contrast(101%);
+            }
+        }
+        &.delete{
+            span{
+                color: $red;
+            }
+            img{
+                filter: invert(16%) sepia(37%) saturate(7096%) hue-rotate(4deg) brightness(103%) contrast(130%);
+            }
+        }
+        &.disabled{
+            cursor: not-allowed;
+            pointer-events: none;
+            span{
+                color: $lightGray2;
+            }
+            img{
+                filter: invert(91%) sepia(26%) saturate(1%) hue-rotate(347deg) brightness(87%) contrast(102%);
+            }
+        }
+    }
+}
+.pagination{
+    @apply mt-[20px] text-[13px];
+    .total_records{
+        color: $lightBlack;
+        @apply float-right mr-[10px];
+    }
+}

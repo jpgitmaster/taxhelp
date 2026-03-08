@@ -1,0 +1,53 @@
+@use '@/styles/colors' as *;
+.ant-table-wrapper{
+	@apply rounded-[10px] overflow-hidden;
+	.ant-table-thead{
+		.ant-table-cell{
+			padding: 10px;
+            font-size: 13px;
+			border-right: 0;
+			&:before{
+				display: none;
+			}
+			&:first-child{
+				border-left: 0;
+			}
+			&:last-child{
+				border-right: 0;
+			}
+		}
+	}
+	.ant-table-row{
+		&:last-child{
+			td{
+				border-bottom: 0 !important;
+			}
+		}
+		td{
+			font-size: 13px;
+            padding: 10px !important;
+		}
+	}
+}
+.ant-picker{
+	width: 100%;
+	padding: 0 10px;
+    margin: -1px 0 5px;
+    border-radius: 10px;
+	outline: none !important;
+    box-shadow: none !important;
+    background-color: transparent;
+	border: 1px solid rgba($darkgray, .6);
+	.ant-picker-input{
+		input{
+			font-size: 12px;
+            border: 0 !important;
+			margin: 0 !important;
+            height: 37px !important;
+		}
+		.ant-picker-suffix, .ant-picker-clear{
+			position: absolute;
+			right: 10px;
+		}
+	}
+}

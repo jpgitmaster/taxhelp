@@ -1,0 +1,75 @@
+@use '@/styles/forms';
+@use '@/styles/helpers';
+@use '@/styles/reuseable';
+@use '@/styles/colors' as *;
+
+.box{
+    border: 1px solid $gray;
+    background-color: $lightGray;
+    @apply h-[100%] rounded-[20px] p-[20px] pb-[0] flex flex-col;
+}
+.customFileUpload{
+    border: 1px solid $gray;
+    background-color: $lightGray;
+    @apply w-[500px] relative overflow-hidden cursor-pointer h-[170px] rounded-[20px] mx-[auto] my-[20px];
+    
+    &.hasImage{
+        border: 0;
+    }
+    &.err{
+        border-color: $red;
+    }
+    &.disabled{
+        background-color: $gray;
+        @apply cursor-not-allowed pointer-events-none opacity-[.3];
+    }
+    .customFile{
+        height: 100%;
+        display: flex;
+        cursor: pointer;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        input[type='file'] {
+            display: none;
+        }
+        .empty_image{
+            width: 50px;
+            img{
+                width: 30px;
+                height: 30px;
+            }
+        }
+        img{
+            margin: 0 0 10px;
+            &.browse_image{
+                margin: 0;
+                width: 100%;
+                object-fit: cover;
+            }
+        }
+        p{
+            margin: 0 0 5px;
+        }
+        span{
+            @apply text-center text-[12px];
+        }
+    }
+    .remove_featured{
+        top: 10px;
+        z-index: 1;
+        right: 10px;
+        width: 28px;
+        padding: 8px;
+        display: flex;
+        border-radius: 50%;
+        overflow: hidden;
+        position: absolute;
+        align-items: center;
+        justify-content: center;
+        // background-color: $secondaryColor;
+        img{
+            width: 100%;
+        }
+    }
+}

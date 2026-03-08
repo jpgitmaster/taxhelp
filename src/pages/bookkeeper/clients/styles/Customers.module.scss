@@ -1,0 +1,46 @@
+@use '@/styles/forms';
+@use '@/styles/helpers';
+@use '@/styles/reuseable';
+@use '@/styles/colors' as *;
+
+.header{
+    @apply inline-block w-full mb-[15px];
+    .button{
+        @apply mr-[10px];
+    }
+    .searchComponent{
+        @apply float-right;
+    }
+}
+.box{
+    border: 1px solid $gray;
+    background-color: $lightGray;
+    @apply h-[100%] rounded-[20px] p-[20px] pb-[0] flex flex-col;
+    .boxTitle{
+        color: rgba($lightBlack, .7);
+        font-weight: 600;
+        @apply text-[18px];
+    }
+    .boxDetails{
+        @apply flex items-center h-[100%];
+        .avatar{
+            border: 1px solid $gray;
+            background-color: $white;
+            @apply w-[120px] h-[120px] relative top-[-20px] rounded-[50%] flex items-center justify-center;
+            svg{
+                @apply w-[70%];
+            }
+            img{
+                @apply w-[60%];
+                filter: invert(96%) sepia(0%) saturate(0%) hue-rotate(148deg) brightness(88%) contrast(88%);
+            }
+        }
+        .avatarDetails{
+            @apply flex-1 pl-[15px];
+
+            input{
+                background-color: $white;
+            }
+        }
+    }
+}

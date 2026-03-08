@@ -1,0 +1,363 @@
+@use '@/styles/theme';
+@use '@/styles/helpers';
+@use '@/styles/colors' as *;
+
+.app{
+    @apply min-h-screen flex flex-row;
+    .appSidebar{
+        @apply w-[200px] bg-app-blue relative px-[10px];
+        img{
+            filter: invert(97%) sepia(15%) saturate(303%) hue-rotate(250deg) brightness(119%) contrast(100%);
+        }
+        .sidebarArrow{
+            background-color: $lightBlue;
+            @apply absolute cursor-pointer rounded-[5px] top-[22px] h-[25px] w-[25px] p-[6px] right-[-10px];
+        }
+        &.slideRight{
+            @apply w-[200px];
+            transition: width .3s ease;
+            .sidebarArrow{
+                transform: rotate(90deg);
+                transition: transform .4s ease-out;
+            }
+            .mainLink, .sublinks{
+                @apply block;
+                animation: fadeIn .5s ease-in forwards;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+        }
+        &.slideLeft{
+            @apply w-[60px];
+            transition: width .3s ease;
+            .sidebarArrow{
+                transform: rotate(270deg);
+                transition: transform .4s ease-out;
+            }
+            .appSidebarLinks{
+                .mainLink{
+                    border: 1px dotted $white !important;
+                    transition-delay: .2s;
+                    span, .linkArrow{
+                        @apply hidden;
+                    }
+                    .link{
+                        .mainLinkIcon{
+                            @apply ml-[-1px];
+                        }
+                    }
+                }
+            }
+            
+            .links{
+                .sublinks{
+                    animation: flipInY .8s;
+                    @apply hidden opacity-[1] z-[1];
+                    -webkit-animation: flipInY .8s;
+                    border: 1px solid $lightGray2;
+                    &::after {
+                        @apply block w-[12px] h-[12px] left-[-16px] relative;
+                        background-color: $lightBlue;
+                        content: "\00a0";
+                        transform:             rotate( 45deg );
+                            -moz-transform:    rotate( 45deg );
+                            -ms-transform:     rotate( 45deg );
+                            -o-transform:      rotate( 45deg );
+                            -webkit-transform: rotate( 45deg );
+                    }
+                    &.open{
+                        border: 0;
+                        border-radius: 10px;
+                        border-top-left-radius: 0;
+                        border-bottom-left-radius: 0;
+                        background-color: $lightBlue;
+                        @apply block absolute p-[10px] pb-[20px] top-[-20px] left-[32px] overflow-visible;
+                        &.hasOne{
+                            height: 55px !important;
+                            @apply top-[-8px];
+                            &::after{
+                                @apply top-[-20px];
+                            }
+                        }
+                        &.hasTwo{
+                            height: 96px !important;
+                            @apply top-[-25px];
+                            &::after{
+                                @apply top-[-40px];
+                            }
+                        }
+                        &.hasThree{
+                            height: 130px !important;
+                            @apply top-[-35px];
+                            &::after{
+                                @apply top-[-60px];
+                            }
+                        }
+                        &.hasFour{
+                            height: 150px !important;
+                            @apply top-[-42px];
+                            &::after{
+                                @apply top-[-80px];
+                            }
+                        }
+                        &.hasFive{
+                            height: 180px !important;
+                            @apply top-[-45px];
+                            &::after{
+                                @apply top-[-110px];
+                            }
+                        }
+                        li{
+                            border: 0 !important;
+                            @apply p-[0];
+                            &::before, &:hover::before{
+                                @apply hidden;
+                            }
+                            a{
+                                color: $white;
+                                border-color: $white;
+                                background-color: $transparent !important;
+                                @apply rounded-[0];
+                                &:hover{
+                                    color: $activeColor;
+                                }
+                                &.isActive{
+                                    color: $activeColor;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .appSidebarLinks{
+            @apply my-[120px];
+            .links{
+                li{
+                    @apply relative mb-[6px];
+                    .mainLink{
+                        border-top: 1px solid $transparent;
+                        border-bottom: 1px dotted $white;
+                        &.isActive{
+                            @apply bg-app-blue-dark cursor-pointer;
+                        }
+                        @apply flex flex-row hover:bg-app-blue-dark rounded-[10px] cursor-pointer;
+                        .linkArrow{
+                            @apply w-[40px] h-[36px] p-[11px] mt-[-14px] right-[0] top-[18px] float-right relative cursor-pointer;
+                            img{
+                                @apply w-[100%];
+                            }
+                            &.linkArrowOpen{
+                                transform: rotate(180deg);
+                                transition: transform .4s ease-out;
+                            }
+                            &.linkArrowClose{
+                                transform: rotate(0deg);
+                                transition: transform .4s ease-out;
+                            }
+                        }
+                    }
+                }
+                
+                .link{
+                    text-shadow: 1px 1px 0 $lightBlack;
+                    @apply text-app-white inline-block w-[100%] p-[10px] text-[14px];
+                    .mainLinkIcon{
+                        @apply cursor-pointer float-left h-[20px] mr-[4px] ml-[0];
+                        img{
+                            @apply w-[100%];
+                        }
+                    }
+                    
+                }
+                .sublinks{
+                    @apply ml-[18px] h-[0] overflow-hidden;
+                    &.close{
+                        @apply h-[0];
+                        transition: height .2s ease-in;
+                    }
+                    &.open{
+                        transition: height .2s ease-in;
+                        &.hasOne{
+                            @apply h-[42px];
+                        }
+                        &.hasTwo{
+                            @apply h-[85px];
+                        }
+                        &.hasThree{
+                            @apply h-[130px];
+                        }
+                        &.hasFour{
+                            @apply h-[180px];
+                        }
+                        &.hasFive{
+                            @apply h-[210px];
+                        }
+                    }
+                    li{
+                        border-left: 1px dotted $white;
+                        @apply relative pt-[8px] w-[160px] pl-[12px] py-[2px] mb-[1px];
+                        &::before{
+                            content: "";
+                            display: inherit;
+                            border-left: 1px dotted $white;
+                            border-bottom: 1px dotted $white;
+                            @apply top-[3px] left-[-1px] rounded-bl-[10px] w-[15px] h-[20px] absolute;
+                        }
+                        &:last-child{
+                            border: 0;
+                            &::before{
+                                @apply left-[0] h-[25px] mt-[-6px];
+                                content: "";
+                                border-left: 1px dotted $white;
+                            }
+                        }
+                        a{
+                            border-bottom: 1px dotted $white;
+                            &.isActive{
+                                @apply bg-app-blue-dark;
+                            }
+                            @apply py-[6px] px-[10px] text-[13px] hover:bg-app-blue-dark rounded-[10px];
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .appContent{
+        background-color: $white;
+        @apply flex-1;
+        .appHeader{
+            background-color: $white;
+            border-bottom: .5px solid rgba($gray, .8);
+            @apply px-[20px] pt-[10px] pb-[5px] min-h-[70px] justify-between flex flex-row items-center w-[100%];
+            .logo{
+                @apply w-[260px] h-[90px] block float-left;
+                img{
+                    @apply w-[100%] h-[100%];
+                }
+            }
+            .headerRight{
+                @apply flex flex-col;
+                .sessionUser{
+                    @apply flex flex-row min-h-[50px];
+                    .avatar{
+                        @apply w-[45px] h-[45px] mt-[4px] p-[8px] rounded-[50%] cursor-pointer;
+                    }
+                    .sessionUserDetails{
+                        @apply pl-[10px] min-w-[300px];
+                        h2{
+                            color: $blue;
+                            border-bottom: .5px solid;
+                            @apply text-[15px] mt-[6px];
+                        }
+                        strong{
+                            @apply text-[12px] block;
+                        }
+                        .headerIcons{
+                            @apply flex flex-row w-[200px] mt-[8px];
+                            .headerIcon{
+                                @apply flex-1 flex justify-center items-center;
+                                &:first-child::before{
+                                    @apply hidden;
+                                }
+                                &::before{
+                                    content: "";
+                                    border-left: 1px dashed $lightBlue;
+                                    @apply relative left-[-18px] h-[14px];
+                                }
+                                &:last-child .icon{
+                                    filter: invert(14%) sepia(68%) saturate(6951%) hue-rotate(358deg) brightness(101%) contrast(113%);
+                                }
+                                .icon{
+                                    @apply w-[18px] cursor-pointer;
+                                    filter: invert(64%) sepia(1%) saturate(0%) hue-rotate(28deg) brightness(98%) contrast(95%);
+                                    img{
+                                        @apply w-[100%];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .appBody{
+            @apply p-[20px] pt-[10px];
+            .breadcrumbs{
+                @apply mb-[25px];
+                ol{
+                    @apply flex flex-row flex-wrap;
+                    li{
+                        list-style: none;
+                        &::before {
+                            @apply inline-block mx-[4px] text-[10px];
+                            content: '/';
+                        }
+                        &:nth-child(1){
+                            &::before {
+                                content: '';
+                                @apply hidden;
+                            }
+                            a{
+                                @apply pl-[0];
+                            }
+                        }
+                        &.active{
+                            a{
+                                color: $darkgray;
+                                cursor: not-allowed;
+                                pointer-events: none;
+                            }
+                        }
+                        a{
+                            color: $blue;
+                            @apply text-[11px] p-[5px] uppercase no-underline;
+                        }
+                    }
+                }
+            }
+        }
+        .cards{
+            .cardBox{
+                // border: 1px solid $blue;
+                @apply min-h-[120px] rounded-[10px] p-[10px] border-app-blue-light;
+            }
+        }
+    }
+}
+
+@keyframes flipInY
+{
+    0% {
+        transform: perspective(500px) rotateY(70deg);
+        opacity: .2;
+    }
+    30% {
+        transform: perspective(500px) rotateY(-30deg);
+    }
+    85% {
+        transform: perspective(500px) rotateY(10deg);
+    }
+    100% {
+        transform: perspective(500px) rotateY(0deg);
+    }
+}
+@-webkit-keyframes flipInY
+{
+    0% {
+        -webkit-transform: perspective(500px) rotateY(70deg);
+        opacity: .2;
+    }
+    30% {
+        -webkit-transform: perspective(500px) rotateY(-30deg);
+    }
+    85% {
+        -webkit-transform: perspective(500px) rotateY(10deg);
+    }
+    100% {
+        -webkit-transform: perspective(500px) rotateY(0deg);
+    }
+}

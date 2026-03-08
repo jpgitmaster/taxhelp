@@ -14,8 +14,11 @@
     "jsx": "react-jsx",
     "incremental": true,
     "paths": {
-      "@/*": ["./src/*"]
-    }
+      "@/*": ["./src/*"],
+      "@/styles/*": ["./src/styles/*"],
+      "@/components/*": ["./components/*"],
+      "@/controllers/*": ["./controllers/*"]
+    },
   },
   "include": [
     "next-env.d.ts",
