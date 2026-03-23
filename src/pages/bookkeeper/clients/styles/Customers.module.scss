@@ -3,10 +3,12 @@
 @use '@/styles/reuseable';
 @use '@/styles/colors' as *;
 
+@reference 'tailwindcss';
+
 .header{
-    @apply inline-block w-full mb-[15px];
+    @apply inline-block w-full mb-3.75;
     .button{
-        @apply mr-[10px];
+        @apply mr-2.5;
     }
     .searchComponent{
         @apply float-right;
@@ -15,18 +17,18 @@
 .box{
     border: 1px solid $gray;
     background-color: $lightGray;
-    @apply h-[100%] rounded-[20px] p-[20px] pb-[0] flex flex-col;
+    @apply h-full rounded-[20px] p-5 pb-0 flex flex-col;
     .boxTitle{
         color: rgba($lightBlack, .7);
         font-weight: 600;
         @apply text-[18px];
     }
     .boxDetails{
-        @apply flex items-center h-[100%];
+        @apply flex items-center h-full;
         .avatar{
             border: 1px solid $gray;
             background-color: $white;
-            @apply w-[120px] h-[120px] relative top-[-20px] rounded-[50%] flex items-center justify-center;
+            @apply w-30 h-30 relative -top-5 rounded-[50%] flex items-center justify-center;
             svg{
                 @apply w-[70%];
             }
@@ -36,7 +38,7 @@
             }
         }
         .avatarDetails{
-            @apply flex-1 pl-[15px];
+            @apply flex-1 pl-3.75;
 
             input{
                 background-color: $white;

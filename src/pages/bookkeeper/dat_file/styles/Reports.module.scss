@@ -3,15 +3,26 @@
 @use '@/styles/reuseable';
 @use '@/styles/colors' as *;
 
+@reference 'tailwindcss';
+
+.pageHeader{
+    @apply inline-block w-full mb-3.75;
+    .button{
+        @apply mr-2.5 w-auto;
+    }
+    .searchComponent{
+        @apply float-right h-[400px];
+    }
+}
 .box{
     border: 1px solid $gray;
     background-color: $lightGray;
-    @apply h-[100%] rounded-[20px] p-[20px] pb-[0] flex flex-col;
+    @apply h-full rounded-[20px] p-5 pb-0 flex flex-col;
 }
 .customFileUpload{
     border: 1px solid $gray;
     background-color: $lightGray;
-    @apply w-[500px] relative overflow-hidden cursor-pointer h-[170px] rounded-[20px] mx-[auto] my-[20px];
+    @apply w-125 relative overflow-hidden cursor-pointer h-42.5 rounded-[20px] mx-auto my-5;
     
     &.hasImage{
         border: 0;
@@ -24,52 +35,33 @@
         @apply cursor-not-allowed pointer-events-none opacity-[.3];
     }
     .customFile{
-        height: 100%;
-        display: flex;
-        cursor: pointer;
-        align-items: center;
-        flex-direction: column;
-        justify-content: center;
+        @apply h-full flex cursor-pointer items-center flex-col justify-center;
         input[type='file'] {
-            display: none;
+            @apply hidden
         }
         .empty_image{
-            width: 50px;
+            @apply w-12.5;
             img{
-                width: 30px;
-                height: 30px;
+                @apply w-7.5 h-7.5;
             }
         }
         img{
-            margin: 0 0 10px;
+            @apply mb-0;
             &.browse_image{
-                margin: 0;
-                width: 100%;
-                object-fit: cover;
+                @apply object-cover m-0 w-[full];
             }
         }
         p{
-            margin: 0 0 5px;
+            @apply mb-1.25;
         }
         span{
             @apply text-center text-[12px];
         }
     }
     .remove_featured{
-        top: 10px;
-        z-index: 1;
-        right: 10px;
-        width: 28px;
-        padding: 8px;
-        display: flex;
-        border-radius: 50%;
-        overflow: hidden;
-        position: absolute;
-        align-items: center;
-        justify-content: center;
-        // background-color: $secondaryColor;
+        @apply absolute top-2.5 z-1 right-2.5 w-7 p-2 flex rounded-[50%] overflow-hidden items-center justify-center;
         img{
-            width: 100%;
+            @apply w-full;
         }
     }
 }

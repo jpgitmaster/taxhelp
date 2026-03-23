@@ -1,6 +1,7 @@
 @use '@/styles/colors' as *;
+@reference 'tailwindcss';
 .npt{
-  @apply flex relative w-[100%] pb-[30px];
+  @apply flex relative w-full pb-7.5;
   &.err{
     @apply relative;
     textarea, select, input[type=text], input[type=email], input[type=password], input[type=file]
@@ -8,7 +9,7 @@
       border: 1px solid rgba($red, .6);
     }
     .errmsg{
-      @apply text-[10px] absolute bottom-[14px] right-[0];
+      @apply text-[10px] absolute bottom-3.5 right-0;
       color: $red;
     }
   }
@@ -16,16 +17,16 @@
 	.lbl{
     // font-weight: 600;
     color: $lightBlack;
-    @apply absolute top-[-15px] left-[0] text-[10px] uppercase;
+    @apply absolute -top-3.75 left-0 text-[10px] uppercase;
 		span{
 			color: $red;
-      @apply text-[13px] float-right ml-[5px] mt-[-3px];
+      @apply text-[13px] float-right ml-1.25 -mt-0.75;
 		}
 	}
   input[type=text], input[type=email], select, textarea, input[type=password]{
     border: 1px solid rgba($darkgray, .6);
     background-color: $transparent;
-    @apply px-[10px] py-[8px] text-[13px] w-[100%] rounded-[10px] text-ellipsis;
+    @apply px-2.5 py-2 text-[13px] w-full rounded-[10px] text-ellipsis;
     
     &:focus{
       outline: none;
@@ -42,137 +43,31 @@
     background-color: $white;
     background: $white url('/svgs/arrowDown.svg') no-repeat 96.5% 51%;
     background-size: 12px;
-    @apply pr-[15px] mb-[4px] text-[12px] h-[38px] w-[100%] clear-both float-left;
+    @apply pr-3.75 mb-1 text-[12px] h-9.5 w-full clear-both float-left;
   }
   .inputValue{
     border-bottom: 1px dashed $lightBlack;
-    @apply inline-block text-[14px] mt-[6px] pl-[5px] pb-[6px] w-[100%];
+    @apply inline-block text-[14px] mt-1.5 pl-1.25 pb-1.5 w-full;
   }
-  // .popover{
-  //   @apply absolute right-[10px] bottom-[77px] z-[1] max-w-[250px] hidden;
-  //   &.textarea{
-  //     bottom: 93px;
-  //   }
-  //   .arrow{
-  //     left: 50%;
-  //     position: absolute;
-  //     bottom: -7px;
-  //     &::after, &::before {
-  //       position: absolute;
-  //       display: block;
-  //       border-color: transparent;
-  //       border-style: solid;
-  //       bottom: 0;
-  //       content: "";
-  //       border-width: .5rem .5rem 0;
-  //     }
-  //     &::after {
-  //       bottom: 1px;
-  //       border-width: .5rem .5rem 0;
-  //       border-top-color: $white;
-  //     }
-  //   }
-  //   .popoverBody{
-  //       padding: 4px 10px;
-  //       line-height: 16px;
-  //       background-color: $white;
-  //       border: 1px solid;
-  //       float: left;
-  //       width: 100%;
-  //       .errmsg{
-  //         margin: 0;
-  //         padding: 0;
-  //         min-height: auto;
-  //         font-size: 12px;
-  //         text-align: center;
-  //         float: none;
-  //       }
-  //   }
-  
-  //   &.flipInY
-  //   {
-  //       -webkit-animation: flipInY .8s;
-  //       animation: flipInY .8s;
-  //   }
-  //   @keyframes flipInY
-  //   {
-  //       0% {
-  //           transform: perspective(500px) rotateY(70deg);
-  //           opacity: .2;
-  //       }
-  //       30% {
-  //           transform: perspective(500px) rotateY(-30deg);
-  //       }
-  //       85% {
-  //           transform: perspective(500px) rotateY(10deg);
-  //       }
-  //       100% {
-  //           transform: perspective(500px) rotateY(0deg);
-  //       }
-  //   }
-  //   @-webkit-keyframes flipInY
-  //   {
-  //       0% {
-  //           -webkit-transform: perspective(500px) rotateY(70deg);
-  //           opacity: .2;
-  //       }
-  //       30% {
-  //           -webkit-transform: perspective(500px) rotateY(-30deg);
-  //       }
-  //       85% {
-  //           -webkit-transform: perspective(500px) rotateY(10deg);
-  //       }
-  //       100% {
-  //           -webkit-transform: perspective(500px) rotateY(0deg);
-  //       }
-  //   }
-  // }
-  // &:focus-within{
-  //     .popover{
-  //       @apply block;
-  //       opacity: 1;
-  //       transition: opacity 0.2s ease all;
-  //       -moz-transition: opacity 0.2s ease all;
-  //       -webkit-transition: opacity 0.2s ease all;
-  //     }
-  // }
-  // .popover{
-  //   @apply hidden;
-  //   opacity: 0;
-  //   transition: opacity 0.2s ease all;
-  //   -moz-transition: opacity 0.2s ease all;
-  //   -webkit-transition: opacity 0.2s ease all;
-  //   .arrow{
-  //     &::before {
-  //       border-top-color: $red;
-  //     }
-  //     &::after{
-  //       border-top-color: $white;
-  //     }
-  //   }
-  //   .popoverBody{
-  //     border-color: $red;
-  //   }
-  // }
 }
 .searchComponent{
-    @apply w-[380px] flex flex-row;
+    @apply w-95 flex flex-row;
     input[type=text]{
         color: $lightBlack;
         border: 1px solid $gray;
         border-right: 0;
-        @apply py-[6px] px-[12px] text-[14px] outline-none rounded-tl-[10px] rounded-bl-[10px] w-[100%];
+        @apply py-1.5 px-3 text-[14px] outline-none rounded-tl-[10px] rounded-bl-[10px] w-full;
     }
     .button{
         letter-spacing: .5px;
-        @apply rounded-tl-[0] w-[auto] rounded-bl-[0] text-[12px] py-[5px];
+        @apply rounded-tl-none w-auto rounded-bl-none text-[12px] py-1.25;
     }
 }
 .button{
   outline: none;
   border: 1px solid;
   text-decoration: none;
-  @apply rounded-[10px] w-[100%] text-[12px] cursor-pointer uppercase py-[8px] px-[10px];
+  @apply rounded-[10px] w-full text-[12px] cursor-pointer uppercase py-2 px-2.5;
   &.btnblue{
     // background-color: rgba($blue, .6);
     background-color: $blue;
@@ -200,10 +95,9 @@
     border-color: $border_red;
   }
   &.disabled, &:disabled{
-    cursor: not-allowed;
+    @apply cursor-not-allowed pointer-events-none;
     color: $darkgray;
     border-color: $gray;
-    pointer-events: none;
     background-color: $lightGray2;
   }
 }
