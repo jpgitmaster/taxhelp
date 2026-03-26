@@ -24,8 +24,8 @@
 		}
 	}
   input[type=text], input[type=email], select, textarea, input[type=password]{
-    border: 1px solid rgba($darkgray, .6);
     background-color: $transparent;
+    border: 1px solid rgba($darkgray, .6);
     @apply px-2.5 py-2 text-[13px] w-full rounded-[10px] text-ellipsis;
     
     &:focus{

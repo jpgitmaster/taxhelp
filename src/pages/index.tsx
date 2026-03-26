@@ -102,7 +102,7 @@ export default function LandingPage() {
                   </button>
                 </div>
               </div>
-              <div>
+              <div className={scss.loginSpiels}>
                 <p>
                   Don't have an account? <button type='button' className={scss.btnSignup} onClick={showModal}>Signup</button>
                 </p>
@@ -231,16 +231,24 @@ export default function LandingPage() {
         open={isModalOpen}
         onCancel={handleCancel}
       >
+        <div className={scss.modelTitle}>
+          <strong>
+            Tell us who you are
+          </strong>
+          <p>
+            Choose your role to get the right tools and experience.
+          </p>
+        </div>
         <ul className={scss.userTypes}>
           <li>
-            <div className={scss.userType+' '+scss.active}>
+            <div className={scss.userType}>
               <Image src="/svgs/business_owner.svg" alt="Business Owner" width={20} height={20} unoptimized={true} />
               <div>
                 <strong>
                   Business Owner
                 </strong>
                 <p>
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                  Manage your business taxes and track your filings.
                 </p>
               </div>
             </div>
@@ -253,7 +261,7 @@ export default function LandingPage() {
                   Bookkeeper
                 </strong>
                 <p>
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                  Manage financial records and prepare tax-ready reports.
                 </p>
               </div>
             </div>

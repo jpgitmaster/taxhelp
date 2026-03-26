@@ -6,6 +6,7 @@
   --blue: #007AFF;
   --white: #FFF;
 }
+
 .app{
   @apply min-h-screen bg-linear-to-br from-blue-50 to-blue-200 flex flex-col;
   .topbar {
@@ -13,8 +14,7 @@
     @apply px-15 py-3 flex justify-between items-center;
 
     .logo {
-      @apply w-55 inline-block;
-
+      @apply w-55 inline-block focus-visible:outline-none;
       img {
         @apply w-full;
       }
@@ -28,10 +28,10 @@
         }
       }
       p, a{
-        @apply mt-1 text-[11px] inline-block;
+        @apply mt-1 text-[11.5px] inline-block;
       }
       p{
-        @apply mr-11 ml-0.5;
+        @apply mr-8.5 ml-0.5;
       }
       .btnSignup, a{
         color: $blue;
@@ -164,19 +164,28 @@
     @apply py-8 text-center text-gray-500 bg-blue-50 border-t border-blue-100 text-sm;
   }
 }
-
+.modelTitle{
+  @apply px-2 mt-4;
+  strong{
+    @apply text-[20px];
+  }
+  p{
+    @apply -mt-0.5;
+  }
+}
 .userTypes{
-  @apply flex flex-row mt-5;
+  @apply flex flex-row mt-2;
   li{
     @apply w-[50%] p-2;
     .userType{
-      border: 1px solid $gray3;
+      border: 1px solid rgba($darkgray, .6);
       @apply flex flex-row w-full rounded-[20px] p-5 cursor-pointer;
       p{
-        @apply text-[10px];
+        color: $darkgray;
+        @apply text-[10px] leading-3;
       }
       img{
-        @apply w-12 mr-2;
+        @apply w-12 mr-2.5;
       }
       &:hover, &.active{
         border-color: $lightBlue;
@@ -192,5 +201,74 @@
   @apply p-2;
   .btnblue{
     @apply max-w-70 mx-auto block;
+  }
+}
+
+@media (max-width: 768px) {
+  .app {
+    .topbar {
+      @apply px-4 flex flex-col items-center text-center;
+
+      .logo {
+        @apply w-60 mx-auto block;
+      }
+
+      .loginUser {
+        @apply w-103.75 mt-3 flex flex-col items-center;
+
+        .cards{
+          .card{
+            &.w40{
+              @apply w-[calc(50%-5px)];
+            }
+            &.w20{
+              @apply w-full;
+            }
+            .npt{
+              @apply pb-4;
+            }
+          }
+        }
+        .loginSpiels {
+          @apply w-full flex justify-between items-center;
+          p {
+            @apply flex-1 text-left; // stretches to the left
+          }
+          a {
+            @apply text-right; // moves to the right
+          }
+        }
+      }
+    }
+  }
+  .userTypes{
+    @apply flex-col;
+    li{
+      @apply w-full;
+    }
+  }
+}
+@media (max-width: 450px) {
+  .app {
+    .topbar {
+      .loginUser {
+        @apply w-full;
+        .cards{
+          .card{
+            &.w40{
+              @apply w-full;
+            }
+            &.w20{
+              .button{
+                @apply relative -top-3;
+              }
+            }
+            .npt{
+              @apply pb-6;
+            }
+          }
+        }
+      }
+    }
   }
 }
