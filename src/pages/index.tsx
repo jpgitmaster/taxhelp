@@ -1,26 +1,114 @@
-import Link from 'next/link'
+import Link from 'next/link';
+import { Modal } from 'antd';
 import Head from 'next/head';
 import Image from 'next/image';
 import scss from '@/styles/Landing.module.scss'
+import CustomContainer from '@/components/reusables/CustomContainer'
+import React, { useState, ChangeEvent, KeyboardEvent, SyntheticEvent } from 'react'
 export default function LandingPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+  const [user, setUser] = useState({
+    userObj: {
+      email: '',
+      password: ''
+    },
+    userErr: {
+      email: '',
+      password: ''
+    },
+  })
+  const handleBlur = (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | HTMLButtonElement>) => {
+      if ((e as KeyboardEvent).key === 'Enter') {
+          e.preventDefault();
+          (e.target as HTMLInputElement).blur()
+      }
+  }
+  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      const { name, value } = event.target
+      setUser({
+          ...user,
+          userObj: {
+              ...user.userObj,
+              [name]: value
+          }
+      })
+  }
+  const handleLoginUser = async (e: SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault()
+  }
   return (
     <>
       <Head>
         <title>TaxHelp Accounting Firm</title>
         <meta name="description" content="Professional accounting and tax services for small businesses and families." />
       </Head>
-      <div className="min-h-screen bg-linear-to-br from-blue-50 to-blue-200 flex flex-col">
+      <div className={scss.app}>
         <header>
           <div className={scss.topbar}>
             {/* Logo */}
             <Link href='/' className={scss.logo}>
               <Image src='/images/logo.png' alt='TaxHelp Logo' priority width={20} height={20} unoptimized={true} style={{width: '100%'}} />
             </Link>
-            {/* Top Navigation */}
-            {/* <nav className="w-full flex justify-end items-center px-6 md:px-20 py-4 gap-4 absolute top-0 left-0 z-30">
-              <a href="/bookkeeper" className="bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold px-5 py-2 rounded-lg shadow transition border border-blue-300">Bookkeeper Portal</a>
-              <a href="/customer" className="bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold px-5 py-2 rounded-lg shadow transition border border-blue-300">Customer Portal</a>
-            </nav> */}
+            
+            <form className={scss.loginUser} onSubmit={handleLoginUser}>
+              <div className={scss.cards}>
+                <CustomContainer
+                  scss={scss}
+                  width={40}
+                  required={true}
+                  label='Email'
+                  labelFor='email'
+                  err={user.userErr.email as string}
+                >
+                  <input
+                    type='text'
+                    name='email'
+                    maxLength={20}
+                    autoComplete='off'
+                    value={user.userObj.email}
+                    placeholder='johndoe@gmail.com'
+                    onKeyUp={handleBlur}
+                    onChange={handleChange}
+                  />
+                </CustomContainer>
+                <CustomContainer
+                  scss={scss}
+                  width={40}
+                  required={true}
+                  label='Password'
+                  labelFor='password'
+                  err={user.userErr.password as string}
+                >
+                  <input
+                    name='password'
+                    maxLength={20}
+                    type='password'
+                    autoComplete='off'
+                    placeholder='*******'
+                    value={user.userObj.password}
+                    onKeyUp={handleBlur}
+                    onChange={handleChange}
+                  />
+                </CustomContainer>
+                <div className={scss.card+' '+scss.w20}>
+                  <button type='submit' className={`${scss.button} ${scss.btnblue}`}>
+                    Login
+                  </button>
+                </div>
+              </div>
+              <div>
+                <p>
+                  Don't have an account? <button type='button' className={scss.btnSignup} onClick={showModal}>Signup</button>
+                </p>
+                <Link href={''}>Forgot Password?</Link>
+              </div>
+            </form>
           </div>
         </header>
         {/* Hero Section */}
@@ -138,6 +226,106 @@ export default function LandingPage() {
           &copy; {new Date().getFullYear()} TaxHelp Accounting Firm. All rights reserved.
         </footer>
       </div>
+      <Modal
+        footer={null}
+        open={isModalOpen}
+        onCancel={handleCancel}
+      >
+        <ul className={scss.userTypes}>
+          <li>
+            <div className={scss.userType+' '+scss.active}>
+              <Image src="/svgs/business_owner.svg" alt="Business Owner" width={20} height={20} unoptimized={true} />
+              <div>
+                <strong>
+                  Business Owner
+                </strong>
+                <p>
+                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                </p>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div className={scss.userType}>
+              <Image src="/svgs/bookkeeper.svg" alt="Bookkeeper" width={20} height={20} unoptimized={true} />
+              <div>
+                <strong>
+                  Bookkeeper
+                </strong>
+                <p>
+                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                </p>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <form className={scss.registerUser} onSubmit={handleLoginUser}>
+          <div className={scss.cards}>
+            <CustomContainer
+              scss={scss}
+              width={100}
+              required={true}
+              label='Email'
+              labelFor='email'
+              err={user.userErr.email as string}
+            >
+              <input
+                type='text'
+                name='email'
+                maxLength={20}
+                autoComplete='off'
+                value={user.userObj.email}
+                placeholder='johndoe@gmail.com'
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+              />
+            </CustomContainer>
+            <CustomContainer
+              scss={scss}
+              width={50}
+              required={true}
+              label='Password'
+              labelFor='password'
+              err={user.userErr.password as string}
+            >
+              <input
+                name='password'
+                maxLength={20}
+                type='password'
+                autoComplete='off'
+                placeholder='*******'
+                value={user.userObj.password}
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+              />
+            </CustomContainer>
+            <CustomContainer
+              scss={scss}
+              width={50}
+              required={true}
+              label='Confirm Password'
+              labelFor='password'
+              err={user.userErr.password as string}
+            >
+              <input
+                name='password'
+                maxLength={20}
+                type='password'
+                autoComplete='off'
+                placeholder='*******'
+                value={user.userObj.password}
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+              />
+            </CustomContainer>
+            <div className={scss.card+' '+scss.w100}>
+              <button type='submit' className={`${scss.button} ${scss.btnblue}`}>
+                Sign up
+              </button>
+            </div>
+          </div>
+        </form>
+      </Modal>
     </>
   );
 }
