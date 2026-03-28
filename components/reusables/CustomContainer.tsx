@@ -4,11 +4,11 @@ interface PropsDefinition {
   width: number
   label?: string
   labelFor?: string
-  scss: { [key: string]: string }
-  children?: ReactNode
   required?: boolean
   disabled?: boolean
+  children?: ReactNode
   className?: string | string[]
+  scss: { [key: string]: string }
   cardClassName?: string | string[]
 }
 const CustomContainer = (

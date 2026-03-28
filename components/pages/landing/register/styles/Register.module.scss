@@ -1,0 +1,89 @@
+@use '@/styles/forms';
+@use '@/styles/helpers';
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+.modelTitle{
+  @apply px-2 mt-4;
+  strong{
+    @apply text-[20px];
+  }
+  p{
+    @apply -mt-0.5;
+  }
+}
+.userTypes{
+  @apply flex flex-row mt-3;
+  li{
+    @apply w-[50%] p-2;
+    .userType{
+      border: 1px solid rgba($darkgray, .6);
+      @apply flex flex-row w-full relative rounded-[20px] p-5 cursor-pointer;
+      p{
+        color: $darkgray;
+        @apply text-[10px] leading-3;
+      }
+      img{
+        @apply w-12 mr-2.5;
+      }
+      &:hover, &.checked{
+        border-color: $lightBlue;
+        background-color: rgba($lightBlue, .1);
+        img{
+          filter: invert(45%) sepia(15%) saturate(6682%) hue-rotate(179deg) brightness(102%) contrast(106%);
+        }
+        .checkmark {
+          background-color: rgba($lightBlue, .8);
+        }
+      }
+      &.checked{
+        input[type=checkbox]{
+          &:checked ~ .checkmark {
+            background-color: $lightBlue;
+            &:after {
+              @apply block;
+            }
+          }
+        }
+      }
+      input[type=checkbox]{
+        @apply w-0 h-0 opacity-0;
+        &:checked ~ .checkmark {
+          &:after {
+            @apply hidden;
+          }
+        }
+      }
+      .checkmark {
+        background-color: $gray;
+        @apply top-3 right-3 w-4 h-4 rounded-sm absolute;
+        &:after {
+          content: "";
+          border: solid $white;
+          border-width: 0 2px 2px 0;
+          -webkit-transform: rotate(45deg);
+          -ms-transform: rotate(45deg);
+          transform: rotate(45deg);
+          @apply hidden absolute top-0.5 left-1.5 w-1.25 h-2.5;
+        }
+      }
+    }
+  }
+}
+.registerUser{
+  @apply p-2;
+  .btnblue{
+    @apply max-w-70 mx-auto block;
+  }
+  .loader{
+    @apply top-[40%];
+  }
+}
+
+@media (max-width: 768px) {
+  .userTypes{
+    @apply flex-col;
+    li{
+      @apply w-full;
+    }
+  }
+}

@@ -13,7 +13,30 @@
       color: $red;
     }
   }
-
+  &:disabled, &.disabled{
+      // opacity: .4;
+      pointer-events: none;
+      span{
+          display: none;
+      }
+      .lbl{
+          color: $gray;
+      }
+      input[type=text], input[type=email], select, textarea, input[type=password]{
+          color: $lightGray2;
+          cursor: not-allowed;
+          background-image: none;
+          background-color: $lightGray;
+          border: 1px solid rgba($lightGray2, .5);
+      }
+      .lbl{
+          margin: 0 2px;
+          display: inline;
+          span{
+              color: $red;
+          }
+      }
+  }
 	.lbl{
     // font-weight: 600;
     color: $lightBlack;
@@ -97,7 +120,8 @@
   &.disabled, &:disabled{
     @apply cursor-not-allowed pointer-events-none;
     color: $darkgray;
-    border-color: $gray;
-    background-color: $lightGray2;
+    opacity: .6;
+    background-color: $lightGray;
+    border-color: rgba($lightGray2, .6);
   }
 }

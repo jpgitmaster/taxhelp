@@ -1,12 +1,38 @@
 import Link from 'next/link';
-import { Modal } from 'antd';
 import Head from 'next/head';
 import Image from 'next/image';
-import scss from '@/styles/Landing.module.scss'
-import CustomContainer from '@/components/reusables/CustomContainer'
-import React, { useState, ChangeEvent, KeyboardEvent, SyntheticEvent } from 'react'
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import scss from '@/styles/Landing.module.scss';
+import Register_V from '@/components/pages/landing/register';
+import CustomContainer from '@/components/reusables/CustomContainer';
+import { useState, useRef, ChangeEvent, KeyboardEvent, SyntheticEvent } from 'react';
+
 export default function LandingPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loader, setLoader] = useState(false)
+  const [activeSlide, setActiveSlide] = useState(0)
+  const textSliderRef = useRef<Slider | null>(null)
+  const imageSliderRef = useRef<Slider | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  
+  const goToSlide = (currentSlide: number) => {
+      if (textSliderRef.current) {
+      setActiveSlide(currentSlide)
+      textSliderRef.current.slickGoTo(currentSlide);  // Go to the specified slide index
+      }
+  };
+  const fadeSettings = {
+      dots: true,
+      speed: 800,
+      fade: true,
+      arrows: false,
+      infinite: true,
+      autoplay: true,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      autoplaySpeed: 5000,
+  };
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -41,6 +67,7 @@ export default function LandingPage() {
   }
   const handleLoginUser = async (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setLoader(true)
   }
   return (
     <>
@@ -112,23 +139,58 @@ export default function LandingPage() {
           </div>
         </header>
         {/* Hero Section */}
-        <section className="relative flex flex-col md:flex-row items-center justify-between px-6 md:px-20 py-16 md:py-28 bg-white bg-opacity-80">
-          <div className="flex-1 z-10">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-blue-800 mb-6 leading-tight drop-shadow-sm">
-              Trusted Accounting & Tax Solutions
-            </h1>
-            <p className="text-lg md:text-2xl text-blue-700 mb-8 max-w-xl">
-              Empowering your business and family with expert financial guidance, tax compliance, and peace of mind.
-            </p>
-            <a href="#contact" className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-lg shadow transition mb-4">Get a Free Consultation</a>
-            {/* Removed Bookkeeper/Customer portal links from here */}
-          </div>
-          <div className="flex-1 flex justify-center mt-10 md:mt-0 z-10">
-            <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80" alt="Accounting Team" className="rounded-2xl shadow-xl w-full max-w-md object-cover" />
-          </div>
-          <div className="absolute inset-0 bg-linear-to-br from-blue-100/60 to-blue-300/40 pointer-events-none" />
+        <section className={scss.banners}>
+          <Slider {...fadeSettings} ref={textSliderRef}>
+            <div className={scss.banner}>
+              <div className={scss.bannerLeft}>
+                <h1>
+                  Trusted Accounting & Tax Solutions
+                </h1>
+                <p>
+                  Empowering your business and family with expert financial guidance, tax compliance, and peace of mind.
+                </p>
+                <Link href="#contact">
+                  Get a Free Consultation
+                </Link>
+              </div>
+              <div className={scss.bannerRight}>
+                <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80" alt="Accounting Team" />
+              </div>
+            </div>
+            <div className={scss.banner}>
+              <div className={scss.bannerLeft}>
+                <h1>
+                  BIR Compliance Made Simple
+                </h1>
+                <p>
+                  Stay fully compliant with BIR regulations. We handle filings, reports, and deadlines so you can focus on growing your business.
+                </p>
+                <Link href="#contact">
+                  Get a Free Consultation
+                </Link>
+              </div>
+              <div className={scss.bannerRight}>
+                <img src="https://plus.unsplash.com/premium_photo-1661761077411-d50cba031848?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Accounting Team" />
+              </div>
+            </div>
+            <div className={scss.banner}>
+              <div className={scss.bannerLeft}>
+                <h1>
+                  Smart Tax Solutions for Every Business
+                </h1>
+                <p>
+                  Minimize liabilities and maximize savings with expert tax planning, preparation, and compliance tailored to your needs.
+                </p>
+                <Link href="#contact">
+                  Get a Free Consultation
+                </Link>
+              </div>
+              <div className={scss.bannerRight}>
+                <img src="https://plus.unsplash.com/premium_photo-1679923813998-6603ee2466c5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Accounting Team" />
+              </div>
+            </div>
+          </Slider>
         </section>
-
         {/* Services Section */}
         <section className={scss.services}>
           <h2 className={scss.serviceTitle}>Our Services</h2>
@@ -226,114 +288,10 @@ export default function LandingPage() {
           &copy; {new Date().getFullYear()} TaxHelp Accounting Firm. All rights reserved.
         </footer>
       </div>
-      <Modal
-        footer={null}
-        open={isModalOpen}
-        onCancel={handleCancel}
-      >
-        <div className={scss.modelTitle}>
-          <strong>
-            Tell us who you are
-          </strong>
-          <p>
-            Choose your role to get the right tools and experience.
-          </p>
-        </div>
-        <ul className={scss.userTypes}>
-          <li>
-            <div className={scss.userType}>
-              <Image src="/svgs/business_owner.svg" alt="Business Owner" width={20} height={20} unoptimized={true} />
-              <div>
-                <strong>
-                  Business Owner
-                </strong>
-                <p>
-                  Manage your business taxes and track your filings.
-                </p>
-              </div>
-            </div>
-          </li>
-          <li>
-            <div className={scss.userType}>
-              <Image src="/svgs/bookkeeper.svg" alt="Bookkeeper" width={20} height={20} unoptimized={true} />
-              <div>
-                <strong>
-                  Bookkeeper
-                </strong>
-                <p>
-                  Manage financial records and prepare tax-ready reports.
-                </p>
-              </div>
-            </div>
-          </li>
-        </ul>
-        <form className={scss.registerUser} onSubmit={handleLoginUser}>
-          <div className={scss.cards}>
-            <CustomContainer
-              scss={scss}
-              width={100}
-              required={true}
-              label='Email'
-              labelFor='email'
-              err={user.userErr.email as string}
-            >
-              <input
-                type='text'
-                name='email'
-                maxLength={20}
-                autoComplete='off'
-                value={user.userObj.email}
-                placeholder='johndoe@gmail.com'
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={50}
-              required={true}
-              label='Password'
-              labelFor='password'
-              err={user.userErr.password as string}
-            >
-              <input
-                name='password'
-                maxLength={20}
-                type='password'
-                autoComplete='off'
-                placeholder='*******'
-                value={user.userObj.password}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={50}
-              required={true}
-              label='Confirm Password'
-              labelFor='password'
-              err={user.userErr.password as string}
-            >
-              <input
-                name='password'
-                maxLength={20}
-                type='password'
-                autoComplete='off'
-                placeholder='*******'
-                value={user.userObj.password}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <div className={scss.card+' '+scss.w100}>
-              <button type='submit' className={`${scss.button} ${scss.btnblue}`}>
-                Sign up
-              </button>
-            </div>
-          </div>
-        </form>
-      </Modal>
+      <Register_V
+        isModalOpen={isModalOpen}
+        handleCancel={handleCancel}
+      />
     </>
   );
 }
