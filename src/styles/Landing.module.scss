@@ -227,27 +227,3 @@
     }
   }
 }
-@media (max-width: 450px) {
-  .app {
-    .topbar {
-      .loginUser {
-        @apply w-full;
-        .cards{
-          .card{
-            &.w40{
-              @apply w-full;
-            }
-            &.w20{
-              .button{
-                @apply relative -top-3;
-              }
-            }
-            .npt{
-              @apply pb-6;
-            }
-          }
-        }
-      }
-    }
-  }
-}
