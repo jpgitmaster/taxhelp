@@ -8,10 +8,14 @@ import 'slick-carousel/slick/slick-theme.css';
 import scss from '@/styles/Landing.module.scss';
 import Login_V from '@/components/pages/landing/login';
 import Register_V from '@/components/pages/landing/register';
+import ForgotPassword_V from '@/components/pages/landing/forgot_password';
 
 export default function LandingPage() {
   const sliderRef = useRef<Slider | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [displayModal, setDisplayModal] = useState({
+    registration: false,
+    forgot_password: false
+  })
   
   const fadeSettings = {
       dots: true,
@@ -24,20 +28,12 @@ export default function LandingPage() {
       slidesToScroll: 1,
       autoplaySpeed: 5000,
   };
-  const showModal = () => setIsModalOpen(true);
-  const handleCancel = () => {
-    setIsModalOpen(false);
+  const toggleModal = (modal: boolean, form: string) => {
+    setDisplayModal({
+      ...displayModal,
+      [form]: modal
+    })
   };
-  const [user, setUser] = useState({
-    userObj: {
-      email: '',
-      password: ''
-    },
-    userErr: {
-      email: '',
-      password: ''
-    },
-  })
   return (
     <>
       <Head>
@@ -52,7 +48,7 @@ export default function LandingPage() {
               <Image src='/images/logo.png' alt='TaxHelp Logo' priority width={20} height={20} unoptimized={true} style={{width: '100%'}} />
             </Link>
             
-            <Login_V showModal={() => showModal()} />
+            <Login_V toggleModal={toggleModal} />
           </div>
         </header>
         {/* Hero Section */}
@@ -222,8 +218,12 @@ export default function LandingPage() {
         </footer>
       </div>
       <Register_V
-        isModalOpen={isModalOpen}
-        handleCancel={handleCancel}
+        displayModal={displayModal}
+        toggleModal={toggleModal}
+      />
+      <ForgotPassword_V
+        displayModal={displayModal}
+        toggleModal={toggleModal}
       />
     </>
   );

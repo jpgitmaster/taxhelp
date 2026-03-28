@@ -6,14 +6,16 @@ import Loader from '@/components/reusables/RotatingLoader';
 import CustomContainer from '@/components/reusables/CustomContainer';
 
 interface PropsDefinition {
-    isModalOpen: boolean
-    handleCancel(): void
+    displayModal: {
+        registration: boolean
+        forgot_password: boolean
+    }
+    toggleModal(modal: boolean, form: string): void
 }
-const Register_V = (props: PropsDefinition) => {
-    const {
-        isModalOpen,
-        handleCancel
-    } = props
+const Register_V = ({
+    toggleModal,
+    displayModal,
+}: PropsDefinition) => {
     const {
         user,
         roles,
@@ -29,16 +31,16 @@ const Register_V = (props: PropsDefinition) => {
     return (
         <Modal
             footer={null}
-            open={isModalOpen}
-            onCancel={handleCancel}
+            open={displayModal.registration}
+            onCancel={() => toggleModal(false, 'registration')}
         >
             <div className={scss.modelTitle}>
-            <strong>
-                Tell us who you are
-            </strong>
-            <p>
-                Choose your role to get the right tools and experience.
-            </p>
+                <strong>
+                    Tell us who you are
+                </strong>
+                <p>
+                    Choose your role to get the right tools and experience.
+                </p>
             </div>
             <ul className={scss.userTypes}>
                 {

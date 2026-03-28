@@ -14,7 +14,7 @@
       }
     }
   }
-  p, a{
+  p, button{
     @apply mt-1 text-[11.5px] inline-block;
   }
   p{
@@ -26,7 +26,7 @@
       @apply w-5 h-5;
     }
   }
-  .btnSignup, a{
+  .btnSignup, .btnForgotPassword{
     color: $blue;
     @apply font-medium cursor-pointer focus-visible:outline-none;
     &:hover{

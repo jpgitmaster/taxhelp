@@ -5,9 +5,9 @@ import Loader from '@/components/reusables/RotatingLoader';
 import CustomContainer from '@/components/reusables/CustomContainer';
 
 interface PropsDefinition {
-    showModal(): void
+    toggleModal(modal: boolean, form: string): void
 }
-const Login_V = ({ showModal }: PropsDefinition) => {
+const Login_V = ({ toggleModal }: PropsDefinition) => {
     const {
         user,
         status,
@@ -69,7 +69,7 @@ const Login_V = ({ showModal }: PropsDefinition) => {
                 {
                     !user.userErr.email ?
                     <p>
-                        Don't have an account? <button type='button' className={scss.btnSignup} onClick={showModal}>Signup</button>
+                        Don't have an account? <button type='button' className={scss.btnSignup} onClick={() => toggleModal(true, 'registration')}>Signup</button>
                     </p>
                     :
                     <p style={{minWidth: '170px'}}>
@@ -78,7 +78,7 @@ const Login_V = ({ showModal }: PropsDefinition) => {
                 }
                 {
                     !user.userErr.password ?
-                    <Link href={''}>Forgot Password?</Link>
+                    <button type='button' className={scss.btnForgotPassword} onClick={() => toggleModal(true, 'forgot_password')}>Forgot Password?</button>
                     :
                     <p>
                         &nbsp;
