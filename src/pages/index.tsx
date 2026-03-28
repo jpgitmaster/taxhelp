@@ -189,6 +189,22 @@ export default function LandingPage() {
                 <img src="https://plus.unsplash.com/premium_photo-1679923813998-6603ee2466c5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Accounting Team" />
               </div>
             </div>
+            <div className={scss.banner}>
+              <div className={scss.bannerLeft}>
+                <h1>
+                  Accurate Bookkeeping for Your Business
+                </h1>
+                <p>
+                  Let us handle the numbers so you can focus on growing your business.
+                </p>
+                <Link href="#contact">
+                  Get a Free Consultation
+                </Link>
+              </div>
+              <div className={scss.bannerRight}>
+                <img src="https://images.unsplash.com/photo-1707902665498-a202981fb5ac?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Accounting Team" />
+              </div>
+            </div>
           </Slider>
         </section>
         {/* Services Section */}
