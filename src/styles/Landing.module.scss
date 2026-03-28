@@ -36,28 +36,6 @@
         @apply w-full;
       }
     }
-    .loginUser{
-      @apply w-125 mb-2 mt-1;
-      .cards{
-        @apply mb-0;
-        .npt{
-          @apply p-0;
-        }
-      }
-      p, a{
-        @apply mt-1 text-[11.5px] inline-block;
-      }
-      p{
-        @apply mr-8.5 ml-0.5;
-      }
-      .btnSignup, a{
-        color: $blue;
-        @apply font-medium cursor-pointer focus-visible:outline-none;
-        &:hover{
-          border-bottom: .8px solid;
-        }
-      }
-    }
   }
 
   /* BANNERS */
@@ -240,33 +218,6 @@
 
       .logo {
         @apply w-60 mx-auto block;
-      }
-
-      .loginUser {
-        @apply w-103.75 mt-3 flex flex-col items-center;
-
-        .cards{
-          .card{
-            &.w40{
-              @apply w-[calc(50%-5px)];
-            }
-            &.w20{
-              @apply w-full;
-            }
-            .npt{
-              @apply pb-4;
-            }
-          }
-        }
-        .loginSpiels {
-          @apply w-full flex justify-between items-center;
-          p {
-            @apply flex-1 text-left; // stretches to the left
-          }
-          a {
-            @apply text-right; // moves to the right
-          }
-        }
       }
     }
     .banners{

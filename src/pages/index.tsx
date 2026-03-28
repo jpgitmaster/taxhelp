@@ -3,25 +3,16 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
+import { useState, useRef } from 'react';
 import 'slick-carousel/slick/slick-theme.css';
 import scss from '@/styles/Landing.module.scss';
+import Login_V from '@/components/pages/landing/login';
 import Register_V from '@/components/pages/landing/register';
-import CustomContainer from '@/components/reusables/CustomContainer';
-import { useState, useRef, ChangeEvent, KeyboardEvent, SyntheticEvent } from 'react';
 
 export default function LandingPage() {
-  const [loader, setLoader] = useState(false)
-  const [activeSlide, setActiveSlide] = useState(0)
-  const textSliderRef = useRef<Slider | null>(null)
-  const imageSliderRef = useRef<Slider | null>(null)
+  const sliderRef = useRef<Slider | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   
-  const goToSlide = (currentSlide: number) => {
-      if (textSliderRef.current) {
-      setActiveSlide(currentSlide)
-      textSliderRef.current.slickGoTo(currentSlide);  // Go to the specified slide index
-      }
-  };
   const fadeSettings = {
       dots: true,
       speed: 800,
@@ -33,9 +24,7 @@ export default function LandingPage() {
       slidesToScroll: 1,
       autoplaySpeed: 5000,
   };
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
+  const showModal = () => setIsModalOpen(true);
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -49,26 +38,6 @@ export default function LandingPage() {
       password: ''
     },
   })
-  const handleBlur = (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | HTMLButtonElement>) => {
-      if ((e as KeyboardEvent).key === 'Enter') {
-          e.preventDefault();
-          (e.target as HTMLInputElement).blur()
-      }
-  }
-  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-      const { name, value } = event.target
-      setUser({
-          ...user,
-          userObj: {
-              ...user.userObj,
-              [name]: value
-          }
-      })
-  }
-  const handleLoginUser = async (e: SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setLoader(true)
-  }
   return (
     <>
       <Head>
@@ -83,64 +52,12 @@ export default function LandingPage() {
               <Image src='/images/logo.png' alt='TaxHelp Logo' priority width={20} height={20} unoptimized={true} style={{width: '100%'}} />
             </Link>
             
-            <form className={scss.loginUser} onSubmit={handleLoginUser}>
-              <div className={scss.cards}>
-                <CustomContainer
-                  scss={scss}
-                  width={40}
-                  required={true}
-                  label='Email'
-                  labelFor='email'
-                  err={user.userErr.email as string}
-                >
-                  <input
-                    type='text'
-                    name='email'
-                    maxLength={20}
-                    autoComplete='off'
-                    value={user.userObj.email}
-                    placeholder='johndoe@gmail.com'
-                    onKeyUp={handleBlur}
-                    onChange={handleChange}
-                  />
-                </CustomContainer>
-                <CustomContainer
-                  scss={scss}
-                  width={40}
-                  required={true}
-                  label='Password'
-                  labelFor='password'
-                  err={user.userErr.password as string}
-                >
-                  <input
-                    name='password'
-                    maxLength={20}
-                    type='password'
-                    autoComplete='off'
-                    placeholder='*******'
-                    value={user.userObj.password}
-                    onKeyUp={handleBlur}
-                    onChange={handleChange}
-                  />
-                </CustomContainer>
-                <div className={scss.card+' '+scss.w20}>
-                  <button type='submit' className={`${scss.button} ${scss.btnblue}`}>
-                    Login
-                  </button>
-                </div>
-              </div>
-              <div className={scss.loginSpiels}>
-                <p>
-                  Don't have an account? <button type='button' className={scss.btnSignup} onClick={showModal}>Signup</button>
-                </p>
-                <Link href={''}>Forgot Password?</Link>
-              </div>
-            </form>
+            <Login_V showModal={() => showModal()} />
           </div>
         </header>
         {/* Hero Section */}
         <section className={scss.banners}>
-          <Slider {...fadeSettings} ref={textSliderRef}>
+          <Slider {...fadeSettings} ref={sliderRef}>
             <div className={scss.banner}>
               <div className={scss.bannerLeft}>
                 <h1>

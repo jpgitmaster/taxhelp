@@ -94,74 +94,74 @@ const Register_V = (props: PropsDefinition) => {
                 </li> */}
             </ul>
             <form className={scss.registerUser} onSubmit={handleRegisterUser}>
-            { loader && <Loader scss={scss} position='absolute' />}
-            <div className={scss.cards}>
-                <CustomContainer
-                    width={100}
-                    scss={scss}
-                    required={true}
-                    label='Email'
-                    labelFor='email'
-                    disabled={!checkedRoles?.length}
-                    err={user.userErr.email as string}
-                >
-                    <input
-                        type='text'
-                        name='email'
-                        maxLength={20}
-                        autoComplete='off'
-                        value={user.userObj.email}
-                        placeholder='johndoe@gmail.com'
-                        onKeyUp={handleBlur}
-                        onChange={handleChange}
-                    />
-                </CustomContainer>
-                <CustomContainer
-                    width={50}
-                    scss={scss}
-                    required={true}
-                    label='Password'
-                    labelFor='password'
-                    disabled={!checkedRoles?.length}
-                    err={user.userErr.password as string}
-                >
-                    <input
-                        name='password'
-                        maxLength={20}
-                        type='password'
-                        autoComplete='off'
-                        placeholder='*******'
-                        value={user.userObj.password}
-                        onKeyUp={handleBlur}
-                        onChange={handleChange}
-                    />
-                </CustomContainer>
-                <CustomContainer
-                    width={50}
-                    scss={scss}
-                    required={true}
-                    labelFor='password'
-                    label='Confirm Password'
-                    disabled={!checkedRoles?.length}
-                    err={user.userErr.confirmPassword as string}
-                >
-                    <input
-                        name='confirmPassword'
-                        maxLength={20}
-                        type='password'
-                        autoComplete='off'
-                        placeholder='*******'
-                        value={user.userObj.confirmPassword}
-                        onKeyUp={handleBlur}
-                        onChange={handleChange}
-                    />
-                </CustomContainer>
-                <div className={scss.card+' '+scss.w100}>
-                    <button type='submit' className={`${scss.button} ${scss.btnblue}`} disabled={!checkedRoles?.length}>
-                        Sign up
-                    </button>
+                { loader && <Loader scss={scss} position='absolute' />}
+                <div className={scss.cards}>
+                    <CustomContainer
+                        width={100}
+                        scss={scss}
+                        required={true}
+                        label='Email'
+                        labelFor='email'
+                        disabled={!checkedRoles?.length}
+                        err={user.userErr.email as string}
+                    >
+                        <input
+                            type='text'
+                            name='email'
+                            maxLength={20}
+                            autoComplete='off'
+                            value={user.userObj.email}
+                            placeholder='johndoe@gmail.com'
+                            onKeyUp={handleBlur}
+                            onChange={handleChange}
+                        />
+                    </CustomContainer>
+                    <CustomContainer
+                        width={50}
+                        scss={scss}
+                        required={true}
+                        label='Password'
+                        labelFor='password'
+                        disabled={!checkedRoles?.length}
+                        err={user.userErr.password as string}
+                    >
+                        <input
+                            name='password'
+                            maxLength={20}
+                            type='password'
+                            autoComplete='off'
+                            placeholder='*******'
+                            value={user.userObj.password}
+                            onKeyUp={handleBlur}
+                            onChange={handleChange}
+                        />
+                    </CustomContainer>
+                    <CustomContainer
+                        width={50}
+                        scss={scss}
+                        required={true}
+                        labelFor='password'
+                        label='Confirm Password'
+                        disabled={!checkedRoles?.length}
+                        err={user.userErr.confirmPassword as string}
+                    >
+                        <input
+                            name='confirmPassword'
+                            maxLength={20}
+                            type='password'
+                            autoComplete='off'
+                            placeholder='*******'
+                            value={user.userObj.confirmPassword}
+                            onKeyUp={handleBlur}
+                            onChange={handleChange}
+                        />
+                    </CustomContainer>
+                    <div className={scss.card+' '+scss.w100}>
+                        <button type='submit' className={`${scss.button} ${scss.btnblue}`} disabled={!checkedRoles?.length}>
+                            Sign up
+                        </button>
+                    </div>
                 </div>
-            </div>
             </form>
             {/* <ul className={scss.userTypes} style={{marginTop: 0, marginBottom: '20px'}}>
             <li>

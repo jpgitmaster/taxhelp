@@ -1,7 +1,7 @@
-import { signIn } from 'next-auth/react'
-import AuthAPIcalls from '@/controllers/users/api/auth'
+
+import UserAPIcalls from './api'
+import { ChangeEvent, SyntheticEvent } from 'react'
 import GlobalController from '@/controllers/global/Global_C'
-import { useState, ChangeEvent, SyntheticEvent } from 'react'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
 
 const Login_C = () => {
@@ -11,52 +11,52 @@ const Login_C = () => {
         handleRemoveErr
     } = GlobalController()
     const {
-        // STATES
-        err,
+        user,
         status,
-        
-        // SET STATES
-        setErr,
+
+        setUser,
         setStatus,
 
-        // REQUESTS
-        authLogin
-    } = AuthAPIcalls()
-    const [user, setUser] = useState({
-        email: '',
-        password: ''
-    })
+    } = UserAPIcalls()
+
     const fieldValidations = {
         password: { usename: 'Password', required: true },
         email: { usename: 'Email', required: true, email: true },
     }
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
-        setUser({ ...user, [name]: value })
-        handleRemoveErr(err, name)
+        setUser({
+            ...user,
+            userObj: {
+                ...user.userObj,
+                [name]: value
+            }
+        })
+        handleRemoveErr(user.userErr, name)
     }
-      
-    const handleCredentialLogin = async (e: SyntheticEvent<HTMLFormElement>) => {
+    
+    const handleUserLogin = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         setStatus({...status, loader: true})
         const {
             validation_errors,
             validation_has_error,
-        } = ValidatorV3(fieldValidations, user)
+        } = ValidatorV3(fieldValidations, user.userObj)
         if (validation_has_error) {
             const timer = setTimeout(() => {
-                setErr(validation_errors)
+                setUser({
+                    ...user,
+                    userErr: validation_errors
+                })
                 setStatus({...status, loader: false})
                 return false
             }, 500)
             return () => clearTimeout(timer)
         }
-        authLogin(user.email, user.password)
     }
       
     return {
         // STATES
-        err,
         user,
         status,
 
@@ -66,7 +66,7 @@ const Login_C = () => {
         handleBlur,
         handleChange,
         handleResubmit,
-        handleCredentialLogin,
+        handleUserLogin,
     }
 }
 
