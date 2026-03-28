@@ -200,6 +200,9 @@
         @apply flex-col-reverse;
         .bannerLeft{
           @apply text-center p-0;
+          h1{
+            @apply text-left;
+          }
           p{
             @apply mx-auto;
           }
@@ -209,6 +212,9 @@
         }
       }
     }
+  }
+  :global(.slick-dots) {
+    @apply -bottom-4;
   }
 }
 @media (max-width: 768px) {
