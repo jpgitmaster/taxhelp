@@ -26,6 +26,9 @@
       @apply w-5 h-5;
     }
   }
+  .btnblue{
+    @apply m-0.5;
+  }
   .btnSignup, .btnForgotPassword{
     color: $blue;
     @apply font-medium cursor-pointer focus-visible:outline-none;
