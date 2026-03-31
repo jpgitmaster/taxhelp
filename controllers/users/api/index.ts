@@ -1,12 +1,10 @@
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { User, UserObj } from '../types'
-import { useState, useContext } from 'react'
 import api from '@/components/reusables/axios'
 import { initUser } from '../states/initUsers'
 import { Status, ErrorItem } from '@/controllers/global/types'
 import { initStatus, initFilter } from '@/controllers/global/states'
-import { AppContext } from '@/pages/AppProvider'
-import { message } from 'antd'
 
 const UserAPIcalls = () => {
     const router = useRouter()

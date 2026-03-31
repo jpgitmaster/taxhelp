@@ -3,9 +3,9 @@ import Head from 'next/head';
 import '@/styles/globals.css';
 import '@/styles/globals.scss';
 import type { AppProps } from "next/app";
-import { AppProvider } from './AppProvider';
 import { SessionProvider } from 'next-auth/react';
 import CMS_Layout from '@/components/layouts/CMS_Layout';
+import { AppProvider } from '@/components/layouts/context/AppProvider';
 
 export default function App({ Component, pageProps }: AppProps) {
   Axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL
