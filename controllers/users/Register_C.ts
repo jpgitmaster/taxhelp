@@ -2,7 +2,7 @@ import UserAPIcalls from './api'
 import GlobalController from '@/controllers/global/Global_C'
 import { useState, ChangeEvent, SyntheticEvent } from 'react'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
-const Register_C = () => {
+const Register_C = ({ toggleModal }: { toggleModal: (modal: boolean, form: string) => void }) => {
     const {
         handleBlur,
         handleResubmit,
@@ -11,14 +11,21 @@ const Register_C = () => {
     const {
         user,
         status,
-
+        initUser,
+        
         setUser,
         setStatus,
 
+        createUser,
     } = UserAPIcalls()
+    const [displayPassword, setDisplayPassword] = useState(false)
+    const [passwordChecker, setPasswordChecker] = useState(false)
     const [checkedRoles, setCheckedRoles] = useState<string[]>([]);
     const fieldValidations = {
-        password: { usename: 'Password', required: true },
+        password: { usename: 'Password', required: true, regex: {
+            message: '8 chars with uppercase, lowercase, numbers & symbols',
+            pattern: /^(?=.*[A-Za-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`])(?=.{6,}).*$/
+        }},
         email: { usename: 'Email', required: true, email: true },
         confirmPassword: { usename: 'Confirm Password', required: true, confirm: user.userObj.password },
     }
@@ -89,15 +96,24 @@ const Register_C = () => {
             }, 500)
             return () => clearTimeout(timer)
         }
+        createUser(user.userObj, checkedRoles, { toggleModal })
     }
     return {
         // STATES
         user,
         roles,
         status,
+        initUser,
         checkedRoles,
+        displayPassword,
+        passwordChecker,
 
         // SET STATES
+        setUser,
+        setStatus,
+        setCheckedRoles,
+        setDisplayPassword,
+        setPasswordChecker,
 
         // HANDLES
         handleBlur,

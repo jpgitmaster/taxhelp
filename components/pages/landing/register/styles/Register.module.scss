@@ -8,7 +8,7 @@
     @apply text-[20px];
   }
   p{
-    @apply -mt-0.5;
+    @apply -mt-0.5 mb-4;
   }
 }
 .userTypes{
@@ -71,14 +71,129 @@
 }
 .registerUser{
   @apply p-2;
+  .npt.err.longErr{
+    .errmsg{
+      @apply -bottom-0.5;
+    }
+  }
   .btnblue{
     @apply max-w-70 mx-auto block;
   }
   .loader{
     @apply top-[40%];
   }
+  .eyecon{
+    @apply absolute top-2.25 right-2.5 w-5 cursor-pointer;
+    filter: invert(91%) sepia(26%) saturate(1%) hue-rotate(347deg) brightness(87%) contrast(102%);
+    &.show{
+        filter: inherit;
+    }
+  }
+  .pwdCheck{
+      border: 1px solid $gray;
+      background-color: $lightGray;
+      @apply absolute w-56.25 p-2.5 z-1 mt-11 rounded-[10px];
+    
+      p {
+          color: $blue;
+          @apply text-[12px];
+      }
+    
+      ul {
+          @apply ml-2.5;
+          li {
+              @apply text-[12px] block;
+              &.meet_requirement {
+                  color: $border_green;
+              }
+          }
+      }
+    
+  }
 }
+.success {
+  @apply flex items-center justify-center p-8 rounded-[20px] w-120;
 
+  .successCheck {
+    @apply mr-2.5;
+
+    svg {
+      @apply block float-left w-20;
+    }
+
+    .path {
+      stroke-dashoffset: 0;
+      stroke-dasharray: 1000;
+
+      &.circle {
+        -webkit-animation: dash .9s ease-in-out;
+        animation: dash .9s ease-in-out;
+      }
+      &.line {
+        stroke-dashoffset: 1000;
+        -webkit-animation: dash .9s .35s ease-in-out forwards;
+        animation: dash .9s .35s ease-in-out forwards;
+      }
+      &.check {
+        stroke-dashoffset: -100;
+        -webkit-animation: dashCheck .9s .35s ease-in-out forwards;
+        animation: dashCheck .9s .35s ease-in-out forwards;
+      }
+    }
+  }
+
+  .successMessage {
+    @apply text-[14px] mt-0.5 text-center;
+    h4{
+      color: $blue;
+      @apply text-[22px] font-semibold;
+    }
+    p{
+      color: $black;
+      @apply text-[13px] mb-4 italic leading-4.5;
+    }
+    .button{
+      @apply w-30 mx-auto block;
+    }
+  }
+
+  @-webkit-keyframes dash {
+    0% {
+      stroke-dashoffset: 1000;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+  
+  
+  @keyframes dash {
+    0% {
+      stroke-dashoffset: 1000;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+  
+  @-webkit-keyframes dashCheck {
+    0% {
+      stroke-dashoffset: -100;
+    }
+    100% {
+      stroke-dashoffset: 900;
+    }
+  }
+  
+  @keyframes dashCheck {
+    0% {
+      stroke-dashoffset: -100;
+    }
+    100% {
+      stroke-dashoffset: 900;
+    }
+  }
+}
 @media (max-width: 768px) {
   .userTypes{
     @apply flex-col;

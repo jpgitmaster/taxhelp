@@ -1,13 +1,23 @@
-import { signOut, getSession } from 'next-auth/react'
-import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
-import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import { signOut, getSession } from 'next-auth/react';
+import interactionPlugin from '@fullcalendar/interaction';
+import type { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { Session, PageProps } from '@/controllers/layouts/types/cms_types';
 const Dashboard_V = () => {
     return (
         <div>
-          {/* <h1>
-            Dashboard
-          </h1> */}
-          <br /><br /><br /><br />
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            events={[
+              { title: 'Event 1', date: '2026-03-30' },
+              { title: 'Meeting', date: '2026-04-02' }
+            ]}
+            editable={true}
+            selectable={true}
+          />
         </div>
     )
 }

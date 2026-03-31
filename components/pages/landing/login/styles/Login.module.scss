@@ -15,7 +15,7 @@
     }
   }
   p, button{
-    @apply mt-1 text-[11.5px] inline-block;
+    @apply mt-0.5 text-[11.5px] inline-block;
   }
   p{
     @apply mr-8.5 ml-0.5;
@@ -54,6 +54,9 @@
           @apply pb-4;
         }
       }
+    }
+    .loader{
+      @apply top-0 -left-15;
     }
     .loginSpiels {
       @apply w-full flex justify-between items-center;

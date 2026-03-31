@@ -1,152 +1,104 @@
-import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { User, UserObj } from '../types'
-// import api from '@/components/lib/axios'
+import { useState, useContext } from 'react'
+import api from '@/components/reusables/axios'
 import { initUser } from '../states/initUsers'
-import AuthAPIcalls from '@/controllers/users/api/auth'
 import { Status, ErrorItem } from '@/controllers/global/types'
 import { initStatus, initFilter } from '@/controllers/global/states'
+import { AppContext } from '@/pages/AppProvider'
+import { message } from 'antd'
 
 const UserAPIcalls = () => {
-    const {
-        authRefreshToken
-    } = AuthAPIcalls()
     const router = useRouter()
     const [user, setUser] = useState<User>(initUser)
     const [filter, setFilter] = useState(initFilter)
     const [status, setStatus] = useState<Status>(initStatus)
+    const createUser = async (user: UserObj, checkedRoles: string[], { toggleModal }: { toggleModal: (modal: boolean, form: string) => void }) => {
+        await api({
+            method: 'POST',
+            url: '/api/v1/auth/register',
+            data: {
+                email: user.email,
+                roles: checkedRoles,
+                password: user.password,
+                confirm_password: user.confirmPassword,
+            }
+        }).then((res) => {
+            // const { message } = res.data
+            console.log(res)
+            const timer = setTimeout(() => {
+                setStatus(prev => ({
+                    ...prev,
+                    loader: false,
+                    message: 'Account Created Successfully!',
+                    submessage: 'Check your email to activate your account and get started. Once verified, you\'re ready to explore.'
+                }))
+                // toggleModal(false, 'registration')
+            }, 500)
+            return () => clearTimeout(timer)
+        }).catch(async (error) => {
+            console.log(error)
+            // const message: ErrorItem[] | undefined = error?.response?.data?.message;
+            // if (Array.isArray(message)) {
+            //     setUser((prevUser) => ({
+            //         ...prevUser,
+            //         userErr: Object.fromEntries(
+            //                     message.map(({ field, message }) => [field, message])
+            //                 )
+            //     }));
+            // }
+        })
+        
+    }
+
+    const loginUser = async (user: UserObj) => {
+        await api({
+            method: 'POST',
+            url: '/api/v1/auth/login',
+            data: {
+                email: user.email,
+                password: user.password
+            }
+        }).then((res) => {
+            console.log(res)
+            // if (accessToken) {
+            //     return signIn('credentials', {
+            //         id: id,
+            //         email: email,
+            //         password: password,
+            //         accessToken: accessToken,
+            //         refreshToken: refreshToken,
+            //     })
+            // }
+        }).catch(async (error) => {
+            console.log('error')
+            console.log(error)
+        })
+    }
+
+    const getUser = async () => {
+        await api({
+            method: 'GET',
+            url: '/api/v1/auth/me'
+        }).then((res) => {
+            console.log(res)
+            const userObj = res.data
+            setUser({
+                ...user,
+                userObj: userObj
+            })
+        }).catch(async (error) => {
+            console.log('error')
+            console.log(error)
+        })
+    }
     
-    const getUser = async (id: number) => {
-        // await api({
-        //     method: 'GET',
-        //     url: '/users/'+id
-        // }).then((res) => {
-        //     const userObj = res.data
-        //     setUser({
-        //         ...user,
-        //         userObj: userObj
-        //     })
-        // }).catch(async (error) => {
-        //     console.log('error')
-        //     console.log(error)
-        // })
-    }
-    const getUsers = async (
-        page: number,
-        limit: number,
-        filter: { roleId: string[] | number[] },
-        search: string
-    ) => {
-        // await api({
-        //     method: 'GET',
-        //     url: '/users',
-        //     params: {
-        //         page: page,
-        //         limit: limit,
-        //         search: search,
-        //         sortBy: 'createdBy',
-        //         sortOrder: 'ASC',
-        //         filter: JSON.stringify(filter)
-        //         // filter: JSON.stringify({ roleId: ['2'] })
-        //     }
-        // }).then((res) => {
-        //     const { records, total } = res.data
-        //     const timer = setTimeout(() => {
-        //         if(records){
-        //             setUser({
-        //                 ...user,
-        //                 userArr: records,
-        //                 totalUsers: total
-        //             })
-        //         }
-        //         setStatus(prev => ({
-        //             ...prev,
-        //             loader: false
-        //         }))
-        //         return false
-        //     }, 500)
-        //     return () => clearTimeout(timer)
-            
-        // }).catch(async (error) => {
-        //     const { statusCode } = error.response?.data
-        //     if(statusCode === 401){
-        //         authRefreshToken()
-        //     }
-        //     return error
-        // })
-    }
-
-    const createUser = async (user: UserObj) => {
-        // await api({
-        //     method: 'POST',
-        //     url: '/users',
-        //     data: {
-        //         email: user.email,
-        //         roleId: user.role.id,
-        //         password: user.password,
-        //         lastName: user.lastName,
-        //         firstName: user.firstName
-        //     }
-        // }).then((res) => {
-        //     const { message } = res.data
-        //     console.log(res.data)
-        //     if(message){
-        //         sessionStorage.setItem('successMessage', message);
-        //         router.push('/cms/users')
-        //     }
-        // }).catch(async (error) => {
-        //     const message: ErrorItem[] | undefined = error?.response?.data?.message;
-        //     if (Array.isArray(message)) {
-        //         setUser((prevUser) => ({
-        //             ...prevUser,
-        //             userErr: Object.fromEntries(
-        //                         message.map(({ field, message }) => [field, message])
-        //                     )
-        //         }));
-        //     }
-        // })
-        // const timer = setTimeout(() => {
-        //     setStatus(prev => ({
-        //         ...prev,
-        //         loader: false
-        //     }))
-        // }, 500)
-        // return () => clearTimeout(timer)
-    }
-
-    const updateUser = async (user: UserObj) => {
-        // await api({
-        //     method: 'PATCH',
-        //     url: '/users/'+user.id,
-        //     data: {
-        //         roleId: user.role.id,
-        //         lastName: user.lastName,
-        //         firstName: user.firstName,
-        //     }
-        // }).then((res) => {
-        //     console.log(res.data)
-        // }).catch(async (error) => {
-        //     const message: ErrorItem[] | undefined = error?.response?.data?.message;
-        //     if (Array.isArray(message)) {
-        //         setUser((prevUser) => ({
-        //             ...prevUser,
-        //             userErr: Object.fromEntries(
-        //                         message.map(({ field, message }) => [field, message])
-        //                     )
-        //         }));
-        //     }
-        // })
-        // const timer = setTimeout(() => {
-        //     setStatus({...status, loader: false})
-        //     return false
-        // }, 500)
-        // return () => clearTimeout(timer)
-    }
     return {
         //STATES
         user,
         filter,
         status,
+        initUser,
         
         // SET STATES
         setUser,
@@ -155,9 +107,8 @@ const UserAPIcalls = () => {
 
         // REQUESTS
         getUser,
-        getUsers,
+        loginUser,
         createUser,
-        updateUser,
     }
 }
 export default UserAPIcalls;

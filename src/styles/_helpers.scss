@@ -1,16 +1,16 @@
 @use '@/styles/colors' as *;
-
+@reference 'tailwindcss';
 .cards{
-    @apply flex flex-row flex-wrap gap-[10px] my-[20px] justify-between;
+    @apply flex flex-row flex-wrap gap-2.5 my-5 justify-between;
     .card{
         &.w20 {
-            width: calc((100% - (4 * 10px)) / 5);
+            width: calc((100% - (4 * 2.5px)) / 5);
         }
         &.w25 {
-            width: calc((100% - (3 * 10px)) / 4);
+            width: calc((100% - (3 * 2.5px)) / 4);
         }
         &.w30 {
-            width: calc((30% - 10px));
+            width: calc((30% - 2.5px));
         }
         &.w33{
             width: calc((100% - (2 * 10px)) / 3);
@@ -36,7 +36,7 @@
     }
 }
 .loader{
-    @apply flex justify-center absolute top-[30%] left-[0] right-[0] z-[1];
+    @apply flex justify-center absolute top-[30%] left-0 right-0 z-1;
     &.absolute{
         @apply absolute;
     }
@@ -44,12 +44,12 @@
         @apply fixed;
     }
     .spinner {
-        @apply absolute w-[75px] h-[75px] z-[1];
+        @apply absolute w-18.75 h-18.75 z-1;
         div {
             transform-origin: 40px 40px;
             animation: spinner 1.2s linear infinite;
             &:after {
-                @apply absolute top-[3px] left-[37px] w-[6px] h-[18px] rounded-[20%];
+                @apply absolute top-0.75 left-9.25 w-1.5 h-4.5 rounded-[20%];
                 content: " ";
                 background: $lightBlue;
             }
@@ -111,108 +111,4 @@
           opacity: 0;
         }
     }     
-}
-.success {
-  background-color: rgba($black, .7);
-  transform-origin: center center;
-  backface-visibility: hidden;
-  perspective: 1000px;
-  @apply flex flex-row fixed right-[20px] top-[82px] rounded-[10px] py-[8px] px-[12px];
-
-  /* Sequence: flip bounce → pause → slide out */
-  animation:
-    flipBounceIn 1s ease-in-out forwards,
-    slideOutRight 0.6s ease-in-out 4s forwards; // slides away after 4s
-
-  .successCheck {
-    @apply mr-[10px];
-
-    svg {
-      @apply block float-left w-[25px];
-      opacity: 0;
-      filter: invert(51%) sepia(34%) saturate(1305%) hue-rotate(76deg) brightness(94%) contrast(101%);
-      animation: showSvg 0s linear forwards;
-      animation-delay: 1s; // 👈 visible after flip completes
-    }
-
-    .path {
-      stroke-dashoffset: 0;
-      stroke-dasharray: 1000;
-      opacity: 0;
-
-      &.circle {
-        animation:
-          showPath 0s linear forwards 1s,
-          dash .9s ease-in-out 1s forwards;
-      }
-
-      &.line {
-        stroke-dashoffset: 1000;
-        animation:
-          showPath 0s linear forwards 1.3s,
-          dash .9s ease-in-out 1.3s forwards;
-      }
-
-      &.check {
-        stroke-dashoffset: -100;
-        animation:
-          showPath 0s linear forwards 1.3s,
-          dashCheck .9s ease-in-out 1.3s forwards;
-      }
-    }
-  }
-
-  .successMessage {
-    color: $white;
-    @apply text-[14px] mt-[2px];
-  }
-}
-
-/* === Step 1: Flip in with horizontal bounce === */
-@keyframes flipBounceIn {
-  0% {
-    transform: perspective(1000px) rotateY(90deg);
-    opacity: 0;
-  }
-  40% {
-    transform: perspective(1000px) rotateY(-20deg);
-    opacity: 1;
-  }
-  65% {
-    transform: perspective(1000px) rotateY(10deg);
-  }
-  85% {
-    transform: perspective(1000px) rotateY(-5deg);
-  }
-  100% {
-    transform: perspective(1000px) rotateY(0deg);
-  }
-}
-
-/* === Step 2: Slide out to the right === */
-@keyframes slideOutRight {
-  0% {
-    transform: translateX(0) rotateY(0deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(150%) rotateY(10deg);
-    opacity: 0;
-  }
-}
-
-/* === SVG visibility and stroke animations === */
-@keyframes showSvg {
-  to { opacity: 1; }
-}
-@keyframes showPath {
-  to { opacity: 1; }
-}
-@keyframes dash {
-  0% { stroke-dashoffset: 1000; }
-  100% { stroke-dashoffset: 0; }
-}
-@keyframes dashCheck {
-  0% { stroke-dashoffset: -100; }
-  100% { stroke-dashoffset: 900; }
 }

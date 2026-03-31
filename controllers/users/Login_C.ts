@@ -17,6 +17,7 @@ const Login_C = () => {
         setUser,
         setStatus,
 
+        loginUser,
     } = UserAPIcalls()
 
     const fieldValidations = {
@@ -53,6 +54,7 @@ const Login_C = () => {
             }, 500)
             return () => clearTimeout(timer)
         }
+        loginUser(user.userObj)
     }
       
     return {

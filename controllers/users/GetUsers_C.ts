@@ -19,7 +19,6 @@ const GetUsers_C = () => {
         setStatus,
 
         // REQUESTS
-        getUsers
     } = UserAPIcalls()
 
     const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {

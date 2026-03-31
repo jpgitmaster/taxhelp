@@ -17,7 +17,7 @@ export default function LandingPage() {
     forgot_password: false
   })
   
-  const fadeSettings = {
+  const settings = {
       dots: true,
       speed: 800,
       fade: true,
@@ -40,6 +40,7 @@ export default function LandingPage() {
         <title>TaxHelp Accounting Firm</title>
         <meta name="description" content="Professional accounting and tax services for small businesses and families." />
       </Head>
+      
       <div className={scss.app}>
         <header>
           <div className={scss.topbar}>
@@ -53,7 +54,7 @@ export default function LandingPage() {
         </header>
         {/* Hero Section */}
         <section className={scss.banners}>
-          <Slider {...fadeSettings} ref={sliderRef}>
+          <Slider {...settings} ref={sliderRef}>
             <div className={scss.banner}>
               <div className={scss.bannerLeft}>
                 <h1>

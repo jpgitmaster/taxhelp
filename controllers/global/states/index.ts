@@ -1,6 +1,7 @@
 const initStatus = {
     message: '',
     loader: false,
+    submessage: ''
 }
 
 const initFilter = {
