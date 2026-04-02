@@ -364,3 +364,41 @@ body, html{
         -webkit-transform: perspective(500px) rotateY(0deg);
     }
 }
+
+@media (max-width: 768px) {
+  .app {
+    .appSidebar{
+        @apply px-2;
+        &.slideLeft{
+            .links{
+                li{
+                    .mainLink{
+                        .link{
+                            .mainLinkIcon{
+                                @apply m-0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .appSidebarLinks{
+            .links{
+                li{
+                    .mainLink{
+                        .link{
+                            @apply px-2;
+                            .mainLinkIcon{
+                                @apply w-4! h-4!;
+                            }
+                            span{
+                                @apply text-[12px];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+  }
+}
