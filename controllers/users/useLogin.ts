@@ -1,15 +1,15 @@
 
 import UserAPIcalls from './api'
 import { ChangeEvent, SyntheticEvent } from 'react'
-import GlobalController from '@/controllers/global/Global_C'
+import useGlobal from '@/controllers/global/useGlobal'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
 
-const Login_C = () => {
+const useLogin = () => {
     const {
         handleBlur,
         handleResubmit,
         handleRemoveErr
-    } = GlobalController()
+    } = useGlobal()
     const {
         user,
         status,
@@ -17,7 +17,7 @@ const Login_C = () => {
         setUser,
         setStatus,
 
-        loginUser,
+        loginUserMutation,
     } = UserAPIcalls()
 
     const fieldValidations = {
@@ -54,7 +54,9 @@ const Login_C = () => {
             }, 500)
             return () => clearTimeout(timer)
         }
-        loginUser(user.userObj)
+
+        // LOGIN
+        loginUserMutation.mutate(user.userObj)
     }
       
     return {
@@ -72,4 +74,4 @@ const Login_C = () => {
     }
 }
 
-export default Login_C;
+export default useLogin;

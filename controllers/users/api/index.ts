@@ -3,93 +3,139 @@ import { useRouter } from 'next/router'
 import { User, UserObj } from '../types'
 import api from '@/components/reusables/axios'
 import { initUser } from '../states/initUsers'
-import { Status, ErrorItem } from '@/controllers/global/types'
+import { signIn, signOut } from 'next-auth/react'
+import { Status } from '@/controllers/global/types'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { initStatus, initFilter } from '@/controllers/global/states'
 
-const UserAPIcalls = () => {
+const useUserAPI = () => {
     const router = useRouter()
+    const queryClient = useQueryClient()
     const [user, setUser] = useState<User>(initUser)
     const [filter, setFilter] = useState(initFilter)
     const [status, setStatus] = useState<Status>(initStatus)
-    const createUser = async (user: UserObj, checkedRoles: string[], { toggleModal }: { toggleModal: (modal: boolean, form: string) => void }) => {
-        await api({
-            method: 'POST',
-            url: '/api/v1/auth/register',
-            data: {
+    const apiVersion = process.env?.NEXT_PUBLIC_API_VERSION
+
+    // ✅ CREATE USER (useMutation)
+    const createUserMutation = useMutation({
+        mutationFn: async ({
+            user,
+            checkedRoles
+        }: {
+            user: UserObj
+            checkedRoles: string[]
+        }) => {
+            const res = await api.post(`/api/${apiVersion}/auth/register`, {
                 email: user.email,
                 roles: checkedRoles,
                 password: user.password,
                 confirm_password: user.confirmPassword,
-            }
-        }).then((res) => {
-            // const { message } = res.data
-            console.log(res)
-            const timer = setTimeout(() => {
+            })
+            return res.data
+        },
+        onSuccess: (_, variables, context) => {
+            console.log(context)
+            console.log(variables)
+            setTimeout(() => {
                 setStatus(prev => ({
                     ...prev,
                     loader: false,
                     message: 'Account Created Successfully!',
-                    submessage: 'Check your email to activate your account and get started. Once verified, you\'re ready to explore.'
+                    submessage:
+                        "Check your email to activate your account and get started. Once verified, you're ready to explore."
                 }))
-                // toggleModal(false, 'registration')
             }, 500)
-            return () => clearTimeout(timer)
-        }).catch(async (error) => {
+        },
+        onError: (error: any) => {
             console.log(error)
-            // const message: ErrorItem[] | undefined = error?.response?.data?.message;
-            // if (Array.isArray(message)) {
-            //     setUser((prevUser) => ({
-            //         ...prevUser,
-            //         userErr: Object.fromEntries(
-            //                     message.map(({ field, message }) => [field, message])
-            //                 )
-            //     }));
-            // }
-        })
-        
-    }
 
-    const loginUser = async (user: UserObj) => {
-        await api({
-            method: 'POST',
-            url: '/api/v1/auth/login',
-            data: {
+            const message = error?.response?.data?.message
+            if (Array.isArray(message)) {
+                setUser((prevUser) => ({
+                    ...prevUser,
+                    userErr: Object.fromEntries(
+                        message.map(({ field, message }: any) => [field, message])
+                    )
+                }))
+            }
+        }
+    })
+
+    // ✅ LOGIN USER (useMutation)
+    const loginUserMutation = useMutation({
+        mutationFn: async (user: UserObj) => {
+            const res = await api.post(`/api/${apiVersion}/auth/login`, {
                 email: user.email,
                 password: user.password
-            }
-        }).then((res) => {
-            console.log(res)
-            // if (accessToken) {
-            //     return signIn('credentials', {
-            //         id: id,
-            //         email: email,
-            //         password: password,
-            //         accessToken: accessToken,
-            //         refreshToken: refreshToken,
-            //     })
-            // }
-        }).catch(async (error) => {
-            console.log('error')
-            console.log(error)
-        })
-    }
-
-    const getUser = async () => {
-        await api({
-            method: 'GET',
-            url: '/api/v1/auth/me'
-        }).then((res) => {
-            console.log(res)
-            const userObj = res.data
-            setUser({
-                ...user,
-                userObj: userObj
             })
-        }).catch(async (error) => {
-            console.log('error')
-            console.log(error)
-        })
+            return res.data
+        },
+        onSuccess: async (res) => {
+            const { id, email, token_type, access_token } = res.data
+            await signIn('credentials', {
+                id: id,
+                email: email,
+                redirect: false,
+                accessToken: `${token_type} ${access_token}`,
+            });
+
+            // optionally refetch user after login
+            await queryClient.refetchQueries({ queryKey: ['user'] });
+            router.push('/bookkeeper/dashboard');
+        },
+        onError: (error) => {
+            console.log('error', error)
+        }
+    })
+
+    const verifyUserMutation = useMutation({
+        mutationFn: async (token: string) => {
+            const res = await api.post(`/api/${apiVersion}/auth/verify-email`, {
+                token: token,
+            })
+            return res.data
+        },
+        onSuccess: async (res) => {
+            const { id, email, token_type, access_token } = res.data
+            
+            await signIn('credentials', {
+                id: id,
+                email: email,
+                redirect: false,
+                accessToken: `${token_type} ${access_token}`,
+            });
+
+            // Immediately redirect
+            router.replace('/bookkeeper/dashboard');
+
+            // optionally refetch user after login
+            queryClient.refetchQueries({ queryKey: ['user'] })
+        },
+        onError: (error) => {
+            console.log('error', error)
+        }
+    })
+
+    const handleUserLogout = async () => {
+        queryClient.removeQueries({ queryKey: ['user'] });
+        return await signOut({redirect: true, callbackUrl: '/'});
     }
+    
+    const getUser = async () => {
+        try {
+            const res = await api({
+                method: 'GET',
+                url: `/api/${apiVersion}/auth/me`
+            });
+            const { data } = res.data
+            return data ?? null
+        } catch (error) {
+            console.error(error);
+
+            // IMPORTANT: rethrow so React Query can handle it
+            throw error;
+        }
+    };
     
     return {
         //STATES
@@ -103,10 +149,16 @@ const UserAPIcalls = () => {
         setFilter,
         setStatus,
 
-        // REQUESTS
+        // QUERIES
         getUser,
-        loginUser,
-        createUser,
+
+        // MUTATION
+        loginUserMutation,
+        createUserMutation,
+        verifyUserMutation,
+
+        //HANDLES
+        handleUserLogout
     }
 }
-export default UserAPIcalls;
+export default useUserAPI;

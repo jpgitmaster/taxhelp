@@ -1,12 +1,12 @@
 import { useState, ChangeEvent } from 'react'
-import GlobalController from '@/controllers/global/Global_C'
+import useGlobal from '@/controllers/global/useGlobal'
 
 const SavingCustomer_C = () => {
     const {
         handleBlur,
         handleResubmit,
         handleRemoveErr
-    } = GlobalController()
+    } = useGlobal()
     const [client, setClient] = useState({
         clientObj: {
             city: '',

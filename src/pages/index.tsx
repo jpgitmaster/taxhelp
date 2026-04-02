@@ -3,30 +3,35 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
-import { useState, useRef } from 'react';
+import { getSession } from 'next-auth/react';
 import 'slick-carousel/slick/slick-theme.css';
 import scss from '@/styles/Landing.module.scss';
+import { useState, useRef, useEffect } from 'react';
 import Login_V from '@/components/pages/landing/login';
 import Register_V from '@/components/pages/landing/register';
+import type { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import ForgotPassword_V from '@/components/pages/landing/forgot_password';
+import { Session, PageProps } from '@/controllers/layouts/types/cms_types';
 
-export default function LandingPage() {
+const LandingPage = () => {
   const sliderRef = useRef<Slider | null>(null)
   const [displayModal, setDisplayModal] = useState({
     registration: false,
     forgot_password: false
   })
+  const [mounted, setMounted] = useState(false);
+  const [fadeTransition, setFadeTransition] = useState(false);
   
   const settings = {
       dots: true,
       speed: 800,
-      fade: true,
       arrows: false,
       infinite: true,
       autoplay: true,
       slidesToShow: 1,
       slidesToScroll: 1,
       autoplaySpeed: 5000,
+      fade: fadeTransition,
   };
   const toggleModal = (modal: boolean, form: string) => {
     setDisplayModal({
@@ -34,6 +39,22 @@ export default function LandingPage() {
       [form]: modal
     })
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 800) {
+        setFadeTransition(false); // mobile → scroll
+      } else {
+        setFadeTransition(true); // desktop → fade
+      }
+    };
+
+    handleResize(); // run on mount
+    setMounted(true);
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   return (
     <>
       <Head>
@@ -54,72 +75,76 @@ export default function LandingPage() {
         </header>
         {/* Hero Section */}
         <section className={scss.banners}>
-          <Slider {...settings} ref={sliderRef}>
-            <div className={scss.banner}>
-              <div className={scss.bannerLeft}>
-                <h1>
-                  Trusted Accounting & Tax Solutions
-                </h1>
-                <p>
-                  Empowering your business and family with expert financial guidance, tax compliance, and peace of mind.
-                </p>
-                <Link href="#contact">
-                  Get a Free Consultation
-                </Link>
+          {
+            mounted && (
+            <Slider {...settings} ref={sliderRef}>
+              <div className={scss.banner}>
+                <div className={scss.bannerLeft}>
+                  <h1>
+                    Trusted Accounting & Tax Solutions
+                  </h1>
+                  <p>
+                    Empowering your business and family with expert financial guidance, tax compliance, and peace of mind.
+                  </p>
+                  <Link href="#contact">
+                    Get a Free Consultation
+                  </Link>
+                </div>
+                <div className={scss.bannerRight}>
+                  <img src="https://plus.unsplash.com/premium_photo-1679923906285-386991e8d862?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Accounting Team" />
+                </div>
               </div>
-              <div className={scss.bannerRight}>
-                <img src="https://plus.unsplash.com/premium_photo-1679923906285-386991e8d862?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Accounting Team" />
+              <div className={scss.banner}>
+                <div className={scss.bannerLeft}>
+                  <h1>
+                    BIR Compliance Made Simple
+                  </h1>
+                  <p>
+                    Stay fully compliant with BIR regulations. We handle filings, reports, and deadlines so you can focus on growing your business.
+                  </p>
+                  <Link href="#contact">
+                    Get a Free Consultation
+                  </Link>
+                </div>
+                <div className={scss.bannerRight}>
+                  <img src="https://plus.unsplash.com/premium_photo-1679922389798-8b38c78b5670?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Accounting Team" />
+                </div>
               </div>
-            </div>
-            <div className={scss.banner}>
-              <div className={scss.bannerLeft}>
-                <h1>
-                  BIR Compliance Made Simple
-                </h1>
-                <p>
-                  Stay fully compliant with BIR regulations. We handle filings, reports, and deadlines so you can focus on growing your business.
-                </p>
-                <Link href="#contact">
-                  Get a Free Consultation
-                </Link>
+              <div className={scss.banner}>
+                <div className={scss.bannerLeft}>
+                  <h1>
+                    Smart Tax Solutions for Every Business
+                  </h1>
+                  <p>
+                    Minimize liabilities and maximize savings with expert tax planning, preparation, and compliance tailored to your needs.
+                  </p>
+                  <Link href="#contact">
+                    Get a Free Consultation
+                  </Link>
+                </div>
+                <div className={scss.bannerRight}>
+                  <img src="https://plus.unsplash.com/premium_photo-1679923813998-6603ee2466c5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Accounting Team" />
+                </div>
               </div>
-              <div className={scss.bannerRight}>
-                <img src="https://plus.unsplash.com/premium_photo-1679922389798-8b38c78b5670?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Accounting Team" />
+              <div className={scss.banner}>
+                <div className={scss.bannerLeft}>
+                  <h1>
+                    Accurate Bookkeeping for Your Business
+                  </h1>
+                  <p>
+                    Let us handle the numbers so you can focus on growing your business.
+                  </p>
+                  <Link href="#contact">
+                    Get a Free Consultation
+                  </Link>
+                </div>
+                <div className={scss.bannerRight}>
+                  <img src="https://images.unsplash.com/photo-1707902665498-a202981fb5ac?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Accounting Team" />
+                </div>
               </div>
-            </div>
-            <div className={scss.banner}>
-              <div className={scss.bannerLeft}>
-                <h1>
-                  Smart Tax Solutions for Every Business
-                </h1>
-                <p>
-                  Minimize liabilities and maximize savings with expert tax planning, preparation, and compliance tailored to your needs.
-                </p>
-                <Link href="#contact">
-                  Get a Free Consultation
-                </Link>
-              </div>
-              <div className={scss.bannerRight}>
-                <img src="https://plus.unsplash.com/premium_photo-1679923813998-6603ee2466c5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Accounting Team" />
-              </div>
-            </div>
-            <div className={scss.banner}>
-              <div className={scss.bannerLeft}>
-                <h1>
-                  Accurate Bookkeeping for Your Business
-                </h1>
-                <p>
-                  Let us handle the numbers so you can focus on growing your business.
-                </p>
-                <Link href="#contact">
-                  Get a Free Consultation
-                </Link>
-              </div>
-              <div className={scss.bannerRight}>
-                <img src="https://images.unsplash.com/photo-1707902665498-a202981fb5ac?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Accounting Team" />
-              </div>
-            </div>
-          </Slider>
+            </Slider>
+            )
+          }
         </section>
         {/* Services Section */}
         <section className={scss.services}>
@@ -229,3 +254,20 @@ export default function LandingPage() {
     </>
   );
 }
+export const getServerSideProps: GetServerSideProps<PageProps> = async (context: GetServerSidePropsContext) => {
+  const session = await getSession(context) as Session
+  if (session?.user) {
+    return {
+      redirect: {
+        destination: '/bookkeeper/dashboard',
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: { session }
+  }
+}
+
+export default LandingPage;

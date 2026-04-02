@@ -9,9 +9,9 @@ const PasswordCheckList = ({
 }: PropsDefinition) => {
     const rules = [
         {
-            label: 'at least 6 characters long.',
+            label: 'at least 8 characters long.',
             validate: (value: string) => {
-                return value && value.length >= 6;
+                return value && value.length >= 8;
             },
         },
         {

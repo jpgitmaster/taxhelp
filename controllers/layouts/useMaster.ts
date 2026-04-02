@@ -1,24 +1,34 @@
+import useUserAPI from '../users/api'
 import { usePathname } from 'next/navigation'
-import { signOut, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
+import { useQuery } from '@tanstack/react-query'
 import { useState, useEffect, useRef, MouseEvent } from 'react'
 import { initLinks } from '@/controllers/layouts/states/cms_states'
 import { NavLink, SessionUser } from '@/controllers/layouts/types/cms_types'
 
-const MasterController = () => {
+
+const useMaster = () => {
+    const {
+        getUser,
+        handleUserLogout
+    } = useUserAPI()
     const session = useSession()
     const pathname = usePathname()
     const activeLink = pathname?.split('/')
     const [isMobile, setIsMobile] = useState(false)
-    const [isPageLoad, setIsPageLoad] = useState(false)
     const sessionUser = session.data?.user as SessionUser
     const [appLinks, setAppLinks] = useState<NavLink[]>([])
     
+    const { data: user } = useQuery({
+        queryKey: ['user'],
+        queryFn: getUser,
+        retry: 1,
+        staleTime: 1000 * 60 * 5, // 5 minutes
+    });
     const handleExpand = () => {
         setIsMobile(prevState => !prevState)
     }
-    const handleUserLogout = async () => {
-        return await signOut({redirect: true, callbackUrl: '/login'});
-    }
+    
     const handleShowSublinks = (nav: NavLink, indx: number, click?: string) => {
         if(isMobile || click === 'withoutLink'){
             const toggleActive = initLinks.map((link: NavLink, index: number) =>
@@ -96,18 +106,14 @@ const MasterController = () => {
             setIsMobile(true)
             }
         }
-        const timer = setTimeout(() => {
-            setIsPageLoad(true)
-        }, 100)
-        return () => clearTimeout(timer)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     return {
         // STATES
         ref,
+        user,
         appLinks,
         isMobile,
-        isPageLoad,
         activeLink,
         sessionUser,
         // SET STATES
@@ -120,4 +126,4 @@ const MasterController = () => {
     }
 }
 
-export default MasterController;
+export default useMaster;

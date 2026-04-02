@@ -1,13 +1,13 @@
-import UserAPIcalls from './api'
-import GlobalController from '@/controllers/global/Global_C'
+import useUserAPI from './api'
+import useGlobal from '@/controllers/global/useGlobal'
 import { useState, ChangeEvent, SyntheticEvent } from 'react'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
-const Register_C = ({ toggleModal }: { toggleModal: (modal: boolean, form: string) => void }) => {
+const useRegister = () => {
     const {
         handleBlur,
         handleResubmit,
         handleRemoveErr
-    } = GlobalController()
+    } = useGlobal()
     const {
         user,
         status,
@@ -16,15 +16,15 @@ const Register_C = ({ toggleModal }: { toggleModal: (modal: boolean, form: strin
         setUser,
         setStatus,
 
-        createUser,
-    } = UserAPIcalls()
+        createUserMutation,
+    } = useUserAPI()
     const [displayPassword, setDisplayPassword] = useState(false)
     const [passwordChecker, setPasswordChecker] = useState(false)
     const [checkedRoles, setCheckedRoles] = useState<string[]>([]);
     const fieldValidations = {
         password: { usename: 'Password', required: true, regex: {
             message: '8 chars with uppercase, lowercase, numbers & symbols',
-            pattern: /^(?=.*[A-Za-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`])(?=.{6,}).*$/
+            pattern: /^(?=.*[A-Za-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`])(?=.{8,}).*$/
         }},
         email: { usename: 'Email', required: true, email: true },
         confirmPassword: { usename: 'Confirm Password', required: true, confirm: user.userObj.password },
@@ -96,7 +96,12 @@ const Register_C = ({ toggleModal }: { toggleModal: (modal: boolean, form: strin
             }, 500)
             return () => clearTimeout(timer)
         }
-        createUser(user.userObj, checkedRoles, { toggleModal })
+
+        // REGISTER
+        createUserMutation.mutate({
+            user: user.userObj,
+            checkedRoles: checkedRoles
+        })
     }
     return {
         // STATES
@@ -124,4 +129,4 @@ const Register_C = ({ toggleModal }: { toggleModal: (modal: boolean, form: strin
     }
 }
 
-export default Register_C;
+export default useRegister;

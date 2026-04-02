@@ -1,0 +1,90 @@
+@use '@/styles/colors' as *;
+
+@reference 'tailwindcss';
+
+.dashboardWrapper {
+    @apply min-h-screen px-2;
+    /* CONTENT */
+    .contentArea {
+        @apply clear-both w-full;
+        /* STATS */
+        .statsGrid {
+            @apply grid grid-cols-3 gap-4 mb-6;
+            .card {
+                background-color: $lightGray;
+                border: 1px solid $lightGray2;
+                @apply p-4 rounded-xl;
+
+                p {
+                    @apply text-xs text-gray-500;
+                }
+
+                h2 {
+                    @apply text-xl font-semibold;
+                    color: $blue;
+                }
+            }
+        }
+        .scheduleWrapper {
+            @apply flex flex-row gap-6 mt-5;
+            .scheduleBox{
+                @apply w-80;
+                .box{
+                    border: 1px solid $gray;
+                    background-color: $lightGray;
+                    @apply p-5 rounded-[20px] my-5 min-h-40;
+                }
+            }
+            .upcomingList {
+                @apply w-1/4 p-4;
+                .createBtn {
+                    color: $white;
+                    background-color: $orange;
+                    @apply mb-5 cursor-pointer px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 float-left;
+                }
+                h3 {
+                    color: $orange;
+                    @apply text-lg font-semibold mb-3 clear-both;
+                }
+
+                ul {
+                    @apply list-disc list-inside space-y-2 text-sm text-gray-700;
+                    li {
+                        @apply hover:text-blue-600 cursor-pointer;
+                    }
+                }
+            }
+            /* CALENDAR */
+            .calendarContainer{
+                @apply w-160 mt-5 inline-block;
+                .calender{
+                    @apply clear-both w-full;
+                }
+                :global(.fc-toolbar-title) {
+                    color: $blue;
+                    @apply text-2xl font-normal;
+                }
+                :global(.fc-today-button){
+                    background-color: $orange !important;
+                    @apply py-1 px-5 text-[12px] uppercase border-0 rounded-[10px];
+                }
+                :global(.fc-button-group button){
+                    background-color: $blue !important;
+                    @apply py-0.5 px-5 mx-0.5 text-[12px] uppercase rounded-lg;
+                }
+                :global(.fc-event) {
+                    background-color: $blue;
+                    @apply text-[11px] rounded-lg;
+                }
+                :global(.fc-theme-standard th){
+                    @apply text-[12px] font-semibold py-px;
+                }
+                :global(.fc-theme-standard td){
+                    @apply text-[13px];
+                }
+            }
+        }
+    }
+
+    
+}

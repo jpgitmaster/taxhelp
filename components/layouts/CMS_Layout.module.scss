@@ -1,20 +1,20 @@
 @use '@/styles/theme';
 @use '@/styles/helpers';
 @use '@/styles/colors' as *;
-
+@reference 'tailwindcss';
 .app{
     @apply min-h-screen flex flex-row;
     .appSidebar{
-        @apply w-[200px] bg-app-blue relative px-[10px];
+        @apply w-50 bg-app-blue relative px-2.5;
         img{
             filter: invert(97%) sepia(15%) saturate(303%) hue-rotate(250deg) brightness(119%) contrast(100%);
         }
         .sidebarArrow{
             background-color: $lightBlue;
-            @apply absolute cursor-pointer rounded-[5px] top-[22px] h-[25px] w-[25px] p-[6px] right-[-10px];
+            @apply absolute cursor-pointer rounded-[5px] top-5.5 h-6.25 w-6.25 p-1.5 -right-2.5;
         }
         &.slideRight{
-            @apply w-[200px];
+            @apply w-50;
             transition: width .3s ease;
             .sidebarArrow{
                 transform: rotate(90deg);
@@ -30,7 +30,7 @@
             }
         }
         &.slideLeft{
-            @apply w-[60px];
+            @apply w-15;
             transition: width .3s ease;
             .sidebarArrow{
                 transform: rotate(270deg);
@@ -45,7 +45,7 @@
                     }
                     .link{
                         .mainLinkIcon{
-                            @apply ml-[-1px];
+                            @apply -ml-px;
                         }
                     }
                 }
@@ -54,11 +54,11 @@
             .links{
                 .sublinks{
                     animation: flipInY .8s;
-                    @apply hidden opacity-[1] z-[1];
+                    @apply hidden opacity-[1] z-1;
                     -webkit-animation: flipInY .8s;
                     border: 1px solid $lightGray2;
                     &::after {
-                        @apply block w-[12px] h-[12px] left-[-16px] relative;
+                        @apply block w-3 h-3 -left-4 relative;
                         background-color: $lightBlue;
                         content: "\00a0";
                         transform:             rotate( 45deg );
@@ -73,45 +73,45 @@
                         border-top-left-radius: 0;
                         border-bottom-left-radius: 0;
                         background-color: $lightBlue;
-                        @apply block absolute p-[10px] pb-[20px] top-[-20px] left-[32px] overflow-visible;
+                        @apply block absolute p-2.5 pb-5 -top-5 left-8 overflow-visible;
                         &.hasOne{
                             height: 55px !important;
-                            @apply top-[-8px];
+                            @apply -top-2;
                             &::after{
-                                @apply top-[-20px];
+                                @apply -top-5;
                             }
                         }
                         &.hasTwo{
                             height: 96px !important;
-                            @apply top-[-25px];
+                            @apply -top-6.25;
                             &::after{
-                                @apply top-[-40px];
+                                @apply -top-10;
                             }
                         }
                         &.hasThree{
                             height: 130px !important;
-                            @apply top-[-35px];
+                            @apply -top-8.75;
                             &::after{
-                                @apply top-[-60px];
+                                @apply -top-15;
                             }
                         }
                         &.hasFour{
                             height: 150px !important;
-                            @apply top-[-42px];
+                            @apply -top-10.5;
                             &::after{
-                                @apply top-[-80px];
+                                @apply -top-20;
                             }
                         }
                         &.hasFive{
                             height: 180px !important;
-                            @apply top-[-45px];
+                            @apply -top-11.25;
                             &::after{
-                                @apply top-[-110px];
+                                @apply -top-27.5;
                             }
                         }
                         li{
                             border: 0 !important;
-                            @apply p-[0];
+                            @apply p-0;
                             &::before, &:hover::before{
                                 @apply hidden;
                             }
@@ -119,7 +119,7 @@
                                 color: $white;
                                 border-color: $white;
                                 background-color: $transparent !important;
-                                @apply rounded-[0];
+                                @apply rounded-none;
                                 &:hover{
                                     color: $activeColor;
                                 }
@@ -133,10 +133,10 @@
             }
         }
         .appSidebarLinks{
-            @apply my-[120px];
+            @apply my-18;
             .links{
                 li{
-                    @apply relative mb-[6px];
+                    @apply relative mb-1.5;
                     .mainLink{
                         border-top: 1px solid $transparent;
                         border-bottom: 1px dotted $white;
@@ -145,9 +145,9 @@
                         }
                         @apply flex flex-row hover:bg-app-blue-dark rounded-[10px] cursor-pointer;
                         .linkArrow{
-                            @apply w-[40px] h-[36px] p-[11px] mt-[-14px] right-[0] top-[18px] float-right relative cursor-pointer;
+                            @apply w-10 h-9 p-2.75 -mt-3.5 right-0 top-4.5 float-right relative cursor-pointer;
                             img{
-                                @apply w-[100%];
+                                @apply w-full;
                             }
                             &.linkArrowOpen{
                                 transform: rotate(180deg);
@@ -163,53 +163,53 @@
                 
                 .link{
                     text-shadow: 1px 1px 0 $lightBlack;
-                    @apply text-app-white inline-block w-[100%] p-[10px] text-[14px];
+                    @apply text-app-white inline-block w-full p-2.5 text-[14px];
                     .mainLinkIcon{
-                        @apply cursor-pointer float-left h-[20px] mr-[4px] ml-[0];
+                        @apply cursor-pointer float-left h-5 mr-1 ml-0;
                         img{
-                            @apply w-[100%];
+                            @apply w-full;
                         }
                     }
                     
                 }
                 .sublinks{
-                    @apply ml-[18px] h-[0] overflow-hidden;
+                    @apply ml-4.5 h-0 overflow-hidden;
                     &.close{
-                        @apply h-[0];
+                        @apply h-0;
                         transition: height .2s ease-in;
                     }
                     &.open{
                         transition: height .2s ease-in;
                         &.hasOne{
-                            @apply h-[42px];
+                            @apply h-10.5;
                         }
                         &.hasTwo{
-                            @apply h-[85px];
+                            @apply h-21.25;
                         }
                         &.hasThree{
-                            @apply h-[130px];
+                            @apply h-32.5;
                         }
                         &.hasFour{
-                            @apply h-[180px];
+                            @apply h-45;
                         }
                         &.hasFive{
-                            @apply h-[210px];
+                            @apply h-52.5;
                         }
                     }
                     li{
                         border-left: 1px dotted $white;
-                        @apply relative pt-[8px] w-[160px] pl-[12px] py-[2px] mb-[1px];
+                        @apply relative pt-2 w-40 pl-3 py-0.5 mb-px;
                         &::before{
                             content: "";
                             display: inherit;
                             border-left: 1px dotted $white;
                             border-bottom: 1px dotted $white;
-                            @apply top-[3px] left-[-1px] rounded-bl-[10px] w-[15px] h-[20px] absolute;
+                            @apply top-0.75 -left-px rounded-bl-[10px] w-3.75 h-5 absolute;
                         }
                         &:last-child{
                             border: 0;
                             &::before{
-                                @apply left-[0] h-[25px] mt-[-6px];
+                                @apply left-0 h-6.25 -mt-1.5;
                                 content: "";
                                 border-left: 1px dotted $white;
                             }
@@ -219,7 +219,7 @@
                             &.isActive{
                                 @apply bg-app-blue-dark;
                             }
-                            @apply py-[6px] px-[10px] text-[13px] hover:bg-app-blue-dark rounded-[10px];
+                            @apply py-1.5 px-2.5 text-[13px] hover:bg-app-blue-dark rounded-[10px];
                         }
                     }
                 }
@@ -232,32 +232,32 @@
         .appHeader{
             background-color: $white;
             border-bottom: .5px solid rgba($gray, .8);
-            @apply px-[20px] pt-[10px] pb-[5px] min-h-[70px] justify-between flex flex-row items-center w-[100%];
+            @apply px-5 pt-2.5 pb-1.25 min-h-17.5 justify-between flex flex-row items-center w-full;
             .logo{
-                @apply w-[260px] h-[90px] block float-left;
+                @apply w-63 h-22.5 block float-left;
                 img{
-                    @apply w-[100%] h-[100%];
+                    @apply w-full h-full;
                 }
             }
             .headerRight{
                 @apply flex flex-col;
                 .sessionUser{
-                    @apply flex flex-row min-h-[50px];
+                    @apply flex flex-row min-h-12.5;
                     .avatar{
-                        @apply w-[45px] h-[45px] mt-[4px] p-[8px] rounded-[50%] cursor-pointer;
+                        @apply w-11.25 h-11.25 mt-1 p-2 rounded-[50%] cursor-pointer;
                     }
                     .sessionUserDetails{
-                        @apply pl-[10px] min-w-[300px];
+                        @apply pl-2.5 min-w-75;
                         h2{
                             color: $blue;
                             border-bottom: .5px solid;
-                            @apply text-[15px] mt-[6px];
+                            @apply text-[15px] mt-1.5;
                         }
                         strong{
                             @apply text-[12px] block;
                         }
                         .headerIcons{
-                            @apply flex flex-row w-[200px] mt-[8px];
+                            @apply flex flex-row w-50 mt-2;
                             .headerIcon{
                                 @apply flex-1 flex justify-center items-center;
                                 &:first-child::before{
@@ -266,16 +266,16 @@
                                 &::before{
                                     content: "";
                                     border-left: 1px dashed $lightBlue;
-                                    @apply relative left-[-18px] h-[14px];
+                                    @apply relative -left-4.5 h-3.5;
                                 }
                                 &:last-child .icon{
                                     filter: invert(14%) sepia(68%) saturate(6951%) hue-rotate(358deg) brightness(101%) contrast(113%);
                                 }
                                 .icon{
-                                    @apply w-[18px] cursor-pointer;
+                                    @apply w-4.5 cursor-pointer;
                                     filter: invert(64%) sepia(1%) saturate(0%) hue-rotate(28deg) brightness(98%) contrast(95%);
                                     img{
-                                        @apply w-[100%];
+                                        @apply w-full;
                                     }
                                 }
                             }
@@ -285,15 +285,15 @@
             }
         }
         .appBody{
-            @apply p-[20px] pt-[10px];
+            @apply p-5 pt-2.5;
             .breadcrumbs{
-                @apply mb-[25px];
+                @apply mb-6.25;
                 ol{
                     @apply flex flex-row flex-wrap;
                     li{
                         list-style: none;
                         &::before {
-                            @apply inline-block mx-[4px] text-[10px];
+                            @apply inline-block mx-1 text-[10px];
                             content: '/';
                         }
                         &:nth-child(1){
@@ -302,7 +302,7 @@
                                 @apply hidden;
                             }
                             a{
-                                @apply pl-[0];
+                                @apply pl-0;
                             }
                         }
                         &.active{
@@ -314,7 +314,7 @@
                         }
                         a{
                             color: $blue;
-                            @apply text-[11px] p-[5px] uppercase no-underline;
+                            @apply text-[11px] p-1.25 uppercase no-underline;
                         }
                     }
                 }
@@ -323,7 +323,7 @@
         .cards{
             .cardBox{
                 // border: 1px solid $blue;
-                @apply min-h-[120px] rounded-[10px] p-[10px] border-app-blue-light;
+                @apply min-h-30 rounded-[10px] p-2.5 border-app-blue-light;
             }
         }
     }

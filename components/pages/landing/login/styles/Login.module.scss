@@ -51,7 +51,7 @@
           @apply w-full;
         }
         .npt{
-          @apply pb-4;
+          @apply pb-0 mb-4;
         }
       }
     }
@@ -71,7 +71,7 @@
 }
 @media (max-width: 450px) {
   .loginUser {
-    @apply w-full;
+    @apply w-full px-3;
     .cards{
       .card{
         &.w40{
@@ -83,9 +83,12 @@
           }
         }
         .npt{
-          @apply pb-6;
+          @apply pb-0 mb-6.5;
         }
       }
+    }
+    .loginSpiels {
+      @apply -mt-3;
     }
   }
 }

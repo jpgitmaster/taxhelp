@@ -6,7 +6,6 @@ import { signOut, getSession } from 'next-auth/react'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 
-
 const Customers_V = () => {
     const [width_, setWidth] = useState(0)
     useEffect(() => {

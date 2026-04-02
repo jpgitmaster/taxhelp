@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Modal } from 'antd';
-import Login_C from '@/controllers/users/Login_C';
+import useLogin from '@/controllers/users/useLogin';
 import scss from './styles/ForgotPassword.module.scss';
 import Loader from '@/components/reusables/RotatingLoader';
 import CustomContainer from '@/components/reusables/CustomContainer';
@@ -23,7 +23,7 @@ const ForgotPassword_V = ({
         handleBlur,
         handleChange,
         handleUserLogin
-    } = Login_C()
+    } = useLogin()
     const { loader } = status
     return (
         <Modal

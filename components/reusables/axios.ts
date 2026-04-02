@@ -1,4 +1,3 @@
-// lib/axios.ts
 import { getSession, signOut } from 'next-auth/react';
 import axios, { AxiosInstance, AxiosError } from 'axios';
 
@@ -15,7 +14,7 @@ api.interceptors.request.use(
     if (config.url && !config.url.includes('/auth/login')) {
       const session = await getSession();
       if (session?.accessToken) {
-        config.headers.Authorization = `Bearer ${session.accessToken}`;
+        config.headers.Authorization = session.accessToken;
       }
     }
     return config;
@@ -29,6 +28,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response, // If the response is successful, just return it
   async (error: AxiosError) => {
+    console.log(error)
     const originalRequest = error.config;
     // Check if the error is a 401 Unauthorized and if the original request
     // was not to the refresh token endpoint (which is handled by NextAuth.js's jwt callback)
@@ -55,7 +55,7 @@ api.interceptors.response.use(
         // it means the session is invalid (e.g., refresh token expired or invalid).
         // Sign out the user and redirect to login.
         if (typeof window !== 'undefined') {
-          signOut({ callbackUrl: '/login' }); // Specify your login page as the callback URL
+          signOut({ callbackUrl: '/' }); // Specify your login page as the callback URL
         }
         return Promise.reject(error); // Propagate the original 401 error
       }

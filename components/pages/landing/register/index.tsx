@@ -2,8 +2,8 @@ import { Modal } from 'antd';
 import Image from 'next/image';
 import scss from './styles/Register.module.scss';
 import PasswordCheckList from './PasswordCheckList';
-import Register_C from '@/controllers/users/Register_C';
 import { initStatus } from '@/controllers/global/states';
+import useRegister from '@/controllers/users/useRegister';
 import Loader from '@/components/reusables/RotatingLoader';
 import CustomContainer from '@/components/reusables/CustomContainer';
 interface PropsDefinition {
@@ -36,7 +36,7 @@ const Register_V = ({
         handleChange,
         handleRegisterUser,
         handleCheckedRoles,
-    } = Register_C({ toggleModal })
+    } = useRegister()
     const { loader, message, submessage } = status
     return (
         <Modal
@@ -122,7 +122,7 @@ const Register_V = ({
                                 <input
                                     type='text'
                                     name='email'
-                                    maxLength={20}
+                                    maxLength={100}
                                     autoComplete='off'
                                     value={user.userObj.email}
                                     placeholder='johndoe@gmail.com'

@@ -6,26 +6,31 @@ import type { AppProps } from "next/app";
 import { SessionProvider } from 'next-auth/react';
 import CMS_Layout from '@/components/layouts/CMS_Layout';
 import { AppProvider } from '@/components/layouts/context/AppProvider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 export default function App({ Component, pageProps }: AppProps) {
   Axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL
   return (
-    <SessionProvider session={pageProps.session}>
-      <Head>
-          <title>TaxHelp - Books of Accounts & DAT File System</title>
-          <meta name="description" content="Created by JP VASQUEZ" />
-          <link rel="icon" href="/svgs/icon.png" sizes="32x32" type='image/png' />
-      </Head>
-      <AppProvider>
-        {
-          pageProps.session?.user ?
-          <CMS_Layout>
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider session={pageProps.session}>
+        <Head>
+            <title>TaxHelp - Books of Accounts & DAT File System</title>
+            <meta name="description" content="Created by JP VASQUEZ" />
+            <link rel="icon" href="/svgs/icon.png" sizes="32x32" type='image/png' />
+        </Head>
+        <AppProvider>
+          {
+            pageProps.session?.user ?
+            <CMS_Layout>
+              <Component {...pageProps} />
+            </CMS_Layout>
+            :
             <Component {...pageProps} />
-          </CMS_Layout>
-          :
-          <Component {...pageProps} />
-        }
-      </AppProvider>
-    </SessionProvider>
+          }
+        </AppProvider>
+      </SessionProvider>
+    </QueryClientProvider>
   );
 }

@@ -1,5 +1,5 @@
 import { KeyboardEvent, Dispatch, SetStateAction } from 'react'
-const Global_C = () => {
+const useGlobal = () => {
     const handleResubmit = (e: KeyboardEvent<HTMLButtonElement>) => {
         if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).code === 'Space'){
             e.preventDefault();
@@ -47,4 +47,4 @@ const Global_C = () => {
     }
 }
 
-export default Global_C;
+export default useGlobal;
