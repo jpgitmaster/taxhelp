@@ -1,7 +1,7 @@
 
 import UserAPIcalls from './api'
-import { ChangeEvent, SyntheticEvent } from 'react'
 import useGlobal from '@/controllers/global/useGlobal'
+import { useState, ChangeEvent, SyntheticEvent } from 'react'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
 
 const useLogin = () => {
@@ -19,7 +19,7 @@ const useLogin = () => {
 
         loginUserMutation,
     } = UserAPIcalls()
-
+    const [displayPassword, setDisplayPassword] = useState(false)
     const fieldValidations = {
         password: { usename: 'Password', required: true },
         email: { usename: 'Email', required: true, email: true },
@@ -63,8 +63,10 @@ const useLogin = () => {
         // STATES
         user,
         status,
+        displayPassword,
 
         // SET STATES
+        setDisplayPassword,
 
         // HANDLES
         handleBlur,

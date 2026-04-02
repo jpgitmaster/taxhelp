@@ -227,7 +227,7 @@
       }
     }
     .banners{
-      @apply pt-12;
+      @apply pt-12 px-5;
       .bannerLeft{
         h1{
           @apply text-2xl;

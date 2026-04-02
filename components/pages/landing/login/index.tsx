@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import scss from './styles/Login.module.scss';
 import useLogin from '@/controllers/users/useLogin';
@@ -10,6 +11,9 @@ const Login_V = ({ toggleModal }: PropsDefinition) => {
     const {
         user,
         status,
+        displayPassword,
+
+        setDisplayPassword,
 
         handleBlur,
         handleChange,
@@ -63,15 +67,18 @@ const Login_V = ({ toggleModal }: PropsDefinition) => {
                 err={user.userErr.password as string}
             >
                 <input
-                name='password'
-                maxLength={20}
-                type='password'
-                autoComplete='off'
-                placeholder='*******'
-                value={user.userObj.password}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
+                    maxLength={20}
+                    name='password'
+                    autoComplete='off'
+                    placeholder='*******'
+                    type={displayPassword ? 'text' : 'password'}
+                    value={user.userObj.password}
+                    onKeyUp={handleBlur}
+                    onChange={handleChange}
                 />
+                <button type='button' className={scss.eyecon + (displayPassword ? ' '+scss.show : '')} onClick={() => setDisplayPassword(prevState => !prevState)}>
+                    <Image src={'/svgs/'+(displayPassword ? 'eyecon_check.svg' : 'eyecon.svg')} alt='Show Password' priority width={250} height={160} />
+                </button>
             </CustomContainer>
             <div className={scss.card+' '+scss.w20}>
                 <button type='submit' className={`${scss.button} ${scss.btnblue}`}>
