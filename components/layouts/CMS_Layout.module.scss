@@ -2,6 +2,9 @@
 @use '@/styles/helpers';
 @use '@/styles/colors' as *;
 @reference 'tailwindcss';
+body, html{
+    overflow-x: hidden;
+}
 .app{
     @apply min-h-screen flex flex-row;
     .appSidebar{
