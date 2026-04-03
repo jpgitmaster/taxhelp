@@ -374,13 +374,17 @@ body, html{
                 li{
                     .mainLink{
                         .link{
+                            @apply flex items-center justify-center;
                             .mainLinkIcon{
-                                @apply m-0;
+                                @apply m-0!;
                             }
                         }
                     }
                 }
             }
+        }
+        &.slideRight {
+            @apply w-38;
         }
         .appSidebarLinks{
             .links{
@@ -389,7 +393,7 @@ body, html{
                         .link{
                             @apply px-2;
                             .mainLinkIcon{
-                                @apply w-4! h-4! m-0;
+                                @apply w-4! h-4! m-0 mt-0.5 mr-1;
                             }
                             span{
                                 @apply text-[12px];
