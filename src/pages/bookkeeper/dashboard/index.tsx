@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import scss from './styles/Dashboard.module.scss';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -6,7 +7,23 @@ import { signOut, getSession } from 'next-auth/react';
 import interactionPlugin from '@fullcalendar/interaction';
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types';
+
 const Dashboard_V = () => {
+  const [mounted, setMounted] = useState(false);
+  const [calendarHeight, setCalendarHeight] = useState(500);
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 800) {
+        setCalendarHeight(400); // mobile → scroll
+      }
+    };
+
+    handleResize(); // run on mount
+    setMounted(true);
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   return (
       <div className={scss.dashboardWrapper}>
         <div className={scss.contentArea}>
@@ -39,22 +56,25 @@ const Dashboard_V = () => {
               </ul>
             </div>
             {/* CALENDAR */}
-            <div className={scss.calendarContainer}>
-              <div className={scss.calender}>
-                <FullCalendar
-                  plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                  initialView="dayGridMonth"
-                  events={[
-                    { title: 'Accounts Payable', date: '2026-03-30' },
-                    { title: 'Meeting', date: '2026-04-02' },
-                    { title: 'Filing & Documentation', date: '2026-04-23' },
-                  ]}
-                  contentHeight={500}
-                  editable={true}
-                  selectable={true}
-                />
+            {
+              mounted &&
+              <div className={scss.calendarContainer}>
+                <div className={scss.calender}>
+                  <FullCalendar
+                    plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                    initialView="dayGridMonth"
+                    events={[
+                      { title: 'Accounts Payable', date: '2026-03-30' },
+                      { title: 'Meeting', date: '2026-04-02' },
+                      { title: 'Filing & Documentation', date: '2026-04-23' },
+                    ]}
+                    editable={true}
+                    selectable={true}
+                    contentHeight={calendarHeight}
+                  />
+                </div>
               </div>
-            </div>
+            }
             <div className={scss.scheduleBox}>
               <div className={scss.box}>
 
