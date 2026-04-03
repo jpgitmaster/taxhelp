@@ -20,6 +20,8 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    console.log('err')
+    console.log(error)
     return Promise.reject(error);
   }
 );
@@ -28,7 +30,6 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response, // If the response is successful, just return it
   async (error: AxiosError) => {
-    console.log(error)
     const originalRequest = error.config;
     // Check if the error is a 401 Unauthorized and if the original request
     // was not to the refresh token endpoint (which is handled by NextAuth.js's jwt callback)
@@ -36,7 +37,7 @@ api.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       originalRequest?.url &&
-      !originalRequest.url.includes('/auth/refresh-token')
+      !originalRequest.url.includes('/auth/refresh')
     ) {
       // Attempt to refresh the session.
       // This will trigger the `jwt` callback in `[...nextauth].ts`

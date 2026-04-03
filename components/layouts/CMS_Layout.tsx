@@ -13,6 +13,7 @@ const CMS_Layout: FC<MastertProps> = ({ children }) => {
     user,
     appLinks,
     isMobile,
+    isPageLoad,
     activeLink,
     sessionUser,
     handleExpand,
@@ -21,6 +22,7 @@ const CMS_Layout: FC<MastertProps> = ({ children }) => {
     handleShowSublinks
   } = useMaster()
   return (
+    isPageLoad &&
     <div className={scss.app}>
       <aside className={scss.appSidebar+' '+(isMobile ? scss.slideLeft : scss.slideRight)} onClick={handleHeaderClick}>
         

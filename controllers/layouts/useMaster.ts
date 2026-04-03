@@ -16,6 +16,7 @@ const useMaster = () => {
     const pathname = usePathname()
     const activeLink = pathname?.split('/')
     const [isMobile, setIsMobile] = useState(false)
+    const [isPageLoad, setIsPageLoad] = useState(false)
     const sessionUser = session.data?.user as SessionUser
     const [appLinks, setAppLinks] = useState<NavLink[]>([])
     
@@ -106,6 +107,10 @@ const useMaster = () => {
             setIsMobile(true)
             }
         }
+        const timer = setTimeout(() => {
+            setIsPageLoad(true)
+        }, 100)
+        return () => clearTimeout(timer)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     return {
@@ -114,6 +119,7 @@ const useMaster = () => {
         user,
         appLinks,
         isMobile,
+        isPageLoad,
         activeLink,
         sessionUser,
         // SET STATES

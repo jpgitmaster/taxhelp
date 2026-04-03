@@ -71,11 +71,14 @@ const useUserAPI = () => {
             return res.data
         },
         onSuccess: async (res) => {
-            const { id, email, token_type, access_token } = res.data
+            const { id, email, token_type, access_token, expires_in, refresh_token } = res.data
+            console.log(res)
             await signIn('credentials', {
                 id: id,
                 email: email,
                 redirect: false,
+                refresh_token: refresh_token,
+                accessTokenExpiresIn: Number(expires_in),
                 accessToken: `${token_type} ${access_token}`,
             });
 
@@ -96,12 +99,14 @@ const useUserAPI = () => {
             return res.data
         },
         onSuccess: async (res) => {
-            const { id, email, token_type, access_token } = res.data
+            const { id, email, token_type, access_token, expires_in, refresh_token} = res.data
             
             await signIn('credentials', {
                 id: id,
                 email: email,
                 redirect: false,
+                refresh_token: refresh_token,
+                accessTokenExpiresIn: Number(expires_in),
                 accessToken: `${token_type} ${access_token}`,
             });
 
@@ -130,8 +135,8 @@ const useUserAPI = () => {
             const { data } = res.data
             return data ?? null
         } catch (error) {
-            console.error(error);
-
+            console.log('error')
+            console.log(error)
             // IMPORTANT: rethrow so React Query can handle it
             throw error;
         }

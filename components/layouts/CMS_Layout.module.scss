@@ -389,12 +389,29 @@ body, html{
                         .link{
                             @apply px-2;
                             .mainLinkIcon{
-                                @apply w-4! h-4!;
+                                @apply w-4! h-4! m-0;
                             }
                             span{
                                 @apply text-[12px];
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+    .appContent{
+        @apply w-full overflow-auto;
+        .appHeader{
+            @apply flex-col min-h-auto px-4;
+            .logo{
+                @apply w-50 h-18 mt-2;
+            }
+            .headerRight{
+                .sessionUser{
+                    @apply my-4;
+                    .sessionUserDetails{
+                        @apply min-w-50;
                     }
                 }
             }

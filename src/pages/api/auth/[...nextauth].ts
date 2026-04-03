@@ -1,8 +1,11 @@
+import Axios from 'axios'
 import NextAuth from 'next-auth'
+import { signOut } from 'next-auth/react'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
 const env = process.env
+const apiVersion = env?.NEXT_PUBLIC_API_VERSION
 
 export default NextAuth({
   providers: [
@@ -18,22 +21,23 @@ export default NextAuth({
             id,
             email,
             accessToken,
-            refreshToken,
+            refresh_token,
             accessTokenExpiresIn,
           } = credentials as {
             id:  number
             email: string
             password: string
             accessToken: string
-            refreshToken: string
-            accessTokenExpiresIn: string
+            refresh_token: string
+            accessTokenExpiresIn: number
           }
           const userDetails = {
             id: String(id),
             accessToken: accessToken,
-            refreshToken: refreshToken,
-            accessTokenExpires: accessTokenExpiresIn,
+            refreshToken: refresh_token,
+            accessTokenExpiresIn: Number(accessTokenExpiresIn),
           }
+          
           if (!email || !id) { // Example of basic validation
             throw new Error('Invalid credentials provided.');
           }
@@ -62,8 +66,40 @@ export default NextAuth({
     jwt: async ({ token, user}) => {
       if (user && user.accessToken) {
         token.accessToken = user.accessToken
+        token.refreshToken = user.refreshToken
+        token.accessTokenExpires = Date.now() + Number(user.accessTokenExpiresIn) * 1000
       }
-      return token;
+      console.log('date')
+      console.log(apiVersion)
+      console.log(Date.now())
+      console.log(token.accessTokenExpires)
+      // ✅ IF TOKEN NOT EXPIRED → RETURN
+      if(token.accessTokenExpires){
+        if (token.accessTokenExpires && Date.now() < token.accessTokenExpires) {
+          return token;
+        }
+      }
+      
+      // REFRESH TOKEN
+      try {
+        const res = await Axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/${apiVersion}/auth/refresh`, {
+          refresh_token: token.refreshToken,
+        })
+        console.log('results')
+        console.log(res)
+        const data = res.data
+
+        token.accessToken = `${data.token_type} ${data.access_token}`
+        token.accessTokenExpires = Date.now() + data.expires_in * 1000
+
+        return token
+      } catch (error) {
+        console.error('Refresh token error:', error)
+
+        // ❗ DO NOT call signOut here (server-side)
+        token.error = 'RefreshAccessTokenError'
+        return token
+      }
     },
     session: ({ session, token }) => {
       if(token){
