@@ -95,6 +95,9 @@
     .contentArea{
         .statsGrid{
             @apply gap-2.5;
+            .card{
+                @apply p-3;
+            }
         }
         .scheduleWrapper{
             @apply flex-col;
@@ -117,6 +120,9 @@
                 }
                 :global(.fc .fc-toolbar.fc-header-toolbar){
                     @apply mb-3;
+                }
+                :global(.fc-theme-standard td){
+                    @apply text-[11px];
                 }
             }
         }
