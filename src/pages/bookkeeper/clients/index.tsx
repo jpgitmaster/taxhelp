@@ -94,54 +94,6 @@ const Customers_V = () => {
             registeredName: 'SUPER SHOPPING MARKET INC',
             registeredAddress: 'SM HYPERMARKET NOVALICHES  402 QUIRINO HIWAY TALIPAPA NOVALICHES QUEZON CITY',
         },
-        // {
-        //     masterlistID: '11',
-        //     tin: '123854789',
-        //     name: '',
-        //     branchCode: '',
-        //     registeredName: 'ANCHOR INSURANCE BROKERAGE CORP',
-        //     registeredAddress: 'SM HYPERMARKET NOVALICHES  402 QUIRINO HIWAY TALIPAPA NOVALICHES QUEZON CITY',
-        // },
-        // {
-        //     masterlistID: '12',
-        //     tin: '303916736',
-        //     name: '',
-        //     branchCode: '',
-        //     registeredName: 'ORIONPH FUEL STATION',
-        //     registeredAddress: 'LOT 38 AND LOT 2B MINDANAO AVE TALIPAPA QUEZON CITY',
-        // },
-        // {
-        //     masterlistID: '13',
-        //     tin: '000000000',
-        //     name: '',
-        //     branchCode: '',
-        //     registeredName: 'SECURITIES AND EXCHANGE COMMISSION',
-        //     registeredAddress: '',
-        // },
-        // {
-        //     masterlistID: '14',
-        //     tin: '000000000',
-        //     name: '',
-        //     branchCode: '',
-        //     registeredName: 'PAYROLL',
-        //     registeredAddress: '',
-        // },
-        // {
-        //     masterlistID: '15',
-        //     tin: '318378721',
-        //     name: 'BACUD RACHELLE OCLARES',
-        //     branchCode: '',
-        //     registeredName: '',
-        //     registeredAddress: 'PH4B PKG7 BLK109 LOT17 BRGY 176A CALOOCAN CITY',
-        // },
-        // {
-        //     masterlistID: '16',
-        //     tin: '318378721',
-        //     name: 'BACUD RACHELLE OCLARES',
-        //     branchCode: '00000',
-        //     registeredName: '',
-        //     registeredAddress: '4225 S BAUTISTA ST BRGY MAPULANG LUPA VALENZUELA CITY',
-        // },
     ];
 
     const columns = [
@@ -199,7 +151,7 @@ const Customers_V = () => {
                     </button>
                 </form>
             </div>
-            <div style={{width:width_+'px'}}>
+            <div className={scss.tableWrapper} style={{width:width_+'px'}}>
                 <Table
                     rowKey='id'
                     columns={columns}
