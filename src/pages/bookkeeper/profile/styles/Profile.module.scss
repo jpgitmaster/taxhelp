@@ -149,10 +149,11 @@
 }
 @media (max-width: 768px) {
   .profileWrapper {
+    @apply px-0;
     .editProfile.form{
         .top{
             .avatarDetails{
-                @apply mb-20 px-0;
+                @apply mb-20 px-0 min-w-auto;
                 .cards{
                     .card.w50{
                         @apply w-full;
