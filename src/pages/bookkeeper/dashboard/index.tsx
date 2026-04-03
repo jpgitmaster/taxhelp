@@ -14,7 +14,7 @@ const Dashboard_V = () => {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 800) {
-        setCalendarHeight(350); // mobile → scroll
+        setCalendarHeight(320); // mobile → scroll
       }
     };
 
