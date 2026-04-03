@@ -1,37 +1,24 @@
-import { DefaultSession, DefaultUser } from "next-auth"
-import { DefaultJWT } from "next-auth/jwt"
-
-interface User_ {
-  email: string
-  lastName: string
-  firstName: string
-  role: {
-    name: string
-    color: string
-  }
-}
-
-declare module "next-auth" {
+import { DefaultJWT } from 'next-auth/jwt'
+import { DefaultSession } from 'next-auth'
+declare module 'next-auth' {
   interface Session extends DefaultSession {
     id?: number
-    user?: User_ | unknown
     accessToken?: string
     refreshToken?: string
+    // Add any other custom properties you want to expose on the session
   }
-
   interface User extends DefaultUser {
-    accessToken?: string
+    accessToken?: string // Add accessToken to the User type
     refreshToken?: string
-    user?: User_
-    accessTokenExpires?: string
+    accessTokenExpiresIn?: number 
   }
 }
 
-declare module "next-auth/jwt" {
+declare module 'next-auth/jwt' {
   interface JWT extends DefaultJWT {
-    accessToken?: string
-    refreshToken?: string
-    accessTokenExpires?: string
-    user: User_
+    accessToken?: string; // Add your custom properties here
+    refreshToken?: string; // If you also need the refresh token
+    accessTokenExpires?: number // ✅ FIX: use number
+    // Add any other custom properties you added to the token in the jwt callback
   }
 }
