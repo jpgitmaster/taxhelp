@@ -421,6 +421,9 @@ body, html{
                 }
             }
         }
+        .appBody{
+            @apply px-3.5;
+        }
     }
   }
 }

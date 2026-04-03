@@ -110,17 +110,20 @@
             .calendarContainer{
                 @apply mt-0;
                 :global(.fc-toolbar-title) {
-                    @apply w-35 relative top-4;
+                    @apply w-38 relative top-4 text-[20px];
                 }
                 :global(.fc-event) {
                     background-color: $blue;
                     @apply text-[10px];
                 }
                 :global(.fc-button), :global(.fc-button-group) {
-                    @apply float-right;
+                    @apply float-right px-2;
                 }
                 :global(.fc-button-group){
-                    @apply mt-2;
+                    @apply mt-2 px-0 clear-both;
+                }
+                :global(.fc-button-group .fc-button){
+                    @apply px-2.5;
                 }
                 :global(.fc .fc-toolbar.fc-header-toolbar){
                     @apply mb-3;
