@@ -99,10 +99,25 @@
         .scheduleWrapper{
             @apply flex-col;
             .upcomingList{
-                @apply px-0;
+                @apply px-0 pb-0;
             }
             .upcomingList, .calendarContainer, .scheduleBox{
                 @apply w-full;
+            }
+            .calendarContainer{
+                @apply mt-0;
+                :global(.fc-toolbar-title) {
+                    @apply w-35 relative top-4;
+                }
+                :global(.fc-button), :global(.fc-button-group) {
+                    @apply float-right;
+                }
+                :global(.fc-button-group){
+                    @apply mt-2;
+                }
+                :global(.fc .fc-toolbar.fc-header-toolbar){
+                    @apply mb-3;
+                }
             }
         }
     }
