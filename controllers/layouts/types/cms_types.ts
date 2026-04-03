@@ -27,7 +27,9 @@ interface NavLink {
   }[]
 }
 interface Session {
+  error?: string
   user?: SessionUser
+  tokenType: string
   accessToken: string
   refreshToken: string
 }

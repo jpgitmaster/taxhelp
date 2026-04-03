@@ -4,12 +4,9 @@ const initUserObj = {
     lastName: '',
     firstName: '',
     isActive: null,
-    role: {
-        id: null,
-        name: '',
-        color: '210, 213, 214',
-    },
+    role: [],
     password: '',
+    birthdate: '',
     confirmPassword: '',
     
 }
@@ -21,6 +18,7 @@ const initUser = {
         lastName: '',
         password: '',
         firstName: '',
+        birthdate: '',
         confirmPassword: '',
     },
     totalUsers: 0,

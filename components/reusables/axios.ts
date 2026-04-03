@@ -1,71 +1,84 @@
-import { getSession, signOut } from 'next-auth/react';
-import axios, { AxiosInstance, AxiosError } from 'axios';
+import { signOut } from 'next-auth/react';
+import { Session } from '@/controllers/layouts/types/cms_types';
+import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from 'axios';
 
-// Create a new instance of Axios with base configurations
+interface CustomAxiosRequestConfig extends AxiosRequestConfig {
+  _retry?: boolean;
+}
+
 const api: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL, // e.g., 'https://your-backend-api.com/api'
-  withCredentials: true, // Essential for sending cookies (e.g., HTTP-only refresh token)
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  withCredentials: true,
 });
 
-// Add a request interceptor to attach the access token to outgoing requests
-api.interceptors.request.use(
-  async (config) => {
-    // Exclude authentication-related endpoints from token attachment
-    if (config.url && !config.url.includes('/auth/login')) {
-      const session = await getSession();
-      if (session?.accessToken) {
-        config.headers.Authorization = session.accessToken;
-      }
-    }
-    return config;
-  },
-  (error) => {
-    console.log('err')
-    console.log(error)
-    return Promise.reject(error);
-  }
-);
+let cachedSession: Session | null = null;
+let refreshing: Promise<Session | null> | null = null;
 
-// Add a response interceptor to handle token expiration (401 Unauthorized)
+const getSessionSafe = async (): Promise<Session | null> => {
+  if (cachedSession) return cachedSession;
+
+  if (!refreshing) {
+    refreshing = fetch('/api/auth/session')
+      .then((res) => res.json() as Promise<Session>)
+      .finally(() => { refreshing = null; });
+  }
+
+  const session = await refreshing;
+  cachedSession = session;
+  return session;
+};
+
+// REQUEST INTERCEPTOR
+api.interceptors.request.use(async (config) => {
+  if (
+    config.url &&
+    !config.url.includes('/auth/login') &&
+    !config.url.includes('/auth/refresh')
+  ) {
+    const session = await getSessionSafe();
+    if (session?.accessToken) {
+      cachedSession = session; // store the latest token
+    }
+    if (session?.accessToken) {
+      config.headers = config.headers || {};
+      (config.headers as Record<string, string>).Authorization = `${session.tokenType ?? 'Bearer'} ${session.accessToken}`;
+    }
+  }
+  return config;
+}, (error) => Promise.reject(error));
+
+// RESPONSE INTERCEPTOR
 api.interceptors.response.use(
-  (response) => response, // If the response is successful, just return it
+  (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config;
-    // Check if the error is a 401 Unauthorized and if the original request
-    // was not to the refresh token endpoint (which is handled by NextAuth.js's jwt callback)
-    // and if it hasn't been retried already (though less likely with this simplified flow)
+    const originalRequest = error.config as CustomAxiosRequestConfig;
+
     if (
       error.response?.status === 401 &&
-      originalRequest?.url &&
-      !originalRequest.url.includes('/auth/refresh')
+      !originalRequest._retry &&
+      !originalRequest.url?.includes('/auth/refresh')
     ) {
-      // Attempt to refresh the session.
-      // This will trigger the `jwt` callback in `[...nextauth].ts`
-      // which should handle the actual token refresh via your backend.
-      const session = await getSession();
+      originalRequest._retry = true;
 
-      if (session?.accessToken) {
-        // If a new access token is successfully obtained, update the original request's header
-        if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${session.accessToken}`;
+      try {
+        const session = await getSessionSafe();
+
+        if (session?.accessToken) {
+          cachedSession = session; // update cachedSession with fresh token
+          originalRequest.headers = originalRequest.headers || {};
+          originalRequest.headers.Authorization = `${session.tokenType} ${session.accessToken}`;
+          return api(originalRequest);
         }
-        // Retry the original request with the new token
-        return api(originalRequest);
-      } else {
-        // If no new access token is available after attempting refresh,
-        // it means the session is invalid (e.g., refresh token expired or invalid).
-        // Sign out the user and redirect to login.
-        if (typeof window !== 'undefined') {
-          signOut({ callbackUrl: '/' }); // Specify your login page as the callback URL
-        }
-        return Promise.reject(error); // Propagate the original 401 error
+
+        signOut({ callbackUrl: '/' });
+      } catch (err) {
+        console.error('Refresh failed', err);
+        signOut({ callbackUrl: '/' });
       }
     }
 
-    // For any other error, just reject the promise as normal.
     return Promise.reject(error);
   }
 );
 
-// Export the custom Axios instance for use throughout your application
 export default api;

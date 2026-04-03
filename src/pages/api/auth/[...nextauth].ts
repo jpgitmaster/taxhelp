@@ -1,12 +1,10 @@
-import Axios from 'axios'
 import NextAuth from 'next-auth'
-import { signOut } from 'next-auth/react'
+import api from '@/components/reusables/axios'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
 const env = process.env
-const apiVersion = env?.NEXT_PUBLIC_API_VERSION
-
+let refreshPromises: Record<string, Promise<any>> = {};
 export default NextAuth({
   providers: [
     CredentialsProvider({
@@ -20,22 +18,25 @@ export default NextAuth({
           const {
             id,
             email,
+            tokenType,
             accessToken,
             refresh_token,
-            accessTokenExpiresIn,
+            accessTokenExpires,
           } = credentials as {
             id:  number
             email: string
             password: string
+            tokenType: string
             accessToken: string
             refresh_token: string
-            accessTokenExpiresIn: number
+            accessTokenExpires: number
           }
           const userDetails = {
             id: String(id),
+            tokenType: tokenType,
             accessToken: accessToken,
             refreshToken: refresh_token,
-            accessTokenExpiresIn: Number(accessTokenExpiresIn),
+            accessTokenExpires: Number(accessTokenExpires),
           }
           
           if (!email || !id) { // Example of basic validation
@@ -63,50 +64,56 @@ export default NextAuth({
     // ...add more providers here
   ],
   callbacks: {
-    jwt: async ({ token, user}) => {
+    jwt: async ({ token, user }) => {
       if (user && user.accessToken) {
-        token.accessToken = user.accessToken
-        token.refreshToken = user.refreshToken
-        token.accessTokenExpires = Date.now() + Number(user.accessTokenExpiresIn) * 1000
+        token.accessToken = user.accessToken;
+        token.accessTokenExpires = Date.now() + Number(user.accessTokenExpires) * 1000;
+        token.refreshToken = user.refreshToken;
       }
-      console.log('date')
-      console.log(apiVersion)
-      console.log(Date.now())
-      console.log(token.accessTokenExpires)
-      // ✅ IF TOKEN NOT EXPIRED → RETURN
-      if(token.accessTokenExpires){
-        if (token.accessTokenExpires && Date.now() < token.accessTokenExpires) {
-          return token;
-        }
+
+      // Token still valid
+      if (token.accessTokenExpires && Date.now() < token.accessTokenExpires) {
+        return token;
       }
-      
-      // REFRESH TOKEN
-      try {
-        const res = await Axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/${apiVersion}/auth/refresh`, {
-          refresh_token: token.refreshToken,
-        })
-        console.log('results')
-        console.log(res)
-        const data = res.data
 
-        token.accessToken = `${data.token_type} ${data.access_token}`
-        token.accessTokenExpires = Date.now() + data.expires_in * 1000
-
-        return token
-      } catch (error) {
-        console.error('Refresh token error:', error)
-
-        // ❗ DO NOT call signOut here (server-side)
-        token.error = 'RefreshAccessTokenError'
-        return token
+      if (!token.refreshToken) {
+        token.error = 'NoRefreshToken';
+        return token;
       }
+
+      // At this point, token.refreshToken is guaranteed to be a string
+      if (!refreshPromises[token.refreshToken]) {
+        refreshPromises[token.refreshToken] = (async () => {
+          try {
+            const response = await api.post(
+              `${process.env.NEXT_PUBLIC_API_URL}/api/${process.env.NEXT_PUBLIC_API_VERSION}/auth/refresh`,
+              { refresh_token: token.refreshToken }
+            );
+            const res = response.data.data;
+            token.accessToken = res.access_token;
+            token.refreshToken = res.refresh_token;
+            token.accessTokenExpires = Date.now() + res.expires_in * 1000;
+            return token;
+          } catch (err: any) {
+            token.error = 'RefreshAccessTokenError';
+            return token;
+          } finally {
+            delete refreshPromises[token.refreshToken as string]; // Safe because token.refreshToken is defined
+          }
+        })();
+      }
+
+      return await refreshPromises[token.refreshToken];
     },
     session: ({ session, token }) => {
-      if(token){
-        session.accessToken = token.accessToken
+      if (token) {
+        session.tokenType = token.tokenType;
+        session.accessToken = token.accessToken;
+        session.refreshToken = token.refreshToken;
+        session.error = typeof token.error === 'string' ? token.error : undefined;
       }
       return session;
-    }
+    },
   },
   session: {
     strategy: 'jwt',

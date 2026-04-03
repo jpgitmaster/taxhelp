@@ -103,14 +103,14 @@ const CMS_Layout: FC<MastertProps> = ({ children }) => {
             <Image src='/images/logo.png' alt='TaxHelp Logo' priority width={20} height={20} unoptimized={true} />
           </Link>
           <div className={scss.headerRight}>
-            { user && 
             <div className={scss.sessionUser}>
               <div className={scss.avatar} style={{border: '1px solid rgba('+sessionUser?.role?.color+', .8)'}}>
                 <Avatar color={''} />
               </div>
               <div className={scss.sessionUserDetails}>
+                
                 <h2>
-                  {(user?.firstName && user?.lastName) ? user?.firstName+' '+user?.lastName: user?.email}
+                  {(user?.first_name && user?.last_name) ? user?.first_name+' '+user?.last_name: user?.email} &nbsp;
                 </h2>
                 <div className={scss.headerIcons}>
                   <div className={scss.headerIcon} style={{marginLeft: '-15px'}}>
@@ -124,9 +124,9 @@ const CMS_Layout: FC<MastertProps> = ({ children }) => {
                     </div>
                   </div>
                   <div className={scss.headerIcon+' '+scss.mid}>
-                    <div className={scss.icon}>
+                    <Link href='/bookkeeper/profile' className={scss.icon}>
                       <Image src={'/svgs/header/profile.svg'} alt='Profile' priority width={20} height={20} unoptimized={true} />
-                    </div>
+                    </Link>
                   </div>
                   <div className={scss.headerIcon}>
                     <button type='button' className={scss.icon} onClick={handleUserLogout}>
@@ -136,7 +136,6 @@ const CMS_Layout: FC<MastertProps> = ({ children }) => {
                 </div>
               </div>
             </div>
-            }
           </div>
         </div>
         <div className={scss.appBody}>

@@ -1,16 +1,13 @@
 interface UserObj{
   email: string
+  role: string[]
   id: number | null
   firstName: string
   lastName: string
-  role: {
-    id: number | null
-    name: string
-    color: string
-  }
-  isActive: boolean | null
   password?: string
+  birthdate: string
   confirmPassword?: string
+  isActive: boolean | null
 }
 
 interface User{

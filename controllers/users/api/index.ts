@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { User, UserObj } from '../types'
@@ -72,19 +73,44 @@ const useUserAPI = () => {
         },
         onSuccess: async (res) => {
             const { id, email, token_type, access_token, expires_in, refresh_token } = res.data
-            console.log(res)
             await signIn('credentials', {
                 id: id,
                 email: email,
                 redirect: false,
                 refresh_token: refresh_token,
-                accessTokenExpiresIn: Number(expires_in),
-                accessToken: `${token_type} ${access_token}`,
+                accessTokenExpires: Number(expires_in),
+                tokenType: token_type,
+                accessToken: access_token,
             });
 
             // optionally refetch user after login
             await queryClient.refetchQueries({ queryKey: ['user'] });
             router.push('/bookkeeper/dashboard');
+        },
+        onError: (error) => {
+            console.log('error', error)
+        }
+    })
+
+    // ✅ EDIT PROFILE (useMutation)
+    const editProfileMutation = useMutation({
+        mutationFn: async (user: UserObj) => {
+            const res = await api.put(`/api/${apiVersion}/users/${user.id}`, {
+                email: user.email,
+                birthday: dayjs(user.birthdate).format('YYYY-MM-DD'),
+                last_name: user.lastName,
+                first_name: user.firstName,
+            })
+            return res.data
+        },
+        onSuccess: async (res) => {
+            setTimeout(() => {
+                setStatus(prev => ({
+                    ...prev,
+                    loader: false,
+                    message: 'Your profile changes have been saved successfully.'
+                }))
+            }, 500)
         },
         onError: (error) => {
             console.log('error', error)
@@ -106,8 +132,9 @@ const useUserAPI = () => {
                 email: email,
                 redirect: false,
                 refresh_token: refresh_token,
-                accessTokenExpiresIn: Number(expires_in),
-                accessToken: `${token_type} ${access_token}`,
+                accessTokenExpires: Number(expires_in),
+                tokenType: token_type,
+                accessToken: access_token,
             });
 
             // Immediately redirect
@@ -161,6 +188,7 @@ const useUserAPI = () => {
         loginUserMutation,
         createUserMutation,
         verifyUserMutation,
+        editProfileMutation,
 
         //HANDLES
         handleUserLogout
