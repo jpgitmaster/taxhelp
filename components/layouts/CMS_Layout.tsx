@@ -104,9 +104,9 @@ const CMS_Layout: FC<MastertProps> = ({ children }) => {
           </Link>
           <div className={scss.headerRight}>
             <div className={scss.sessionUser}>
-              <div className={scss.avatar} style={{border: '1px solid rgba('+sessionUser?.role?.color+', .8)'}}>
+              <Link href='/bookkeeper/profile' className={scss.avatar}>
                 <Avatar color={''} />
-              </div>
+              </Link>
               <div className={scss.sessionUserDetails}>
                 
                 <h2>

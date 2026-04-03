@@ -25,7 +25,7 @@
                     @apply text-[14px] mt-2;
                 }
                 .button{
-                    @apply max-w-50 mx-auto block;
+                    @apply max-w-50 mx-auto block -mt-5;
                 }
             }
         }
@@ -136,4 +136,30 @@
 @keyframes dashCheck {
   0% { stroke-dashoffset: -100; }
   100% { stroke-dashoffset: 900; }
+}
+
+@media (max-width: 1024px) {
+  .profileWrapper {
+    .editProfile.form{
+        .top{
+            @apply flex-col;
+        }
+    }
+  }
+}
+@media (max-width: 768px) {
+  .profileWrapper {
+    .editProfile.form{
+        .top{
+            .avatarDetails{
+                @apply mb-20 px-0;
+                .cards{
+                    .card.w50{
+                        @apply w-full;
+                    }
+                }
+            }
+        }
+    }
+  }
 }
