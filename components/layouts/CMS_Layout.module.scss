@@ -371,6 +371,7 @@ body, html{
     .appSidebar{
         @apply px-2;
         &.slideLeft{
+            @apply w-12.5 px-1.5;
             .links{
                 li{
                     .mainLink{
