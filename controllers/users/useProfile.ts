@@ -1,9 +1,10 @@
-import dayjs, { Dayjs } from 'dayjs'
-import useUserAPI from './api'
-import { useQuery } from '@tanstack/react-query'
-import useGlobal from '@/controllers/global/useGlobal'
-import { useState, ChangeEvent, SyntheticEvent, useEffect } from 'react'
-import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
+
+import useUserAPI from './api';
+import dayjs, { Dayjs } from 'dayjs';
+import { useQuery } from '@tanstack/react-query';
+import useGlobal from '@/controllers/global/useGlobal';
+import ValidatorV3 from '@/components/reusables/validation/ValidatorV3';
+import { useState, ChangeEvent, SyntheticEvent, useEffect } from 'react';
 const useProfile = () => {
     const {
         handleBlur,
@@ -21,7 +22,6 @@ const useProfile = () => {
         getUser,
         editProfileMutation,
     } = useUserAPI()
-
     const fieldValidations = {
         lastName: { usename: 'Last Name', required: true },
         firstName: { usename: 'First Name', required: true },
@@ -97,21 +97,23 @@ const useProfile = () => {
     }
 
     useEffect(() => {
-        if(fetchUser){
-            console.log(fetchUser)
-            setUser({
-                ...user,
+        if (fetchUser) {
+            setUser(prev => ({
+                ...prev,
                 userObj: {
-                    ...user.userObj,
+                    ...prev.userObj,
                     id: fetchUser.id,
                     email: fetchUser.email,
                     lastName: fetchUser.last_name || '',
                     firstName: fetchUser.first_name || '',
-                    birthdate: dayjs(fetchUser.birthday).format('MM/DD/YYYY') || ''
+                    birthdate: fetchUser.birthday
+                        ? dayjs(fetchUser.birthday).format('MM/DD/YYYY')
+                        : ''
                 }
-            })
+            }))
         }
     }, [fetchUser])
+
     return {
         // STATES
         user,

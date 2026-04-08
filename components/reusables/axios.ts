@@ -53,28 +53,39 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as CustomAxiosRequestConfig;
 
+    const isUnauthorized = error.response?.status === 401;
+
     if (
-      error.response?.status === 401 &&
+      isUnauthorized &&
       !originalRequest._retry &&
       !originalRequest.url?.includes('/auth/refresh')
     ) {
       originalRequest._retry = true;
 
       try {
+        // ⚠️ This does NOT refresh token — just re-gets session
         const session = await getSessionSafe();
 
         if (session?.accessToken) {
-          cachedSession = session; // update cachedSession with fresh token
           originalRequest.headers = originalRequest.headers || {};
-          originalRequest.headers.Authorization = `${session.tokenType} ${session.accessToken}`;
+          originalRequest.headers.Authorization =
+            `${session.tokenType ?? 'Bearer'} ${session.accessToken}`;
+
           return api(originalRequest);
         }
-
-        signOut({ callbackUrl: '/' });
       } catch (err) {
-        console.error('Refresh failed', err);
-        signOut({ callbackUrl: '/' });
+        console.error('Retry failed', err);
       }
+    }
+
+    // ❗ FINAL fallback → FORCE LOGOUT
+    if (isUnauthorized) {
+      cachedSession = null;
+      refreshing = null;
+
+      console.log("Unauthorized → signing out");
+
+      await signOut({ callbackUrl: '/' });
     }
 
     return Promise.reject(error);

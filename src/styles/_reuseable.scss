@@ -1,13 +1,13 @@
 @use '@/styles/colors' as *;
 
 .actions{
-    @apply  w-[100%] flex flex-row items-center justify-center;
+    @apply  w-full flex flex-row items-center justify-center;
     .action{
         @apply flex flex-1 flex-col items-center justify-center;
         span{
-            @apply text-[8px] uppercase inline-block mt-[2px];
+            @apply text-[6.5px] uppercase inline-block mt-0.5;
         }
-        &.edit{
+        &.edit, &.download{
             span{
                 color: $darkBlue;
             }
@@ -23,6 +23,22 @@
                 filter: invert(16%) sepia(37%) saturate(7096%) hue-rotate(4deg) brightness(103%) contrast(130%);
             }
         }
+        &.sales{
+            span{
+                color: $orange;
+            }
+            img{
+                filter: invert(53%) sepia(44%) saturate(5472%) hue-rotate(2deg) brightness(103%) contrast(88%);
+            }
+        }
+        &.purchases{
+            span{
+                color: $darkGreen;
+            }
+            img{
+                filter: invert(33%) sepia(94%) saturate(470%) hue-rotate(147deg) brightness(93%) contrast(91%);
+            }
+        }
         &.disabled{
             cursor: not-allowed;
             pointer-events: none;
@@ -36,9 +52,9 @@
     }
 }
 .pagination{
-    @apply mt-[20px] text-[13px];
+    @apply mt-5 text-[13px];
     .total_records{
         color: $lightBlack;
-        @apply float-right mr-[10px];
+        @apply float-right mr-2.5;
     }
 }

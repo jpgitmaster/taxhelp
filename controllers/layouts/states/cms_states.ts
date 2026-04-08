@@ -9,6 +9,7 @@ const initLinks: NavLink[] = [
         iconWidth: 20,
         url: '/bookkeeper/dashboard',
     },
+    
     // {
     //     active: false,
     //     key: 'web',
@@ -56,32 +57,14 @@ const initLinks: NavLink[] = [
         icon: 'users.svg',
         iconWidth: 20,
         url: '/bookkeeper/clients',
-        // children: [
-        //     // {
-        //     //     active: false,
-        //     //     key: 'create_user',
-        //     //     name: 'Create User',
-        //     //     url: '/bookkeeper/users/create_user',
-        //     // },
-        //     // {
-        //     //     active: false,
-        //     //     key: 'taxhelp_users',
-        //     //     name: 'TaxHelp Users',
-        //     //     url: '/bookkeeper/users/taxhelp_users',
-        //     // },
-        //     // {
-        //     //     active: false,
-        //     //     key: 'bookkeepers',
-        //     //     name: 'Bookkeepers',
-        //     //     url: '/bookkeeper/users/bookkeepers',
-        //     // },
-        //     // {
-        //     //     active: false,
-        //     //     key: 'customers',
-        //     //     name: 'Customers',
-        //     //     url: '/bookkeeper/users/customers',
-        //     // },
-        // ]
+    },
+    {
+        active: false,
+        key: 'documents',
+        name: 'Documents',
+        icon: 'dat_file.svg',
+        iconWidth: 20,
+        url: '/bookkeeper/documents',
     },
     {
         active: false,
@@ -130,14 +113,6 @@ const initLinks: NavLink[] = [
         icon: 'book_of_accounts.svg',
         iconWidth: 20,
         url: '/bookkeeper/books_of_accounts',
-    },
-    {
-        active: false,
-        key: 'dat_file',
-        name: 'DAT File',
-        icon: 'dat_file.svg',
-        iconWidth: 20,
-        url: '/bookkeeper/dat_file',
     },
     // {
     //     active: false,

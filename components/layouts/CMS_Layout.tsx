@@ -15,7 +15,6 @@ const CMS_Layout: FC<MastertProps> = ({ children }) => {
     isMobile,
     isPageLoad,
     activeLink,
-    sessionUser,
     handleExpand,
     handleUserLogout,
     handleHeaderClick,

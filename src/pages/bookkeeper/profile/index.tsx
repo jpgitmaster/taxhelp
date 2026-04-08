@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { DatePicker } from 'antd';
+import { getSession } from 'next-auth/react';
 import scss from './styles/Profile.module.scss';
-import { signOut, getSession } from 'next-auth/react';
 import useProfile from '@/controllers/users/useProfile';
 import Loader from '@/components/reusables/RotatingLoader';
 import Avatar from '@/components/reusables/AvatarPlaceholder';
@@ -20,7 +20,7 @@ const Profile_V = () => {
     } = useProfile()
     const profile = user.userObj
     const dateFormat = 'MM/DD/YYYY'
-    const { message, submessage, loader } = status
+    const { message, loader } = status
     return (
         <div className={scss.profileWrapper}>
             <form className={scss.editProfile+' '+scss.form} onSubmit={handleEditProfile}>
@@ -149,7 +149,6 @@ const Profile_V = () => {
 export const getServerSideProps: GetServerSideProps<PageProps> = async (context: GetServerSidePropsContext) => {
   const session = await getSession(context) as Session
   if (!session?.user) {
-    signOut({ redirect: true, callbackUrl: '/' })
     return {
       redirect: {
         destination: '/',

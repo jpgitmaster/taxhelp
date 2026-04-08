@@ -117,36 +117,49 @@ const useUserAPI = () => {
         }
     })
 
+    // VERIFY USER THROUGH EMAIL NOTIF
     const verifyUserMutation = useMutation({
         mutationFn: async (token: string) => {
             const res = await api.post(`/api/${apiVersion}/auth/verify-email`, {
-                token: token,
-            })
-            return res.data
+            token,
+            });
+            return res.data;
         },
         onSuccess: async (res) => {
-            const { id, email, token_type, access_token, expires_in, refresh_token} = res.data
-            
+            const {
+                id,
+                email,
+                token_type,
+                access_token,
+                expires_in,
+                refresh_token,
+            } = res;
             await signIn('credentials', {
-                id: id,
-                email: email,
+                id,
+                email,
                 redirect: false,
-                refresh_token: refresh_token,
+                refresh_token,
+                accessTokenExpires: Number(expires_in),
+                tokenType: token_type,
+                accessToken: access_token,
+            });
+            // ⚡ DO NOT await
+            signIn('credentials', {
+                id,
+                email,
+                redirect: false,
+                refresh_token,
                 accessTokenExpires: Number(expires_in),
                 tokenType: token_type,
                 accessToken: access_token,
             });
 
-            // Immediately redirect
-            router.replace('/bookkeeper/dashboard');
-
-            // optionally refetch user after login
-            queryClient.refetchQueries({ queryKey: ['user'] })
+            router.replace('/bookkeeper/profile');
         },
         onError: (error) => {
-            console.log('error', error)
-        }
-    })
+            console.log('error', error);
+        },
+    });
 
     const handleUserLogout = async () => {
         queryClient.removeQueries({ queryKey: ['user'] });

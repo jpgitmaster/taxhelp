@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
+import { getSession } from 'next-auth/react';
 import FullCalendar from '@fullcalendar/react';
 import scss from './styles/Dashboard.module.scss';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import { signOut, getSession } from 'next-auth/react';
 import interactionPlugin from '@fullcalendar/interaction';
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types';
@@ -76,6 +76,7 @@ const Dashboard_V = () => {
               </div>
             }
             <div className={scss.scheduleBox}>
+              ADVERTISEMENTS
               <div className={scss.box}>
 
               </div>
@@ -93,8 +94,8 @@ const Dashboard_V = () => {
 }
 export const getServerSideProps: GetServerSideProps<PageProps> = async (context: GetServerSidePropsContext) => {
   const session = await getSession(context) as Session
+  console.log(session)
   if (!session?.user) {
-    signOut({ redirect: true, callbackUrl: '/' })
     return {
       redirect: {
         destination: '/',

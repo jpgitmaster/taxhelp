@@ -1,23 +1,19 @@
 import useUserAPI from '../users/api'
 import { usePathname } from 'next/navigation'
-import { useSession } from 'next-auth/react'
 import { useQuery } from '@tanstack/react-query'
 import { useState, useEffect, useRef, MouseEvent } from 'react'
+import { NavLink } from '@/controllers/layouts/types/cms_types'
 import { initLinks } from '@/controllers/layouts/states/cms_states'
-import { NavLink, SessionUser } from '@/controllers/layouts/types/cms_types'
-
 
 const useMaster = () => {
     const {
         getUser,
         handleUserLogout
     } = useUserAPI()
-    const session = useSession()
     const pathname = usePathname()
     const activeLink = pathname?.split('/')
     const [isMobile, setIsMobile] = useState(false)
     const [isPageLoad, setIsPageLoad] = useState(false)
-    const sessionUser = session.data?.user as SessionUser
     const [appLinks, setAppLinks] = useState<NavLink[]>([])
     
     const { data: user } = useQuery({
@@ -26,6 +22,7 @@ const useMaster = () => {
         retry: 1,
         staleTime: 1000 * 60 * 5, // 5 minutes
     });
+    
     const handleExpand = () => {
         setIsMobile(prevState => !prevState)
     }
@@ -121,7 +118,6 @@ const useMaster = () => {
         isMobile,
         isPageLoad,
         activeLink,
-        sessionUser,
         // SET STATES
 
         // HANDLES
