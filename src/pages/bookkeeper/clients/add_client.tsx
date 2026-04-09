@@ -33,17 +33,17 @@ const AddCustomer_V = () => {
                       width={33}
                       required={true}
                       label='First Name'
-                      labelFor='firstName'
-                      err={client.clientErr.firstName as string}
+                      labelFor='first_name'
+                      err={client.clientErr.first_name as string}
                     >
                       <input
-                        id='firstName'
+                        id='first_name'
                         type='text'
-                        name='firstName'
+                        name='first_name'
                         maxLength={20}
                         autoComplete='off'
                         placeholder='Jose Protacio'
-                        value={client.clientObj.firstName}
+                        value={client.clientObj.first_name}
                         onKeyUp={handleBlur}
                         onChange={handleChange}
                       />
@@ -53,17 +53,17 @@ const AddCustomer_V = () => {
                       width={33}
                       required={true}
                       label='Middle Name'
-                      labelFor='middleName'
-                      err={client.clientErr.middleName as string}
+                      labelFor='middle_name'
+                      err={client.clientErr.middle_name as string}
                     >
                       <input
-                        id='middleName'
+                        id='middle_name'
                         type='text'
-                        name='middleName'
+                        name='middle_name'
                         maxLength={20}
                         autoComplete='off'
                         placeholder='Realonda'
-                        value={client.clientObj.middleName}
+                        value={client.clientObj.middle_name}
                         onKeyUp={handleBlur}
                         onChange={handleChange}
                       />
@@ -73,17 +73,17 @@ const AddCustomer_V = () => {
                       width={33}
                       required={true}
                       label='Last Name'
-                      labelFor='lastName'
-                      err={client.clientErr.lastName as string}
+                      labelFor='last_name'
+                      err={client.clientErr.last_name as string}
                     >
                       <input
-                        id='lastName'
+                        id='last_name'
                         type='text'
-                        name='lastName'
+                        name='last_name'
                         maxLength={20}
                         autoComplete='off'
                         placeholder='Rizal'
-                        value={client.clientObj.lastName}
+                        value={client.clientObj.last_name}
                         onKeyUp={handleBlur}
                         onChange={handleChange}
                       />
@@ -185,18 +185,18 @@ const AddCustomer_V = () => {
                       scss={scss}
                       width={40}
                       label='Substreet'
-                      labelFor='substreet'
-                      err={client.clientErr.substreet as string}
+                      labelFor='sub_street'
+                      err={client.clientErr.sub_street as string}
                     >
                       <input
-                        id='substreet'
+                        id='sub_street'
                         type='text'
-                        name='substreet'
+                        name='sub_street'
                         maxLength={30}
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.substreet}
+                        value={client.clientObj.sub_street}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -275,18 +275,18 @@ const AddCustomer_V = () => {
                       scss={scss}
                       width={20}
                       label='Zip Code'
-                      labelFor='zipcode'
-                      err={client.clientErr.zipcode as string}
+                      labelFor='zip_code'
+                      err={client.clientErr.zip_code as string}
                     >
                       <input
-                        id='zipcode'
+                        id='zip_code'
                         type='text'
-                        name='zipcode'
+                        name='zip_code'
                         maxLength={30}
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.zipcode}
+                        value={client.clientObj.zip_code}
                       />
                     </CustomContainer>
                   </div>

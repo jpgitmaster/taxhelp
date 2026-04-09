@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import Link from 'next/link'
 import Image from 'next/image'
 import type { MenuProps } from 'antd'
@@ -10,8 +11,6 @@ import Loader from '@/components/reusables/RotatingLoader'
 import useDocuments from '@/controllers/documents/useDocuments'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
-import dayjs from 'dayjs'
-
 
 const Documents_V = () => {
   const {
@@ -38,7 +37,7 @@ const Documents_V = () => {
 		{
 			key: '1',
 			label: (
-			<Link href={``} className={scss.actionItem}>
+			<Link href={'/bookkeeper/sales'} className={scss.actionItem}>
 				Sales
 			</Link>
 			),
@@ -46,39 +45,39 @@ const Documents_V = () => {
 		{
 			key: '2',
 			label: (
-			<Link href={''} className={scss.actionItem}>
+			<Link href={'/bookkeeper/purchases'} className={scss.actionItem}>
 				Purchases
 			</Link>
 			),
 		},
     {
-			key: '2',
+			key: '3',
 			label: (
-			<Link href={''} className={scss.actionItem}>
+			<Link href={'/bookkeeper/receipts'} className={scss.actionItem}>
 				Receipts
 			</Link>
 			),
 		},
     {
-			key: '2',
+			key: '4',
 			label: (
-			<Link href={''} className={scss.actionItem}>
+			<Link href={'/bookkeeper/disbursements'} className={scss.actionItem}>
 				Disbursements
 			</Link>
 			),
 		},
     {
-			key: '2',
+			key: '5',
 			label: (
-			<Link href={''} className={scss.actionItem}>
+			<Link href={'/bookkeeper/general_journal'} className={scss.actionItem}>
 				General Journal
 			</Link>
 			),
 		},
     {
-			key: '2',
+			key: '6',
 			label: (
-			<Link href={''} className={scss.actionItem}>
+			<Link href={'/bookkeeper/book_of_accounts'} className={scss.actionItem}>
 				Book of Accounts
 			</Link>
 			),
@@ -102,7 +101,7 @@ const Documents_V = () => {
 			),
 		},
     {
-			key: '2',
+			key: '3',
 			label: (
 			<Link href={'/bookkeeper/receipts'} className={scss.actionItem}>
 				Receipts
@@ -110,7 +109,7 @@ const Documents_V = () => {
 			),
 		},
     {
-			key: '2',
+			key: '4',
 			label: (
 			<Link href={'/bookkeeper/disbursements'} className={scss.actionItem}>
 				Disbursements
@@ -118,7 +117,7 @@ const Documents_V = () => {
 			),
 		},
     {
-			key: '2',
+			key: '5',
 			label: (
 			<Link href={'/bookkeeper/general_journal'} className={scss.actionItem}>
 				General Journal
@@ -126,7 +125,7 @@ const Documents_V = () => {
 			),
 		},
     {
-			key: '2',
+			key: '6',
 			label: (
 			<Link href={'/bookkeeper/book_of_accounts'} className={scss.actionItem}>
 				Book of Accounts
@@ -268,9 +267,12 @@ const Documents_V = () => {
           />
         </div>
         <div className={scss.pagination}>
-          <div className={scss.total_records}>
-            {doc.totalDocs ?(' Total Document'+ (doc.totalDocs > 1 ? 's' : '')) : ''}: <strong>{doc.totalDocs}</strong>
-          </div>
+          {
+            doc.totalDocs != 0 &&
+            <div className={scss.total_records}>
+              {'Total Document'+ (doc.totalDocs > 1 ? 's' : '')}: <strong>{doc.totalDocs}</strong>
+            </div>
+          }
           <div className={scss.paginationComponent}>
             {
               doc.totalDocs ? <Pagination defaultPageSize={filter.recordsLimit} total={doc.totalDocs} onChange={handlePageChange} />

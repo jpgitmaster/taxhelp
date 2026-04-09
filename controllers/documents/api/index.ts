@@ -4,7 +4,7 @@ import { initDoc } from '../states'
 import { useRouter } from 'next/router'
 import api from '@/components/reusables/axios'
 import { Status } from '@/controllers/global/types'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { initFilter, initStatus } from '@/controllers/global/states'
 
 const useDocumentAPI = () => {

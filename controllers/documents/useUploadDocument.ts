@@ -2,6 +2,7 @@ import * as XLSX from 'xlsx';
 import useDocumentAPI from './api';
 import { ExcelRow } from "./types";
 import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
+import useClients from '../clients/useClients';
 
 const useUploadDocuments = () => {
     const {
@@ -10,27 +11,45 @@ const useUploadDocuments = () => {
         setStatus,
         uploadDocumentMutation
     } = useDocumentAPI()
+    const {
+        client
+    } = useClients()
+    const { clientArr } = client
     const [width_, setWidth] = useState(0)
     const [file, setFile] = useState<File | null>(null)
+    const [displayClients, setDisplayClients] = useState(false)
+    const [displayDocsTbl, setDisplayDocsTbl] = useState(false)
     const [rows, setRows] = useState<(ExcelRow & { id: number })[]>([])
-    const [doc, setDoc] = useState({
-        clientID: null,
-        selectedTable: ''
-    })
-    const clients = [
-        {
-            id: 1,
-            name: 'RB ACCOUNTING OFFICE',
-        },
-        {
-            id: 2,
-            name: 'VALCITY VIRTUAL OFFICE',
-        },
-        {
-            id: 3,
-            name: 'QCITY VIRTUAL OFFICE'
+    const [doc, setDoc] = useState<{
+        search: string
+        selectedTable: string
+        client: {
+            id: number | null,
+            registered_name: string
         }
-    ]
+    }>({
+        search: '',
+        client: {
+            id: null,
+            registered_name: ''
+        },
+        selectedTable: 'SALES'
+    })
+    
+    // [
+    //     {
+    //         id: 1,
+    //         name: 'RB ACCOUNTING OFFICE',
+    //     },
+    //     {
+    //         id: 2,
+    //         name: 'VALCITY VIRTUAL OFFICE',
+    //     },
+    //     {
+    //         id: 3,
+    //         name: 'QCITY VIRTUAL OFFICE'
+    //     }
+    // ]
 
     const getColumns = () => {
         if(doc.selectedTable === 'SALES') {
@@ -72,8 +91,19 @@ const useUploadDocuments = () => {
             ]
         }
     }
-
-    const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const handleSelectTable = (selectedTable: string) => {
+        setDoc({
+            ...doc,
+            selectedTable: selectedTable
+        })
+    }
+    const handleSelectClient = (client: { id: number, registered_name: string }) => {
+        setDoc({
+            ...doc,
+            client: client
+        })
+    }
+    const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target
         setDoc({
             ...doc,
@@ -81,6 +111,15 @@ const useUploadDocuments = () => {
         })
     }
 
+    const handleToggle = (dropdown: string) => {
+        if(dropdown === 'clients'){
+            setDisplayClients(prevState => !prevState)
+        }
+        if(dropdown === 'docs_table'){
+            setDisplayDocsTbl(prevState => !prevState)
+        }
+    }
+    
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const f = e.target.files?.[0]
         if (!f) return
@@ -177,7 +216,7 @@ const useUploadDocuments = () => {
     const handleUpload = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         setStatus({...status, loader: true})
-        if (!file || !doc.clientID) {
+        if (!file || !doc.client.id) {
             alert('Missing file or client')
             return
         }
@@ -185,7 +224,7 @@ const useUploadDocuments = () => {
         // 👇 TypeScript now knows these are NOT null
         uploadDocumentMutation.mutate({
             file,
-            clientId: doc.clientID,
+            clientId: doc.client.id,
         })
     };
 
@@ -289,10 +328,14 @@ const useUploadDocuments = () => {
         rows,
         status,
         width_,
-        clients,
+        clientArr,
+        displayDocsTbl,
+        displayClients,
 
         // SET STATES
         setRows,
+        setDisplayClients,
+        setDisplayDocsTbl,
 
         getColumns,
         
@@ -300,6 +343,9 @@ const useUploadDocuments = () => {
         handleUpload,
         handleChange,
         handleFileChange,
+        handleSelectTable,
+        handleSelectClient,
+        handleToggle
     }
 }
 

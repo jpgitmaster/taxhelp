@@ -7,7 +7,7 @@ import { initLinks } from '@/controllers/layouts/states/cms_states'
 
 const useMaster = () => {
     const {
-        getUser,
+        useGetUser,
         handleUserLogout
     } = useUserAPI()
     const pathname = usePathname()
@@ -18,7 +18,7 @@ const useMaster = () => {
     
     const { data: user } = useQuery({
         queryKey: ['user'],
-        queryFn: getUser,
+        queryFn: useGetUser,
         retry: 1,
         staleTime: 1000 * 60 * 5, // 5 minutes
     });

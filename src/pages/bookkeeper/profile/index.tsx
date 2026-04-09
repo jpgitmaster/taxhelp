@@ -148,13 +148,8 @@ const Profile_V = () => {
 }
 export const getServerSideProps: GetServerSideProps<PageProps> = async (context: GetServerSidePropsContext) => {
   const session = await getSession(context) as Session
-  if (!session?.user) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    }
+  if (!session?.user?.id || !session.user.email) {
+    return { redirect: { destination: '/', permanent: false } };
   }
 
   return {

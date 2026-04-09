@@ -24,6 +24,7 @@
       }
       img{
         @apply w-12 mr-2.5;
+        filter: invert(73%) sepia(24%) saturate(13%) hue-rotate(344deg) brightness(106%) contrast(95%);
       }
       &:hover, &.checked{
         border-color: $lightBlue;

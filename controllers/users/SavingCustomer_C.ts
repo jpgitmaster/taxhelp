@@ -9,19 +9,23 @@ const SavingCustomer_C = () => {
     } = useGlobal()
     const [client, setClient] = useState({
         clientObj: {
+            tin: '',
             city: '',
             email: '',
             phone: '',
             street: '',
-            zipcode: '',
+            zip_code: '',
             district: '',
             barangay: '',
-            lastName: '',
-            substreet: '',
-            firstName: '',
-            middleName: '',
+            last_name: '',
+            sub_street: '',
+            first_name: '',
+            middle_name: '',
+            branch_code: '',
             companyName: '',
+            classification: '',
             corporateEmail: '',
+            registered_name: ''
             
         },
         clientErr: {
@@ -29,13 +33,14 @@ const SavingCustomer_C = () => {
             email: '',
             phone: '',
             street: '',
-            zipcode: '',
+            zip_code: '',
             district: '',
             barangay: '',
-            lastName: '',
-            substreet: '',
-            firstName: '',
-            middleName: '',
+            last_name: '',
+            sub_street: '',
+            first_name: '',
+            branch_code: '',
+            middle_name: '',
             companyName: '',
             corporateEmail: '',
         }

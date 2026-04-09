@@ -4,8 +4,8 @@ import { useRouter } from 'next/router'
 import { User, UserObj } from '../types'
 import api from '@/components/reusables/axios'
 import { initUser } from '../states/initUsers'
-import { signIn, signOut } from 'next-auth/react'
 import { Status } from '@/controllers/global/types'
+import { getSession, signIn, signOut } from 'next-auth/react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { initStatus, initFilter } from '@/controllers/global/states'
 
@@ -77,7 +77,7 @@ const useUserAPI = () => {
                 id: id,
                 email: email,
                 redirect: false,
-                refresh_token: refresh_token,
+                refreshToken: refresh_token,
                 accessTokenExpires: Number(expires_in),
                 tokenType: token_type,
                 accessToken: access_token,
@@ -120,44 +120,43 @@ const useUserAPI = () => {
     // VERIFY USER THROUGH EMAIL NOTIF
     const verifyUserMutation = useMutation({
         mutationFn: async (token: string) => {
-            const res = await api.post(`/api/${apiVersion}/auth/verify-email`, {
-            token,
-            });
+            const res = await api.post(`/api/${apiVersion}/auth/verify-email`, { token });
             return res.data;
         },
+
         onSuccess: async (res) => {
-            const {
+            const { id, email, token_type, access_token, expires_in, refresh_token } = res;
+
+            try {
+            // Step 1: Sign in via NextAuth credentials provider
+            const result = await signIn('credentials', {
                 id,
                 email,
-                token_type,
-                access_token,
-                expires_in,
-                refresh_token,
-            } = res;
-            await signIn('credentials', {
-                id,
-                email,
-                redirect: false,
-                refresh_token,
-                accessTokenExpires: Number(expires_in),
                 tokenType: token_type,
                 accessToken: access_token,
-            });
-            // ⚡ DO NOT await
-            signIn('credentials', {
-                id,
-                email,
-                redirect: false,
-                refresh_token,
+                refreshToken: refresh_token,
                 accessTokenExpires: Number(expires_in),
-                tokenType: token_type,
-                accessToken: access_token,
+                redirect: false,
             });
 
+            if (!result?.ok) {
+                console.error('Sign-in failed', result);
+                return;
+            }
+
+            // Step 2: Wait for session to be available
+            await getSession(); // ensures session is synced
+
+            // Step 3: Redirect AFTER session is ready
             router.replace('/bookkeeper/profile');
+            } catch (err) {
+            console.error('Email verification flow error:', err);
+            }
         },
+
         onError: (error) => {
-            console.log('error', error);
+            console.error('Verification API error:', error);
+            router.replace('/'); // fallback
         },
     });
 
@@ -166,7 +165,7 @@ const useUserAPI = () => {
         return await signOut({redirect: true, callbackUrl: '/'});
     }
     
-    const getUser = async () => {
+    const useGetUser = async () => {
         try {
             const res = await api({
                 method: 'GET',
@@ -195,7 +194,7 @@ const useUserAPI = () => {
         setStatus,
 
         // QUERIES
-        getUser,
+        useGetUser,
 
         // MUTATION
         loginUserMutation,

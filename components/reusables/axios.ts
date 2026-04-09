@@ -85,7 +85,7 @@ api.interceptors.response.use(
 
       console.log("Unauthorized → signing out");
 
-      await signOut({ callbackUrl: '/' });
+      // await signOut({ callbackUrl: '/' });
     }
 
     return Promise.reject(error);

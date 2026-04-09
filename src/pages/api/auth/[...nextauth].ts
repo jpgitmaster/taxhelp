@@ -20,7 +20,7 @@ export default NextAuth({
             email,
             tokenType,
             accessToken,
-            refresh_token,
+            refreshToken,
             accessTokenExpires,
           } = credentials as {
             id:  number
@@ -28,14 +28,15 @@ export default NextAuth({
             password: string
             tokenType: string
             accessToken: string
-            refresh_token: string
+            refreshToken: string
             accessTokenExpires: number
           }
           const userDetails = {
             id: String(id),
+            email: email,
             tokenType: tokenType,
             accessToken: accessToken,
-            refreshToken: refresh_token,
+            refreshToken: refreshToken,
             accessTokenExpires: Number(accessTokenExpires),
           }
           
@@ -66,6 +67,9 @@ export default NextAuth({
   callbacks: {
     jwt: async ({ token, user }) => {
       if (user && user.accessToken) {
+        token.id = user.id;
+        token.email = user.email;
+        token.tokenType = user.tokenType;
         token.accessToken = user.accessToken;
         token.accessTokenExpires = Date.now() + Number(user.accessTokenExpires) * 1000;
         token.refreshToken = user.refreshToken;
@@ -107,6 +111,11 @@ export default NextAuth({
     },
     session: ({ session, token }) => {
       if (token) {
+        session.user = {
+          id: token.id ?? "",      // fallback to empty string
+          email: token.email ?? "", // fallback to empty string
+          name: session.user?.name ?? null
+        };
         session.tokenType = token.tokenType;
         session.accessToken = token.accessToken;
         session.refreshToken = token.refreshToken;

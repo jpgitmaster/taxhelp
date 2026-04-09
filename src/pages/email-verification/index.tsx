@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import useUserAPI from "@/controllers/users/api";
@@ -10,8 +9,10 @@ const EmailVerification = () => {
 
     useEffect(() => {
       if (typeof token !== 'string') return;
+
       router.prefetch('/bookkeeper/profile');
-      verifyUserMutation.mutate(token);
+
+      verifyUserMutation.mutate(token); // ✅ NO onSuccess here
     }, [token]);
     return (
         <div>

@@ -2,12 +2,15 @@ import { DefaultJWT } from 'next-auth/jwt'
 import { DefaultSession } from 'next-auth'
 declare module 'next-auth' {
   interface Session extends DefaultSession {
-    id?: number
-    error?: string
+    user: {
+      id: string  // ✅ ID should be inside `user`
+      email?: string | null
+      name?: string | null
+    } & DefaultSession["user"]
     tokenType?: string
     accessToken?: string
     refreshToken?: string
-    // Add any other custom properties you want to expose on the session
+    error?: string
   }
   interface User extends DefaultUser {
     tokenType?: string
@@ -19,6 +22,7 @@ declare module 'next-auth' {
 
 declare module 'next-auth/jwt' {
   interface JWT extends DefaultJWT {
+    id?: string
     error?: string
     tokenType?: string
     accessToken?: string // Add your custom properties here

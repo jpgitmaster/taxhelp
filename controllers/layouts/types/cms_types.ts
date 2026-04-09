@@ -3,14 +3,8 @@ interface MastertProps {
     children: ReactNode
 }
 interface SessionUser{
-  id: number
+  id: string
   email: string
-  lastName: string
-  firstName: string
-  role: {
-    name: string
-    color: string
-  }
 }
 interface NavLink {
   url: string
