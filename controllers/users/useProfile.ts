@@ -19,7 +19,7 @@ const useProfile = () => {
         setUser,
         setStatus,
 
-        getUser,
+        useGetUser,
         editProfileMutation,
     } = useUserAPI()
     const fieldValidations = {
@@ -29,7 +29,7 @@ const useProfile = () => {
     
     const { data:fetchUser } = useQuery({
         queryKey: ['user'],
-        queryFn: getUser,
+        queryFn: useGetUser,
         retry: 1,
         staleTime: 1000 * 60 * 5, // 5 minutes
     });
