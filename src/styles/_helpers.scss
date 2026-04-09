@@ -18,8 +18,14 @@
         &.w50{
             width: calc((100% - 10px) / 2);
         }
+        &.w60 {
+            width: calc((70% - 10px));
+        }
         &.w70 {
             width: calc((70% - 10px));
+        }
+        &.w80 {
+            width: calc((80% - 10px));
         }
         &.w75 {
             width: calc((75% - 10px));

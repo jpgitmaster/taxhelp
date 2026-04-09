@@ -29,10 +29,10 @@ const UploadNewDocument_V = () => {
         
         handleUpload,
         handleChange,
+        handleToggle,
         handleFileChange,
         handleSelectTable,
         handleSelectClient,
-        handleToggle
     } = useUploadDocuments()
     const { loader } = status
     return (

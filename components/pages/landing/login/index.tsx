@@ -17,6 +17,7 @@ const Login_V = ({ toggleModal }: PropsDefinition) => {
 
         handleBlur,
         handleChange,
+        handleResubmit,
         handleUserLogin
     } = useLogin()
     const { loader } = status
@@ -81,8 +82,8 @@ const Login_V = ({ toggleModal }: PropsDefinition) => {
                 </button>
             </CustomContainer>
             <div className={scss.card+' '+scss.w20}>
-                <button type='submit' className={`${scss.button} ${scss.btnblue}`}>
-                Login
+                <button type='submit' className={`${scss.button} ${scss.btnblue}`} onKeyDown={handleResubmit}>
+                    Login
                 </button>
             </div>
             </div>

@@ -49,16 +49,6 @@ const useUserAPI = () => {
         },
         onError: (error: any) => {
             console.log(error)
-
-            const message = error?.response?.data?.message
-            if (Array.isArray(message)) {
-                setUser((prevUser) => ({
-                    ...prevUser,
-                    userErr: Object.fromEntries(
-                        message.map(({ field, message }: any) => [field, message])
-                    )
-                }))
-            }
         }
     })
 
@@ -125,7 +115,7 @@ const useUserAPI = () => {
         },
 
         onSuccess: async (res) => {
-            const { id, email, token_type, access_token, expires_in, refresh_token } = res;
+            const { id, email, token_type, access_token, expires_in, refresh_token } = res.data;
 
             try {
             // Step 1: Sign in via NextAuth credentials provider

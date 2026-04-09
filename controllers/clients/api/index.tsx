@@ -1,13 +1,15 @@
 
 import { useState } from 'react'
-import { Client } from '../types'
 import { initClient } from '../states'
+import { useRouter } from 'next/router'
+import { Client, ClientObj } from '../types'
 import api from '@/components/reusables/axios'
 import { Status } from '@/controllers/global/types'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { initStatus, initFilter } from '@/controllers/global/states'
 
 const useClientAPI = () => {
+    const router = useRouter()
     const [filter, setFilter] = useState(initFilter)
     const [client, setClient] = useState<Client>(initClient)
     const [status, setStatus] = useState<Status>(initStatus)
@@ -43,6 +45,37 @@ const useClientAPI = () => {
         })
     }
     
+    const useCreateClient = useMutation({
+        mutationFn: async (client: ClientObj) => {
+            const res = await api.post(`/api/${apiVersion}/clients`, {
+                tin: client.tin,
+                city: client.city,
+                street: client.street,
+                fiscal: client.fiscal,
+                zip_code: client.zip_code,
+                district: client.district,
+                barangay: client.barangay,
+                last_name: client.last_name,
+                first_name: client.first_name,
+                sub_street: client.sub_street,
+                middle_name: client.middle_name,
+                branch_code: client.branch_code,
+                classification: client.classification,
+                registered_name: client.registered_name
+            })
+            return res.data
+        },
+        onSuccess: () => {
+            sessionStorage.setItem(
+                'successMessage',
+                'Your client has been created.'
+            )
+            router.push('/bookkeeper/clients')
+        },
+        onError: (error: any) => {
+            console.log(error)
+        }
+    })
     return {
         //STATES
         client,
@@ -59,6 +92,7 @@ const useClientAPI = () => {
         useGetClients,
 
         // MUTATION
+        useCreateClient,
 
         //HANDLES
     }

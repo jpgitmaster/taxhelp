@@ -4,13 +4,15 @@ const useClients = () => {
     const {
         client,
         filter,
+        status,
 
         setClient,
+        setStatus,
 
         useGetClients
     } = useClientAPI()
-
-    const { data } = useGetClients(
+    const [tableWidth, setTableWidth] = useState(0)
+    const { data, isLoading, isFetching } = useGetClients(
         filter.currentPage,
         filter.recordsLimit,
         filter.filter,
@@ -29,9 +31,33 @@ const useClients = () => {
         }
     }, [data])
 
+    useEffect(() => {
+        if(typeof window !== 'undefined'){
+            setTableWidth(window.innerWidth - 240)
+        }
+
+        const successMessage = sessionStorage.getItem('successMessage');
+        if (successMessage) {
+            setStatus(prev => ({
+                ...prev,
+                message: successMessage
+            }))
+
+            setTimeout(() => {
+                setStatus(prev => ({
+                    ...prev,
+                    message: ''
+                }))
+                sessionStorage.removeItem('successMessage')
+            }, 5000)
+        }
+    },[])
     return {
         // STATES
-        client
+        client,
+        status,
+        tableWidth,
+        loader: isLoading || isFetching,
 
         // SET STATES
         

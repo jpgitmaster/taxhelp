@@ -35,21 +35,6 @@ const useUploadDocuments = () => {
         },
         selectedTable: 'SALES'
     })
-    
-    // [
-    //     {
-    //         id: 1,
-    //         name: 'RB ACCOUNTING OFFICE',
-    //     },
-    //     {
-    //         id: 2,
-    //         name: 'VALCITY VIRTUAL OFFICE',
-    //     },
-    //     {
-    //         id: 3,
-    //         name: 'QCITY VIRTUAL OFFICE'
-    //     }
-    // ]
 
     const getColumns = () => {
         if(doc.selectedTable === 'SALES') {
@@ -221,7 +206,6 @@ const useUploadDocuments = () => {
             return
         }
 
-        // 👇 TypeScript now knows these are NOT null
         uploadDocumentMutation.mutate({
             file,
             clientId: doc.client.id,

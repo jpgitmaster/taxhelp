@@ -1,8 +1,9 @@
 import Image from 'next/image'
-import scss from './styles/Customers.module.scss'
+import scss from './styles/Clients.module.scss'
 import { signOut, getSession } from 'next-auth/react'
+import Loader from '@/components/reusables/RotatingLoader'
 import Avatar from '@/components/reusables/AvatarPlaceholder'
-import SavingCustomer_C from '@/controllers/users/SavingCustomer_C'
+import useAddClient from '@/controllers/clients/useAddClient'
 import CustomContainer from '@/components/reusables/CustomContainer'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
@@ -10,14 +11,19 @@ import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 const AddCustomer_V = () => {
   const {
     client,
+    status,
 
     handleBlur,
-    handleChange
-  } = SavingCustomer_C()
+    handleChange,
+    handleSubmit,
+    handleResubmit,
+  } = useAddClient()
+  const { loader } = status
   return (
-      <form>
+      <form onSubmit={handleSubmit} className={scss.addClient}>
+        { loader && <Loader scss={scss} position='absolute' />}
         <div className={scss.cards}>
-          <div className={scss.card+' '+scss.w50}>
+          <div className={scss.card+' '+scss.w100}>
             <div className={scss.box}>
               <div className={scss.boxTitle}>
                 Representative Details
@@ -26,7 +32,7 @@ const AddCustomer_V = () => {
                 <div className={scss.avatar}>
                   <Avatar color={''} />
                 </div>
-                <div className={scss.avatarDetails}>
+                <div className={scss.representativeDetails}>
                   <div className={scss.cards}>
                     <CustomContainer
                       scss={scss}
@@ -51,14 +57,13 @@ const AddCustomer_V = () => {
                     <CustomContainer
                       scss={scss}
                       width={33}
-                      required={true}
                       label='Middle Name'
                       labelFor='middle_name'
                       err={client.clientErr.middle_name as string}
                     >
                       <input
-                        id='middle_name'
                         type='text'
+                        id='middle_name'
                         name='middle_name'
                         maxLength={20}
                         autoComplete='off'
@@ -122,6 +127,7 @@ const AddCustomer_V = () => {
                         name='phone'
                         maxLength={30}
                         autoComplete='off'
+                        placeholder='(+63)926-123-4567'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
                         value={client.clientObj.phone}
@@ -132,7 +138,7 @@ const AddCustomer_V = () => {
               </div>
             </div>
           </div>
-          <div className={scss.card+' '+scss.w50}>
+          <div className={scss.card+' '+scss.w100}>
             <div className={scss.box}>
               <div className={scss.boxTitle}>
                 Company Details
@@ -141,44 +147,123 @@ const AddCustomer_V = () => {
                 <div className={scss.avatar}>
                   <Image src='/svgs/building.svg' alt='Company' priority width={20} height={20} unoptimized={true} />
                 </div>
-                <div className={scss.avatarDetails}>
+                <div className={scss.companyDetails}>
                   <div className={scss.cards}>
                     <CustomContainer
                       scss={scss}
-                      width={100}
+                      width={80}
                       required={true}
                       label='Company Name'
-                      labelFor='companyName'
-                      err={client.clientErr.companyName as string}
+                      labelFor='registered_name'
+                      err={client.clientErr.registered_name as string}
                     >
                       <input
-                        id='companyName'
+                        id='registered_name'
                         type='text'
-                        name='companyName'
+                        name='registered_name'
                         maxLength={100}
                         autoComplete='off'
-                        value={client.clientObj.companyName}
+                        value={client.clientObj.registered_name}
                         onKeyUp={handleBlur}
                         onChange={handleChange}
                       />
                     </CustomContainer>
                     <CustomContainer
                       scss={scss}
-                      width={100}
+                      width={20}
                       required={true}
-                      label='Corporate Email'
-                      labelFor='corporateEmail'
-                      err={client.clientErr.corporateEmail as string}
+                      label='Fiscal'
+                      labelFor='fiscal'
+                      err={client.clientErr.fiscal as string}
                     >
                       <input
-                        id='corporateEmail'
+                        id='fiscal'
                         type='text'
-                        name='corporateEmail'
+                        name='fiscal'
+                        maxLength={2}
+                        autoComplete='off'
+                        value={client.clientObj.fiscal}
+                        onKeyUp={handleBlur}
+                        onChange={handleChange}
+                      />
+                    </CustomContainer>
+                    <CustomContainer
+                      scss={scss}
+                      width={20}
+                      required={true}
+                      label='Branch Code'
+                      labelFor='branch_code'
+                      err={client.clientErr.branch_code as string}
+                    >
+                      <input
+                        type='text'
+                        maxLength={3}
+                        id='branch_code'
+                        placeholder='000'
+                        autoComplete='off'
+                        name='branch_code'
+                        onKeyUp={handleBlur}
+                        onChange={handleChange}
+                        
+                        value={client.clientObj.branch_code}
+                      />
+                    </CustomContainer>
+                    <CustomContainer
+                      scss={scss}
+                      width={40}
+                      required={true}
+                      label='TIN No.'
+                      labelFor='tin'
+                      err={client.clientErr.tin as string}
+                    >
+                      <input
+                        id='tin'
+                        type='text'
+                        name='tin'
                         maxLength={30}
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.corporateEmail}
+                        placeholder="000-000-000-000"
+                        value={client.clientObj.tin}
+                      />
+                    </CustomContainer>
+                    <CustomContainer
+                      scss={scss}
+                      width={40}
+                      required={true}
+                      label='Corporate Email'
+                      labelFor='corporate_email'
+                      err={client.clientErr.corporate_email as string}
+                    >
+                      <input
+                        type='text'
+                        maxLength={30}
+                        autoComplete='off'
+                        id='corporate_email'
+                        name='corporate_email'
+                        placeholder='yourname@yourcompany.com'
+                        onKeyUp={handleBlur}
+                        onChange={handleChange}
+                        value={client.clientObj.corporate_email}
+                      />
+                    </CustomContainer>
+                    <CustomContainer
+                      scss={scss}
+                      width={20}
+                      label='Barangay'
+                      labelFor='barangay'
+                      err={client.clientErr.barangay as string}
+                    >
+                      <input
+                        id='barangay'
+                        type='text'
+                        name='barangay'
+                        maxLength={30}
+                        autoComplete='off'
+                        onKeyUp={handleBlur}
+                        onChange={handleChange}
+                        value={client.clientObj.barangay}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -215,24 +300,6 @@ const AddCustomer_V = () => {
                         onKeyUp={handleBlur}
                         onChange={handleChange}
                         value={client.clientObj.street}
-                      />
-                    </CustomContainer>
-                    <CustomContainer
-                      scss={scss}
-                      width={20}
-                      label='Barangay'
-                      labelFor='barangay'
-                      err={client.clientErr.barangay as string}
-                    >
-                      <input
-                        id='barangay'
-                        type='text'
-                        name='barangay'
-                        maxLength={30}
-                        autoComplete='off'
-                        onKeyUp={handleBlur}
-                        onChange={handleChange}
-                        value={client.clientObj.barangay}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -295,7 +362,7 @@ const AddCustomer_V = () => {
             </div>
           </div>
         </div>
-        <button type='button' className={scss.button+' '+scss.btnblue} style={{display: 'block', maxWidth: '300px', margin: '50px auto 0'}}>
+        <button type='submit' className={scss.button+' '+scss.btnblue} style={{display: 'block', maxWidth: '300px', margin: '30px auto'}} onKeyDown={handleResubmit}>
           Add Client
         </button>
       </form>

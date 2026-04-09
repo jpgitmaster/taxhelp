@@ -63,6 +63,7 @@ export default function ClientsDropdown(props: {
         event.stopPropagation();
     };
     const ref = useOutsideClick(handleClickOutside)
+    console.log(clients)
     return (
         <div className={scss.customDropdown} onClick={handleHeaderClick}>
             <div className={scss.dropdownInput} onClick={() => handleToggle('clients')} ref={ref}>

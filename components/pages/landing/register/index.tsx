@@ -34,6 +34,7 @@ const Register_V = ({
 
         handleBlur,
         handleChange,
+        handleResubmit,
         handleRegisterUser,
         handleCheckedRoles,
     } = useRegister()
@@ -187,7 +188,7 @@ const Register_V = ({
                                 />
                             </CustomContainer>
                             <div className={scss.card+' '+scss.w100}>
-                                <button type='submit' className={`${scss.button} ${scss.btnblue}`} disabled={!checkedRoles?.length}>
+                                <button type='submit' className={`${scss.button} ${scss.btnblue}`} disabled={!checkedRoles?.length} onKeyDown={handleResubmit}>
                                     Sign up
                                 </button>
                             </div>

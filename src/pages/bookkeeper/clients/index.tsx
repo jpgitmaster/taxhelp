@@ -1,121 +1,59 @@
+import dayjs from 'dayjs'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Table, Pagination } from 'antd'
-import { useEffect, useState } from 'react'
-import scss from './styles/Customers.module.scss'
+import scss from './styles/Clients.module.scss'
+import type { ColumnsType } from 'antd/es/table'
 import { signOut, getSession } from 'next-auth/react'
+import useClients from '@/controllers/clients/useClients'
+import Loader from '@/components/reusables/RotatingLoader'
+import { ClientTableRow } from '@/controllers/clients/types'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 
 const Customers_V = () => {
-    const [width_, setWidth] = useState(0)
-    useEffect(() => {
-        if(typeof window !== 'undefined'){
-        setWidth(window.innerWidth - 240)
+    const {
+        loader,
+        status,
+        client,
+        tableWidth
+    } = useClients()
+    const { message } = status
+    const { clientArr } = client
+    const dataSource = clientArr?.length ? clientArr.map(client => (
+        {
+            id: client.id,
+            tin: client.tin,
+            fiscal: client.fiscal,
+            created_at: client.created_at ? dayjs(client.created_at).format('MM/DD/YYYY h:mm A') : '',
+            branch_code: client.branch_code,
+            classification: client.classification,
+            registered_name: client.registered_name,
+            name: client.first_name+' '+client.last_name,
+            address: client.barangay+', '+client.street+', '+client.sub_street+', '+client.district+', '+client.city+', '+client.zip_code
         }
-    },[])
-    const dataSource = [
-        {
-            masterlistID: '1',
-            tin: '006807251',
-            name: '',
-            branchCode: '',
-            registeredName: 'SAN MIGUEL BREWERLY INC',
-            registeredAddress: '40 SAN MIGUEL AVE MANDALUYONG CITY',
-        },
-        {
-            masterlistID: '2',
-            tin: '741855060',
-            name: '',
-            branchCode: '',
-            registeredName: 'CD1 DELIVERY SERVICES CORPORATION',
-            registeredAddress: '888 HEROES DEL BRGY 73 CALOOCAN CITY',
-        },
-        {
-            masterlistID: '3',
-            tin: '205412358',
-            name: '',
-            branchCode: '',
-            registeredName: 'LANDMARK SUPERMARKET CITYSUPER INC',
-            registeredAddress: 'EDSA COR MIN AVE EXT PAG ASA QUEZON CITY',
-        },
-        {
-            masterlistID: '4',
-            tin: '211072434',
-            name: '',
-            branchCode: '',
-            registeredName: 'PUMPPRIME ENTERPRISES',
-            registeredAddress: 'SITIO SULOK MINDANAO AVE EXT BRGY UGONG EXIT VALENZUELA CITY',
-        },
-        {
-            masterlistID: '5',
-            tin: '108664829',
-            name: '',
-            branchCode: '',
-            registeredName: 'AEGIS CALTES SERVICE CENTER AND CONVENIENCE STORE',
-            registeredAddress: 'G ARANETA AVE COR NS AMORANTO TALAYAN 1 QUEZON CITY',
-        },
-        {
-            masterlistID: '6',
-            tin: '009192878',
-            name: '',
-            branchCode: '',
-            registeredName: 'WILCON DEPOT INC',
-            registeredAddress: 'L119 C 1 MINDANAO AVE  NEAR QUIRINO HIWAY TALIPAPA NOVALICHES QUEZON CITY',
-        },
-        {
-            masterlistID: '7',
-            tin: '000299299',
-            name: '',
-            branchCode: '',
-            registeredName: 'ABACUS BOOK AND CARD CORP  NATIONAL BOOK STORE',
-            registeredAddress: 'SM CITY FAIRVIEW QUIRINO HIWAY NOVALICHES GREATER LAGRO QUEZON CITY',
-        },
-        {
-            masterlistID: '8',
-            tin: '000299299',
-            name: '',
-            branchCode: '',
-            registeredName: 'ABACUS BOOK AND CARD CORP  NATIONAL BOOK STORE',
-            registeredAddress: '2F UNIT 235 239 SM CITY CALOOCAN DEPARO RD  CORNER SARANAY RD EXIT BRGY 171 CALOOCAN CITY',
-        },
-        {
-            masterlistID: '9',
-            tin: '156466935',
-            name: '',
-            branchCode: '',
-            registeredName: 'ULTIMA SERVICE STATION',
-            registeredAddress: 'MINDANAO AVE COR MWSS RD TALIPAPA NOVALICHES QUEZON CITY',
-        },
-        {
-            masterlistID: '10',
-            tin: '209609185',
-            name: '',
-            branchCode: '',
-            registeredName: 'SUPER SHOPPING MARKET INC',
-            registeredAddress: 'SM HYPERMARKET NOVALICHES  402 QUIRINO HIWAY TALIPAPA NOVALICHES QUEZON CITY',
-        },
-    ];
+    )) : []
 
-    const columns = [
+    const columns: ColumnsType<ClientTableRow> = [
         {
-            title: 'Masterlist ID',
-            dataIndex: 'masterlistID',
-            key: 'masterlistID',
+            title: 'ID',
+            key: 'ud',
+            dataIndex: 'id',
         },
         {
             title: 'TIN',
-            dataIndex: 'tin',
             key: 'tin',
+            dataIndex: 'tin',
         },
         {
             title: 'Branch Code',
-            dataIndex: 'branchCode',
-            key: 'branchCode',
+            key: 'branch_code',
+            dataIndex: 'branch_code',
         },
         {
             title: 'Registered Name',
-            dataIndex: 'registeredName',
-            key: 'registeredName',
+            key: 'registered_name',
+            dataIndex: 'registered_name',
         },
         {
             title: 'Name',
@@ -125,10 +63,43 @@ const Customers_V = () => {
         },
         {
             title: 'Registered Address',
-            dataIndex: 'registeredAddress',
-            key: 'registeredAddress',
+            key: 'address',
+            dataIndex: 'address',
+        },
+        {
+            title: 'Date & Time Created',
+            key: 'created_at',
+            dataIndex: 'created_at',
+        },
+        {
+            width: 100,
+            fixed: 'right',
+            title: 'Actions',
+            align: 'center',
+            render: () =>
+                <div className={scss.actions}>
+                    <div className={scss.action+' '+scss.purchases}>
+                        <Image src='/svgs/eyecon_check.svg' alt='Purchases' priority width={22} height={22} unoptimized={true} />
+                        <span style={{top: '-2px'}}>
+                            View
+                        </span>
+                    </div>
+                    <Link href={''} className={scss.action+' '+scss.edit}>
+                        <Image src='/svgs/edit.svg' alt='Edit' priority width={20} height={20} unoptimized={true} />
+                        <span>
+                            Edit
+                        </span>
+                    </Link>
+                    <Link href={''} className={scss.action+' '+scss.delete}>
+                        <Image src='/svgs/delete.svg' alt='Delete' priority width={18} height={18} unoptimized={true} />
+                        <span>
+                            Delete
+                        </span>
+                    </Link>
+                </div>
         },
     ];
+    
     return (
         <div>
             <div className={scss.header}>
@@ -151,7 +122,43 @@ const Customers_V = () => {
                     </button>
                 </form>
             </div>
-            <div className={scss.tableWrapper} style={{width:width_+'px'}}>
+            {
+                message &&
+                <div className={scss.success}>
+                    <div className={scss.successCheck}>
+                        <svg
+                        version="1.1"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 130.2 130.2"
+                        >
+                        <circle
+                            className={scss.path+' '+scss.circle}
+                            fill="none"
+                            stroke="#000"
+                            strokeWidth="8"
+                            strokeMiterlimit="12"
+                            cx="65.1"
+                            cy="65.1"
+                            r="60.1"
+                        />
+                        <polyline
+                            className={`${scss.path} ${scss.check}`}
+                            fill="none"
+                            stroke="#000"
+                            strokeWidth="8"
+                            strokeLinecap="round"
+                            strokeMiterlimit="12"
+                            points="100.2,40.2 51.5,88.8 29.8,67.5 "
+                        />
+                        </svg>
+                    </div>
+                    <div className={scss.successMessage}>
+                        {message}
+                    </div>
+                </div>
+            }
+            <div className={scss.tableRecords} style={{width:tableWidth+'px'}}>
+                { loader && <Loader scss={scss} position='absolute' />}
                 <Table
                     rowKey='id'
                     columns={columns}
