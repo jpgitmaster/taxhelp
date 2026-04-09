@@ -12,6 +12,7 @@ export default function ClientsDropdown(props: {
         }
     }
     search: string
+    loader: boolean
     clients: ClientObj[]
     displayClients: boolean
     scss: { [key: string]: string }
@@ -27,6 +28,7 @@ export default function ClientsDropdown(props: {
         doc,
         scss,
         search,
+        loader,
         clients,
         displayClients,
         
@@ -63,7 +65,6 @@ export default function ClientsDropdown(props: {
         event.stopPropagation();
     };
     const ref = useOutsideClick(handleClickOutside)
-    console.log(clients)
     return (
         <div className={scss.customDropdown} onClick={handleHeaderClick}>
             <div className={scss.dropdownInput} onClick={() => handleToggle('clients')} ref={ref}>
@@ -98,8 +99,9 @@ export default function ClientsDropdown(props: {
                                 )
                             }
                         </ul>
-                        : <Loader scss={scss} position='absolute' />
+                        : <p className={scss.noClient}>No client found.</p>
                     }
+                    {loader &&  <Loader scss={scss} position='absolute' />}
                 </div>
             }
         </div>

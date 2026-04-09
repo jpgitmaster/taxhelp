@@ -12,7 +12,8 @@ const useUploadDocuments = () => {
         uploadDocumentMutation
     } = useDocumentAPI()
     const {
-        client
+        client,
+        loader: clientLoader
     } = useClients()
     const { clientArr } = client
     const [width_, setWidth] = useState(0)
@@ -313,6 +314,7 @@ const useUploadDocuments = () => {
         status,
         width_,
         clientArr,
+        clientLoader,
         displayDocsTbl,
         displayClients,
 

@@ -11,12 +11,15 @@ import { ClientTableRow } from '@/controllers/clients/types'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 
-const Customers_V = () => {
+const Clients_V = () => {
     const {
         loader,
+        filter,
         status,
         client,
-        tableWidth
+        tableWidth,
+
+        handlePageChange
     } = useClients()
     const { message } = status
     const { clientArr } = client
@@ -76,15 +79,15 @@ const Customers_V = () => {
             fixed: 'right',
             title: 'Actions',
             align: 'center',
-            render: () =>
+            render: (record: ClientTableRow) =>
                 <div className={scss.actions}>
-                    <div className={scss.action+' '+scss.purchases}>
+                    <Link href={'/bookkeeper/clients/'+record.id} className={scss.action+' '+scss.purchases}>
                         <Image src='/svgs/eyecon_check.svg' alt='Purchases' priority width={22} height={22} unoptimized={true} />
                         <span style={{top: '-2px'}}>
                             View
                         </span>
-                    </div>
-                    <Link href={''} className={scss.action+' '+scss.edit}>
+                    </Link>
+                    <Link href={'/bookkeeper/clients/'+record.id} className={scss.action+' '+scss.edit}>
                         <Image src='/svgs/edit.svg' alt='Edit' priority width={20} height={20} unoptimized={true} />
                         <span>
                             Edit
@@ -167,15 +170,18 @@ const Customers_V = () => {
                     scroll={{ x: 'max-content' }}
                 />
             </div>
-            {/* { loader && <Loader scss={scss} position='fixed' />}*/}
             <div className={scss.pagination}>
-                <div className={scss.total_records}>
-                    Total Users: <strong>{16}</strong>
-                </div>
-                    <div className={scss.paginationComponent}>
-                    <Pagination defaultPageSize={10} total={16}
-                        // onChange={handlePageChange}
-                    />
+                {
+                    client.totalClients != 0 &&
+                    <div className={scss.total_records}>
+                    {'Total Document'+ (client.totalClients > 1 ? 's' : '')}: <strong>{client.totalClients}</strong>
+                    </div>
+                }
+                <div className={scss.paginationComponent}>
+                    {
+                    client.totalClients ? <Pagination defaultPageSize={filter.recordsLimit} total={client.totalClients} onChange={handlePageChange} />
+                    : ''
+                    }
                 </div>
             </div>
             <br />
@@ -198,4 +204,4 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (context:
     props: { session }
   }
 }
-export default Customers_V;
+export default Clients_V;

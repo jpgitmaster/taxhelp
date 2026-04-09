@@ -7,6 +7,7 @@ const useClients = () => {
         status,
 
         setClient,
+        setFilter,
         setStatus,
 
         useGetClients
@@ -19,13 +20,20 @@ const useClients = () => {
         filter.search
     )
 
+    const handlePageChange = (current: number) => {
+        setFilter((prev) => ({
+            ...prev,
+            currentPage: current
+        }))
+    }
+
     useEffect(() => {
         if(data?.data?.length){
             setClient(
                 {
                     ...client,
                     clientArr: data.data,
-                    totalClients: data.totalDocs
+                    totalClients: data.totalClients
                 }
             )
         }
@@ -56,6 +64,7 @@ const useClients = () => {
         // STATES
         client,
         status,
+        filter,
         tableWidth,
         loader: isLoading || isFetching,
 
@@ -63,6 +72,7 @@ const useClients = () => {
         
 
         // HANDLES
+        handlePageChange
         
     }
 }

@@ -38,8 +38,28 @@ const useClientAPI = () => {
 
                 return {
                     data: res.data?.data ?? [],
-                    totalDocs: res.data?.total ?? 0
+                    totalClients: res.data?.total ?? 0
                 }
+            },
+            // placeholderData: (prev) => prev, // 👈 replaces keepPreviousData (see below)
+        })
+    }
+
+    const useGetClient = (
+        id: number
+    ) => {
+        return useQuery({
+            queryKey: ['client', id],
+            queryFn: async () => {
+                const res = await api({
+                    method: 'GET',
+                    url: `/api/${apiVersion}/clients/${id}`
+                })
+                console.log(res)
+                // return {
+                //     data: res.data?.data ?? [],
+                //     totalDocs: res.data?.total ?? 0
+                // }
             },
             // placeholderData: (prev) => prev, // 👈 replaces keepPreviousData (see below)
         })
@@ -89,6 +109,7 @@ const useClientAPI = () => {
         setStatus,
 
         // QUERIES
+        useGetClient,
         useGetClients,
 
         // MUTATION

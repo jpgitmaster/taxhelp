@@ -18,6 +18,7 @@ const UploadNewDocument_V = () => {
         status,
         width_,
         clientArr,
+        clientLoader,
         displayDocsTbl,
         displayClients,
 
@@ -76,6 +77,7 @@ const UploadNewDocument_V = () => {
                                     scss={scss}
                                     clients={clientArr}
                                     search={doc.search}
+                                    loader={clientLoader}
                                     displayClients={displayClients}
 
                                     setDisplayClients={setDisplayClients}
@@ -135,6 +137,7 @@ const UploadNewDocument_V = () => {
                                 scss={scss}
                                 clients={clientArr}
                                 search={doc.search}
+                                loader={clientLoader}
                                 displayClients={displayClients}
 
                                 setDisplayClients={setDisplayClients}

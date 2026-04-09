@@ -162,6 +162,9 @@
         }
       }
     }
+    .noClient{
+      @apply inline-block text-center text-[12px] w-full mt-5;
+    }
   }
 }
 .success {
