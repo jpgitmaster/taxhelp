@@ -1,11 +1,10 @@
-import * as XLSX from 'xlsx';
 import { Dayjs } from 'dayjs';
-import useDatAPI from './api';
+import useFileGeneratorAPI from './api';
 import useClients from '../clients/useClients';
 import { useState, useEffect, ChangeEvent } from "react";
 
 
-const useDatFile = () => {
+const useFileGenerator = () => {
     const {
         client,
         loader: clientLoader
@@ -13,10 +12,13 @@ const useDatFile = () => {
     const {
         filter,
         record,
+
+        setFilter,
         setRecord,
 
-        useGetRecords,
-    } = useDatAPI()
+        useGetSales,
+        useGetPurchases
+    } = useFileGeneratorAPI()
     const { clientArr } = client
     const [tableWidth, setTableWidth] = useState(0)
     const [displayClients, setDisplayClients] = useState(false)
@@ -42,16 +44,31 @@ const useDatFile = () => {
             value: 'SALES',
             label: 'SUMMARY LIST OF SALES (SLS)'
         },
-        period: null
+        period: null,
     })
 
-    const { data, isLoading, isFetching } = useGetRecords(
+    const { data: sales, isLoading: isLoadingSales, isFetching: isFetchingSales } = useGetSales(
         filter.currentPage,
         filter.recordsLimit,
         filter.filter,
         filter.search,
         doc,
     )
+
+    const { data: purchases, isLoading: isLoadingPurchases, isFetching: isFetchingPurchases } = useGetPurchases(
+        filter.currentPage,
+        filter.recordsLimit,
+        filter.filter,
+        filter.search,
+        doc,
+    )
+
+    const handlePageChange = (current: number) => {
+        setFilter((prev) => ({
+            ...prev,
+            currentPage: current
+        }))
+    }
 
     const handleSelectClient = (client: { id: number, registered_name: string }) => {
         setDoc({
@@ -88,17 +105,28 @@ const useDatFile = () => {
     }
 
     useEffect(() => {
-        console.log(data)
-        if(data?.records?.length){
+        if(sales?.records?.length){
             setRecord(
                 {
                     ...record,
-                    recordArr: data.records,
-                    totalRecords: data.totalRecords
+                    recordArr: sales.records,
+                    totalRecords: sales.totalRecords
                 }
             )
         }
-    }, [data])
+    }, [sales])
+
+    useEffect(() => {
+        if(purchases?.records?.length){
+            setRecord(
+                {
+                    ...record,
+                    recordArr: purchases.records,
+                    totalRecords: purchases.totalRecords
+                }
+            )
+        }
+    }, [purchases])
     useEffect(() => {
         if(typeof window !== 'undefined'){
             setTableWidth(window.innerWidth - 240)
@@ -107,13 +135,14 @@ const useDatFile = () => {
     return {
         // STATES
         doc,
+        filter,
         record,
         clientArr,
         tableWidth,
         clientLoader,
         displayClients,
         displayDocsTbl,
-        loader: isLoading || isFetching,
+        loader: isLoadingSales || isFetchingSales || isLoadingPurchases || isFetchingPurchases,
 
         // SET STATES
         setDisplayClients,
@@ -122,10 +151,11 @@ const useDatFile = () => {
         // HANDLES
         handleToggle,
         handleChange,
+        handlePageChange,
         handleDateChange,
         handleSelectTable,
         handleSelectClient,
     }
 }
 
-export default useDatFile;
+export default useFileGenerator;

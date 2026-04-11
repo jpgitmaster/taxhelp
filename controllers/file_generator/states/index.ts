@@ -1,8 +1,16 @@
 const initRecordObj = {
     id: null,
+    terms: '',
+    particulars: '',
     account_name: '',
-    invoice_date: '',
-    taxable_month: '',
+    invoice_date: null,
+    taxable_month: null,
+    business_profile: {
+        tin: '',
+        name: '',
+        branch_code: '',
+        registered_name: ''
+    }
 }
 const initRecord = {
     recordArr: [],

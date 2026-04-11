@@ -24,13 +24,16 @@
     }
 }
 .cards.filters{
-    @apply justify-normal flex-nowrap mt-8;
+    @apply justify-normal flex-nowrap mt-8 mb-1;
     .npt{
       @apply m-0 p-0;
     }
 }
 .tableRecords{
   @apply relative;
+}
+.actionItem{
+  @apply cursor-pointer;
 }
 .customDropdown{
   @apply w-full relative;

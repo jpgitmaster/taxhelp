@@ -2,9 +2,19 @@ import { Dayjs } from "dayjs";
 
 interface Record_Obj{
     id: number | null
+    terms: string
+    particulars: string
     account_name: string
-    invoice_date: Dayjs
-    taxable_month: Dayjs
+    invoice_date: Dayjs | null
+    taxable_month: Dayjs | null
+    business_profile: {
+        tin?: string
+        last_name?: string
+        first_name?: string
+        middle_name?: string
+        branch_code?: string
+        registered_name?: string
+    }
 }
 
 type Record_Err = {

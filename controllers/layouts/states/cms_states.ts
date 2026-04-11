@@ -21,7 +21,7 @@ const initLinks: NavLink[] = [
         active: false,
         key: 'documents',
         name: 'Documents',
-        icon: 'dat_file.svg',
+        icon: 'documents.svg',
         iconWidth: 20,
         url: '/bookkeeper/documents',
     },
@@ -75,11 +75,11 @@ const initLinks: NavLink[] = [
     },
     {
         active: false,
-        key: 'dat_files',
-        name: 'DAT File Generator',
-        icon: 'dat_file.svg',
+        key: 'file_generator',
+        name: 'File Generator',
+        icon: 'file_generator.svg',
         iconWidth: 20,
-        url: '/bookkeeper/dat_files',
+        url: '/bookkeeper/file_generator',
     },
 ]
 export {

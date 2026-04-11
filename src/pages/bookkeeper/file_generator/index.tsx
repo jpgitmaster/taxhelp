@@ -1,21 +1,23 @@
 
+import type { MenuProps } from 'antd'
 import scss from './styles/DatFile.module.scss'
 import type { ColumnsType } from 'antd/es/table'
-import { Table, DatePicker, Pagination } from 'antd'
 import { signOut, getSession } from 'next-auth/react'
-import { Record_Obj } from '@/controllers/dat_file/types'
-import useDatFile from '@/controllers/dat_file/useDatFile'
 import Loader from '@/components/reusables/RotatingLoader'
+import { Table, DatePicker, Pagination, Dropdown } from 'antd'
+import { Record_Obj } from '@/controllers/file_generator/types'
 import CustomContainer from '@/components/reusables/CustomContainer'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
+import useFileGenerator from '@/controllers/file_generator/useFileGenerator'
 import ClientsDropdown from '@/components/pages/bookkeeper/documents/ClientsDropdown'
 import DocumentsTableDropdown from '@/components/pages/bookkeeper/documents/DocumentsTableDropdown'
 import dayjs from 'dayjs'
 
-const Documents_V = () => {
+const FileGenerator_V = () => {
     const {
       doc,
+      filter,
       record,
       loader,
       clientArr,
@@ -29,16 +31,23 @@ const Documents_V = () => {
 
       handleToggle,
       handleChange,
+      handlePageChange,
       handleDateChange,
       handleSelectTable,
       handleSelectClient
-    } = useDatFile()
+    } = useFileGenerator()
+    console.log(record.recordArr)
     const dataSource: Record_Obj[] = record.recordArr?.map(doc => ({
       id: doc.id,
+      terms: doc.terms,
+      particulars: doc.particulars,
       account_name: doc.account_name,
       invoice_date: doc.invoice_date,
-      taxable_month: doc.taxable_month
+      taxable_month: doc.taxable_month,
+      business_profile: doc.business_profile,
+      name: (doc.business_profile?.first_name || '') + ' ' + (doc.business_profile?.middle_name || '') + ' ' + (doc.business_profile?.last_name || ''),
     })) ?? []
+
     const columns: ColumnsType<Record_Obj> = [
       {
         title: 'ID',
@@ -58,11 +67,62 @@ const Documents_V = () => {
         render: (value) => dayjs(value)?.format('M/DD/YYYY'),
       },
       {
+        title: 'TIN Number',
+        key: 'tin',
+        dataIndex: 'business_profile',
+        render: (bp) => bp?.tin,
+      },
+      {
+        title: 'Branch Code',
+        key: 'branch_code',
+        dataIndex: 'business_profile',
+        render: (bp) => bp?.branch_code,
+      },
+      {
+        title: 'Registered Name',
+        key: 'registered_name',
+        dataIndex: 'business_profile',
+        render: (bp) => bp?.registered_name,
+      },
+      {
+        title: 'Name',
+        key: 'name',
+        dataIndex: 'name',
+      },
+      {
+        title: 'Particulars',
+        key: 'particulars',
+        dataIndex: 'particulars',
+      },
+      {
+        title: 'Terms',
+        key: 'terms',
+        dataIndex: 'terms',
+      },
+      {
         title: 'Account Name',
         key: 'account_name',
         dataIndex: 'account_name',
       },
     ]
+    const downloadItems = (): MenuProps['items'] => [
+      {
+        key: '1',
+        label: (
+        <button type='button' className={scss.actionItem}>
+          Download Excel
+        </button>
+        ),
+      },
+      {
+        key: '2',
+        label: (
+        <button type='button' className={scss.actionItem}>
+          Download DAT File
+        </button>
+        ),
+      },
+    ];
     return (
         <div>
             <div className={scss.cards+' '+scss.filters}>
@@ -124,16 +184,16 @@ const Documents_V = () => {
               >
                   <DatePicker picker="month" value={doc.period} onChange={handleDateChange} />
               </CustomContainer>
-              <CustomContainer
-                  scss={scss}
-                  width={25}
-                  required={true}
-                  label='DAT File Generator'
-              >
-                <button className={scss.button+' '+scss.btnorange} disabled={doc.client.id && doc.selectedTable.value && doc.period ? false : true}>
-                    Generate DAT File
-                </button>
-              </CustomContainer>
+                <div className={scss.card+' '+scss.w25}>
+                  <Dropdown 
+                    menu={{ items: downloadItems() }}
+                    placement="bottomRight" trigger={['click']}
+                  >
+                  <button className={scss.button+' '+scss.btnblue} disabled={doc.client.id && doc.selectedTable.value && doc.period ? false : true}>
+                      Download
+                  </button>
+                  </Dropdown>
+              </div>
           </div>
           <div className={scss.tableRecords} style={{width:tableWidth+'px'}}>
             { loader && <Loader scss={scss} position='absolute' />}
@@ -144,6 +204,20 @@ const Documents_V = () => {
                 dataSource={dataSource}
                 scroll={{ x: 'max-content' }}
             />
+          </div>
+          <div className={scss.pagination}>
+            {
+              record.totalRecords != 0 &&
+              <div className={scss.total_records}>
+                {'Total Document'+ (record.totalRecords > 1 ? 's' : '')}: <strong>{record.totalRecords}</strong>
+              </div>
+            }
+            <div className={scss.paginationComponent}>
+              {
+                record.totalRecords ? <Pagination defaultPageSize={filter.recordsLimit} total={record.totalRecords} onChange={handlePageChange} />
+                : ''
+              }
+            </div>
           </div>
         </div>
     )
@@ -164,4 +238,4 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (context:
     props: { session }
   }
 }
-export default Documents_V;
+export default FileGenerator_V;
