@@ -25,11 +25,11 @@ const useDocuments = () => {
         }))
     }
     useEffect(() => {
-        if(data?.data?.length){
+        if(data?.documents?.length){
             setDocument(
                 {
                     ...doc,
-                    docArr: data.data,
+                    docArr: data.documents,
                     totalDocs: data.totalDocs
                 }
             )

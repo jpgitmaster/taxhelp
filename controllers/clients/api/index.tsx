@@ -39,7 +39,7 @@ const useClientAPI = () => {
                 })
 
                 return {
-                    data: res.data?.clients ?? [],
+                    clients: res.data?.clients ?? [],
                     totalClients: res.data?.total ?? 0
                 }
             },

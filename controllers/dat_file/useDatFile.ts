@@ -1,13 +1,24 @@
 import * as XLSX from 'xlsx';
+import { Dayjs } from 'dayjs';
+import useDatAPI from './api';
 import useClients from '../clients/useClients';
-import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
+
 
 const useDatFile = () => {
     const {
         client,
         loader: clientLoader
     } = useClients()
+    const {
+        filter,
+        record,
+        setRecord,
+
+        useGetRecords,
+    } = useDatAPI()
     const { clientArr } = client
+    const [tableWidth, setTableWidth] = useState(0)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayDocsTbl, setDisplayDocsTbl] = useState(false)
     const [doc, setDoc] = useState<{
@@ -19,7 +30,8 @@ const useDatFile = () => {
         client: {
             id: number | null,
             registered_name: string
-        }
+        },
+        period: Dayjs | null
     }>({
         search: '',
         client: {
@@ -29,8 +41,18 @@ const useDatFile = () => {
         selectedTable: {
             value: 'SALES',
             label: 'SUMMARY LIST OF SALES (SLS)'
-        }
+        },
+        period: null
     })
+
+    const { data, isLoading, isFetching } = useGetRecords(
+        filter.currentPage,
+        filter.recordsLimit,
+        filter.filter,
+        filter.search,
+        doc,
+    )
+
     const handleSelectClient = (client: { id: number, registered_name: string }) => {
         setDoc({
             ...doc,
@@ -50,7 +72,12 @@ const useDatFile = () => {
             [name]: value
         })
     }
-
+    const handleDateChange = (date: Dayjs | null) => {
+        setDoc(prev => ({
+            ...prev,
+            period: date
+        }))
+    }
     const handleToggle = (dropdown: string) => {
         if(dropdown === 'clients'){
             setDisplayClients(prevState => !prevState)
@@ -59,13 +86,34 @@ const useDatFile = () => {
             setDisplayDocsTbl(prevState => !prevState)
         }
     }
+
+    useEffect(() => {
+        console.log(data)
+        if(data?.records?.length){
+            setRecord(
+                {
+                    ...record,
+                    recordArr: data.records,
+                    totalRecords: data.totalRecords
+                }
+            )
+        }
+    }, [data])
+    useEffect(() => {
+        if(typeof window !== 'undefined'){
+            setTableWidth(window.innerWidth - 240)
+        }
+    },[])
     return {
         // STATES
         doc,
+        record,
         clientArr,
+        tableWidth,
         clientLoader,
         displayClients,
         displayDocsTbl,
+        loader: isLoading || isFetching,
 
         // SET STATES
         setDisplayClients,
@@ -74,8 +122,9 @@ const useDatFile = () => {
         // HANDLES
         handleToggle,
         handleChange,
+        handleDateChange,
+        handleSelectTable,
         handleSelectClient,
-        handleSelectTable
     }
 }
 

@@ -28,11 +28,11 @@ const useClients = () => {
     }
 
     useEffect(() => {
-        if(data?.data?.length){
+        if(data?.clients?.length){
             setClient(
                 {
                     ...client,
-                    clientArr: data.data,
+                    clientArr: data.clients,
                     totalClients: data.totalClients
                 }
             )

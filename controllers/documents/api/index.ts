@@ -36,7 +36,7 @@ const useDocumentAPI = () => {
                 })
                 console.log(res.data)
                 return {
-                    data: res.data?.files ?? [],
+                    documents: res.data?.files ?? [],
                     totalDocs: res.data?.total ?? 0
                 }
             },

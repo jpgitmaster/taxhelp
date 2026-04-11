@@ -23,6 +23,15 @@
         }
     }
 }
+.cards.filters{
+    @apply justify-normal flex-nowrap mt-8;
+    .npt{
+      @apply m-0 p-0;
+    }
+}
+.tableRecords{
+  @apply relative;
+}
 .customDropdown{
   @apply w-full relative;
   .dropdownInput {
