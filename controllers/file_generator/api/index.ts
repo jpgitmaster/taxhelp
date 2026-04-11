@@ -144,11 +144,13 @@ const useFileGeneratorAPI = () => {
                     responseType: 'blob',
                 }
             )
+            const disposition = res.headers['content-disposition']
+            const filename = disposition?.match(/filename="?([^"]+)"?/)?.[1] ?? `sales-${type}`
 
-            return { data: res.data, type }
+            return { data: res.data, type, filename }
         },
 
-        onSuccess: ({ data, type }) => {
+        onSuccess: ({ data, type, filename }) => {
             const config = fileConfig[type] || {
                 mime: 'application/octet-stream',
                 ext: 'dat',
@@ -159,7 +161,7 @@ const useFileGeneratorAPI = () => {
 
             const link = document.createElement('a')
             link.href = url
-            link.download = `sales-${type}.${config.ext}`
+            link.download = filename
 
             document.body.appendChild(link)
             link.click()
@@ -207,11 +209,13 @@ const useFileGeneratorAPI = () => {
                     responseType: 'blob',
                 }
             )
+            const disposition = res.headers['content-disposition']
+            const filename = disposition?.match(/filename="?([^"]+)"?/)?.[1] ?? `purchases-${type}`
 
-            return { data: res.data, type }
+            return { data: res.data, type, filename }
         },
 
-        onSuccess: ({ data, type }) => {
+        onSuccess: ({ data, type, filename }) => {
             const config = fileConfig[type] || {
                 mime: 'application/octet-stream',
                 ext: 'dat',
@@ -222,7 +226,7 @@ const useFileGeneratorAPI = () => {
 
             const link = document.createElement('a')
             link.href = url
-            link.download = `purchases-${type}.${config.ext}`
+            link.download = filename
 
             document.body.appendChild(link)
             link.click()

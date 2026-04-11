@@ -38,11 +38,11 @@ const Clients_V = () => {
     )) : []
 
     const columns: ColumnsType<ClientTableRow> = [
-        {
-            title: 'ID',
-            key: 'ud',
-            dataIndex: 'id',
-        },
+        // {
+        //     title: 'ID',
+        //     key: 'ud',
+        //     dataIndex: 'id',
+        // },
         {
             title: 'TIN',
             key: 'tin',

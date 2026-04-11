@@ -154,6 +154,18 @@ const Documents_V = () => {
       render: (has_purchases: boolean) => has_purchases && <Image src='/svgs/check.svg' alt='Check' unoptimized={true} priority height={20} width={20} className={scss.check} />
     },
     {
+      align: 'center',
+      title: 'Receipts',
+    },
+    {
+      align: 'center',
+      title: 'Importation',
+    },
+    {
+      align: 'center',
+      title: 'Disbursements',
+    },
+    {
       title: 'Uploaded Time & Date',
       key: 'created_at',
       dataIndex: 'created_at',

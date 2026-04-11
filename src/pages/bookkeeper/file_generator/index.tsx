@@ -52,11 +52,11 @@ const FileGenerator_V = () => {
     })) ?? []
 
     const columns: ColumnsType<Record_Obj> = [
-      {
-        title: 'ID',
-        key: 'id',
-        dataIndex: 'id',
-      },
+      // {
+      //   title: 'ID',
+      //   key: 'id',
+      //   dataIndex: 'id',
+      // },
       {
         title: 'Taxable Month',
         key: 'taxable_month',
