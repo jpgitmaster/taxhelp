@@ -94,7 +94,6 @@ const Dashboard_V = () => {
 }
 export const getServerSideProps: GetServerSideProps<PageProps> = async (context: GetServerSidePropsContext) => {
   const session = await getSession(context) as Session
-  console.log(session)
   if (!session?.user) {
     return {
       redirect: {

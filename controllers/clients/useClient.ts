@@ -1,6 +1,5 @@
 import useClientAPI from "./api";
 import { useRouter } from 'next/router';
-import { useState, useEffect } from "react";
 const useClient = () => {
     const {
         client,
@@ -10,18 +9,15 @@ const useClient = () => {
     } = useClientAPI()
     const router = useRouter()
     const { clientID } = router.query
-
-    useEffect(() => {
-        if(clientID){
-            useGetClient(Number(clientID))
-        }
-    }, [clientID])
+    const clientIdNumber = Number(clientID)
+    const { data } = useGetClient(clientIdNumber, {
+        enabled: typeof clientID === 'string',
+    })
 
     return {
         // STATES
-        client,
         status,
-
+        client:data,
         // SET STATES
         
 

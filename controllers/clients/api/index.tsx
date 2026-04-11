@@ -1,13 +1,15 @@
-
 import { useState } from 'react'
 import { initClient } from '../states'
 import { useRouter } from 'next/router'
 import { Client, ClientObj } from '../types'
 import api from '@/components/reusables/axios'
 import { Status } from '@/controllers/global/types'
-import { useMutation, useQuery } from '@tanstack/react-query'
 import { initStatus, initFilter } from '@/controllers/global/states'
-
+import { useMutation, useQuery, UseQueryOptions } from '@tanstack/react-query'
+type UseGetClientOptions = Omit<
+    UseQueryOptions<Client, Error>,
+    'queryKey' | 'queryFn'
+>
 const useClientAPI = () => {
     const router = useRouter()
     const [filter, setFilter] = useState(initFilter)
@@ -37,7 +39,7 @@ const useClientAPI = () => {
                 })
 
                 return {
-                    data: res.data?.data ?? [],
+                    data: res.data?.clients ?? [],
                     totalClients: res.data?.total ?? 0
                 }
             },
@@ -46,22 +48,20 @@ const useClientAPI = () => {
     }
 
     const useGetClient = (
-        id: number
+        id: number,
+        options?: UseGetClientOptions
     ) => {
-        return useQuery({
+        return useQuery<Client, Error>({
             queryKey: ['client', id],
             queryFn: async () => {
                 const res = await api({
                     method: 'GET',
                     url: `/api/${apiVersion}/clients/${id}`
                 })
-                console.log(res)
-                // return {
-                //     data: res.data?.data ?? [],
-                //     totalDocs: res.data?.total ?? 0
-                // }
+
+                return res.data.client as Client
             },
-            // placeholderData: (prev) => prev, // 👈 replaces keepPreviousData (see below)
+            ...options,
         })
     }
     
@@ -76,11 +76,11 @@ const useClientAPI = () => {
                 district: client.district,
                 barangay: client.barangay,
                 last_name: client.last_name,
+                classification: 'INDIVIDUAL',
                 first_name: client.first_name,
                 sub_street: client.sub_street,
                 middle_name: client.middle_name,
                 branch_code: client.branch_code,
-                classification: client.classification,
                 registered_name: client.registered_name
             })
             return res.data

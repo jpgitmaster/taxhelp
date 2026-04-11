@@ -1,9 +1,9 @@
 import useClientAPI from './api'
 import { ClientErr } from './types'
+import { useRouter } from 'next/router';
 import useGlobal from '@/controllers/global/useGlobal'
-import { useState, ChangeEvent, SyntheticEvent} from 'react'
+import { useState, ChangeEvent, SyntheticEvent, useEffect} from 'react'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
-import { initClient } from './states'
 
 const useAddClient = () => {
     const {
@@ -13,6 +13,7 @@ const useAddClient = () => {
         setStatus,
         setClient,
 
+        useGetClient,
         useCreateClient
     } = useClientAPI()
     const {
@@ -20,11 +21,19 @@ const useAddClient = () => {
         handleResubmit,
         handleRemoveErr
     } = useGlobal()
+    const router = useRouter()
+    const { clientID } = router.query
+    const clientIdNumber = Number(clientID)
     
     const fieldValidations = {
         email: { usename: 'Email', required: true, email: true },
         registered_name: { usename: 'Company Name', required: true },
     }
+    
+    const { data } = useGetClient(clientIdNumber, {
+        enabled: !!clientID && !isNaN(clientIdNumber)
+    })
+
     const formatPhoneNumber = (value: string) => {
         // remove all non-digits
         const digits = value.replace(/\D/g, "");
@@ -124,6 +133,19 @@ const useAddClient = () => {
         useCreateClient.mutate(client.clientObj)
     }
 
+    useEffect(() => {
+        if (data && clientID) {
+            const fetchedClient = data
+
+            setClient(prev => ({
+                ...prev,
+                clientObj: {
+                    ...prev.clientObj,
+                    ...fetchedClient
+                }
+            }))
+        }
+    }, [data, clientID])
     return {
         // STATES
         client,

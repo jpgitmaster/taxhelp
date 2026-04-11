@@ -48,7 +48,7 @@ const UploadNewDocument_V = () => {
                         <div className={scss.cards+' '+scss.customCards}>
                             <CustomContainer
                                 scss={scss}
-                                width={20}
+                                width={33}
                                 required={true}
                                 label='Select Table'
                                 className={scss.selectedTable}
@@ -61,14 +61,10 @@ const UploadNewDocument_V = () => {
                                     handleToggle={handleToggle}
                                     handleSelectTable={handleSelectTable}
                                 />
-                                {/* <select name='selectedTable' onChange={handleChange}>
-                                    <option value="SALES">SALES</option>
-                                    <option value="PURCHASES">PURCHASES</option>
-                                </select> */}
                             </CustomContainer>
                             <CustomContainer
                                 scss={scss}
-                                width={30}
+                                width={33}
                                 required={true}
                                 label='Selected Client'
                             >
@@ -146,48 +142,6 @@ const UploadNewDocument_V = () => {
                                 handleSelectClient={handleSelectClient}
                                 handleToggle={handleToggle}
                             />
-                            {/* <div className={scss.customDropdown}>
-                                <div className={scss.dropdownInput} onClick={handleToggle}>
-                                    <div className={scss.arrow +' '+ (displayClients ? scss.open : scss.close)}>
-                                        <Image src='/svgs/arrowDown.svg' alt='Arrow Down Icon' priority width={12} height={12} unoptimized={true} />
-                                    </div>
-                                </div>
-                                {
-                                    displayClients &&
-                                    <div className={scss.dropwdownList}>
-                                        <div className={scss.dropwdownSearch}>
-                                            <div className={scss.searchIcon}>
-                                                <Image src='/svgs/search.svg' alt='Search' priority width={12} height={12} unoptimized={true} />
-                                            </div>
-                                            <input type='text' value={''} />
-                                        </div>
-                                        {
-                                            clientArr?.length &&
-                                            <ul>
-                                                {
-                                                    clientArr?.length ? clientArr?.map(client => client.id &&
-                                                        <li key={client.id} value={client.id}>
-                                                            {client.registered_name}
-                                                        </li>
-                                                    )
-                                                    : ''
-                                                }
-                                            </ul>
-                                        }
-                                    </div>
-                                }
-                            </div> */}
-                            {/* <select name='clientID' onChange={handleChange}>
-                                <option></option>
-                                {
-                                    clientArr?.length ? clientArr?.map(client => client.id &&
-                                        <option key={client.id} value={client.id}>
-                                            {client.registered_name}
-                                        </option>
-                                    )
-                                    : ''
-                                }
-                            </select> */}
                         </CustomContainer>
                     </div>
                     <div className={scss.customFile}>

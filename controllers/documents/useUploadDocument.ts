@@ -1,8 +1,8 @@
 import * as XLSX from 'xlsx';
 import useDocumentAPI from './api';
 import { ExcelRow } from "./types";
-import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
 import useClients from '../clients/useClients';
+import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
 
 const useUploadDocuments = () => {
     const {
@@ -23,7 +23,10 @@ const useUploadDocuments = () => {
     const [rows, setRows] = useState<(ExcelRow & { id: number })[]>([])
     const [doc, setDoc] = useState<{
         search: string
-        selectedTable: string
+        selectedTable: {
+            value: string,
+            label: string
+        }
         client: {
             id: number | null,
             registered_name: string
@@ -34,11 +37,14 @@ const useUploadDocuments = () => {
             id: null,
             registered_name: ''
         },
-        selectedTable: 'SALES'
+        selectedTable: {
+            value: 'SALES',
+            label: 'SUMMARY LIST OF SALES (SLS)'
+        }
     })
 
     const getColumns = () => {
-        if(doc.selectedTable === 'SALES') {
+        if(doc.selectedTable.value === 'SALES') {
             return [
             { key: 'tin', title: 'TIN', dataIndex: 'tin' },
             { key: 'registeredName', title: 'Registered Name', dataIndex: 'registeredName' },
@@ -77,7 +83,10 @@ const useUploadDocuments = () => {
             ]
         }
     }
-    const handleSelectTable = (selectedTable: string) => {
+    const handleSelectTable = (selectedTable: {
+        value: string,
+        label: string
+    }) => {
         setDoc({
             ...doc,
             selectedTable: selectedTable
@@ -119,7 +128,7 @@ const useUploadDocuments = () => {
 
             const workbook = XLSX.read(data, { type: 'binary' })
             const sheetName = workbook.SheetNames.find(name =>
-                name.toUpperCase().includes(doc.selectedTable)
+                name.toUpperCase().includes(doc.selectedTable.value)
             )
 
             if (!sheetName) {
@@ -133,7 +142,7 @@ const useUploadDocuments = () => {
             const json = XLSX.utils.sheet_to_json(sheet, { defval: '' })
 
             const mapRow = (row: any, index: number): ExcelRow & { id: number } => {
-                if(doc.selectedTable === 'SALES') {
+                if(doc.selectedTable.value === 'SALES') {
                     return {
                     id: index,
                     taxableMonth: row['TAXABLE MONTH'],
@@ -222,7 +231,7 @@ const useUploadDocuments = () => {
 
             const workbook = XLSX.read(data, { type: 'binary' })
             const sheetName = workbook.SheetNames.find(name =>
-                name.toUpperCase().includes(doc.selectedTable)
+                name.toUpperCase().includes(doc.selectedTable.value)
             )
 
             if (!sheetName) {
@@ -234,7 +243,7 @@ const useUploadDocuments = () => {
             const json = XLSX.utils.sheet_to_json(sheet, { defval: '' })
 
             const mapRow = (row: any, index: number): ExcelRow & { id: number } => {
-                if(doc.selectedTable === 'SALES') {
+                if(doc.selectedTable.value === 'SALES') {
                     return {
                     id: index,
                     taxableMonth: row['TAXABLE MONTH'],

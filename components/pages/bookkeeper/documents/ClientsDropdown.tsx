@@ -5,7 +5,10 @@ import { useRef, useEffect, ChangeEvent, MouseEvent, Dispatch, SetStateAction } 
 export default function ClientsDropdown(props: {
     doc: {
         search: string
-        selectedTable: string
+        selectedTable: {
+            value: string,
+            label: string
+        }
         client: {
             id: number | null,
             registered_name: string

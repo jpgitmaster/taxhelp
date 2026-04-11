@@ -3,7 +3,7 @@ import scss from './styles/Clients.module.scss'
 import { signOut, getSession } from 'next-auth/react'
 import Loader from '@/components/reusables/RotatingLoader'
 import Avatar from '@/components/reusables/AvatarPlaceholder'
-import useAddClient from '@/controllers/clients/useAddClient'
+import useSaveClient from '@/controllers/clients/useSaveClient'
 import CustomContainer from '@/components/reusables/CustomContainer'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
@@ -17,7 +17,7 @@ const AddCustomer_V = () => {
     handleChange,
     handleSubmit,
     handleResubmit,
-  } = useAddClient()
+  } = useSaveClient()
   const { loader } = status
   return (
       <form onSubmit={handleSubmit} className={scss.addClient}>
@@ -183,6 +183,23 @@ const AddCustomer_V = () => {
                         maxLength={2}
                         autoComplete='off'
                         value={client.clientObj.fiscal}
+                        onKeyUp={handleBlur}
+                        onChange={handleChange}
+                      />
+                    </CustomContainer>
+                    <CustomContainer
+                      scss={scss}
+                      width={100}
+                      label='Company Description'
+                      labelFor='company_description'
+                      err={client.clientErr.company_description as string}
+                    >
+                      <textarea
+                        id='company_description'
+                        name='company_description'
+                        maxLength={100}
+                        autoComplete='off'
+                        value={client.clientObj.company_description}
                         onKeyUp={handleBlur}
                         onChange={handleChange}
                       />

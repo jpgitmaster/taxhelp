@@ -1,0 +1,84 @@
+@use '@/styles/forms';
+@use '@/styles/helpers';
+@use '@/styles/reuseable';
+@use '@/styles/colors' as *;
+
+@reference 'tailwindcss';
+
+.pageHeader.form{
+    @apply inline-block w-full mb-0 relative;
+    .cards{
+        @apply mt-0;
+        .button{
+            @apply mr-2.5 w-auto;
+        }
+        .searchComponent{
+            @apply float-right;
+            .button{
+                @apply m-0;
+            }
+        }
+        .npt{
+            @apply p-0;
+        }
+    }
+}
+.customDropdown{
+  @apply w-full relative;
+  .dropdownInput {
+    border: 1px solid $gray;
+    @apply px-2.5 py-2 text-[13px] w-full rounded-[10px] clear-both float-left h-9.5 cursor-pointer outline-0;
+    .arrow {
+      @apply float-right m-2;
+      &.open {
+          transform: rotate(180deg);
+          transition: transform .3s ease-out;
+      }
+      &.close {
+          transform: rotate(0);
+          transition: transform .3s ease-out;
+      }
+    }
+  }
+  .dropwdownList {
+    border: 1px solid $gray;
+    background-color: $white;
+    @apply left-0 top-12 z-1 w-full min-h-30 absolute rounded-[10px] py-5 px-3.5;
+    .dropwdownSearch {
+      @apply relative w-full inline-block;
+      .searchIcon {
+        @apply absolute top-2.5 right-2.5 w-5;
+        img{
+          @apply w-full;
+          filter: invert(49%) sepia(58%) saturate(13%) hue-rotate(328deg) brightness(87%) contrast(87%);
+        }
+      }
+      input[type=text]{
+        border: 1px solid $gray;
+      }
+    }
+    ul {
+      @apply h-55 mt-1.5 overflow-y-auto;
+      li{
+        @apply px-1.5 py-1 text-[12px] cursor-pointer uppercase;
+        &:hover{
+          color: $blue;
+        }
+      }
+    }
+    .noClient{
+      @apply inline-block text-center text-[12px] w-full mt-5;
+    }
+  }
+}
+.tblBtns{
+    @apply flex flex-row mt-5 w-80 mx-auto;
+    .button{
+        @apply ml-2;
+    }
+}
+.box{
+    border: 1px solid $gray;
+    background-color: $lightGray;
+    @apply h-full rounded-[20px] p-5 pb-0 flex flex-col;
+}

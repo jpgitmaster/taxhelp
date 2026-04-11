@@ -3,7 +3,10 @@ import { useRef, useEffect, MouseEvent, Dispatch, SetStateAction } from 'react'
 export default function DocumentsTableDropdown(props: {
     doc: {
         search: string
-        selectedTable: string
+        selectedTable: {
+            value: string,
+            label: string
+        }
         client: {
             id: number | null,
             registered_name: string
@@ -15,7 +18,10 @@ export default function DocumentsTableDropdown(props: {
     setDisplayDocsTbl: Dispatch<SetStateAction<boolean>>
 
     handleToggle(dropdown: string): void
-    handleSelectTable(selectedTable: string): void
+    handleSelectTable(selectedTable: {
+        value: string,
+        label: string
+    }): void
     
 }) {
     const {
@@ -28,7 +34,16 @@ export default function DocumentsTableDropdown(props: {
         handleSelectTable,
         handleToggle
     } = props
-    const docs = ['SALES', 'PURCHASES']
+    const options = [
+        {
+            label: 'SUMMARY LIST OF SALES (SLS)',
+            value: 'SALES'
+        },
+        {
+            label: 'SUMMARY LIST OF PURCHASES (SLP)',
+            value: 'PURCHASES'
+        },
+    ]
     // CLICK OUTSIDE
     const useOutsideClick = (callback: () => void) => {
         const ref = useRef<HTMLDivElement>(null)
@@ -67,22 +82,22 @@ export default function DocumentsTableDropdown(props: {
                     <Image src='/svgs/arrowDown.svg' alt='Arrow Down Icon' priority width={12} height={12} unoptimized={true} />
                 </div>
                 <div className={scss.selected}>
-                    {doc.selectedTable} &nbsp;
+                    {doc.selectedTable.label} &nbsp;
                 </div>
             </div>
             {
                 displayDocsTbl &&
                 <div className={scss.dropwdownList} style={{padding: '15px 10px'}}>
                     {
-                        docs?.length ?
+                        options?.length ?
                         <ul style={{height: 'auto', margin: 0}}>
                             {
-                                docs?.length ? docs?.map((doc, index) => 
-                                    <li key={index} value={doc} onClick={() => {
+                                options?.length ? options?.map((option, index) => 
+                                    <li key={index} value={option.value} onClick={() => {
                                         setDisplayDocsTbl(false)
-                                        handleSelectTable(doc)
+                                        handleSelectTable(option)
                                     }}>
-                                        {doc}
+                                        {option.label}
                                     </li>
                                 )
                                 : ''

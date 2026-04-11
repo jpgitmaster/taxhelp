@@ -24,7 +24,7 @@ const AuthAPIcalls = () => {
               password: password
             }
         }).then((res) => {
-            const { id, email, details, accessToken, refreshToken, accessTokenExpiresIn } = res.data
+            const { id, email, details, accessToken, refreshToken, accessTokenExpiresIn } = res.data.user
             
             if(accessToken){
                 return signIn('credentials', {

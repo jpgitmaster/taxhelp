@@ -18,6 +18,7 @@ interface ClientObj{
   classification: string
   corporate_email: string
   registered_name: string
+  company_description: string
 }
 
 type ClientErr = {

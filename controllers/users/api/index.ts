@@ -34,9 +34,9 @@ const useUserAPI = () => {
             })
             return res.data
         },
-        onSuccess: (_, variables, context) => {
-            console.log(context)
-            console.log(variables)
+        onSuccess: (res) => {
+            console.log('res')
+            console.log(res)
             setTimeout(() => {
                 setStatus(prev => ({
                     ...prev,
@@ -62,7 +62,7 @@ const useUserAPI = () => {
             return res.data
         },
         onSuccess: async (res) => {
-            const { id, email, token_type, access_token, expires_in, refresh_token } = res.data
+            const { id, email, token_type, access_token, expires_in, refresh_token } = res.user
             await signIn('credentials', {
                 id: id,
                 email: email,
@@ -115,7 +115,7 @@ const useUserAPI = () => {
         },
 
         onSuccess: async (res) => {
-            const { id, email, token_type, access_token, expires_in, refresh_token } = res.data;
+            const { id, email, token_type, access_token, expires_in, refresh_token } = res.user;
 
             try {
             // Step 1: Sign in via NextAuth credentials provider
@@ -161,8 +161,8 @@ const useUserAPI = () => {
                 method: 'GET',
                 url: `/api/${apiVersion}/auth/me`
             });
-            const { data } = res.data
-            return data ?? null
+            const { user } = res.data
+            return user ?? null
         } catch (error) {
             console.log('error')
             console.log(error)

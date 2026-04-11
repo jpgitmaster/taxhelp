@@ -30,13 +30,13 @@ const useDocumentAPI = () => {
                         page,
                         search,
                         page_size: limit,
-                        sortOrder: 'ASC',
-                        filter: JSON.stringify(filter)
+                        // sortOrder: 'ASC',
+                        // filter: JSON.stringify(filter)
                     }
                 })
-
+                console.log(res.data)
                 return {
-                    data: res.data?.data ?? [],
+                    data: res.data?.files ?? [],
                     totalDocs: res.data?.total ?? 0
                 }
             },

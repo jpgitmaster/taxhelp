@@ -49,14 +49,15 @@ const Login_V = ({ toggleModal }: PropsDefinition) => {
                 err={user.userErr.email as string}
             >
                 <input
-                type='text'
-                name='email'
-                maxLength={100}
-                autoComplete='off'
-                value={user.userObj.email}
-                placeholder='johndoe@gmail.com'
-                onKeyUp={handleBlur}
-                onChange={handleChange}
+                    id="email"
+                    type='text'
+                    name='email'
+                    maxLength={100}
+                    autoComplete='off'
+                    value={user.userObj.email}
+                    placeholder='johndoe@gmail.com'
+                    onKeyUp={handleBlur}
+                    onChange={handleChange}
                 />
             </CustomContainer>
             <CustomContainer
@@ -69,6 +70,7 @@ const Login_V = ({ toggleModal }: PropsDefinition) => {
             >
                 <input
                     maxLength={20}
+                    id="password"
                     name='password'
                     autoComplete='off'
                     placeholder='*******'

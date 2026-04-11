@@ -17,7 +17,8 @@ const initClientObj = {
     classification: '',
     corporate_email: '',
     registered_name: '',
-    
+    company_description: '',
+
 }
 const initClient = {
     clientArr: [],
@@ -36,9 +37,10 @@ const initClient = {
         first_name: '',
         middle_name: '',
         branch_code: '',
-        classification: '',
         corporate_email: '',
         registered_name: '',
+        company_description: '',
+        classification: 'INDIVIDUAL',
     },
     totalClients: 0,
     clientObj: initClientObj,

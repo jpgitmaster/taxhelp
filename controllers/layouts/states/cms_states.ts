@@ -9,47 +9,6 @@ const initLinks: NavLink[] = [
         iconWidth: 20,
         url: '/bookkeeper/dashboard',
     },
-    
-    // {
-    //     active: false,
-    //     key: 'web',
-    //     name: 'Web',
-    //     icon: 'navigation.svg',
-    //     iconWidth: 20,
-    //     url: '',
-    //     children: [
-    //         {
-    //             active: false,
-    //             key: 'masterpage',
-    //             name: 'Masterpage',
-    //             url: '/bookkeeper/web/masterpage',
-    //         },
-    //         {
-    //             active: false,
-    //             key: 'navigation',
-    //             name: 'Navigation',
-    //             url: '/bookkeeper/web/navigation',
-    //         },
-    //         {
-    //             active: false,
-    //             key: 'pages',
-    //             name: 'Pages',
-    //             url: '/bookkeeper/web/pages',
-    //         },
-    //         {
-    //             active: false,
-    //             key: 'posts',
-    //             name: 'Posts',
-    //             url: '/bookkeeper/web/posts',
-    //         },
-    //         {
-    //             active: false,
-    //             key: 'images',
-    //             name: 'Images',
-    //             url: '/bookkeeper/web/images',
-    //         },
-    //     ]
-    // },
     {
         active: false,
         key: 'clients',
@@ -114,50 +73,14 @@ const initLinks: NavLink[] = [
         iconWidth: 20,
         url: '/bookkeeper/books_of_accounts',
     },
-    // {
-    //     active: false,
-    //     key: 'reports',
-    //     name: 'Reports',
-    //     icon: 'reports.svg',
-    //     iconWidth: 20,
-    //     url: '/bookkeeper/reports',
-    //     children: [
-    //         {
-    //             active: false,
-    //             key: 'books_of_accounts',
-    //             name: 'Book of Accounts',
-    //             url: '/bookkeeper/reports/books_of_accounts',
-    //         },
-    //         {
-    //             active: false,
-    //             key: 'financial_statements',
-    //             name: 'Financial Statements',
-    //             url: '/bookkeeper/reports/financial_statements',
-    //         },
-    //         {
-    //             active: false,
-    //             key: 'dat_file',
-    //             name: 'DAT File',
-    //             url: '/bookkeeper/reports/dat_file',
-    //         },
-    //     ]
-    // },
-    // {
-    //     active: false,
-    //     key: 'roles',
-    //     name: 'Roles',
-    //     icon: 'task.svg',
-    //     iconWidth: 20,
-    //     url: '/bookkeeper/roles',
-    //     children: [
-    //         {
-    //             active: false,
-    //             key: 'create_role',
-    //             name: 'Create Role',
-    //             url: '/bookkeeper/roles/create_role',
-    //         },
-    //     ]
-    // },
+    {
+        active: false,
+        key: 'dat_files',
+        name: 'DAT File Generator',
+        icon: 'dat_file.svg',
+        iconWidth: 20,
+        url: '/bookkeeper/dat_files',
+    },
 ]
 export {
     initLinks
