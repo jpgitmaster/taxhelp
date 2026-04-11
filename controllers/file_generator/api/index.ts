@@ -3,10 +3,20 @@ import { useState } from 'react'
 import { Record_ } from '../types'
 import { initRecord } from '../states'
 import api from '@/components/reusables/axios'
-import { useQuery } from '@tanstack/react-query'
 import { Status } from '@/controllers/global/types'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { initStatus, initFilter } from '@/controllers/global/states'
 
+const fileConfig: Record<string, { mime: string; ext: string }> = {
+    journal: {
+        mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ext: 'xlsx',
+    },
+    dat: {
+        mime: 'text/plain',
+        ext: 'dat',
+    },
+}
 
 const useFileGeneratorAPI = () => {
     const [filter, setFilter] = useState(initFilter)
@@ -103,6 +113,132 @@ const useFileGeneratorAPI = () => {
             enabled: !!doc.period && !!doc.client.id && !!doc.selectedTable.value && doc.selectedTable.value === 'PURCHASES', // 👈 only runs when these conditions are met
         })
     }
+    
+    const downloadSalesMutation = useMutation({
+        mutationFn: async (params: {
+            doc: {
+                search: string
+                selectedTable: {
+                    value: string,
+                    label: string
+                }
+                client: {
+                    id: number | null,
+                    registered_name: string
+                }
+                period: Dayjs | null
+            },
+            type: string
+        }) => {
+            const { doc, type } = params
+
+            const res = await api.post(
+                `/api/${apiVersion}/files/download/sales`,
+                {
+                    type: type,
+                    client_id: doc.client.id,
+                    year: doc.period?.format('YYYY') ?? '',
+                    month: doc.period?.format('MM') ?? '',
+                },
+                {
+                    responseType: 'blob',
+                }
+            )
+
+            return { data: res.data, type }
+        },
+
+        onSuccess: ({ data, type }) => {
+            const config = fileConfig[type] || {
+                mime: 'application/octet-stream',
+                ext: 'dat',
+            }
+
+            const blob = new Blob([data], { type: config.mime })
+            const url = window.URL.createObjectURL(blob)
+
+            const link = document.createElement('a')
+            link.href = url
+            link.download = `sales-${type}.${config.ext}`
+
+            document.body.appendChild(link)
+            link.click()
+
+            link.remove()
+            window.URL.revokeObjectURL(url)
+            setStatus(prev => ({
+                ...prev,
+                loader: false
+            }))
+        },
+
+        onError: (error: any) => {
+            console.log(error)
+        }
+    })
+
+    const downloadPurchasesMutation = useMutation({
+        mutationFn: async (params: {
+            doc: {
+                search: string
+                selectedTable: {
+                    value: string,
+                    label: string
+                }
+                client: {
+                    id: number | null,
+                    registered_name: string
+                }
+                period: Dayjs | null
+            },
+            type: string
+        }) => {
+            const { doc, type } = params
+
+            const res = await api.post(
+                `/api/${apiVersion}/files/download/purchases`,
+                {
+                    type: type,
+                    client_id: doc.client.id,
+                    year: doc.period?.format('YYYY') ?? '',
+                    month: doc.period?.format('MM') ?? '',
+                },
+                {
+                    responseType: 'blob',
+                }
+            )
+
+            return { data: res.data, type }
+        },
+
+        onSuccess: ({ data, type }) => {
+            const config = fileConfig[type] || {
+                mime: 'application/octet-stream',
+                ext: 'dat',
+            }
+
+            const blob = new Blob([data], { type: config.mime })
+            const url = window.URL.createObjectURL(blob)
+
+            const link = document.createElement('a')
+            link.href = url
+            link.download = `purchases-${type}.${config.ext}`
+
+            document.body.appendChild(link)
+            link.click()
+
+            link.remove()
+            window.URL.revokeObjectURL(url)
+            setStatus(prev => ({
+                ...prev,
+                loader: false
+            }))
+        },
+
+        onError: (error: any) => {
+            console.log(error)
+        }
+    })
 
     return {
         //STATES
@@ -121,6 +257,8 @@ const useFileGeneratorAPI = () => {
         useGetPurchases,
 
         // MUTATION
+        downloadSalesMutation,
+        downloadPurchasesMutation
 
         //HANDLES
     }

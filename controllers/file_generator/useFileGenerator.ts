@@ -2,8 +2,7 @@ import { Dayjs } from 'dayjs';
 import useFileGeneratorAPI from './api';
 import useClients from '../clients/useClients';
 import { useState, useEffect, ChangeEvent } from "react";
-
-
+import { stat } from 'fs';
 const useFileGenerator = () => {
     const {
         client,
@@ -12,12 +11,16 @@ const useFileGenerator = () => {
     const {
         filter,
         record,
+        status,
 
         setFilter,
         setRecord,
+        setStatus,
 
         useGetSales,
-        useGetPurchases
+        useGetPurchases,
+        downloadSalesMutation,
+        downloadPurchasesMutation
     } = useFileGeneratorAPI()
     const { clientArr } = client
     const [tableWidth, setTableWidth] = useState(0)
@@ -62,7 +65,20 @@ const useFileGenerator = () => {
         filter.search,
         doc,
     )
-
+    const handleDownloadSales = (type: string) => {
+        setStatus(prev => ({
+            ...prev,
+            loader: true
+        }))
+        downloadSalesMutation.mutate({ doc, type })
+    }
+    const handleDownloadPurchases = (type: string) => {
+        setStatus(prev => ({
+            ...prev,
+            loader: true
+        }))
+        downloadPurchasesMutation.mutate({ doc, type })
+    }
     const handlePageChange = (current: number) => {
         setFilter((prev) => ({
             ...prev,
@@ -135,6 +151,7 @@ const useFileGenerator = () => {
     return {
         // STATES
         doc,
+        status,
         filter,
         record,
         clientArr,
@@ -155,6 +172,8 @@ const useFileGenerator = () => {
         handleDateChange,
         handleSelectTable,
         handleSelectClient,
+        handleDownloadSales,
+        handleDownloadPurchases
     }
 }
 

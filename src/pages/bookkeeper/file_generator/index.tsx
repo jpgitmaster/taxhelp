@@ -17,6 +17,7 @@ import dayjs from 'dayjs'
 const FileGenerator_V = () => {
     const {
       doc,
+      status,
       filter,
       record,
       loader,
@@ -34,9 +35,11 @@ const FileGenerator_V = () => {
       handlePageChange,
       handleDateChange,
       handleSelectTable,
-      handleSelectClient
+      handleSelectClient,
+      handleDownloadSales,
+      handleDownloadPurchases
     } = useFileGenerator()
-    console.log(record.recordArr)
+    const { loader: statLoader } = status
     const dataSource: Record_Obj[] = record.recordArr?.map(doc => ({
       id: doc.id,
       terms: doc.terms,
@@ -109,7 +112,14 @@ const FileGenerator_V = () => {
       {
         key: '1',
         label: (
-        <button type='button' className={scss.actionItem}>
+        <button type='button' className={scss.actionItem} onClick={() => {
+          if(doc.selectedTable.value === 'SALES'){
+            handleDownloadSales('journal')
+          }
+          if(doc.selectedTable.value === 'PURCHASES'){
+            handleDownloadPurchases('journal')
+          }
+        }}>
           Download Excel
         </button>
         ),
@@ -117,7 +127,14 @@ const FileGenerator_V = () => {
       {
         key: '2',
         label: (
-        <button type='button' className={scss.actionItem}>
+        <button type='button' className={scss.actionItem} onClick={() => {
+          if(doc.selectedTable.value === 'SALES'){
+            handleDownloadSales('dat')
+          }
+          if(doc.selectedTable.value === 'PURCHASES'){
+            handleDownloadPurchases('dat')
+          }
+        }}>
           Download DAT File
         </button>
         ),
@@ -196,7 +213,7 @@ const FileGenerator_V = () => {
               </div>
           </div>
           <div className={scss.tableRecords} style={{width:tableWidth+'px'}}>
-            { loader && <Loader scss={scss} position='absolute' />}
+            { (loader || statLoader) && <Loader scss={scss} position='absolute' />}
             <Table
                 rowKey='id'
                 columns={columns}
