@@ -23,16 +23,20 @@ const Clients_V = () => {
     } = useClients()
     const { message } = status
     const { clientArr } = client
+    console.log(clientArr)
     const dataSource = clientArr?.length ? clientArr.map(client => (
         {
             id: client.id,
             tin: client.tin,
-            fiscal: client.fiscal,
-            created_at: client.created_at ? dayjs(client.created_at).format('MM/DD/YYYY h:mm A') : '',
-            branch_code: client.branch_code,
+            period: client.period,
+            rdo_code: client.rdo_code,
+            month_end: client.month_end,
+            trade_name: client.trade_name,
             classification: client.classification,
             registered_name: client.registered_name,
-            name: client.first_name+' '+client.last_name,
+            taxpayer_name: client.first_name+' '+client.last_name,
+            created_at: client.created_at ? dayjs(client.created_at).format('MM/DD/YYYY h:mm A') : '',
+            representative_name: client.representative?.first_name+' '+client.representative?.last_name,
             address: client.barangay+', '+client.street+', '+client.sub_street+', '+client.district+', '+client.city+', '+client.zip_code
         }
     )) : []
@@ -44,14 +48,25 @@ const Clients_V = () => {
         //     dataIndex: 'id',
         // },
         {
+            title: 'Classification',
+            key: 'classification',
+            dataIndex: 'classification',
+        },
+        {
             title: 'TIN',
             key: 'tin',
             dataIndex: 'tin',
         },
         {
-            title: 'Branch Code',
-            key: 'branch_code',
-            dataIndex: 'branch_code',
+            title: 'RDO Code',
+            key: 'rdo_code',
+            dataIndex: 'rdo_code',
+        },
+        {
+            title: 'Representative Name',
+            dataIndex: 'representative_name',
+            key: 'representative_name',
+            width: 300
         },
         {
             title: 'Registered Name',
@@ -59,9 +74,20 @@ const Clients_V = () => {
             dataIndex: 'registered_name',
         },
         {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
+            title: 'Trade Name',
+            key: 'trade_name',
+            dataIndex: 'trade_name',
+        },
+        {
+            title: 'Accounting Period',
+            key: 'period',
+            dataIndex: 'period',
+            render: (_, record: ClientTableRow) => `${record.period === 'CALENDAR' ? 'Calendar' : 'Fiscal'} (${record.month_end})`
+        },
+        {
+            title: 'Taxpayer Name',
+            dataIndex: 'taxpayer_name',
+            key: 'taxpayer_name',
             width: 300
         },
         {

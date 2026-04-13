@@ -52,13 +52,14 @@ const useFileGeneratorAPI = () => {
                         page,
                         search,
                         page_size: limit,
-                        sortOrder: 'ASC',
-                        filter: JSON.stringify(filter),
+                        // sortOrder: 'ASC',
+                        // filter: JSON.stringify(filter),
                         clientId: doc.client.id,
                         month: doc.period?.format('MM') ?? null,
                         year: doc.period?.format('YYYY') ?? null
                     }
                 })
+                console.log(res.data);
                 return {
                     records: res.data?.sales ?? [],
                     totalRecords: res.data?.total ?? 0

@@ -1,4 +1,5 @@
-
+import Link from 'next/link'
+import Image from 'next/image'
 import type { MenuProps } from 'antd'
 import scss from './styles/DatFile.module.scss'
 import type { ColumnsType } from 'antd/es/table'
@@ -107,6 +108,33 @@ const FileGenerator_V = () => {
         key: 'account_name',
         dataIndex: 'account_name',
       },
+      {
+        width: 100,
+        fixed: 'right',
+        title: 'Actions',
+        align: 'center',
+        render: (record) =>
+            <div className={scss.actions}>
+                <Link href={'/bookkeeper/clients/'+record.id} className={scss.action+' '+scss.purchases}>
+                    <Image src='/svgs/eyecon_check.svg' alt='Purchases' priority width={22} height={22} unoptimized={true} />
+                    <span style={{top: '-2px'}}>
+                        View
+                    </span>
+                </Link>
+                <Link href={'/bookkeeper/clients/'+record.id} className={scss.action+' '+scss.edit}>
+                    <Image src='/svgs/edit.svg' alt='Edit' priority width={20} height={20} unoptimized={true} />
+                    <span>
+                        Edit
+                    </span>
+                </Link>
+                <Link href={''} className={scss.action+' '+scss.delete}>
+                    <Image src='/svgs/delete.svg' alt='Delete' priority width={18} height={18} unoptimized={true} />
+                    <span>
+                        Delete
+                    </span>
+                </Link>
+            </div>
+    },
     ]
     const downloadItems = (): MenuProps['items'] => [
       {

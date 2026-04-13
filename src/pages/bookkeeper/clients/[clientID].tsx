@@ -118,19 +118,19 @@ const Client_V = () => {
                       width={50}
                       required={true}
                       label='Phone Number'
-                      labelFor='phone'
-                      err={client.clientErr.phone as string}
+                      labelFor='phone_number'
+                      err={client.clientErr.phone_number as string}
                     >
                       <input
-                        id='phone'
+                        id='phone_number'
                         type='text'
-                        name='phone'
+                        name='phone_number'
                         maxLength={30}
                         autoComplete='off'
                         placeholder='(+63)926-123-4567'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.phone}
+                        value={client.clientObj.phone_number}
                       />
                     </CustomContainer>
                   </div>
@@ -173,16 +173,16 @@ const Client_V = () => {
                       width={20}
                       required={true}
                       label='Fiscal'
-                      labelFor='fiscal'
-                      err={client.clientErr.fiscal as string}
+                      labelFor='month_end'
+                      err={client.clientErr.month_end as string}
                     >
                       <input
-                        id='fiscal'
+                        id='mon'
                         type='text'
-                        name='fiscal'
+                        name='mon'
                         maxLength={2}
                         autoComplete='off'
-                        value={client.clientObj.fiscal}
+                        value={client.clientObj.month_end}
                         onKeyUp={handleBlur}
                         onChange={handleChange}
                       />
@@ -191,15 +191,15 @@ const Client_V = () => {
                       scss={scss}
                       width={100}
                       label='Company Description'
-                      labelFor='company_description'
-                      err={client.clientErr.company_description as string}
+                      labelFor='description'
+                      err={client.clientErr.description as string}
                     >
                       <textarea
-                        id='company_description'
-                        name='company_description'
+                        id='description'
+                        name='description'
                         maxLength={100}
                         autoComplete='off'
-                        value={client.clientObj.company_description}
+                        value={client.clientObj.description}
                         onKeyUp={handleBlur}
                         onChange={handleChange}
                       />
@@ -209,20 +209,20 @@ const Client_V = () => {
                       width={20}
                       required={true}
                       label='Branch Code'
-                      labelFor='branch_code'
-                      err={client.clientErr.branch_code as string}
+                      labelFor='rdo_code'
+                      err={client.clientErr.rdo_code as string}
                     >
                       <input
                         type='text'
                         maxLength={3}
-                        id='branch_code'
+                        id='rdo_code'
                         placeholder='000'
                         autoComplete='off'
-                        name='branch_code'
+                        name='rdo_code'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
                         
-                        value={client.clientObj.branch_code}
+                        value={client.clientObj.rdo_code}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -250,19 +250,19 @@ const Client_V = () => {
                       width={40}
                       required={true}
                       label='Corporate Email'
-                      labelFor='corporate_email'
-                      err={client.clientErr.corporate_email as string}
+                      labelFor='email'
+                      err={client.clientErr.email as string}
                     >
                       <input
                         type='text'
                         maxLength={30}
                         autoComplete='off'
-                        id='corporate_email'
-                        name='corporate_email'
+                        id='email'
+                        name='email'
                         placeholder='yourname@yourcompany.com'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.corporate_email}
+                        value={client.clientObj.email}
                       />
                     </CustomContainer>
                     <CustomContainer

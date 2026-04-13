@@ -159,11 +159,15 @@ const Documents_V = () => {
     },
     {
       align: 'center',
-      title: 'Importation',
+      title: 'Disbursements',
     },
     {
       align: 'center',
-      title: 'Disbursements',
+      title: 'General Journal',
+    },
+    {
+      align: 'center',
+      title: 'General Ledger',
     },
     {
       title: 'Uploaded Time & Date',

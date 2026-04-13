@@ -70,18 +70,30 @@ const useClientAPI = () => {
             const res = await api.post(`/api/${apiVersion}/clients`, {
                 tin: client.tin,
                 city: client.city,
+                email: client.email,
+                period: client.period,
                 street: client.street,
-                fiscal: client.fiscal,
+                rdo_code: client.rdo_code,
                 zip_code: client.zip_code,
                 district: client.district,
                 barangay: client.barangay,
                 last_name: client.last_name,
-                classification: 'INDIVIDUAL',
                 first_name: client.first_name,
                 sub_street: client.sub_street,
+                trade_name: client.trade_name,
+                description: client.description,
                 middle_name: client.middle_name,
-                branch_code: client.branch_code,
-                registered_name: client.registered_name
+                month_end: Number(client.month_end),
+                classification: client.classification,
+                registered_name: client.registered_name,
+                business_nature: client.business_nature,
+                representative: {
+                    email: client.representative_email,
+                    phone_number: client.representative_phone,
+                    last_name: client.representative_last_name,
+                    first_name: client.representative_first_name,
+                    middle_name: client.representative_middle_name,
+                }
             })
             return res.data
         },

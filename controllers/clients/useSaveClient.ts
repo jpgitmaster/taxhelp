@@ -2,7 +2,7 @@ import useClientAPI from './api'
 import { ClientErr } from './types'
 import { useRouter } from 'next/router';
 import useGlobal from '@/controllers/global/useGlobal'
-import { useState, ChangeEvent, SyntheticEvent, useEffect} from 'react'
+import { ChangeEvent, SyntheticEvent, useEffect} from 'react'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
 
 const useAddClient = () => {
@@ -26,8 +26,29 @@ const useAddClient = () => {
     const clientIdNumber = Number(clientID)
     
     const fieldValidations = {
+        tin: { usename: 'TIN No.', required: true },
+        last_name: { usename: 'Last Name', ifCondition: {
+            condition: client.clientObj.classification === 'INDIVIDUAL',
+            required: true
+        }},
+        first_name: { usename: 'First Name', ifCondition: {
+            condition: client.clientObj.classification === 'INDIVIDUAL',
+            required: true
+        }},
         email: { usename: 'Email', required: true, email: true },
-        registered_name: { usename: 'Company Name', required: true },
+        representative_phone: { usename: 'Phone', required: true },
+        trade_name: { usename: 'Trade Name', ifCondition: {
+            condition: client.clientObj.classification === 'NON-INDIVIDUAL',
+            required: true
+        }},
+        registered_name: { usename: 'Registered Name', ifCondition: {
+            condition: client.clientObj.classification === 'NON-INDIVIDUAL',
+            required: true
+        }},
+        representative_last_name: { usename: 'Last Name', required: true },
+        representative_first_name: { usename: 'First Name', required: true },
+        representative_email: { usename: 'Email', required: true, email: true },
+        
     }
     
     const { data } = useGetClient(clientIdNumber, {
@@ -66,15 +87,33 @@ const useAddClient = () => {
     };
     const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = event.target
+        const alphaNumeric = /^[a-zA-Z0-9]+$/
         const regexNumericOnly = /^(0|[1-9]\d*)$/
         switch (name) {
-            case 'fiscal':
-                if(value === '' || regexNumericOnly.test(value)){
+            case 'month_end':
+                if (value === '' || regexNumericOnly.test(value)) {
+                    const numericValue = Number(value)
+                    const maxMonth =
+                        client.clientObj.period === 'FISCAL' ? 11 : 12
+
+                    if (value === '' || numericValue <= maxMonth) {
+                        setClient({
+                            ...client,
+                            clientObj: {
+                                ...client.clientObj,
+                                [name]: value
+                            }
+                        })
+                    }
+                }
+                break;
+            case 'rdo_code':
+                if(value === '' || alphaNumeric.test(value)){
                     setClient({
                         ...client,
                         clientObj: {
                             ...client.clientObj,
-                            [name]: value
+                            [name]: value?.toUpperCase()
                         }
                     })
                 }
@@ -88,12 +127,22 @@ const useAddClient = () => {
                     }
                 })
                 break;
-            case 'phone':
+            case 'period':
                 setClient({
                     ...client,
                     clientObj: {
                         ...client.clientObj,
-                        phone: formatPhoneNumber(value)
+                        period: value,
+                        month_end: ''
+                    }
+                })
+                break;
+            case 'representative_phone':
+                setClient({
+                    ...client,
+                    clientObj: {
+                        ...client.clientObj,
+                        representative_phone: formatPhoneNumber(value)
                     }
                 })
                 break;

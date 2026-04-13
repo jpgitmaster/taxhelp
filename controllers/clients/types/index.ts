@@ -2,23 +2,38 @@ interface ClientObj{
   tin: string
   city: string
   email: string
-  phone: string
-  fiscal: string
   street: string
+  period: string
+  rdo_code: string
   zip_code: string
   district: string
   barangay: string
+  month_end: string
   created_at?: Date
   id: number | null
   last_name: string
+  trade_name: string
   sub_street: string
   first_name: string
   middle_name: string
   branch_code: string
+  description: string
+  phone_number: string
   classification: string
-  corporate_email: string
   registered_name: string
-  company_description: string
+  business_nature: string
+  representative_email: string
+  representative_phone: string
+  representative_last_name: string
+  representative_first_name: string
+  representative_middle_name: string
+  representative?: {
+    email: string
+    phone_number: string
+    last_name: string
+    first_name: string
+    middle_name: string
+  }
 }
 
 type ClientErr = {
@@ -49,14 +64,17 @@ interface Client{
 
 interface ClientTableRow {
   id: number | null;
-  tin: string;
-  fiscal: string;
-  created_at: string;
-  branch_code: string;
-  classification: string;
-  registered_name: string;
-  name: string;
-  address: string;
+  tin: string
+  period: string
+  address: string
+  rdo_code: string
+  month_end: string
+  trade_name: string
+  created_at: string
+  taxpayer_name: string
+  classification: string
+  registered_name: string
+  representative_name: string
 }
 export type {
     Client,

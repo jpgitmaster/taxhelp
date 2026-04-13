@@ -93,7 +93,9 @@ export default NextAuth({
               `${process.env.NEXT_PUBLIC_API_URL}/api/${process.env.NEXT_PUBLIC_API_VERSION}/auth/refresh`,
               { refresh_token: token.refreshToken }
             );
-            const res = response.data.data;
+            console.log('response')
+            console.log(response)
+            const res = response.data.user;
             token.accessToken = res.access_token;
             token.refreshToken = res.refresh_token;
             token.accessTokenExpires = Date.now() + res.expires_in * 1000;
