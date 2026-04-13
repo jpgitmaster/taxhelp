@@ -1,13 +1,16 @@
 import { Dayjs } from 'dayjs';
 import useFileGeneratorAPI from './api';
-import useClients from '../clients/useClients';
+import useClientAPI from '../clients/api';
 import { useState, useEffect, ChangeEvent } from "react";
-import { stat } from 'fs';
+
 const useFileGenerator = () => {
     const {
-        client,
-        loader: clientLoader
-    } = useClients()
+        filter: clientFilter,
+        setFilter: clientSetFilter,
+
+        useGetClients
+    } = useClientAPI()
+
     const {
         filter,
         record,
@@ -22,7 +25,6 @@ const useFileGenerator = () => {
         downloadSalesMutation,
         downloadPurchasesMutation
     } = useFileGeneratorAPI()
-    const { clientArr } = client
     const [tableWidth, setTableWidth] = useState(0)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayDocsTbl, setDisplayDocsTbl] = useState(false)
@@ -56,6 +58,13 @@ const useFileGenerator = () => {
         period: null,
     })
 
+    const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = useGetClients(    
+        clientFilter.currentPage,
+        clientFilter.recordsLimit,
+        clientFilter.filter,
+        clientFilter.search
+    )
+    const clientArr = dataClients?.clients;
     const { data: sales, isLoading: isLoadingSales, isFetching: isFetchingSales } = useGetSales(
         filter.currentPage,
         filter.recordsLimit,
@@ -112,6 +121,13 @@ const useFileGenerator = () => {
     }
     const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target
+         if(name === 'search'){
+            clientSetFilter(prev => ({
+                ...prev,
+                search: value,
+                currentPage: 1
+            }))
+        }
         setDoc({
             ...doc,
             [name]: value
@@ -155,6 +171,7 @@ const useFileGenerator = () => {
             )
         }
     }, [purchases])
+    
     useEffect(() => {
         if(typeof window !== 'undefined'){
             setTableWidth(window.innerWidth - 240)
@@ -168,9 +185,9 @@ const useFileGenerator = () => {
         record,
         clientArr,
         tableWidth,
-        clientLoader,
         displayClients,
         displayDocsTbl,
+        clientLoader: isLoadingClients || isFetchingClients,
         loader: isLoadingSales || isFetchingSales || isLoadingPurchases || isFetchingPurchases,
 
         // SET STATES

@@ -69,6 +69,7 @@ const useClients = () => {
         loader: isLoading || isFetching,
 
         // SET STATES
+        setFilter,
         
 
         // HANDLES

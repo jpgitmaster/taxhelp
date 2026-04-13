@@ -18,7 +18,6 @@ export default function ClientsDropdown(props: {
             registered_name: string
         }
     }
-    search: string
     loader: boolean
     clients: ClientObj[]
     displayClients: boolean
@@ -32,7 +31,6 @@ export default function ClientsDropdown(props: {
 }) {
     const {
         doc,
-        search,
         loader,
         clients,
         displayClients,
@@ -70,7 +68,6 @@ export default function ClientsDropdown(props: {
         event.stopPropagation();
     };
     const ref = useOutsideClick(handleClickOutside)
-    console.log(clients)
     return (
         <div className={scss.customDropdown} onClick={handleHeaderClick}>
             <div className={scss.dropdownInput} onClick={() => handleToggle('clients')} ref={ref}>
@@ -89,7 +86,7 @@ export default function ClientsDropdown(props: {
                         <div className={scss.searchIcon}>
                             <Image src='/svgs/search.svg' alt='Search' priority width={12} height={12} unoptimized={true} />
                         </div>
-                        <input name='search' type='text' value={search} onChange={handleChange} />
+                        <input name='search' type='text' value={doc.search} onChange={handleChange} />
                     </div>
                     {
                         clients?.length ?

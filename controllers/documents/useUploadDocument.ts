@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
 import useDocumentAPI from './api';
 import { ExcelRow } from "./types";
-import useClients from '../clients/useClients';
+import useClientAPI from '../clients/api';
 import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
 
 const useUploadDocuments = () => {
@@ -12,10 +12,19 @@ const useUploadDocuments = () => {
         uploadDocumentMutation
     } = useDocumentAPI()
     const {
-        client,
-        loader: clientLoader
-    } = useClients()
-    const { clientArr } = client
+        filter: clientFilter,
+
+        setFilter,
+
+        useGetClients
+    } = useClientAPI()
+    const { data: dataClients, isLoading, isFetching } = useGetClients(
+        clientFilter.currentPage,
+        clientFilter.recordsLimit,
+        clientFilter.filter,
+        clientFilter.search
+    )
+    const clientArr = dataClients?.clients;
     const [width_, setWidth] = useState(0)
     const [file, setFile] = useState<File | null>(null)
     const [displayClients, setDisplayClients] = useState(false)
@@ -112,10 +121,18 @@ const useUploadDocuments = () => {
     }
     const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target
+        if(name === 'search'){
+            setFilter(prev => ({
+                ...prev,
+                search: value,
+                currentPage: 1
+            }))
+        }
         setDoc({
             ...doc,
             [name]: value
         })
+
     }
 
     const handleToggle = (dropdown: string) => {
@@ -322,6 +339,8 @@ const useUploadDocuments = () => {
 
         reader.readAsBinaryString(file)
     }, [doc.selectedTable, file])
+
+    
     useEffect(() => {
         if(typeof window !== 'undefined'){
             setWidth(window.innerWidth - 240)
@@ -335,9 +354,9 @@ const useUploadDocuments = () => {
         status,
         width_,
         clientArr,
-        clientLoader,
         displayDocsTbl,
         displayClients,
+        clientLoader: isLoading || isFetching,
 
         // SET STATES
         setRows,

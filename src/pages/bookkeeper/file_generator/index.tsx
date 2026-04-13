@@ -208,7 +208,6 @@ const FileGenerator_V = () => {
                 <ClientsDropdown
                     doc={doc}
                     clients={clientArr}
-                    search={doc.search}
                     loader={clientLoader}
                     displayClients={displayClients}
 

@@ -70,7 +70,6 @@ const UploadNewDocument_V = () => {
                                 <ClientsDropdown
                                     doc={doc}
                                     clients={clientArr}
-                                    search={doc.search}
                                     loader={clientLoader}
                                     displayClients={displayClients}
 
@@ -129,7 +128,6 @@ const UploadNewDocument_V = () => {
                             <ClientsDropdown
                                 doc={doc}
                                 clients={clientArr}
-                                search={doc.search}
                                 loader={clientLoader}
                                 displayClients={displayClients}
 
