@@ -79,7 +79,7 @@ const initLinks: NavLink[] = [
         name: 'Book of Accounts',
         icon: 'book.svg',
         iconWidth: 20,
-        url: '/bookkeeper/books_of_accounts',
+        url: '/bookkeeper/book_of_accounts',
     },
     {
         active: false,

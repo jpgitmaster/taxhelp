@@ -51,6 +51,7 @@ const Clients_V = () => {
             title: 'Classification',
             key: 'classification',
             dataIndex: 'classification',
+            render: (text: string) => <span style={{textTransform: 'capitalize'}}>{text?.toLowerCase()}</span>
         },
         {
             title: 'TIN',

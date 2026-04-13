@@ -75,7 +75,7 @@ export default function DocumentsTableDropdown(props: {
                 <div className={scss.arrow +' '+ (displayDocsTbl ? scss.open : scss.close)}>
                     <Image src='/svgs/arrowDown.svg' alt='Arrow Down Icon' priority width={12} height={12} unoptimized={true} />
                 </div>
-                <div className={scss.selected}>
+                <div className={scss.selected} style={{fontSize: '11px', marginTop: '3.5px'}}>
                     {doc.selectedTable.label} &nbsp;
                 </div>
             </div>
