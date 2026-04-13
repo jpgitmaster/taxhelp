@@ -5,7 +5,7 @@ import useGlobal from '@/controllers/global/useGlobal'
 import { ChangeEvent, SyntheticEvent, useEffect} from 'react'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
 
-const useAddClient = () => {
+const useSaveClient = () => {
     const {
         status,
         client,
@@ -14,6 +14,7 @@ const useAddClient = () => {
         setClient,
 
         useGetClient,
+        useUpdateClient,
         useCreateClient
     } = useClientAPI()
     const {
@@ -51,7 +52,7 @@ const useAddClient = () => {
         
     }
     
-    const { data } = useGetClient(clientIdNumber, {
+    const { data, isLoading } = useGetClient(clientIdNumber, {
         enabled: !!clientID && !isNaN(clientIdNumber)
     })
 
@@ -182,15 +183,42 @@ const useAddClient = () => {
         useCreateClient.mutate(client.clientObj)
     }
 
+    const handleUpdateSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setStatus({...status, loader: true})
+        const {
+            validation_errors,
+            validation_has_error,
+        } = ValidatorV3(fieldValidations, client.clientObj)
+        if (validation_has_error) {
+            const timer = setTimeout(() => {
+                setClient({
+                    ...client,
+                    clientErr: validation_errors as ClientErr
+                })
+                setStatus({...status, loader: false})
+                return false
+            }, 500)
+            return () => clearTimeout(timer)
+        }
+
+        // CLIENT UPDATE
+        useUpdateClient.mutate(client.clientObj)
+    }
+
     useEffect(() => {
         if (data && clientID) {
             const fetchedClient = data
-
             setClient(prev => ({
                 ...prev,
                 clientObj: {
                     ...prev.clientObj,
-                    ...fetchedClient
+                    ...fetchedClient,
+                    representative_email: fetchedClient.representative?.email || '',
+                    representative_phone: fetchedClient.representative?.phone_number || '',
+                    representative_last_name: fetchedClient.representative?.last_name || '',
+                    representative_first_name: fetchedClient.representative?.first_name || '',
+                    representative_middle_name: fetchedClient.representative?.middle_name || '',
                 }
             }))
         }
@@ -199,6 +227,7 @@ const useAddClient = () => {
         // STATES
         client,
         status,
+        isLoading,
 
         // SET STATES
         setClient,
@@ -208,8 +237,9 @@ const useAddClient = () => {
         handleSubmit,
         handleChange,
         handleResubmit,
+        handleUpdateSubmit
         
     }
 }
 
-export default useAddClient;
+export default useSaveClient;

@@ -12,16 +12,17 @@ const Client_V = () => {
     const {
       client,
       status,
+      isLoading,
 
       handleBlur,
       handleChange,
-      handleSubmit,
       handleResubmit,
+      handleUpdateSubmit
     } = useSaveClient()
     const { loader } = status
     return (
-      <form onSubmit={handleSubmit} className={scss.addClient}>
-        { loader && <Loader scss={scss} position='absolute' />}
+      <form onSubmit={handleUpdateSubmit} className={scss.addClient}>
+        { (loader || isLoading) && <Loader scss={scss} position='absolute' />}
         <div className={scss.cards}>
           <div className={scss.card+' '+scss.w100}>
             <div className={scss.box}>

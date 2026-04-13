@@ -59,6 +59,13 @@ interface Client{
     clientObj: ClientObj
     clientArr: ClientObj[]
     totalClients: number
+    representative?: {
+      email: string
+      phone_number: string
+      last_name: string
+      first_name: string
+      middle_name: string
+    }
     clientErr: Record<string, string | { value: string; }>
 }
 

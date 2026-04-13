@@ -58,8 +58,7 @@ const useClientAPI = () => {
                     method: 'GET',
                     url: `/api/${apiVersion}/clients/${id}`
                 })
-
-                return res.data.client as Client
+                return res.data.client
             },
             ...options,
         })
@@ -108,6 +107,56 @@ const useClientAPI = () => {
             console.log(error)
         }
     })
+
+    const useUpdateClient = useMutation({
+        mutationFn: async (client: ClientObj) => {
+            const res = await api.put(`/api/${apiVersion}/clients/${client.id}`, {
+                tin: client.tin,
+                city: client.city,
+                email: client.email,
+                period: client.period,
+                street: client.street,
+                rdo_code: client.rdo_code,
+                zip_code: client.zip_code,
+                district: client.district,
+                barangay: client.barangay,
+                last_name: client.last_name,
+                first_name: client.first_name,
+                sub_street: client.sub_street,
+                trade_name: client.trade_name,
+                description: client.description,
+                middle_name: client.middle_name,
+                month_end: Number(client.month_end),
+                classification: client.classification,
+                registered_name: client.registered_name,
+                business_nature: client.business_nature,
+                representative: {
+                    email: client.representative_email,
+                    phone_number: client.representative_phone,
+                    last_name: client.representative_last_name,
+                    first_name: client.representative_first_name,
+                    middle_name: client.representative_middle_name,
+                }
+            })
+            return res.data
+        },
+        onMutate: () => {
+            setStatus(prev => ({ ...prev, loader: true }))
+        },
+        onSettled: () => {
+            setStatus(prev => ({ ...prev, loader: false }))
+        },
+        onSuccess: () => {
+            sessionStorage.setItem(
+                'successMessage',
+                'Your client has been updated.'
+            )
+            router.push('/bookkeeper/clients')
+        },
+        onError: (error: any) => {
+            console.log(error)
+        }
+    })
     return {
         //STATES
         client,
@@ -126,6 +175,7 @@ const useClientAPI = () => {
 
         // MUTATION
         useCreateClient,
+        useUpdateClient,
 
         //HANDLES
     }
