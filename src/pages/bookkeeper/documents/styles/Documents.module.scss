@@ -44,6 +44,11 @@
     .activeRow, .activeRow td, .activeRow:hover td{
       background-color: $lightGray !important;
     }
+    .client{
+      p{
+        @apply text-[11px] -mt-0.5;
+      }
+    }
     .actions{
         .action{
             @apply mx-1 cursor-pointer;

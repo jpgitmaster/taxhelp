@@ -6,7 +6,7 @@ import type { ColumnsType } from 'antd/es/table'
 import scss from './styles/Documents.module.scss'
 import { Table, Dropdown, Pagination } from 'antd'
 import { signOut, getSession } from 'next-auth/react'
-import { DocObj } from '@/controllers/documents/types'
+import { DocObj, TableRow } from '@/controllers/documents/types'
 import Loader from '@/components/reusables/RotatingLoader'
 import useDocuments from '@/controllers/documents/useDocuments'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
@@ -26,12 +26,17 @@ const Documents_V = () => {
     handlePageChange
   } = useDocuments()
   const { message } = status
-  const dataSource: DocObj[] = doc.docArr?.map(doc => ({
+  console.log(doc.docArr)
+  const dataSource: TableRow[] = doc.docArr?.map(doc => ({
     id: doc.id,
     file_name: doc.file_name,
     has_sales: doc.has_sales,
     created_at: doc.created_at,
     has_purchases: doc.has_purchases,
+    trade_name: doc.client?.trade_name,
+    last_name: doc.client?.last_name,
+    first_name: doc.client?.first_name,
+    registered_name: doc.client?.registered_name,
   })) ?? []
   const linkItems = (): MenuProps['items'] => [
 		{
@@ -133,7 +138,19 @@ const Documents_V = () => {
 			),
 		},
 	];
-  const columns: ColumnsType<DocObj> = [
+  const columns: ColumnsType<TableRow> = [
+    {
+      width: 280,
+      title: 'Client',
+      render: (_, record) => (
+        <div className={scss.client}>
+          <strong>
+            {record.registered_name || (record.first_name+' '+record.last_name)}
+          </strong>
+          <p>{record.trade_name}</p>
+        </div>
+      )
+    },
     {
       title: 'File',
       key: 'file_name',
@@ -271,7 +288,7 @@ const Documents_V = () => {
         </div>
         <div className={scss.tableRecords} style={{width:tableWidth+'px'}}>
           { loader && <Loader scss={scss} position='absolute' />}
-          <Table
+            <Table
               rowKey='id'
               columns={columns}
               pagination={false}
@@ -280,7 +297,7 @@ const Documents_V = () => {
                 record.id === activeRowId ? scss.activeRow : ''
               }
               scroll={{ x: 'max-content' }}
-          />
+            />
         </div>
         <div className={scss.pagination}>
           {

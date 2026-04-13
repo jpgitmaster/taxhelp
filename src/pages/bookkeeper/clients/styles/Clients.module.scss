@@ -33,7 +33,7 @@
         @apply h-full rounded-[20px] p-5 pb-0 flex flex-col;
         &.view{
           background-color: $white;
-          @apply border-0;
+          border: 1px solid $transparent;
           .boxTitle{
             color: $blue;
           }

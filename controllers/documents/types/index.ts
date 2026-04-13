@@ -4,6 +4,24 @@ interface DocObj{
   created_at: Date | null
   has_sales: boolean | null
   has_purchases: boolean | null
+  client: {
+    last_name: string
+    first_name: string
+    trade_name: string
+    registered_name: string
+  }
+}
+
+interface TableRow{
+  id: number | null
+  file_name: string
+  created_at: Date | null
+  has_sales: boolean | null
+  has_purchases: boolean | null
+  last_name: string
+  first_name: string
+  trade_name: string
+  registered_name: string
 }
 
 interface Doc{
@@ -47,5 +65,6 @@ type ExcelRow = {
 export type {
     Doc,
     DocObj,
+    TableRow,
     ExcelRow,
 }
