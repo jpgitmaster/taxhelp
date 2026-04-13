@@ -13,6 +13,10 @@ export default function DocumentsTableDropdown(props: {
             registered_name: string
         }
     }
+    options: {
+        label: string
+        value: string
+    }[]
     displayDocsTbl: boolean
 
     setDisplayDocsTbl: Dispatch<SetStateAction<boolean>>
@@ -26,6 +30,7 @@ export default function DocumentsTableDropdown(props: {
 }) {
     const {
         doc,
+        options,
         displayDocsTbl,
         
         setDisplayDocsTbl,
@@ -33,16 +38,6 @@ export default function DocumentsTableDropdown(props: {
         handleSelectTable,
         handleToggle
     } = props
-    const options = [
-        {
-            label: 'SUMMARY LIST OF SALES (SLS)',
-            value: 'SALES'
-        },
-        {
-            label: 'SUMMARY LIST OF PURCHASES (SLP)',
-            value: 'PURCHASES'
-        },
-    ]
     // CLICK OUTSIDE
     const useOutsideClick = (callback: () => void) => {
         const ref = useRef<HTMLDivElement>(null)

@@ -17,6 +17,7 @@ const UploadNewDocument_V = () => {
         rows,
         status,
         width_,
+        options,
         clientArr,
         clientLoader,
         displayDocsTbl,
@@ -55,6 +56,7 @@ const UploadNewDocument_V = () => {
                             >
                                 <DocumentsTableDropdown
                                     doc={doc}
+                                    options={options}
                                     displayDocsTbl={displayDocsTbl}
                                     setDisplayDocsTbl={setDisplayDocsTbl}
                                     handleToggle={handleToggle}

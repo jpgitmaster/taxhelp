@@ -28,6 +28,16 @@ const useFileGenerator = () => {
     const [tableWidth, setTableWidth] = useState(0)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayDocsTbl, setDisplayDocsTbl] = useState(false)
+    const options =[
+        {
+            label: 'SUMMARY LIST OF SALES (SLS)',
+            value: 'SALES'
+        },
+        {
+            label: 'SUMMARY LIST OF PURCHASES (SLP)',
+            value: 'PURCHASES'
+        },
+    ]
     const [doc, setDoc] = useState<{
         search: string
         selectedTable: {
@@ -183,6 +193,7 @@ const useFileGenerator = () => {
         status,
         filter,
         record,
+        options,
         clientArr,
         tableWidth,
         displayClients,

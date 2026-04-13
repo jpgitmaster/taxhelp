@@ -22,6 +22,7 @@ const FileGenerator_V = () => {
       filter,
       record,
       loader,
+      options,
       clientArr,
       tableWidth,
       clientLoader,
@@ -179,6 +180,7 @@ const FileGenerator_V = () => {
               >
                 <DocumentsTableDropdown
                   doc={doc}
+                  options={options}
                   displayDocsTbl={displayDocsTbl}
                   setDisplayDocsTbl={setDisplayDocsTbl}
                   handleToggle={handleToggle}

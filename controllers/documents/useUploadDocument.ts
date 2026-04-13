@@ -18,6 +18,16 @@ const useUploadDocuments = () => {
 
         useGetClients
     } = useClientAPI()
+    const [options, setOptions] = useState([
+        {
+            label: 'SUMMARY LIST OF SALES (SLS)',
+            value: 'SALES'
+        },
+        {
+            label: 'SUMMARY LIST OF PURCHASES (SLP)',
+            value: 'PURCHASES'
+        },
+    ])
     const { data: dataClients, isLoading, isFetching } = useGetClients(
         clientFilter.currentPage,
         clientFilter.recordsLimit,
@@ -143,7 +153,24 @@ const useUploadDocuments = () => {
             setDisplayDocsTbl(prevState => !prevState)
         }
     }
-    
+    const detectSheet = (workbook: XLSX.WorkBook) => {
+        let salesSheet = null
+        let purchaseSheet = null
+
+        workbook.SheetNames.forEach(name => {
+            const upper = name.toUpperCase()
+
+            if (upper.includes('SALE') || upper.includes('SLS')) {
+                salesSheet = name
+            }
+
+            if (upper.includes('PURCHASE') || upper.includes('SLP')) {
+                purchaseSheet = name
+            }
+        })
+
+        return { salesSheet, purchaseSheet }
+    }
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const f = e.target.files?.[0]
         if (!f) return
@@ -156,12 +183,59 @@ const useUploadDocuments = () => {
             if (!data) return
 
             const workbook = XLSX.read(data, { type: 'binary' })
-            const sheetName = workbook.SheetNames.find(name =>
-                name.toUpperCase().includes(doc.selectedTable.value)
-            )
 
+            const { salesSheet, purchaseSheet } = detectSheet(workbook)
+
+            let sheetName = null
+
+            // ✅ PRIORITY LOGIC
+            if (salesSheet && purchaseSheet) {
+                // both exist → use selectedTable
+                sheetName =
+                    doc.selectedTable.value === 'SALES'
+                        ? salesSheet
+                        : purchaseSheet
+            } else if (salesSheet) {
+                // only sales exists → force SALES
+                sheetName = salesSheet
+                setOptions([
+                    {
+                        label: 'SUMMARY LIST OF SALES (SLS)',
+                        value: 'SALES'
+                    }
+                ])
+                if (doc.selectedTable.value !== 'SALES') {
+                    setDoc(prev => ({
+                        ...prev,
+                        selectedTable: {
+                            value: 'SALES',
+                            label: 'SUMMARY LIST OF SALES (SLS)'
+                        }
+                    }))
+                }
+            } else if (purchaseSheet) {
+                // only purchases exists → force PURCHASES
+                sheetName = purchaseSheet
+                setOptions([
+                    {
+                        label: 'SUMMARY LIST OF PURCHASES (SLP)',
+                        value: 'PURCHASES'
+                    }
+                ])
+                if (doc.selectedTable.value !== 'PURCHASES') {
+                    setDoc(prev => ({
+                        ...prev,
+                        selectedTable: {
+                            value: 'PURCHASES',
+                            label: 'SUMMARY LIST OF PURCHASES (SLP)'
+                        }
+                    }))
+                }
+            }
+
+            // ❌ NOTHING FOUND
             if (!sheetName) {
-                alert(`${doc.selectedTable} sheet not found in Excel file`)
+                alert('No SALES or PURCHASES sheet found in Excel file')
                 return
             }
 
@@ -228,7 +302,7 @@ const useUploadDocuments = () => {
                     taxAmount: Number(row['W/TAX AMOUNT*'] || 0),
                     }
                 }
-                }
+            }
 
             const tableRows = json.map((row, index) => mapRow(row, index))
 
@@ -259,12 +333,49 @@ const useUploadDocuments = () => {
             if (!data) return
 
             const workbook = XLSX.read(data, { type: 'binary' })
-            const sheetName = workbook.SheetNames.find(name =>
-                name.toUpperCase().includes(doc.selectedTable.value)
-            )
 
+            const { salesSheet, purchaseSheet } = detectSheet(workbook)
+
+            let sheetName = null
+
+            // ✅ PRIORITY LOGIC
+            if (salesSheet && purchaseSheet) {
+                // both exist → use selectedTable
+                sheetName =
+                    doc.selectedTable.value === 'SALES'
+                        ? salesSheet
+                        : purchaseSheet
+            } else if (salesSheet) {
+                // only sales exists → force SALES
+                sheetName = salesSheet
+
+                if (doc.selectedTable.value !== 'SALES') {
+                    setDoc(prev => ({
+                        ...prev,
+                        selectedTable: {
+                            value: 'SALES',
+                            label: 'SUMMARY LIST OF SALES (SLS)'
+                        }
+                    }))
+                }
+            } else if (purchaseSheet) {
+                // only purchases exists → force PURCHASES
+                sheetName = purchaseSheet
+
+                if (doc.selectedTable.value !== 'PURCHASES') {
+                    setDoc(prev => ({
+                        ...prev,
+                        selectedTable: {
+                            value: 'PURCHASES',
+                            label: 'SUMMARY LIST OF PURCHASES (SLP)'
+                        }
+                    }))
+                }
+            }
+
+            // ❌ NOTHING FOUND
             if (!sheetName) {
-                alert(`${doc.selectedTable} sheet not found in Excel file`)
+                alert('No SALES or PURCHASES sheet found in Excel file')
                 return
             }
 
@@ -353,6 +464,7 @@ const useUploadDocuments = () => {
         rows,
         status,
         width_,
+        options,
         clientArr,
         displayDocsTbl,
         displayClients,
