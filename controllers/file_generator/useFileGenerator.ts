@@ -34,6 +34,9 @@ const useFileGenerator = () => {
         }
         client: {
             id: number | null,
+            last_name: string
+            first_name: string
+            trade_name: string
             registered_name: string
         },
         period: Dayjs | null
@@ -41,7 +44,10 @@ const useFileGenerator = () => {
         search: '',
         client: {
             id: null,
-            registered_name: ''
+            last_name: '',
+            first_name: '',
+            trade_name: '',
+            registered_name: '',
         },
         selectedTable: {
             value: 'SALES',
@@ -86,7 +92,13 @@ const useFileGenerator = () => {
         }))
     }
 
-    const handleSelectClient = (client: { id: number, registered_name: string }) => {
+    const handleSelectClient = (client: {
+        id: number | null,
+        last_name: string
+        first_name: string
+        trade_name: string
+        registered_name: string
+    }) => {
         setDoc({
             ...doc,
             client: client

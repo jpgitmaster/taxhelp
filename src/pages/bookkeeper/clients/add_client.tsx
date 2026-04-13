@@ -411,24 +411,6 @@ const AddCustomer_V = () => {
                     </CustomContainer>
                     <CustomContainer
                       scss={scss}
-                      width={20}
-                      label='Barangay'
-                      labelFor='barangay'
-                      err={client.clientErr.barangay as string}
-                    >
-                      <input
-                        id='barangay'
-                        type='text'
-                        name='barangay'
-                        maxLength={30}
-                        autoComplete='off'
-                        onKeyUp={handleBlur}
-                        onChange={handleChange}
-                        value={client.clientObj.barangay}
-                      />
-                    </CustomContainer>
-                    <CustomContainer
-                      scss={scss}
                       width={40}
                       label='Substreet'
                       labelFor='sub_street'
@@ -461,6 +443,24 @@ const AddCustomer_V = () => {
                         onKeyUp={handleBlur}
                         onChange={handleChange}
                         value={client.clientObj.street}
+                      />
+                    </CustomContainer>
+                    <CustomContainer
+                      scss={scss}
+                      width={20}
+                      label='Barangay'
+                      labelFor='barangay'
+                      err={client.clientErr.barangay as string}
+                    >
+                      <input
+                        id='barangay'
+                        type='text'
+                        name='barangay'
+                        maxLength={30}
+                        autoComplete='off'
+                        onKeyUp={handleBlur}
+                        onChange={handleChange}
+                        value={client.clientObj.barangay}
                       />
                     </CustomContainer>
                     <CustomContainer

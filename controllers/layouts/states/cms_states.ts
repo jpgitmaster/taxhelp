@@ -67,9 +67,17 @@ const initLinks: NavLink[] = [
     },
     {
         active: false,
+        key: 'general_ledger',
+        name: 'General Ledger',
+        icon: 'ledger.svg',
+        iconWidth: 20,
+        url: '/bookkeeper/general_ledger',
+    },
+    {
+        active: false,
         key: 'books_of_accounts',
         name: 'Book of Accounts',
-        icon: 'book_of_accounts.svg',
+        icon: 'book.svg',
         iconWidth: 20,
         url: '/bookkeeper/books_of_accounts',
     },

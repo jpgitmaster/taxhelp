@@ -37,7 +37,7 @@ const Clients_V = () => {
             taxpayer_name: client.first_name+' '+client.last_name,
             created_at: client.created_at ? dayjs(client.created_at).format('MM/DD/YYYY h:mm A') : '',
             representative_name: client.representative?.first_name+' '+client.representative?.last_name,
-            address: client.barangay+', '+client.street+', '+client.sub_street+', '+client.district+', '+client.city+', '+client.zip_code
+            address: client.street+', '+client.sub_street+', '+client.barangay+', '+client.district+', '+client.city+', '+client.zip_code
         }
     )) : []
 

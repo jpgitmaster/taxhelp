@@ -179,7 +179,6 @@ const FileGenerator_V = () => {
               >
                 <DocumentsTableDropdown
                   doc={doc}
-                  scss={scss}
                   displayDocsTbl={displayDocsTbl}
                   setDisplayDocsTbl={setDisplayDocsTbl}
                   handleToggle={handleToggle}
@@ -208,7 +207,6 @@ const FileGenerator_V = () => {
               >
                 <ClientsDropdown
                     doc={doc}
-                    scss={scss}
                     clients={clientArr}
                     search={doc.search}
                     loader={clientLoader}

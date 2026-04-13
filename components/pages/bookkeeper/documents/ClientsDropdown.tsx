@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import scss from './styles/CustomDropdown.module.scss'
 import { ClientObj } from '@/controllers/clients/types'
 import Loader from '@/components/reusables/RotatingLoader'
 import { useRef, useEffect, ChangeEvent, MouseEvent, Dispatch, SetStateAction } from 'react'
@@ -11,6 +12,9 @@ export default function ClientsDropdown(props: {
         }
         client: {
             id: number | null,
+            last_name: string
+            first_name: string
+            trade_name: string
             registered_name: string
         }
     }
@@ -18,7 +22,6 @@ export default function ClientsDropdown(props: {
     loader: boolean
     clients: ClientObj[]
     displayClients: boolean
-    scss: { [key: string]: string }
 
     setDisplayClients: Dispatch<SetStateAction<boolean>>
 
@@ -29,7 +32,6 @@ export default function ClientsDropdown(props: {
 }) {
     const {
         doc,
-        scss,
         search,
         loader,
         clients,
@@ -68,6 +70,7 @@ export default function ClientsDropdown(props: {
         event.stopPropagation();
     };
     const ref = useOutsideClick(handleClickOutside)
+    console.log(clients)
     return (
         <div className={scss.customDropdown} onClick={handleHeaderClick}>
             <div className={scss.dropdownInput} onClick={() => handleToggle('clients')} ref={ref}>
@@ -75,7 +78,7 @@ export default function ClientsDropdown(props: {
                     <Image src='/svgs/arrowDown.svg' alt='Arrow Down Icon' priority width={12} height={12} unoptimized={true} />
                 </div>
                 <div className={scss.selected}>
-                    {doc.client.registered_name}
+                    {(doc.client.registered_name ? doc.client.registered_name : '') || (doc.client.first_name ? doc.client.first_name+' '+doc.client.last_name : '')} {doc.client.trade_name ? ' - '+doc.client.trade_name : ''}
                     &nbsp;
                 </div>
             </div>
@@ -97,7 +100,12 @@ export default function ClientsDropdown(props: {
                                         setDisplayClients(false)
                                         handleSelectClient(client)
                                     }}>
-                                        {client.registered_name}
+                                        <strong>
+                                            {client.registered_name || (client.first_name+' '+client.last_name)}
+                                        </strong>
+                                        <p>
+                                            {client.trade_name}
+                                        </p>
                                     </li>
                                 )
                             }

@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import scss from './styles/CustomDropdown.module.scss'
 import { useRef, useEffect, MouseEvent, Dispatch, SetStateAction } from 'react'
 export default function DocumentsTableDropdown(props: {
     doc: {
@@ -13,7 +14,6 @@ export default function DocumentsTableDropdown(props: {
         }
     }
     displayDocsTbl: boolean
-    scss: { [key: string]: string }
 
     setDisplayDocsTbl: Dispatch<SetStateAction<boolean>>
 
@@ -26,7 +26,6 @@ export default function DocumentsTableDropdown(props: {
 }) {
     const {
         doc,
-        scss,
         displayDocsTbl,
         
         setDisplayDocsTbl,
