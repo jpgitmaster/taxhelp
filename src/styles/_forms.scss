@@ -59,6 +59,12 @@
       background-color: $lightGray2;
       @apply cursor-not-allowed;
     }
+    &.lblContent{
+      border: 0;
+      color: $black;
+      border-bottom: 1px dashed $blue;
+      @apply w-full inline-block rounded-none text-[14px] mt-0 pl-1.25 pb-1.5;
+    }
   }
   select{
     outline: none;

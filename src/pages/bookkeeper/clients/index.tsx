@@ -113,7 +113,7 @@ const Clients_V = () => {
                             View
                         </span>
                     </Link>
-                    <Link href={'/bookkeeper/clients/'+record.id} className={scss.action+' '+scss.edit}>
+                    <Link href={'/bookkeeper/clients/'+record.id+'/edit'} className={scss.action+' '+scss.edit}>
                         <Image src='/svgs/edit.svg' alt='Edit' priority width={20} height={20} unoptimized={true} />
                         <span>
                             Edit

@@ -17,12 +17,27 @@
         }
     }
 }
-.addClient{
+.addClient, .viewClient{
     @apply w-220 mx-auto relative;
+    .editLink{
+      color: $orange;
+      @apply absolute flex flex-row right-5 top-0 uppercase text-[11px] font-semibold;
+      img{
+        @apply relative -left-2 -top-1;
+        filter: invert(34%) sepia(86%) saturate(5128%) hue-rotate(186deg) brightness(93%) contrast(101%);
+      }
+    }
     .box{
         border: 1px solid $gray;
         background-color: $lightGray;
         @apply h-full rounded-[20px] p-5 pb-0 flex flex-col;
+        &.view{
+          background-color: $white;
+          @apply border-0;
+          .boxTitle{
+            color: $blue;
+          }
+        }
         .boxTitle{
             color: rgba($lightBlack, .7);
             font-weight: 600;
