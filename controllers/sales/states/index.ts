@@ -14,9 +14,7 @@ const initSalesObj = {
     gross_taxable: '',
     vatable_sales: '',
     taxable_month: '',
-    first_address: '',
     invoice_number: '',
-    second_address: '',
     zero_rated_sales: '',
     business_profile: {
         tin: '',
@@ -24,7 +22,9 @@ const initSalesObj = {
         first_name: '',
         middle_name: '',
         branch_code: '',
-        registered_name: ''
+        first_address: '',
+        second_address: '',
+        registered_name: '',
     }
 }
 const initSales = {

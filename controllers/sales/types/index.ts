@@ -14,9 +14,7 @@ interface SalesObj{
     gross_taxable: string
     vatable_sales: string
     taxable_month: string
-    first_address: string
     invoice_number: string
-    second_address: string
     zero_rated_sales: string
     business_profile: {
         tin: string
@@ -24,6 +22,8 @@ interface SalesObj{
         last_name: string
         first_name: string
         middle_name: string
+        first_address: string
+        second_address: string
         registered_name: string
     }
 }
