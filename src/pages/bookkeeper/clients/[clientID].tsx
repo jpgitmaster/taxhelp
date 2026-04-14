@@ -5,6 +5,7 @@ import { signOut, getSession } from 'next-auth/react'
 import Loader from '@/components/reusables/RotatingLoader'
 import Avatar from '@/components/reusables/AvatarPlaceholder'
 import useSaveClient from '@/controllers/clients/useSaveClient'
+import SuccessMessage from '@/components/reusables/SuccessMessage'
 import CustomContainer from '@/components/reusables/CustomContainer'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
@@ -17,12 +18,16 @@ const Client_V = () => {
 
       handleChange,
     } = useSaveClient()
-    const { loader } = status
+    const { message, loader } = status
     return (
       <div className={scss.viewClient}>
+        {
+          message &&
+          <SuccessMessage message={message} />
+        }
         { (loader || isLoading) && <Loader scss={scss} position='absolute' />}
         <Link href={`/bookkeeper/clients/${client.clientObj.id}/edit`} className={scss.editLink}>
-          <Image src='/svgs/edit.svg' alt='Edit' priority width={20} height={20} unoptimized={true} />
+          <Image src='/svgs/edit.svg' alt='Edit Details' priority width={20} height={20} unoptimized={true} />
           Edit Details
         </Link>
         <div className={scss.cards}>

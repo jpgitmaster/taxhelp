@@ -13,7 +13,7 @@ const EmailVerification = () => {
     useEffect(() => {
       if (typeof token !== 'string') return;
 
-      router.prefetch('/bookkeeper/profile');
+      router.prefetch('/bookkeeper/profile/edit');
 
       verifyUserMutation.mutate(token); // ✅ NO onSuccess here
     }, [token]);

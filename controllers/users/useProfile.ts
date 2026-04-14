@@ -3,8 +3,8 @@ import useUserAPI from './api';
 import dayjs, { Dayjs } from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
 import useGlobal from '@/controllers/global/useGlobal';
+import { ChangeEvent, SyntheticEvent, useEffect } from 'react';
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3';
-import { useState, ChangeEvent, SyntheticEvent, useEffect } from 'react';
 const useProfile = () => {
     const {
         handleBlur,
@@ -106,6 +106,7 @@ const useProfile = () => {
                     email: fetchUser.email,
                     lastName: fetchUser.last_name || '',
                     firstName: fetchUser.first_name || '',
+                    middleName: fetchUser.middle_name || '',
                     birthdate: fetchUser.birthday
                         ? dayjs(fetchUser.birthday).format('MM/DD/YYYY')
                         : ''
@@ -114,6 +115,23 @@ const useProfile = () => {
         }
     }, [fetchUser])
 
+    useEffect(() => {
+        const successMessage = sessionStorage.getItem('successMessage');
+        if (successMessage) {
+            setStatus(prev => ({
+                ...prev,
+                message: successMessage
+            }))
+
+            setTimeout(() => {
+                setStatus(prev => ({
+                    ...prev,
+                    message: ''
+                }))
+                sessionStorage.removeItem('successMessage')
+            }, 5000)
+        }
+    },[])
     return {
         // STATES
         user,

@@ -223,6 +223,24 @@ const useSaveClient = () => {
             }))
         }
     }, [data, clientID])
+
+    useEffect(() => {
+        const successMessage = sessionStorage.getItem('successMessage');
+        if (successMessage) {
+            setStatus(prev => ({
+                ...prev,
+                message: successMessage
+            }))
+
+            setTimeout(() => {
+                setStatus(prev => ({
+                    ...prev,
+                    message: ''
+                }))
+                sessionStorage.removeItem('successMessage')
+            }, 5000)
+        }
+    },[])
     return {
         // STATES
         client,

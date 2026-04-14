@@ -3,6 +3,7 @@ const initUserObj = {
     email: '',
     lastName: '',
     firstName: '',
+    middleName: '',
     isActive: null,
     role: [],
     password: '',

@@ -5,13 +5,14 @@ import { Client, ClientObj } from '../types'
 import api from '@/components/reusables/axios'
 import { Status } from '@/controllers/global/types'
 import { initStatus, initFilter } from '@/controllers/global/states'
-import { useMutation, useQuery, UseQueryOptions } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query'
 type UseGetClientOptions = Omit<
     UseQueryOptions<Client, Error>,
     'queryKey' | 'queryFn'
 >
 const useClientAPI = () => {
     const router = useRouter()
+    const queryClient = useQueryClient()
     const [filter, setFilter] = useState(initFilter)
     const [client, setClient] = useState<Client>(initClient)
     const [status, setStatus] = useState<Status>(initStatus)
@@ -140,23 +141,60 @@ const useClientAPI = () => {
             })
             return res.data
         },
-        onMutate: () => {
-            setStatus(prev => ({ ...prev, loader: true }))
+
+        // ✅ Optimistic update
+        onMutate: async (updatedClient) => {
+            setStatus(prev => ({ ...prev, loader: true }));
+
+            await queryClient.cancelQueries({ queryKey: ['client', updatedClient.id] });
+
+            const previousClient = queryClient.getQueryData(['client', updatedClient.id]);
+
+            queryClient.setQueryData(['client', updatedClient.id], (old: any) => {
+                if (!old) return old;
+
+                return {
+                    ...old,
+                    ...updatedClient,
+                    representative: {
+                        email: updatedClient.representative_email,
+                        phone_number: updatedClient.representative_phone,
+                        last_name: updatedClient.representative_last_name,
+                        first_name: updatedClient.representative_first_name,
+                        middle_name: updatedClient.representative_middle_name,
+                    }
+                };
+            });
+
+            return { previousClient };
         },
-        onSettled: () => {
-            setStatus(prev => ({ ...prev, loader: false }))
+
+        // ❌ rollback if error
+        onError: (error: any, _vars) => {
+            console.log(error);
+            setStatus(prev => ({ ...prev, loader: false }));
         },
-        onSuccess: () => {
+
+        // ✅ ensure sync with backend
+        onSettled: (_data, _err, variables) => {
+            queryClient.invalidateQueries({ queryKey: ['client', variables.id] });
+            setStatus(prev => ({ ...prev, loader: false }));
+        },
+
+        // ✅ success
+        onSuccess: (res) => {
+            const { client } = res;
+
             sessionStorage.setItem(
                 'successMessage',
                 'Your client has been updated.'
-            )
-            router.push('/bookkeeper/clients')
-        },
-        onError: (error: any) => {
-            console.log(error)
+            );
+
+            if (client?.id) {
+                router.push(`/bookkeeper/clients/${client.id}`);
+            }
         }
-    })
+    });
     return {
         //STATES
         client,

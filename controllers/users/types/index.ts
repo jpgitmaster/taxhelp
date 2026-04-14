@@ -2,8 +2,9 @@ interface UserObj{
   email: string
   role: string[]
   id: number | null
-  firstName: string
   lastName: string
+  firstName: string
+  middleName: string
   password?: string
   birthdate: string
   confirmPassword?: string

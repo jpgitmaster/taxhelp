@@ -1,39 +1,36 @@
 import dayjs from 'dayjs';
 import Link from 'next/link'
 import Image from 'next/image'
+import { DatePicker } from 'antd';
 import { getSession } from 'next-auth/react';
 import scss from './styles/Profile.module.scss';
 import useProfile from '@/controllers/users/useProfile';
 import Loader from '@/components/reusables/RotatingLoader';
 import Avatar from '@/components/reusables/AvatarPlaceholder';
-import SuccessMessage from '@/components/reusables/SuccessMessage';
 import CustomContainer from '@/components/reusables/CustomContainer';
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types';
 
-const Profile_V = () => {
+const EdtProfile_V = () => {
     const {
         user,
         status,
+        handleDate,
         handleBlur,
         handleChange,
         handleEditProfile
     } = useProfile()
     const profile = user.userObj
     const dateFormat = 'MM/DD/YYYY'
-    const { message, loader } = status
+    const { loader } = status
     return (
-        <>
-            {
-            message &&
-                <SuccessMessage message={message} />
-            }
-            <div className={scss.profileWrapper}>
-                <Link href={`/bookkeeper/profile/edit`} className={scss.editLink}>
-                    <Image src='/svgs/edit.svg' alt='Edit' priority width={20} height={20} unoptimized={true} />
-                    Edit Details
-                </Link>
-                <div className={scss.editProfile}>
+        <div className={scss.profileWrapper}>
+            <Link href={`/bookkeeper/profile`} className={scss.editLink}>
+                <Image src='/svgs/eyecon_check.svg' alt='View Details' priority width={20} height={20} unoptimized={true} />
+                View Details
+            </Link>
+            <form onSubmit={handleEditProfile} className={scss.form}>
+                <div className={scss.editProfile+' '+scss.box}>
                     <div className={scss.boxTitle}>
                         Profile Details
                     </div>
@@ -50,16 +47,17 @@ const Profile_V = () => {
                                     required={true}
                                     label='First Name'
                                     labelFor='firstName'
+                                    err={user.userErr.firstName as string}
                                 >
                                     <input
-                                        readOnly
                                         type='text'
+                                        maxLength={50}
                                         id='firstName'
                                         name='firstName'
+                                        autoComplete='off'
+                                        value={user.userObj.firstName}
                                         onKeyUp={handleBlur}
                                         onChange={handleChange}
-                                        className={scss.lblContent}
-                                        value={user.userObj.firstName}
                                     />
                                 </CustomContainer>
                                 <CustomContainer
@@ -67,16 +65,17 @@ const Profile_V = () => {
                                     scss={scss}
                                     label='Middle Name'
                                     labelFor='middleName'
+                                    err={user.userErr.middleName as string}
                                 >
                                     <input
-                                        readOnly
                                         type='text'
                                         id='middleName'
                                         name='middleName'
+                                        maxLength={50}
+                                        autoComplete='off'
+                                        value={user.userObj.middleName}
                                         onKeyUp={handleBlur}
                                         onChange={handleChange}
-                                        className={scss.lblContent}
-                                        value={user.userObj.middleName}
                                     />
                                 </CustomContainer>
                                 <CustomContainer
@@ -85,16 +84,17 @@ const Profile_V = () => {
                                     required={true}
                                     label='Last Name'
                                     labelFor='lastName'
+                                    err={user.userErr.lastName as string}
                                 >
                                     <input
-                                        readOnly
                                         type='text'
                                         id='lastName'
                                         name='lastName'
+                                        maxLength={50}
+                                        autoComplete='off'
+                                        value={user.userObj.lastName}
                                         onKeyUp={handleBlur}
                                         onChange={handleChange}
-                                        className={scss.lblContent}
-                                        value={user.userObj.lastName}
                                     />
                                 </CustomContainer>
                                 <CustomContainer
@@ -120,24 +120,30 @@ const Profile_V = () => {
                                     scss={scss}
                                     label='Birthdate'
                                     labelFor='birthdate'
+                                    err={user.userErr.birthdate as string}
                                 >
-                                    <input
-                                        readOnly
-                                        type='text'
+                                    <DatePicker
                                         id='birthdate'
                                         name='birthdate'
-                                        onKeyUp={handleBlur}
-                                        onChange={handleChange}
-                                        className={scss.lblContent}
-                                        value={profile.birthdate ? dayjs(profile.birthdate).format(dateFormat) : ''}
+                                        format={dateFormat}
+                                        style={{ border: user.userErr.birthdate ? '1px solid #DC2626' : '1px solid rgba(125, 122, 122, 0.6)' }}
+                                        onChange={(date) => handleDate(date, 'birthdate')}
+                                        value={
+                                            profile.birthdate
+                                            ? dayjs(profile.birthdate, dateFormat)
+                                            : null
+                                        }
                                     />
                                 </CustomContainer>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </>
+                <button type='submit' className={scss.button+' '+scss.btnblue} style={{display: 'block', maxWidth: '300px', margin: '30px auto'}}>
+                    Save Profile
+                </button>
+            </form>
+        </div>
     )
 }
 export const getServerSideProps: GetServerSideProps<PageProps> = async (context: GetServerSidePropsContext) => {
@@ -150,4 +156,4 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (context:
     props: { session }
   }
 }
-export default Profile_V;
+export default EdtProfile_V;

@@ -84,28 +84,66 @@ const useUserAPI = () => {
 
     // ✅ EDIT PROFILE (useMutation)
     const editProfileMutation = useMutation({
-        mutationFn: async (user: UserObj) => {
-            const res = await api.put(`/api/${apiVersion}/users/${user.id}`, {
-                email: user.email,
-                birthday: dayjs(user.birthdate).format('YYYY-MM-DD'),
-                last_name: user.lastName,
-                first_name: user.firstName,
-            })
-            return res.data
+    mutationFn: async (user: UserObj) => {
+        const res = await api.put(`/api/${apiVersion}/users/${user.id}`, {
+            email: user.email,
+            birthday: dayjs(user.birthdate).format('YYYY-MM-DD'),
+            last_name: user.lastName,
+            first_name: user.firstName,
+            middle_name: user.middleName,
+        })
+        return res.data
+    },
+
+    // ✅ OPTIMISTIC UPDATE (instant UI)
+    onMutate: async (updatedUser) => {
+            await queryClient.cancelQueries({ queryKey: ['user'] });
+
+            const previousUser = queryClient.getQueryData(['user']);
+
+            queryClient.setQueryData(['user'], (old: any) => {
+                if (!old) return old;
+
+                return {
+                    ...old,
+                    id: updatedUser.id,
+                    email: updatedUser.email,
+                    last_name: updatedUser.lastName,
+                    first_name: updatedUser.firstName,
+                    middle_name: updatedUser.middleName,
+                    birthday: updatedUser.birthdate
+                        ? dayjs(updatedUser.birthdate).format('YYYY-MM-DD')
+                        : null
+                };
+            });
+
+            return { previousUser };
         },
-        onSuccess: async (res) => {
-            setTimeout(() => {
-                setStatus(prev => ({
-                    ...prev,
-                    loader: false,
-                    message: 'Your profile changes have been saved successfully.'
-                }))
-            }, 500)
+
+        // ❌ rollback if error
+        onError: (error, _vars, context) => {
+            console.log('error', error);
+
+            if (context?.previousUser) {
+                queryClient.setQueryData(['user'], context.previousUser);
+            }
         },
-        onError: (error) => {
-            console.log('error', error)
+
+        // ✅ final sync (optional but recommended)
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['user'] });
+        },
+
+        // ✅ success behavior
+        onSuccess: () => {
+            sessionStorage.setItem(
+                'successMessage',
+                'Your profile has been updated.'
+            );
+
+            router.push(`/bookkeeper/profile`);
         }
-    })
+    });
 
     // VERIFY USER THROUGH EMAIL NOTIF
     const verifyUserMutation = useMutation({
@@ -138,7 +176,7 @@ const useUserAPI = () => {
             await getSession(); // ensures session is synced
 
             // Step 3: Redirect AFTER session is ready
-            router.replace('/bookkeeper/profile');
+            router.replace('/bookkeeper/profile/edit');
             } catch (err) {
             console.error('Email verification flow error:', err);
             }

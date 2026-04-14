@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import Image from 'next/image'
 import scss from './../styles/Clients.module.scss'
 import { signOut, getSession } from 'next-auth/react'
@@ -23,6 +24,10 @@ const Client_V = () => {
     return (
       <form onSubmit={handleUpdateSubmit} className={scss.addClient}>
         { (loader || isLoading) && <Loader scss={scss} position='absolute' />}
+        <Link href={`/bookkeeper/clients/${client.clientObj.id}`} className={scss.editLink}>
+          <Image src='/svgs/eyecon_check.svg' alt='View Details' priority width={20} height={20} unoptimized={true} />
+          View Details
+        </Link>
         <div className={scss.cards}>
           <div className={scss.card+' '+scss.w100}>
             <div className={scss.box}>

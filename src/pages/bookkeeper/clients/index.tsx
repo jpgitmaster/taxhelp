@@ -8,6 +8,7 @@ import { signOut, getSession } from 'next-auth/react'
 import useClients from '@/controllers/clients/useClients'
 import Loader from '@/components/reusables/RotatingLoader'
 import { ClientTableRow } from '@/controllers/clients/types'
+import SuccessMessage from '@/components/reusables/SuccessMessage'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 
@@ -23,7 +24,6 @@ const Clients_V = () => {
     } = useClients()
     const { message } = status
     const { clientArr } = client
-    console.log(clientArr)
     const dataSource = clientArr?.length ? clientArr.map(client => (
         {
             id: client.id,
@@ -154,38 +154,7 @@ const Clients_V = () => {
             </div>
             {
                 message &&
-                <div className={scss.success}>
-                    <div className={scss.successCheck}>
-                        <svg
-                        version="1.1"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 130.2 130.2"
-                        >
-                        <circle
-                            className={scss.path+' '+scss.circle}
-                            fill="none"
-                            stroke="#000"
-                            strokeWidth="8"
-                            strokeMiterlimit="12"
-                            cx="65.1"
-                            cy="65.1"
-                            r="60.1"
-                        />
-                        <polyline
-                            className={`${scss.path} ${scss.check}`}
-                            fill="none"
-                            stroke="#000"
-                            strokeWidth="8"
-                            strokeLinecap="round"
-                            strokeMiterlimit="12"
-                            points="100.2,40.2 51.5,88.8 29.8,67.5 "
-                        />
-                        </svg>
-                    </div>
-                    <div className={scss.successMessage}>
-                        {message}
-                    </div>
-                </div>
+                <SuccessMessage message={message} />
             }
             <div className={scss.tableRecords} style={{width:tableWidth+'px'}}>
                 { loader && <Loader scss={scss} position='absolute' />}
