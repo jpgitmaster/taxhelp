@@ -201,7 +201,7 @@ const Sales_V = () => {
         }
         <div className={scss.header}>
             <Link href='/bookkeeper/sales/add_sales' className={scss.button+' '+scss.btnblue}>
-                Add Sales
+                Add Record
             </Link>
             <Link href='/bookkeeper/sales/add_sales' className={scss.button+' '+scss.btnorange}>
                 Export Sales

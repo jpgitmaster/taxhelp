@@ -24,10 +24,10 @@ const Documents_V = () => {
 
     setActiveRowId,
 
-    handlePageChange
+    handlePageChange,
+    handleDownloadTemplate
   } = useDocuments()
   const { message } = status
-  console.log(doc.docArr)
   const dataSource: TableRow[] = doc.docArr?.map(doc => ({
     id: doc.id,
     file_name: doc.file_name,
@@ -237,6 +237,9 @@ const Documents_V = () => {
               <Link href='/bookkeeper/documents/upload_new_document' className={scss.button+' '+scss.btnblue}>
                 Upload New Document
               </Link>
+              <button type='button' className={scss.button+' '+scss.btnorange} onClick={handleDownloadTemplate}>
+                Download Template
+              </button>
               <form className={scss.searchComponent}
                   // onSubmit={handleSubmitSearch}
               >

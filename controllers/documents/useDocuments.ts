@@ -8,10 +8,12 @@ const useDocuments = () => {
         setStatus,
         setFilter,
         setDocument,
+        useGetTemplate,
         useGetDocuments
     } = useDocumentAPI()
     const [tableWidth, setTableWidth] = useState(0)
     const [activeRowId, setActiveRowId] = useState<number | null>(null)
+    const { refetch: downloadTemplate, isFetching: isDownloading } = useGetTemplate()
     const { data, isLoading, isFetching } = useGetDocuments(
         filter.currentPage,
         filter.recordsLimit,
@@ -24,6 +26,31 @@ const useDocuments = () => {
             currentPage: current
         }))
     }
+    
+    const handleDownloadTemplate = async () => {
+        try {
+            const res = await downloadTemplate()
+
+            if (res?.data) {
+                const blob = new Blob([res.data], {
+                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                })
+
+                const url = window.URL.createObjectURL(blob)
+                const link = document.createElement('a')
+                link.href = url
+                link.download = 'template.xlsx'
+                document.body.appendChild(link)
+                link.click()
+
+                link.remove()
+                window.URL.revokeObjectURL(url)
+            }
+        } catch (error) {
+            console.error('Download failed:', error)
+        }
+    }
+
     useEffect(() => {
         if(data?.documents?.length){
             setDocument(
@@ -64,12 +91,13 @@ const useDocuments = () => {
         status,
         tableWidth,
         activeRowId,
-        loader: isLoading || isFetching,
+        loader: isLoading || isFetching || isDownloading,
         // SET STATES
         setActiveRowId,
 
         // HANDLES
-        handlePageChange
+        handlePageChange,
+        handleDownloadTemplate
     }
 }
 

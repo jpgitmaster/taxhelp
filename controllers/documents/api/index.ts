@@ -43,6 +43,21 @@ const useDocumentAPI = () => {
             // placeholderData: (prev) => prev, // 👈 replaces keepPreviousData (see below)
         })
     }
+
+    const useGetTemplate = () => {
+        return useQuery({
+            queryKey: ['download_template'],
+            queryFn: async () => {
+                const res = await api({
+                    method: 'GET',
+                    url: `/api/${apiVersion}/files/template`,
+                    responseType: 'blob', // 👈 VERY IMPORTANT
+                })
+                return res.data
+            },
+            enabled: false // 👈 prevent auto-run
+        })
+    }
     
     const uploadDocumentMutation = useMutation({
         mutationFn: async ({
@@ -95,6 +110,7 @@ const useDocumentAPI = () => {
         setDocument,
 
         // QUERIES
+        useGetTemplate,
         useGetDocuments,
 
         // MUTATION
