@@ -131,13 +131,13 @@ const Clients_V = () => {
     ];
     
     return (
-        <div>
+        <>
             <div className={scss.header}>
                 <Link href='/bookkeeper/clients/add_client' className={scss.button+' '+scss.btnblue}>
                     Add Client
                 </Link>
                 <Link href='/bookkeeper/clients/add_client' className={scss.button+' '+scss.btnorange}>
-                    Export Table
+                    Export Clients
                 </Link>
                 <form className={scss.searchComponent}
                     // onSubmit={handleSubmitSearch}
@@ -181,7 +181,7 @@ const Clients_V = () => {
                 </div>
             </div>
             <br />
-        </div>
+        </>
     )
 }
 export const getServerSideProps: GetServerSideProps<PageProps> = async (context: GetServerSidePropsContext) => {

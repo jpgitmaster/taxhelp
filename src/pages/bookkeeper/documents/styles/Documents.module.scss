@@ -5,33 +5,15 @@
 
 @reference 'tailwindcss';
 
-.pageHeader.form{
-    @apply inline-block w-full mb-0 relative;
-    .cards{
-        @apply mt-0 mb-3;
+.header{
+    @apply inline-block w-full mb-3.75;
+    .button{
+        @apply mr-2.5;
+    }
+    .searchComponent{
+        @apply float-right -mt-2;
         .button{
-            @apply mr-2.5 w-auto inline-block;
-        }
-        &.customCards{
-          .card{
-            &.w33{
-              .searchComponent{
-                  @apply float-right w-full;
-                  .button{
-                      @apply m-0 py-2.25;
-                  }
-              }
-            }
-          }
-        }
-        .searchComponent{
-            @apply float-right;
-            .button{
-                @apply m-0 py-2.25;
-            }
-        }
-        .npt{
-            @apply p-0;
+            @apply mr-0;
         }
     }
 }

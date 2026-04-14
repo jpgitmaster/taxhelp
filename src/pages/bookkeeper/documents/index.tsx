@@ -229,19 +229,15 @@ const Documents_V = () => {
   ]
   return (
       <div>
-        <div className={scss.pageHeader+' '+scss.form}>
-          {
-            message &&
-            <SuccessMessage message={message} />
-          }
-          <div className={scss.cards}>
-            <div className={scss.card+' '+scss.w20}>
+        {
+          message &&
+          <SuccessMessage message={message} />
+        }
+        <div className={scss.header}>
               <Link href='/bookkeeper/documents/upload_new_document' className={scss.button+' '+scss.btnblue}>
                 Upload New Document
               </Link>
-            </div>
-            <div className={scss.card+' '+scss.w40}>
-              <div className={scss.searchComponent}
+              <form className={scss.searchComponent}
                   // onSubmit={handleSubmitSearch}
               >
                   <input id='search' type='text' name='search' maxLength={50} autoComplete='search' placeholder='Enter keyword...'
@@ -252,10 +248,8 @@ const Documents_V = () => {
                   >
                   Search
                   </button>
-              </div>
-            </div>
+              </form>
           </div>
-        </div>
         <div className={scss.tableRecords} style={{width:tableWidth+'px'}}>
           { loader && <Loader scss={scss} position='absolute' />}
             <Table
