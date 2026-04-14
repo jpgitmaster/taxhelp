@@ -1,0 +1,32 @@
+@use '@/styles/forms';
+@use '@/styles/helpers';
+@use '@/styles/reuseable';
+@use '@/styles/colors' as *;
+
+@reference 'tailwindcss';
+
+.header{
+    @apply inline-block w-full mb-3.75;
+    .button{
+        @apply mr-2.5;
+    }
+    .searchComponent{
+        @apply float-right -mt-2;
+        .button{
+            @apply mr-0;
+        }
+    }
+}
+
+.tableRecords{
+  @apply relative;
+  .actions{
+    @apply flex items-center justify-center;
+    .action{
+      @apply mx-1.5 cursor-pointer;
+      span{
+        @apply relative text-[7px];
+      }
+    }
+  }
+}

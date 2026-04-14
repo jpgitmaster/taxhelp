@@ -1,21 +1,24 @@
-const initSalesObj = {
+const initPurchasesObj = {
     id: null,
     atc: '',
     terms: '',
-    ewt_rate: '',
     vat_rate: '',
-    tax_amount: '',
+    wtax_rate: '',
     vat_amount: '',
+    wtax_amount: '',
     particulars: '',
+    invoice_date: '',
     account_name: '',
     gross_amount: '',
-    exempt_sales: '',
-    invoice_date: '',
     gross_taxable: '',
-    vatable_sales: '',
     taxable_month: '',
     invoice_number: '',
-    zero_rated_sales: '',
+    exempt_purchases: '',
+    vatable_purchases: '',
+    zero_rated_purchases: '',
+    vatable_purchase_of_services: '',
+    vatable_purchase_of_other_goods: '',
+    vatable_purchase_of_capital_goods: '',
     business_profile: {
         tin: '',
         last_name: '',
@@ -27,15 +30,15 @@ const initSalesObj = {
         registered_name: '',
     }
 }
-const initSales = {
-    salesArr: [],
-    salesErr: {
+const initPurchases = {
+    purchasesArr: [],
+    purchasesErr: {
 
     },
-    totalSales: 0,
-    salesObj: initSalesObj,
+    totalPurchases: 0,
+    purchasesObj: initPurchasesObj,
 }
 
 export {
-    initSales
+    initPurchases
 };

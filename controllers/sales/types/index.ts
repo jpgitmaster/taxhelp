@@ -7,9 +7,9 @@ interface SalesObj{
     tax_amount: string
     vat_amount: string
     particulars: string
-    exempt_sales: string
-    gross_amount: string
     account_name: string
+    gross_amount: string
+    exempt_sales: string
     invoice_date: string
     gross_taxable: string
     vatable_sales: string
@@ -28,10 +28,6 @@ interface SalesObj{
     }
 }
 
-type SalesErr = {
-    
-};
-
 interface Sales{
     salesObj: SalesObj
     salesArr: SalesObj[]
@@ -48,7 +44,6 @@ interface SalesTableRow {
 
 export type {
     Sales,
-    SalesErr,
     SalesObj,
     SalesTableRow
 }

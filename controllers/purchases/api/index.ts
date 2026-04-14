@@ -1,28 +1,28 @@
-import { Sales } from '../types'
 import { useState } from 'react'
-import { initSales } from '../states'
+import { Purchases } from '../types'
+import { initPurchases } from '../states'
 import api from '@/components/reusables/axios'
 import { useQuery } from '@tanstack/react-query'
 import { Status } from '@/controllers/global/types'
 import { initStatus, initFilter } from '@/controllers/global/states'
 
-const useSalesAPI = () => {
+const usePurchasesAPI = () => {
     const [filter, setFilter] = useState(initFilter)
-    const [sales, setSales] = useState<Sales>(initSales)
     const [status, setStatus] = useState<Status>(initStatus)
     const apiVersion = process.env?.NEXT_PUBLIC_API_VERSION
-    const useGetSales = (
+    const [purchases, setPurchases] = useState<Purchases>(initPurchases)
+    const useGetPurchases = (
         page: number,
         limit: number,
         filter: { roleId: string[] | number[] },
         search: string
     ) => {
         return useQuery({
-            queryKey: ['sales', page, limit, filter, search],
+            queryKey: ['purchases', page, limit, filter, search],
             queryFn: async () => {
                 const res = await api({
                     method: 'GET',
-                    url: `/api/${apiVersion}/sales/records`,
+                    url: `/api/${apiVersion}/purchases/records`,
                     params: {
                         page,
                         search,
@@ -33,8 +33,8 @@ const useSalesAPI = () => {
                 })
 
                 return {
-                    sales: res.data?.sales ?? [],
-                    totalSales: res.data?.total ?? 0
+                    purchases: res.data?.purchases ?? [],
+                    totalPurchases: res.data?.total ?? 0
                 }
             },
             // placeholderData: (prev) => prev, // 👈 replaces keepPreviousData (see below)
@@ -44,21 +44,21 @@ const useSalesAPI = () => {
     
     return {
         //STATES
-        sales,
         status,
         filter,
+        purchases,
 
         // SET STATES
-        setSales,
+        setPurchases,
         setFilter,
         setStatus,
 
         // QUERIES
-        useGetSales,
+        useGetPurchases,
 
         // MUTATION
 
         //HANDLES
     }
 }
-export default useSalesAPI;
+export default usePurchasesAPI;

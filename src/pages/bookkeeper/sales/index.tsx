@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Table, Pagination } from 'antd'
@@ -10,7 +11,6 @@ import Loader from '@/components/reusables/RotatingLoader'
 import SuccessMessage from '@/components/reusables/SuccessMessage'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
-import dayjs from 'dayjs'
 
 const Sales_V = () => {
   const {
@@ -23,7 +23,6 @@ const Sales_V = () => {
   } = useSales()
   const { message } = status
   const { salesArr } = sales
-  console.log(salesArr)
   const dataSource = salesArr?.length ? salesArr.map(sales => (
       {
         id: sales.id,
@@ -202,9 +201,6 @@ const Sales_V = () => {
         <div className={scss.header}>
             <Link href='/bookkeeper/sales/add_sales' className={scss.button+' '+scss.btnblue}>
                 Add Record
-            </Link>
-            <Link href='/bookkeeper/sales/add_sales' className={scss.button+' '+scss.btnorange}>
-                Export Sales
             </Link>
             <form className={scss.searchComponent}
                 // onSubmit={handleSubmitSearch}
