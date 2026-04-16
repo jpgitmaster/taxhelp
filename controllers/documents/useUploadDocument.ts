@@ -191,6 +191,16 @@ const useUploadDocuments = () => {
             // ✅ PRIORITY LOGIC
             if (salesSheet && purchaseSheet) {
                 // both exist → use selectedTable
+                setOptions([
+                    {
+                        label: 'SUMMARY LIST OF SALES (SLS)',
+                        value: 'SALES'
+                    },
+                    {
+                        label: 'SUMMARY LIST OF PURCHASES (SLP)',
+                        value: 'PURCHASES'
+                    },
+                ])
                 sheetName =
                     doc.selectedTable.value === 'SALES'
                         ? salesSheet
