@@ -167,6 +167,14 @@ const useFileGenerator = () => {
                     totalRecords: sales.totalRecords
                 }
             )
+        }else{
+            setRecord(
+                {
+                    ...record,
+                    recordArr: [],
+                    totalRecords: 0
+                }
+            )
         }
     }, [sales])
 
@@ -177,6 +185,14 @@ const useFileGenerator = () => {
                     ...record,
                     recordArr: purchases.records,
                     totalRecords: purchases.totalRecords
+                }
+            )
+        }else{
+            setRecord(
+                {
+                    ...record,
+                    recordArr: [],
+                    totalRecords: 0
                 }
             )
         }

@@ -186,20 +186,6 @@ const FileGenerator_V = () => {
                   handleToggle={handleToggle}
                   handleSelectTable={handleSelectTable}
                 />
-                  {/* <select>
-                      <option>
-                          SUMMARY LIST OF SALES (SLS)
-                      </option>
-                      <option>
-                          SUMMARY LIST OF PURCHASES (SLP)
-                      </option>
-                      <option>
-                          IMPORTATION
-                      </option>
-                      <option>
-                          QUARTERLY ALPHALIST OF PAYEES (QAP)
-                      </option>
-                  </select> */}
               </CustomContainer>
               <CustomContainer
                   scss={scss}
