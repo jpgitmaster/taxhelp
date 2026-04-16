@@ -52,6 +52,31 @@ const useUserAPI = () => {
         }
     })
 
+    const forgotPasswordMutation = useMutation({
+        mutationFn: async (user: UserObj) => {
+            const res = await api.post(`/api/${apiVersion}/auth/forgot-password`, {
+                email: user.email
+            })
+            return res.data
+        },
+        onSuccess: (res) => {
+            console.log('res')
+            console.log(res)
+            setTimeout(() => {
+                setStatus(prev => ({
+                    ...prev,
+                    loader: false,
+                    message: 'Password Reset Email Sent!',
+                    submessage:
+                        "Check your email for instructions to reset your password. Follow the link provided to create a new one."
+                }));
+            }, 500)
+        },
+        onError: (error: any) => {
+            console.log(error)
+        }
+    })
+
     // ✅ LOGIN USER (useMutation)
     const loginUserMutation = useMutation({
         mutationFn: async (user: UserObj) => {
@@ -229,6 +254,7 @@ const useUserAPI = () => {
         createUserMutation,
         verifyUserMutation,
         editProfileMutation,
+        forgotPasswordMutation,
 
         //HANDLES
         handleUserLogout

@@ -225,7 +225,7 @@ const LandingPage = () => {
         </section>
 
         {/* Contact Section */}
-        <section id="contact" className={scss.contact_us}>
+        <section id="contactus" className={scss.contact_us}>
           <div className={scss.contact_us_box}>
               <h2>Contact Us</h2>
               <p>Ready to get started? Reach out for a free consultation or to learn more about our services.</p>

@@ -2,6 +2,7 @@ import { FC } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import scss from './CMS_Layout.module.scss'
+import { Dropdown, type MenuProps } from 'antd'
 import useMaster from '@/controllers/layouts/useMaster'
 import Breadcrumbs from '@/components/reusables/BreadCrumbs'
 import Avatar from '@/components/reusables/AvatarPlaceholder'
@@ -20,6 +21,32 @@ const CMS_Layout: FC<MastertProps> = ({ children }) => {
     handleHeaderClick,
     handleShowSublinks
   } = useMaster()
+  const linkItems = (): MenuProps['items'] => [
+		{
+			key: '1',
+			label: (
+			<Link href={'/bookkeeper/profile/edit'} className={scss.actionItem}>
+				Edit Profile
+			</Link>
+			),
+		},
+    {
+			key: '2',
+			label: (
+			<Link href={''} className={scss.actionItem}>
+				Account Settings
+			</Link>
+			),
+		},
+		{
+			key: '3',
+			label: (
+			<Link href={''} className={scss.actionItem}>
+				Change Password
+			</Link>
+			),
+		},
+	];
   return (
     isPageLoad &&
     <div className={scss.app}>
@@ -117,15 +144,20 @@ const CMS_Layout: FC<MastertProps> = ({ children }) => {
                       <Image src={'/svgs/header/chat.svg'} alt='Chat' priority width={20} height={20} unoptimized={true} />
                     </div>
                   </div>
-                  <div className={scss.headerIcon+' '+scss.mid}>
+                  <div className={scss.headerIcon}>
                     <div className={scss.icon}>
                       <Image src={'/svgs/header/notification.svg'} alt='Notification' priority width={20} height={20} unoptimized={true} />
                     </div>
                   </div>
-                  <div className={scss.headerIcon+' '+scss.mid}>
-                    <Link href='/bookkeeper/profile' className={scss.icon}>
-                      <Image src={'/svgs/header/profile.svg'} alt='Profile' priority width={20} height={20} unoptimized={true} />
-                    </Link>
+                  <div className={scss.headerIcon+' '+scss.active}>
+                    <Dropdown 
+                      menu={{ items: linkItems() }}
+                      placement="bottomRight" trigger={['click']}
+                    >
+                      <button type='button' className={scss.icon}>
+                        <Image src={'/svgs/header/profile.svg'} alt='Profile' priority width={20} height={20} unoptimized={true} />
+                      </button>
+                    </Dropdown>
                   </div>
                   <div className={scss.headerIcon}>
                     <button type='button' className={scss.icon} onClick={handleUserLogout}>

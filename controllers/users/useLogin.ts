@@ -13,17 +13,19 @@ const useLogin = () => {
     const {
         user,
         status,
+        initUser,
 
         setUser,
         setStatus,
 
         loginUserMutation,
+        forgotPasswordMutation
     } = UserAPIcalls()
     const [displayPassword, setDisplayPassword] = useState(false)
     const fieldValidations = {
-        password: { usename: 'Password', required: true },
         email: { usename: 'Email', required: true, email: true },
     }
+    
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
         setUser({
@@ -35,14 +37,37 @@ const useLogin = () => {
         })
         handleRemoveErr(user.userErr, name)
     }
-    
-    const handleUserLogin = async (e: SyntheticEvent<HTMLFormElement>) => {
+    const handleForgotPassword = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         setStatus({...status, loader: true})
         const {
             validation_errors,
             validation_has_error,
         } = ValidatorV3(fieldValidations, user.userObj)
+        if (validation_has_error) {
+            const timer = setTimeout(() => {
+                setUser({
+                    ...user,
+                    userErr: validation_errors
+                })
+                setStatus({...status, loader: false})
+                return false
+            }, 500)
+            return () => clearTimeout(timer)
+        }
+        forgotPasswordMutation.mutate(user.userObj)
+    }
+
+    const handleUserLogin = async (e: SyntheticEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setStatus({...status, loader: true})
+        const {
+            validation_errors,
+            validation_has_error,
+        } = ValidatorV3({
+            ...fieldValidations,
+            password: { usename: 'Password', required: true },
+        }, user.userObj)
         if (validation_has_error) {
             const timer = setTimeout(() => {
                 setUser({
@@ -63,9 +88,12 @@ const useLogin = () => {
         // STATES
         user,
         status,
+        initUser,
         displayPassword,
 
         // SET STATES
+        setUser,
+        setStatus,
         setDisplayPassword,
 
         // HANDLES
@@ -73,6 +101,7 @@ const useLogin = () => {
         handleChange,
         handleResubmit,
         handleUserLogin,
+        handleForgotPassword
     }
 }
 

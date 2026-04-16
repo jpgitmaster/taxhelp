@@ -267,6 +267,11 @@ body, html{
                                 &:first-child::before{
                                     @apply hidden;
                                 }
+                                &.active{
+                                    .icon{
+                                        filter: invert(34%) sepia(86%) saturate(5128%) hue-rotate(186deg) brightness(93%) contrast(101%);
+                                    }
+                                }
                                 &::before{
                                     content: "";
                                     border-left: 1px dashed $lightBlue;
