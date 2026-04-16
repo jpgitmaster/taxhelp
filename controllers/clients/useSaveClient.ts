@@ -36,6 +36,7 @@ const useSaveClient = () => {
             condition: client.clientObj.classification === 'INDIVIDUAL',
             required: true
         }},
+        rdo_code: { usename: 'RDO Code', required: true },
         email: { usename: 'Email', required: true, email: true },
         representative_phone: { usename: 'Phone', required: true },
         trade_name: { usename: 'Trade Name', ifCondition: {
@@ -91,6 +92,30 @@ const useSaveClient = () => {
         const alphaNumeric = /^[a-zA-Z0-9]+$/
         const regexNumericOnly = /^(0|[1-9]\d*)$/
         switch (name) {
+            case 'classification':
+                if (value === 'INDIVIDUAL') {
+                    setClient({
+                        ...client,
+                        clientObj: {
+                            ...client.clientObj,
+                            [name]: value,
+                            registered_name: ''
+                        }
+                    })
+                }
+                if (value === 'NON-INDIVIDUAL') {
+                    setClient({
+                        ...client,
+                        clientObj: {
+                            ...client.clientObj,
+                            [name]: value,
+                            last_name: '',
+                            first_name: '',
+                            middle_name: ''
+                        }
+                    })
+                }
+                break;
             case 'month_end':
                 if (value === '' || regexNumericOnly.test(value)) {
                     const numericValue = Number(value)
@@ -134,7 +159,7 @@ const useSaveClient = () => {
                     clientObj: {
                         ...client.clientObj,
                         period: value,
-                        month_end: ''
+                        month_end: value === 'CALENDAR' ? '12' : ''
                     }
                 })
                 break;
