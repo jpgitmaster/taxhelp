@@ -104,6 +104,15 @@ const useUserAPI = () => {
         },
         onError: (error) => {
             console.log('error', error)
+            setUser(prev => ({
+                ...prev,
+                userErr: {
+                    ...(prev.userErr || {}),
+                    email: 'Invalid email or password',
+                    password: 'Please contact TaxHelp Administrator'
+                }
+            }));
+            setStatus({...status, loader: false})
         }
     })
 
