@@ -34,7 +34,7 @@ const useDocumentAPI = () => {
                         // filter: JSON.stringify(filter)
                     }
                 })
-                console.log(res.data)
+                // console.log(res.data)
                 return {
                     documents: res.data?.files ?? [],
                     totalDocs: res.data?.total ?? 0

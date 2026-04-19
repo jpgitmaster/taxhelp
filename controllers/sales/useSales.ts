@@ -1,44 +1,203 @@
+import { Dayjs } from 'dayjs';
 import useSalesAPI from "./api";
-import { useState, useEffect } from "react";
+import { SalesObj } from './types';
+import useClientAPI from '../clients/api';
+import useDocumentAPI from '../documents/api';
+import { useState, useEffect, ChangeEvent } from "react";
+
 
 const useSales = () => {
     const {
         sales,
         status,
-        filter,
+        filter: salesFilter,
 
         setSales,
-        setFilter,
         setStatus,
+        setFilter: salesSetFilter,
 
-        useGetSales
+        useGetSales,
+        useDeleteSalesRecord
     } = useSalesAPI()
+
+    const {
+        filter: clientFilter,
+        setFilter: clientSetFilter,
+
+        useGetClients
+    } = useClientAPI()
+
+    const {
+        filter: documentFilter,
+        setFilter: documentSetFilter,
+
+        useGetDocuments
+    } = useDocumentAPI()
+
     const [tableWidth, setTableWidth] = useState(0)
-    const { data, isLoading, isFetching } = useGetSales(
-        filter.currentPage,
-        filter.recordsLimit,
-        filter.filter,
-        filter.search
+    const [displayClients, setDisplayClients] = useState(false)
+    const [displayDocuments, setDisplayDocuments] = useState(false)
+    const [doc, setDoc] = useState<{
+        search: string
+        client: {
+            id: number | null,
+            last_name: string
+            first_name: string
+            trade_name: string
+            registered_name: string
+        },
+        document: {
+            id: number | null
+            file_name: string
+        },
+        period: Dayjs | null
+    }>({
+        search: '',
+        client: {
+            id: null,
+            last_name: '',
+            first_name: '',
+            trade_name: '',
+            registered_name: '',
+        },
+        document: {
+            id: null,
+            file_name: ''
+        },
+        period: null,
+    })
+    const { data: dataDocuments, isLoading: isLoadingDocuments, isFetching: isFetchingDocuments } = useGetDocuments(
+        documentFilter.currentPage,
+        documentFilter.recordsLimit,
+        documentFilter.filter,
+        documentFilter.search
     )
 
+    const { data: dataSales, isLoading: isLoadingSales, isFetching: isFetchingSales } = useGetSales(
+        salesFilter.currentPage,
+        salesFilter.recordsLimit,
+        salesFilter.filter,
+        salesFilter.search,
+        Number(doc.document.id),
+        Number(doc.client.id),
+    )
+
+    const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = useGetClients(    
+        clientFilter.currentPage,
+        clientFilter.recordsLimit,
+        clientFilter.filter,
+        clientFilter.search
+    )
+
+    const clientArr = dataClients?.clients;
+    const documentArr = dataDocuments?.documents; 
+
+    const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = event.target
+        if(name === 'search'){
+            clientSetFilter(prev => ({
+                ...prev,
+                search: value,
+                currentPage: 1
+            }))
+        }
+        setDoc({
+            ...doc,
+            [name]: value
+        })
+    }
+    const handleSelectClient = (client: {
+        id: number | null,
+        last_name: string
+        first_name: string
+        trade_name: string
+        registered_name: string
+    }) => {
+        setDoc({
+            ...doc,
+            client: client
+        })
+        salesSetFilter({
+            ...salesFilter,
+            currentPage: 1,
+        })
+    }
+
+    const handleDeleteRecord = (id: number) => {
+        setStatus({...status, loader: true})
+        useDeleteSalesRecord.mutate(id)
+    }
+
+    const handleSelectDocument = (document: {
+        id: number | null,
+        file_name: string
+    }) => {
+        setDoc({
+            ...doc,
+            document: document
+        })
+        salesSetFilter({
+            ...salesFilter,
+            currentPage: 1,
+        })
+    }
+    const handleToggleDelete = (id: number) => {
+        const { salesArr } = sales
+        const newSalesArr = salesArr?.map((sales_) => sales_.id == id ? {
+            ...sales_,
+            toDelete: !sales_.toDelete
+        } : {
+            ...sales_,
+            toDelete: false,
+        })
+        setSales({
+            ...sales,
+            salesArr: newSalesArr as SalesObj[]
+        })
+    }
+    const handleToggle = (dropdown: string) => {
+        if(dropdown === 'clients'){
+            setDisplayClients(prevState => !prevState)
+        }
+        if(dropdown === 'documents'){
+            setDisplayDocuments(prevState => !prevState)
+        }
+    }
+    const handleDateChange = (date: Dayjs | null) => {
+        setDoc(prev => ({
+            ...prev,
+            period: date
+        }))
+    }
     const handlePageChange = (current: number) => {
-        setFilter((prev) => ({
+        salesSetFilter((prev) => ({
             ...prev,
             currentPage: current
         }))
     }
 
     useEffect(() => {
-        if(data?.sales?.length){
+        if(dataSales?.sales?.length){
             setSales(
                 {
                     ...sales,
-                    salesArr: data.sales,
-                    totalSales: data.totalSales
+                    salesArr: dataSales.sales?.map((sales_: SalesObj[]) => ({
+                        ...sales_,
+                        toDelete: false
+                    })),
+                    totalSales: dataSales.totalSales
+                }
+            )
+        }else{
+            setSales(
+                {
+                    ...sales,
+                    salesArr: [],
+                    totalSales: 0
                 }
             )
         }
-    }, [data])
+    }, [dataSales])
 
     useEffect(() => {
         if(typeof window !== 'undefined'){
@@ -63,18 +222,33 @@ const useSales = () => {
     },[])
     return {
         // STATES
+        doc,
         sales,
         status,
-        filter,
+        clientArr,
         tableWidth,
-        loader: isLoading || isFetching,
+        documentArr,
+        salesFilter,
+        displayClients,
+        displayDocuments,
+        clientLoader: isLoadingClients || isFetchingClients,
+        documentLoader: isLoadingDocuments || isFetchingDocuments,
+        salesloader: isLoadingSales || isFetchingSales || status.loader,
 
         // SET STATES
+        setDisplayClients,
+        setDisplayDocuments,
         
 
         // HANDLES
+        handleChange,
+        handleToggle,
+        handleDateChange,
         handlePageChange,
-        
+        handleToggleDelete,
+        handleSelectClient,
+        handleDeleteRecord,
+        handleSelectDocument
     }
 }
 

@@ -4,22 +4,57 @@
 @use '@/styles/colors' as *;
 
 @reference 'tailwindcss';
-
+:global(.ant-picker) {
+  border: 1px solid $gray;
+  background-color: $white;
+}
+:global(.ant-table-content){
+  @apply -mt-3 pt-8;
+}
 .header{
-    @apply inline-block w-full mb-3.75;
+    @apply inline-block w-full mb-0 mt-3;
     .button{
-        @apply mr-2.5;
+      @apply mr-2.5;
     }
     .searchComponent{
-        @apply float-right -mt-2;
-        .button{
-            @apply mr-0;
-        }
+      @apply float-right -mt-2;
+      input[type=text]{
+        @apply h-9.5;
+      }
+      .button{
+          @apply mr-0;
+      }
     }
 }
-
+.box{
+  border: 1px solid $gray;
+  background-color: $lightGray;
+  @apply w-220 mx-auto relative h-full rounded-[20px] p-5 pb-0 flex flex-col mb-2.5;
+  .boxTitle{
+    color: rgba($lightBlack, .7);
+    font-weight: 600;
+    @apply text-[18px] mb-3;
+  }
+  input[type=text].lblContent{
+    background-color: $transparent;
+  }
+}
+.filters{
+  background-color: $lightGray;
+  border: 1px solid rgba($gray, .5);
+  @apply rounded-[20px] p-3.5 pb-1 w-full mb-3 -mt-2.5;
+  .cards{
+    @apply justify-normal flex-nowrap mb-3;
+    .npt{
+      @apply p-0;
+    }
+  }
+}
 .tableRecords{
   @apply relative;
+  .activeRow, .activeRow td, .activeRow:hover td{
+    background-color: #fbdfdf !important;
+  }
   .actions{
     @apply flex items-center justify-center;
     .action{
@@ -29,4 +64,124 @@
       }
     }
   }
+}
+
+.onDelete {
+  @apply relative float-right;
+  &.disabled{
+      @apply pointer-events-none cursor-not-allowed;
+      .delete{
+          @apply opacity-[.2];
+          img{
+              filter: inherit;
+          }
+      }
+  }
+  .popover {
+      transition: opacity 0.2s ease all;
+      -moz-transition: opacity 0.2s ease all;
+      -webkit-transition: opacity 0.2s ease all;
+      @apply absolute w-37.5 bottom-9.5 -left-27.5 z-2 opacity-0 hidden;
+
+      .arrow {
+          @apply absolute right-7 -bottom-2;
+
+          &::before,
+          &::after {
+              content: "";
+              border-style: solid;
+              border-color: transparent;
+              border-width: 0.5rem 0.5rem 0;
+              @apply absolute block bottom-0;
+          }
+
+          &::before {
+              border-top-color: $blue;
+          }
+
+          &::after {
+              bottom: 1px;
+              border-top-color: $white;
+          }
+      }
+
+      .popoverBody {
+          border: 1px solid $blue;
+          background-color: $white;
+          @apply float-left w-full pt-1.5 px-2.5 pb-1.25 rounded-[10px];
+          .deleteDetails{
+              @apply flex flex-col;
+              p{
+                  line-height: 12px;
+                  @apply text-[11px] text-center;
+              }
+              .deleteActions{
+                  @apply clear-both mt-1.5 mb-0.5 flex flex-row items-center justify-center;
+                  .deleteAction{
+                      border: 1px solid;
+                      @apply mx-0.5 px-1.5 py-0 rounded-[5px] w-10 text-[10px] cursor-pointer;
+                      &.yes{
+                          color: $border_green;
+                          border-color: $border_green;
+                          &:hover{
+                              color: $white;
+                              background-color: $border_green;
+                          }
+                      }
+                      &.no{
+                          color: $blue;
+                          border-color: $blue;
+                          &:hover{
+                              color: $white;
+                              background-color: $blue;
+                          }
+                      }
+                  }
+              }
+          }
+      }
+
+      &.flipInY {
+          animation: flipInY 0.8s;
+          -webkit-animation: flipInY 0.8s;
+          @apply inline-block opacity-[1]
+      }
+  }
+
+  &:focus-within .popover {
+      @apply block opacity-[1];
+  }
+}
+
+/* Animations */
+@keyframes flipInY {
+    0% {
+        transform: perspective(500px) rotateY(70deg);
+        opacity: 0.2;
+    }
+    30% {
+        transform: perspective(500px) rotateY(-30deg);
+    }
+    85% {
+        transform: perspective(500px) rotateY(10deg);
+    }
+    100% {
+        transform: perspective(500px) rotateY(0deg);
+    }
+}
+
+@-webkit-keyframes flipInY {
+    0% {
+        -webkit-transform: perspective(500px) rotateY(70deg);
+        opacity: 0.2;
+    }
+    30% {
+        -webkit-transform: perspective(500px) rotateY(-30deg);
+    }
+    85% {
+        -webkit-transform: perspective(500px) rotateY(10deg);
+    }
+    100% {
+        -webkit-transform: perspective(500px) rotateY(0deg);
+    }
 }

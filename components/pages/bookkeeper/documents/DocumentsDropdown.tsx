@@ -1,45 +1,42 @@
 import Image from 'next/image'
 import scss from './styles/CustomDropdown.module.scss'
-import { ClientObj } from '@/controllers/clients/types'
+import { DocObj } from '@/controllers/documents/types'
 import Loader from '@/components/reusables/RotatingLoader'
 import { useRef, useEffect, ChangeEvent, MouseEvent, Dispatch, SetStateAction } from 'react'
-export default function ClientsDropdown(props: {
+export default function DocumentsDropdown(props: {
     doc: {
         search: string
         selectedTerms?: {
             value: string,
             label: string
         }
-        client: {
-            id: number | null,
-            last_name: string
-            first_name: string
-            trade_name: string
-            registered_name: string
+        document: {
+            id: number | null
+            file_name: string
         }
     }
     loader: boolean
-    clients: ClientObj[]
-    displayClients: boolean
+    documents: DocObj[]
+    displayDocuments: boolean
 
-    setDisplayClients: Dispatch<SetStateAction<boolean>>
+    setDisplayDocuments: Dispatch<SetStateAction<boolean>>
 
     handleToggle(dropdown: string): void
     handleChange(event: ChangeEvent<HTMLInputElement>): void
-    handleSelectClient(client: { id: null | number, registered_name: string }): void
+    handleSelectDocument(document: { id: null | number, file_name: string }): void
     
 }) {
     const {
         doc,
         loader,
-        clients,
-        displayClients,
+        documents,
+        displayDocuments,
         
-        setDisplayClients,
+        setDisplayDocuments,
 
         handleChange,
-        handleSelectClient,
-        handleToggle
+        handleToggle,
+        handleSelectDocument
     } = props
 
     // CLICK OUTSIDE
@@ -62,7 +59,7 @@ export default function ClientsDropdown(props: {
         return ref;
     };
     const handleClickOutside = () => {
-        setDisplayClients(false)
+        setDisplayDocuments(false)
     };
     const handleHeaderClick = (event: MouseEvent<HTMLElement>) => {
         event.stopPropagation();
@@ -70,17 +67,17 @@ export default function ClientsDropdown(props: {
     const ref = useOutsideClick(handleClickOutside)
     return (
         <div className={scss.customDropdown} onClick={handleHeaderClick}>
-            <div className={scss.dropdownInput} onClick={() => handleToggle('clients')} ref={ref}>
-                <div className={scss.arrow +' '+ (displayClients ? scss.open : scss.close)}>
+            <div className={scss.dropdownInput} onClick={() => handleToggle('documents')} ref={ref}>
+                <div className={scss.arrow +' '+ (displayDocuments ? scss.open : scss.close)}>
                     <Image src='/svgs/arrowDown.svg' alt='Arrow Down Icon' priority width={12} height={12} unoptimized={true} />
                 </div>
                 <div className={scss.selected}>
-                    {(doc.client.registered_name ? doc.client.registered_name : '') || (doc.client.first_name ? doc.client.first_name+' '+doc.client.last_name : '')} {doc.client.trade_name ? ' - '+doc.client.trade_name : ''}
+                    {(doc.document.file_name ? doc.document.file_name : '')}
                     &nbsp;
                 </div>
             </div>
             {
-                displayClients &&
+                displayDocuments &&
                 <div className={scss.dropwdownList}>
                     <div className={scss.dropwdownSearch}>
                         <div className={scss.searchIcon}>
@@ -89,20 +86,17 @@ export default function ClientsDropdown(props: {
                         <input name='search' type='text' value={doc.search} onChange={handleChange} />
                     </div>
                     {
-                        clients?.length ?
+                        documents?.length ?
                         <ul>
                             {
-                                clients.map(client => client.id &&
-                                    <li key={client.id} value={client.id} onClick={() => {
-                                        setDisplayClients(false)
-                                        handleSelectClient(client)
+                                documents.map(document => document.id &&
+                                    <li key={document.id} value={document.id} onClick={() => {
+                                        setDisplayDocuments(false)
+                                        handleSelectDocument(document)
                                     }}>
                                         <strong>
-                                            {client.registered_name || (client.first_name+' '+client.last_name)}
+                                            {document.file_name}
                                         </strong>
-                                        <p>
-                                            {client.trade_name}
-                                        </p>
                                     </li>
                                 )
                             }

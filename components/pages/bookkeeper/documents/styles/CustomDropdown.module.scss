@@ -6,6 +6,7 @@
   @apply w-full relative;
   .dropdownInput {
     border: 1px solid $gray;
+    background-color: $white;
     @apply px-2.5 py-2 text-[13px] w-full rounded-[10px] clear-both float-left h-9.5 cursor-pointer outline-0;
     .arrow {
       @apply float-right m-2;

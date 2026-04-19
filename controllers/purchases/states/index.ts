@@ -7,6 +7,7 @@ const initPurchasesObj = {
     vat_amount: '',
     wtax_amount: '',
     particulars: '',
+    toDelete: false,
     invoice_date: '',
     account_name: '',
     gross_amount: '',

@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { Purchases } from '../types'
+import { useRouter } from 'next/router'
 import { initPurchases } from '../states'
 import api from '@/components/reusables/axios'
-import { useQuery } from '@tanstack/react-query'
 import { Status } from '@/controllers/global/types'
+import { useQuery, useMutation} from '@tanstack/react-query'
 import { initStatus, initFilter } from '@/controllers/global/states'
 
 const usePurchasesAPI = () => {
+    const router = useRouter()
     const [filter, setFilter] = useState(initFilter)
     const [status, setStatus] = useState<Status>(initStatus)
     const apiVersion = process.env?.NEXT_PUBLIC_API_VERSION
@@ -15,10 +17,12 @@ const usePurchasesAPI = () => {
         page: number,
         limit: number,
         filter: { roleId: string[] | number[] },
-        search: string
+        search: string,
+        documentID: number,
+        clientID: number
     ) => {
         return useQuery({
-            queryKey: ['purchases', page, limit, filter, search],
+            queryKey: ['purchases', page, limit, filter, search, documentID, clientID],
             queryFn: async () => {
                 const res = await api({
                     method: 'GET',
@@ -28,7 +32,9 @@ const usePurchasesAPI = () => {
                         search,
                         page_size: limit,
                         sortOrder: 'ASC',
-                        filter: JSON.stringify(filter)
+                        filter: JSON.stringify(filter),
+                        upload_id: documentID ? documentID : null,
+                        client_id: clientID ? clientID : null,
                     }
                 })
 
@@ -41,7 +47,24 @@ const usePurchasesAPI = () => {
         })
     }
 
-    
+    const useDeletePurchasesRecord = useMutation({
+        mutationFn: async (id: number) => {
+            const res = await api.delete(`/api/${apiVersion}/purchases/records/${id}`, {
+                data: { is_active: true }
+            })
+            return res.data
+        },
+        onSuccess: () => {
+            sessionStorage.setItem(
+                'successMessage',
+                'Your Purchases record has been deleted.'
+            )
+            router.reload()
+        },
+        onError: (error: any) => {
+            console.log(error)
+        }
+    })
     return {
         //STATES
         status,
@@ -57,6 +80,7 @@ const usePurchasesAPI = () => {
         useGetPurchases,
 
         // MUTATION
+        useDeletePurchasesRecord,
 
         //HANDLES
     }

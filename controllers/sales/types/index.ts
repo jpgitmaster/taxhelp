@@ -1,9 +1,11 @@
+import { Dayjs } from 'dayjs';
 interface SalesObj{
     atc: string
     terms: string
     ewt_rate: string
     vat_rate: string
     id: number | null
+    toDelete: boolean
     tax_amount: string
     vat_amount: string
     particulars: string
@@ -13,18 +15,20 @@ interface SalesObj{
     invoice_date: string
     gross_taxable: string
     vatable_sales: string
-    taxable_month: string
     invoice_number: string
     zero_rated_sales: string
+    taxable_month: Dayjs | null
     business_profile: {
         tin: string
-        branch_code: string
+        trade_name: string
         last_name: string
         first_name: string
         middle_name: string
+        branch_code: string
         first_address: string
         second_address: string
         registered_name: string
+        classification: string
     }
 }
 
@@ -37,6 +41,7 @@ interface Sales{
 
 interface SalesTableRow {
   id: number | null
+  toDelete: boolean
   invoice_date: string
   taxable_month: string
   invoice_number: string

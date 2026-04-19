@@ -1,25 +1,46 @@
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Table, Pagination } from 'antd'
 import scss from './styles/Sales.module.scss'
 import type { ColumnsType } from 'antd/es/table'
 import useSales from '@/controllers/sales/useSales'
+import { Table, Pagination, DatePicker } from 'antd'
 import { signOut, getSession } from 'next-auth/react'
 import { SalesTableRow } from '@/controllers/sales/types'
 import Loader from '@/components/reusables/RotatingLoader'
 import SuccessMessage from '@/components/reusables/SuccessMessage'
+import CustomContainer from '@/components/reusables/CustomContainer'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
+import ClientsDropdown from '@/components/pages/bookkeeper/documents/ClientsDropdown'
+import DocumentsDropdown from '@/components/pages/bookkeeper/documents/DocumentsDropdown'
 
 const Sales_V = () => {
   const {
+    doc,
     sales,
     status,
-    filter,
-    loader,
+    clientArr,
     tableWidth,
-    handlePageChange
+    salesFilter,
+    salesloader,
+    documentArr,
+    clientLoader,
+    documentLoader,
+    displayClients,
+    displayDocuments,
+    
+    setDisplayClients,
+    setDisplayDocuments,
+    
+    handleChange,
+    handleToggle,
+    handleDateChange,
+    handlePageChange,
+    handleToggleDelete,
+    handleSelectClient,
+    handleDeleteRecord,
+    handleSelectDocument,
   } = useSales()
   const { message } = status
   const { salesArr } = sales
@@ -28,6 +49,7 @@ const Sales_V = () => {
         id: sales.id,
         atc: sales.atc,
         terms: sales.terms,
+        toDelete: sales.toDelete,
         ewt_rate: sales.ewt_rate,
         vat_rate: sales.vat_rate,
         tax_amount: sales.tax_amount,
@@ -183,12 +205,39 @@ const Sales_V = () => {
                       Edit
                   </span>
               </Link>
-              <Link href={''} className={scss.action+' '+scss.delete}>
-                  <Image src='/svgs/delete.svg' alt='Delete' priority width={18} height={18} unoptimized={true} />
-                  <span>
-                      Delete
-                  </span>
-              </Link>
+              <div className={scss.onDelete}>
+                {
+                  record.toDelete &&
+                  <div className={scss.popover+' '+scss.flipInY}>
+                    <div className={scss.arrow}></div>
+                    <div className={scss.popoverBody}>
+                      <div className={scss.deleteDetails}>
+                        <p>
+                          You want to delete this record?
+                        </p>
+                        <div className={scss.deleteActions}>
+                          <button type='button' className={scss.deleteAction+' '+scss.yes}
+                            onClick={() => handleDeleteRecord(Number(record.id))}
+                          >
+                            Yes
+                          </button>
+                          <button type='button' className={scss.deleteAction+' '+scss.no}
+                            onClick={() => handleToggleDelete(Number(record.id))}
+                          >
+                            No
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+                <button type='button' onClick={() => handleToggleDelete(Number(record.id))} className={scss.action+' '+scss.delete}>
+                    <Image src='/svgs/delete.svg' alt='Delete' priority width={18} height={18} unoptimized={true} />
+                    <span>
+                        Delete
+                    </span>
+                </button>
+              </div>
           </div>
     },
   ];
@@ -198,30 +247,82 @@ const Sales_V = () => {
           message &&
           <SuccessMessage message={message} />
         }
-        <div className={scss.header}>
-            <Link href='/bookkeeper/sales/add_sales' className={scss.button+' '+scss.btnblue}>
-                Add Record
-            </Link>
-            <form className={scss.searchComponent}
-                // onSubmit={handleSubmitSearch}
-            >
-                <input id='search' type='text' name='search' maxLength={50} autoComplete='search' placeholder='Enter keyword...'
-                    // value={filter.search} onKeyUp={handleBlur} onChange={handleSearch}
+        <div className={scss.filters}>
+          <div className={scss.cards}>
+              <CustomContainer
+                  scss={scss}
+                  width={33}
+                  label='Filter by Document'
+              >
+                <DocumentsDropdown
+                    doc={doc}
+                    documents={documentArr}
+                    loader={documentLoader}
+                    displayDocuments={displayDocuments}
+
+                    setDisplayDocuments={setDisplayDocuments}
+
+                    handleChange={handleChange}
+                    handleToggle={handleToggle}
+                    handleSelectDocument={handleSelectDocument}
                 />
-                <button type='submit' className={`${scss.button} ${scss.btnblue}`}
-                    // onKeyDown={handleResubmit}
-                >
-                Search
-                </button>
-            </form>
+              </CustomContainer>
+              <CustomContainer
+                  scss={scss}
+                  width={33}
+                  label='Filter by Client'
+              >
+                <ClientsDropdown
+                    doc={doc}
+                    clients={clientArr}
+                    loader={clientLoader}
+                    displayClients={displayClients}
+
+                    setDisplayClients={setDisplayClients}
+
+                    handleChange={handleChange}
+                    handleToggle={handleToggle}
+                    handleSelectClient={handleSelectClient}
+                />
+              </CustomContainer>
+              <CustomContainer
+                  scss={scss}
+                  width={33}
+                  label='Month Range'
+              >
+                <DatePicker placeholder='Month - Year From' picker="month" value={doc.period} onChange={handleDateChange} />
+                &nbsp;&nbsp;
+                <DatePicker placeholder='Month - Year To' picker="month" value={doc.period} onChange={handleDateChange} />
+              </CustomContainer>
+          </div>
+        </div>
+        <div className={scss.header}>
+          <Link href='/bookkeeper/sales/add' className={scss.button+' '+scss.btnblue}>
+            Add Record
+          </Link>
+          <form className={scss.searchComponent}
+            // onSubmit={handleSubmitSearch}
+          >
+              <input id='search' type='text' name='search' maxLength={50} autoComplete='search' placeholder='Enter keyword...'
+                  // value={salesFilter.search} onKeyUp={handleBlur} onChange={handleSearch}
+              />
+              <button type='submit' className={`${scss.button} ${scss.btnblue}`}
+                  // onKeyDown={handleResubmit}
+              >
+              Search
+              </button>
+          </form>
         </div>
         <div className={scss.tableRecords} style={{width:tableWidth+'px'}}>
-            { loader && <Loader scss={scss} position='absolute' />}
+            { salesloader && <Loader scss={scss} position='absolute' />}
             <Table
                 rowKey='id'
                 columns={columns}
                 pagination={false}
                 dataSource={dataSource}
+                rowClassName={(record) =>
+                  record.toDelete ? scss.activeRow : ''
+                }
                 scroll={{ x: 'max-content' }}
             />
         </div>
@@ -234,11 +335,12 @@ const Sales_V = () => {
             }
             <div className={scss.paginationComponent}>
                 {
-                sales.totalSales ? <Pagination defaultPageSize={filter.recordsLimit} total={sales.totalSales} onChange={handlePageChange} />
+                sales.totalSales ? <Pagination defaultPageSize={salesFilter.recordsLimit} total={sales.totalSales} onChange={handlePageChange} />
                 : ''
                 }
             </div>
         </div>
+        <br />
       </div>
   )
 }

@@ -1,44 +1,205 @@
+import { Dayjs } from 'dayjs';
 import usePurchasesAPI from "./api";
-import { useState, useEffect } from "react";
+import { PurchasesObj } from './types';
+import useClientAPI from '../clients/api';
+import useDocumentAPI from '../documents/api';
+import { useState, useEffect, ChangeEvent } from "react";
 
 const usePurchases = () => {
     const {
         status,
-        filter,
         purchases,
+        filter: purchasesFilter,
 
-        setPurchases,
-        setFilter,
         setStatus,
+        setPurchases,
+        setFilter: setPurchaseFilter,
 
-        useGetPurchases
+        useGetPurchases,
+        useDeletePurchasesRecord
     } = usePurchasesAPI()
+
+    const {
+        filter: clientFilter,
+        setFilter: clientSetFilter,
+
+        useGetClients
+    } = useClientAPI()
+
+    const {
+        filter: documentFilter,
+        setFilter: documentSetFilter,
+
+        useGetDocuments
+    } = useDocumentAPI()
+
     const [tableWidth, setTableWidth] = useState(0)
-    const { data, isLoading, isFetching } = useGetPurchases(
-        filter.currentPage,
-        filter.recordsLimit,
-        filter.filter,
-        filter.search
+    const [displayClients, setDisplayClients] = useState(false)
+    const [displayDocuments, setDisplayDocuments] = useState(false)
+    const [doc, setDoc] = useState<{
+        search: string
+        client: {
+            id: number | null,
+            last_name: string
+            first_name: string
+            trade_name: string
+            registered_name: string
+        },
+        document: {
+            id: number | null
+            file_name: string
+        },
+        period: Dayjs | null
+    }>({
+        search: '',
+        client: {
+            id: null,
+            last_name: '',
+            first_name: '',
+            trade_name: '',
+            registered_name: '',
+        },
+        document: {
+            id: null,
+            file_name: ''
+        },
+        period: null,
+    })
+    const { data: dataPurchases, isLoading: isLoadingPurchases, isFetching: isFetchingPurchases } = useGetPurchases(
+        purchasesFilter.currentPage,
+        purchasesFilter.recordsLimit,
+        purchasesFilter.filter,
+        purchasesFilter.search,
+        Number(doc.document.id),
+        Number(doc.client.id),
     )
 
+    const { data: dataDocuments, isLoading: isLoadingDocuments, isFetching: isFetchingDocuments } = useGetDocuments(
+        documentFilter.currentPage,
+        documentFilter.recordsLimit,
+        documentFilter.filter,
+        documentFilter.search
+    )
+
+    const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = useGetClients(    
+        clientFilter.currentPage,
+        clientFilter.recordsLimit,
+        clientFilter.filter,
+        clientFilter.search
+    )
+    const clientArr = dataClients?.clients;
+    const documentArr = dataDocuments?.documents; 
+
+    const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = event.target
+        if(name === 'search'){
+            clientSetFilter(prev => ({
+                ...prev,
+                search: value,
+                currentPage: 1
+            }))
+        }
+        setDoc({
+            ...doc,
+            [name]: value
+        })
+    }
+    const handleDeleteRecord = (id: number) => {
+        setStatus({...status, loader: true})
+        useDeletePurchasesRecord.mutate(id)
+    }
+
+    const handleSelectClient = (client: {
+        id: number | null,
+        last_name: string
+        first_name: string
+        trade_name: string
+        registered_name: string
+    }) => {
+        setDoc({
+            ...doc,
+            client: client
+        })
+        setPurchaseFilter({
+            ...purchasesFilter,
+            currentPage: 1,
+        })
+    }
+
+    const handleSelectDocument = (document: {
+        id: number | null,
+        file_name: string
+    }) => {
+        setDoc({
+            ...doc,
+            document: document
+        })
+        setPurchaseFilter({
+            ...purchasesFilter,
+            currentPage: 1,
+        })
+    }
+
+    const handleToggle = (dropdown: string) => {
+        if(dropdown === 'clients'){
+            setDisplayClients(prevState => !prevState)
+        }
+        if(dropdown === 'documents'){
+            setDisplayDocuments(prevState => !prevState)
+        }
+    }
+
+    const handleToggleDelete = (id: number) => {
+        const { purchasesArr } = purchases
+        const newSalesArr = purchasesArr?.map((purchases_) => purchases_.id == id ? {
+            ...purchases_,
+            toDelete: !purchases_.toDelete
+        } : {
+            ...purchases_,
+            toDelete: false,
+        })
+        setPurchases({
+            ...purchases,
+            purchasesArr: newSalesArr as PurchasesObj[]
+        })
+    }
+
+    const handleDateChange = (date: Dayjs | null) => {
+        setDoc(prev => ({
+            ...prev,
+            period: date
+        }))
+    }
+
     const handlePageChange = (current: number) => {
-        setFilter((prev) => ({
+        setPurchaseFilter((prev) => ({
             ...prev,
             currentPage: current
         }))
     }
 
     useEffect(() => {
-        if(data?.purchases?.length){
+        if(dataPurchases?.purchases?.length){
             setPurchases(
                 {
                     ...purchases,
-                    purchasesArr: data.purchases,
-                    totalPurchases: data.totalPurchases
+                    purchasesArr: dataPurchases.purchases?.map((purchases_: PurchasesObj[]) => ({
+                        ...purchases_,
+                        toDelete: false
+                    })),
+                    totalPurchases: dataPurchases.totalPurchases
+                }
+            )
+        }else{
+            setPurchases(
+                {
+                    ...purchases,
+                    purchasesArr: [],
+                    totalPurchases: 0
                 }
             )
         }
-    }, [data])
+    }, [dataPurchases])
 
     useEffect(() => {
         if(typeof window !== 'undefined'){
@@ -62,18 +223,30 @@ const usePurchases = () => {
         }
     },[])
     return {
-        // STATES
+        doc,
         status,
-        filter,
         purchases,
+        clientArr,
         tableWidth,
-        loader: isLoading || isFetching,
+        documentArr,
+        displayClients,
+        purchasesFilter,
+        displayDocuments,
+        clientLoader: isLoadingClients || isFetchingClients,
+        documentLoader: isLoadingDocuments || isFetchingDocuments,
+        purchasesLoader: isLoadingPurchases || isFetchingPurchases || status.loader,
 
-        // SET STATES
+        setDisplayClients,
+        setDisplayDocuments,
         
-
-        // HANDLES
+        handleChange,
+        handleToggle,
+        handleDateChange,
         handlePageChange,
+        handleToggleDelete,
+        handleSelectClient,
+        handleDeleteRecord,
+        handleSelectDocument,
         
     }
 }

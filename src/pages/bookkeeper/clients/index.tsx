@@ -120,12 +120,12 @@ const Clients_V = () => {
                             Edit
                         </span>
                     </Link>
-                    <Link href={''} className={scss.action+' '+scss.delete}>
+                    {/* <Link href={''} className={scss.action+' '+scss.delete}>
                         <Image src='/svgs/delete.svg' alt='Delete' priority width={18} height={18} unoptimized={true} />
                         <span>
                             Delete
                         </span>
-                    </Link>
+                    </Link> */}
                 </div>
         },
     ];

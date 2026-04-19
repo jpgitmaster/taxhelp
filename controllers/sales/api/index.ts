@@ -1,12 +1,14 @@
 import { Sales } from '../types'
 import { useState } from 'react'
 import { initSales } from '../states'
+import { useRouter } from 'next/router'
 import api from '@/components/reusables/axios'
-import { useQuery } from '@tanstack/react-query'
 import { Status } from '@/controllers/global/types'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { initStatus, initFilter } from '@/controllers/global/states'
 
 const useSalesAPI = () => {
+    const router = useRouter()
     const [filter, setFilter] = useState(initFilter)
     const [sales, setSales] = useState<Sales>(initSales)
     const [status, setStatus] = useState<Status>(initStatus)
@@ -15,10 +17,12 @@ const useSalesAPI = () => {
         page: number,
         limit: number,
         filter: { roleId: string[] | number[] },
-        search: string
+        search: string,
+        documentID: number,
+        clientID: number
     ) => {
         return useQuery({
-            queryKey: ['sales', page, limit, filter, search],
+            queryKey: ['sales', page, limit, filter, search, documentID, clientID],
             queryFn: async () => {
                 const res = await api({
                     method: 'GET',
@@ -28,7 +32,9 @@ const useSalesAPI = () => {
                         search,
                         page_size: limit,
                         sortOrder: 'ASC',
-                        filter: JSON.stringify(filter)
+                        filter: JSON.stringify(filter),
+                        upload_id: documentID ? documentID : null,
+                        client_id: clientID ? clientID : null,
                     }
                 })
 
@@ -41,7 +47,24 @@ const useSalesAPI = () => {
         })
     }
 
-    
+    const useDeleteSalesRecord = useMutation({
+        mutationFn: async (id: number) => {
+            const res = await api.delete(`/api/${apiVersion}/sales/records/${id}`, {
+                data: { is_active: true }
+            })
+            return res.data
+        },
+        onSuccess: () => {
+            sessionStorage.setItem(
+                'successMessage',
+                'Your Sales record has been deleted.'
+            )
+            router.reload()
+        },
+        onError: (error: any) => {
+            console.log(error)
+        }
+    })
     return {
         //STATES
         sales,
@@ -55,8 +78,9 @@ const useSalesAPI = () => {
 
         // QUERIES
         useGetSales,
-
+        
         // MUTATION
+        useDeleteSalesRecord
 
         //HANDLES
     }

@@ -4,6 +4,7 @@ interface PurchasesObj{
     vat_rate: string
     wtax_rate: string
     id: number | null
+    toDelete: boolean
     vat_amount: string
     wtax_amount: string
     particulars: string
@@ -40,6 +41,7 @@ interface Purchases{
 
 interface PurchasesTableRow {
   id: number | null
+  toDelete: boolean
 }
 
 export type {
