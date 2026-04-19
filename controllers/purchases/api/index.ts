@@ -50,7 +50,7 @@ const usePurchasesAPI = () => {
     const useDeletePurchasesRecord = useMutation({
         mutationFn: async (id: number) => {
             const res = await api.delete(`/api/${apiVersion}/purchases/records/${id}`, {
-                data: { is_active: true }
+                data: { is_active: false }
             })
             return res.data
         },

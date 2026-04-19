@@ -50,7 +50,7 @@ const useSalesAPI = () => {
     const useDeleteSalesRecord = useMutation({
         mutationFn: async (id: number) => {
             const res = await api.delete(`/api/${apiVersion}/sales/records/${id}`, {
-                data: { is_active: true }
+                data: { is_active: false }
             })
             return res.data
         },
