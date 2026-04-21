@@ -10,6 +10,7 @@ const useSales = () => {
     const {
         sales,
         status,
+        router,
         filter: salesFilter,
 
         setSales,
@@ -31,14 +32,17 @@ const useSales = () => {
         filter: documentFilter,
         setFilter: documentSetFilter,
 
+        useGetDocument,
         useGetDocuments
     } = useDocumentAPI()
-
+    const { documentID } = router.query
     const [tableWidth, setTableWidth] = useState(0)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayDocuments, setDisplayDocuments] = useState(false)
     const [doc, setDoc] = useState<{
         search: string
+        hasSelectedClient: boolean
+        hasSelectedDocument: boolean
         client: {
             id: number | null,
             last_name: string
@@ -53,6 +57,8 @@ const useSales = () => {
         period: Dayjs | null
     }>({
         search: '',
+        hasSelectedClient: false,
+        hasSelectedDocument: false,
         client: {
             id: null,
             last_name: '',
@@ -66,6 +72,8 @@ const useSales = () => {
         },
         period: null,
     })
+
+
     const { data: dataDocuments, isLoading: isLoadingDocuments, isFetching: isFetchingDocuments } = useGetDocuments(
         documentFilter.currentPage,
         documentFilter.recordsLimit,
@@ -73,6 +81,9 @@ const useSales = () => {
         documentFilter.search
     )
 
+    // const { data: dataDocument } = useGetDocument(
+    //     Number(documentID)
+    // )
     const { data: dataSales, isLoading: isLoadingSales, isFetching: isFetchingSales } = useGetSales(
         salesFilter.currentPage,
         salesFilter.recordsLimit,
@@ -115,8 +126,40 @@ const useSales = () => {
     }) => {
         setDoc({
             ...doc,
-            client: client
+            client: client,
+            hasSelectedClient: true
         })
+        salesSetFilter({
+            ...salesFilter,
+            currentPage: 1,
+        })
+    }
+    const handleClearSelected = (dropdown: string) => {
+        if(dropdown === 'client'){
+            setDoc({
+                ...doc,
+                client: {
+                    id: null,
+                    last_name: '',
+                    first_name: '',
+                    trade_name: '',
+                    registered_name: '',
+                },
+                hasSelectedClient: false
+            })
+            setDisplayClients(false)
+        }
+        if(dropdown === 'document'){
+            setDoc({
+                ...doc,
+                document: {
+                    id: null,
+                    file_name: ''
+                },
+                hasSelectedDocument: false
+            })
+            setDisplayDocuments(false)
+        }
         salesSetFilter({
             ...salesFilter,
             currentPage: 1,
@@ -134,7 +177,8 @@ const useSales = () => {
     }) => {
         setDoc({
             ...doc,
-            document: document
+            document: document,
+            hasSelectedDocument: true
         })
         salesSetFilter({
             ...salesFilter,
@@ -220,6 +264,7 @@ const useSales = () => {
             }, 5000)
         }
     },[])
+
     return {
         // STATES
         doc,
@@ -248,7 +293,8 @@ const useSales = () => {
         handleToggleDelete,
         handleSelectClient,
         handleDeleteRecord,
-        handleSelectDocument
+        handleClearSelected,
+        handleSelectDocument,
     }
 }
 

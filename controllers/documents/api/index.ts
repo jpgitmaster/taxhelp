@@ -14,6 +14,26 @@ const useDocumentAPI = () => {
     const [status, setStatus] = useState<Status>(initStatus)
     const apiVersion = process.env?.NEXT_PUBLIC_API_VERSION
 
+    const useGetDocument = (
+        id: number
+    ) => {
+        return useQuery({
+            queryKey: ['document', id],
+            queryFn: async () => {
+                const res = await api({
+                    method: 'GET',
+                    url: `/api/${apiVersion}/files/uploads/${id}`,
+                    params: {
+                        upload_id: id
+                    }
+                })
+                // console.log(res.data)
+                return res
+            },
+            // placeholderData: (prev) => prev, // 👈 replaces keepPreviousData (see below)
+        })
+    }
+
     const useGetDocuments = (
         page: number,
         limit: number,
@@ -111,6 +131,7 @@ const useDocumentAPI = () => {
 
         // QUERIES
         useGetTemplate,
+        useGetDocument,
         useGetDocuments,
 
         // MUTATION

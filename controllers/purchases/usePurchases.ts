@@ -38,6 +38,8 @@ const usePurchases = () => {
     const [displayDocuments, setDisplayDocuments] = useState(false)
     const [doc, setDoc] = useState<{
         search: string
+        hasSelectedClient: boolean
+        hasSelectedDocument: boolean
         client: {
             id: number | null,
             last_name: string
@@ -52,6 +54,8 @@ const usePurchases = () => {
         period: Dayjs | null
     }>({
         search: '',
+        hasSelectedClient: false,
+        hasSelectedDocument: false,
         client: {
             id: null,
             last_name: '',
@@ -118,7 +122,8 @@ const usePurchases = () => {
     }) => {
         setDoc({
             ...doc,
-            client: client
+            client: client,
+            hasSelectedClient: true
         })
         setPurchaseFilter({
             ...purchasesFilter,
@@ -126,13 +131,45 @@ const usePurchases = () => {
         })
     }
 
+    const handleClearSelected = (dropdown: string) => {
+        if(dropdown === 'client'){
+            setDoc({
+                ...doc,
+                client: {
+                    id: null,
+                    last_name: '',
+                    first_name: '',
+                    trade_name: '',
+                    registered_name: '',
+                },
+                hasSelectedClient: false
+            })
+            setDisplayClients(false)
+        }
+        if(dropdown === 'document'){
+            setDoc({
+                ...doc,
+                document: {
+                    id: null,
+                    file_name: ''
+                },
+                hasSelectedDocument: false
+            })
+            setDisplayDocuments(false)
+        }
+        setPurchaseFilter({
+            ...purchasesFilter,
+            currentPage: 1,
+        })
+    }
     const handleSelectDocument = (document: {
         id: number | null,
         file_name: string
     }) => {
         setDoc({
             ...doc,
-            document: document
+            document: document,
+            hasSelectedDocument: true
         })
         setPurchaseFilter({
             ...purchasesFilter,
@@ -246,6 +283,7 @@ const usePurchases = () => {
         handleToggleDelete,
         handleSelectClient,
         handleDeleteRecord,
+        handleClearSelected,
         handleSelectDocument,
         
     }

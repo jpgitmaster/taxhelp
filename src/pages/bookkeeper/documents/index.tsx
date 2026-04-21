@@ -38,11 +38,11 @@ const Documents_V = () => {
     first_name: doc.client?.first_name,
     registered_name: doc.client?.registered_name,
   })) ?? []
-  const linkItems = (): MenuProps['items'] => [
+  const linkItems = (id: number): MenuProps['items'] => [
 		{
 			key: '1',
 			label: (
-			<Link href={'/bookkeeper/sales'} className={scss.actionItem}>
+			<Link href={'/bookkeeper/sales?documentID='+id} className={scss.actionItem}>
 				Sales
 			</Link>
 			),
@@ -202,7 +202,7 @@ const Documents_V = () => {
       render: (id: number) =>
       <div className={scss.actions}>
         <Dropdown 
-          menu={{ items: linkItems() }}
+          menu={{ items: linkItems(id) }}
           placement="bottomRight" trigger={['click']}
         >
           <div className={scss.action+' '+scss.purchases} onClick={() => setActiveRowId(id)}>

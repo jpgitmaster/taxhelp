@@ -8,7 +8,7 @@
     border: 1px solid $gray;
     background-color: $white;
     @apply px-2.5 py-2 text-[13px] w-full rounded-[10px] clear-both float-left h-9.5 cursor-pointer outline-0;
-    .arrow {
+    .arrow, .erase{
       @apply float-right m-2;
       &.open {
           transform: rotate(180deg);
@@ -18,6 +18,10 @@
           transform: rotate(0);
           transition: transform .3s ease-out;
       }
+    }
+    .erase{
+      @apply relative -top-1.5 -right-1;
+          filter: invert(16%) sepia(37%) saturate(7096%) hue-rotate(4deg) brightness(103%) contrast(130%);
     }
   }
   .dropwdownList {

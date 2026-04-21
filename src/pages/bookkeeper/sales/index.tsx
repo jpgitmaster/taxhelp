@@ -41,6 +41,7 @@ const Sales_V = () => {
     handleSelectClient,
     handleDeleteRecord,
     handleSelectDocument,
+    handleClearSelected
   } = useSales()
   const { message } = status
   const { salesArr } = sales
@@ -252,6 +253,7 @@ const Sales_V = () => {
               <CustomContainer
                   scss={scss}
                   width={33}
+                  className={scss.btmDate}
                   label='Filter by Document'
               >
                 <DocumentsDropdown
@@ -264,12 +266,14 @@ const Sales_V = () => {
 
                     handleChange={handleChange}
                     handleToggle={handleToggle}
+                    handleClearSelected={handleClearSelected}
                     handleSelectDocument={handleSelectDocument}
                 />
               </CustomContainer>
               <CustomContainer
                   scss={scss}
                   width={33}
+                  className={scss.btmDate}
                   label='Filter by Client'
               >
                 <ClientsDropdown
@@ -283,17 +287,39 @@ const Sales_V = () => {
                     handleChange={handleChange}
                     handleToggle={handleToggle}
                     handleSelectClient={handleSelectClient}
+                    handleClearSelected={handleClearSelected}
                 />
               </CustomContainer>
-              <CustomContainer
+              {/* <CustomContainer
                   scss={scss}
                   width={33}
-                  label='Month Range'
+                  label='Tax Month Range'
               >
                 <DatePicker placeholder='Month - Year From' picker="month" value={doc.period} onChange={handleDateChange} />
                 &nbsp;&nbsp;
                 <DatePicker placeholder='Month - Year To' picker="month" value={doc.period} onChange={handleDateChange} />
               </CustomContainer>
+              <CustomContainer
+                  scss={scss}
+                  width={33}
+                  className={scss.btmDate}
+                  label='Invoice Date Range'
+              >
+                <DatePicker placeholder='Month - Year From' picker="month" value={doc.period} onChange={handleDateChange} />
+                &nbsp;&nbsp;
+                <DatePicker placeholder='Month - Year To' picker="month" value={doc.period} onChange={handleDateChange} />
+              </CustomContainer>
+              <CustomContainer
+                  scss={scss}
+                  width={33}
+                  className={scss.btmDate}
+                  label='Created Date Range'
+              >
+                <DatePicker placeholder='Month - Year From' picker="month" value={doc.period} onChange={handleDateChange} />
+                &nbsp;&nbsp;
+                <DatePicker placeholder='Month - Year To' picker="month" value={doc.period} onChange={handleDateChange} />
+              </CustomContainer> */}
+              <div className={scss.card+' '+scss.w33}></div>
           </div>
         </div>
         <div className={scss.header}>

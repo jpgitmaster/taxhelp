@@ -39,7 +39,8 @@ const FileGenerator_V = () => {
       handleSelectTable,
       handleSelectClient,
       handleDownloadSales,
-      handleDownloadPurchases
+      handleClearSelected,
+      handleDownloadPurchases,
     } = useFileGenerator()
     const { loader: statLoader } = status
     const dataSource: Record_Obj[] = record.recordArr?.map(doc => ({
@@ -204,6 +205,7 @@ const FileGenerator_V = () => {
                     handleChange={handleChange}
                     handleToggle={handleToggle}
                     handleSelectClient={handleSelectClient}
+                    handleClearSelected={handleClearSelected}
                 />
               </CustomContainer>
               <CustomContainer

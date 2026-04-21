@@ -40,6 +40,7 @@ const Purchases_V = () => {
     handleToggleDelete,
     handleSelectClient,
     handleDeleteRecord,
+    handleClearSelected,
     handleSelectDocument,
   } = usePurchases()
   const { message } = status
@@ -285,6 +286,7 @@ const Purchases_V = () => {
 
                     handleChange={handleChange}
                     handleToggle={handleToggle}
+                    handleClearSelected={handleClearSelected}
                     handleSelectDocument={handleSelectDocument}
                 />
               </CustomContainer>
@@ -304,9 +306,10 @@ const Purchases_V = () => {
                     handleChange={handleChange}
                     handleToggle={handleToggle}
                     handleSelectClient={handleSelectClient}
+                    handleClearSelected={handleClearSelected}
                 />
               </CustomContainer>
-              <CustomContainer
+              {/* <CustomContainer
                   scss={scss}
                   width={33}
                   label='Month Range'
@@ -314,7 +317,8 @@ const Purchases_V = () => {
                 <DatePicker placeholder='Month - Year From' picker="month" value={doc.period} onChange={handleDateChange} />
                 &nbsp;&nbsp;
                 <DatePicker placeholder='Month - Year To' picker="month" value={doc.period} onChange={handleDateChange} />
-              </CustomContainer>
+              </CustomContainer> */}
+              <div className={scss.card+' '+scss.w33}></div>
           </div>
         </div>
         <div className={scss.header}>

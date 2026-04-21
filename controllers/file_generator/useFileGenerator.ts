@@ -40,6 +40,7 @@ const useFileGenerator = () => {
     ]
     const [doc, setDoc] = useState<{
         search: string
+        hasSelectedClient: boolean
         selectedTable: {
             value: string,
             label: string
@@ -54,6 +55,7 @@ const useFileGenerator = () => {
         period: Dayjs | null
     }>({
         search: '',
+        hasSelectedClient: false,
         client: {
             id: null,
             last_name: '',
@@ -120,8 +122,23 @@ const useFileGenerator = () => {
     }) => {
         setDoc({
             ...doc,
-            client: client
+            client: client,
+            hasSelectedClient: true
         })
+    }
+    const handleClearSelected = () => {
+        setDoc({
+            ...doc,
+            client: {
+                id: null,
+                last_name: '',
+                first_name: '',
+                trade_name: '',
+                registered_name: '',
+            },
+            hasSelectedClient: false
+        })
+        setDisplayClients(false)
     }
     const handleSelectTable = (selectedTable: { value: string, label: string }) => {
         setDoc({
@@ -229,7 +246,8 @@ const useFileGenerator = () => {
         handleSelectTable,
         handleSelectClient,
         handleDownloadSales,
-        handleDownloadPurchases
+        handleClearSelected,
+        handleDownloadPurchases,
     }
 }
 

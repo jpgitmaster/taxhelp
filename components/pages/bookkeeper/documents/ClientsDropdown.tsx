@@ -2,10 +2,11 @@ import Image from 'next/image'
 import scss from './styles/CustomDropdown.module.scss'
 import { ClientObj } from '@/controllers/clients/types'
 import Loader from '@/components/reusables/RotatingLoader'
-import { useRef, useEffect, ChangeEvent, MouseEvent, Dispatch, SetStateAction } from 'react'
+import { useRef, useEffect, ChangeEvent, MouseEvent, Dispatch, SetStateAction, useState } from 'react'
 export default function ClientsDropdown(props: {
     doc: {
         search: string
+        hasSelectedClient?: boolean
         selectedTerms?: {
             value: string,
             label: string
@@ -25,6 +26,7 @@ export default function ClientsDropdown(props: {
     setDisplayClients: Dispatch<SetStateAction<boolean>>
 
     handleToggle(dropdown: string): void
+    handleClearSelected?: (dropdown: string) => void
     handleChange(event: ChangeEvent<HTMLInputElement>): void
     handleSelectClient(client: { id: null | number, registered_name: string }): void
     
@@ -37,11 +39,11 @@ export default function ClientsDropdown(props: {
         
         setDisplayClients,
 
+        handleToggle,
         handleChange,
         handleSelectClient,
-        handleToggle
+        handleClearSelected
     } = props
-
     // CLICK OUTSIDE
     const useOutsideClick = (callback: () => void) => {
         const ref = useRef<HTMLDivElement>(null)
@@ -68,12 +70,24 @@ export default function ClientsDropdown(props: {
         event.stopPropagation();
     };
     const ref = useOutsideClick(handleClickOutside)
+
     return (
         <div className={scss.customDropdown} onClick={handleHeaderClick}>
             <div className={scss.dropdownInput} onClick={() => handleToggle('clients')} ref={ref}>
-                <div className={scss.arrow +' '+ (displayClients ? scss.open : scss.close)}>
-                    <Image src='/svgs/arrowDown.svg' alt='Arrow Down Icon' priority width={12} height={12} unoptimized={true} />
-                </div>
+                {
+                    doc.hasSelectedClient ?
+                    <div className={scss.erase} onClick={(e) => {
+                        e.stopPropagation();
+                        handleClearSelected?.('client');
+                    }}>
+                        <Image src='/svgs/eraser.svg' alt='Erase Icon' priority width={15} height={15} unoptimized={true} />
+                    </div>
+                    :
+                    <div className={scss.arrow +' '+ (displayClients ? scss.open : scss.close)}>
+                        <Image src='/svgs/arrowDown.svg' alt='Arrow Down Icon' priority width={12} height={12} unoptimized={true} />
+                    </div>
+                }
+                
                 <div className={scss.selected}>
                     {(doc.client.registered_name ? doc.client.registered_name : '') || (doc.client.first_name ? doc.client.first_name+' '+doc.client.last_name : '')} {doc.client.trade_name ? ' - '+doc.client.trade_name : ''}
                     &nbsp;

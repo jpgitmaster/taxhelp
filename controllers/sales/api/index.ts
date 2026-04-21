@@ -37,7 +37,6 @@ const useSalesAPI = () => {
                         client_id: clientID ? clientID : null,
                     }
                 })
-
                 return {
                     sales: res.data?.sales ?? [],
                     totalSales: res.data?.total ?? 0
@@ -70,6 +69,7 @@ const useSalesAPI = () => {
         sales,
         status,
         filter,
+        router,
 
         // SET STATES
         setSales,
