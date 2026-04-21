@@ -290,7 +290,7 @@ const Sales_V = () => {
                     handleClearSelected={handleClearSelected}
                 />
               </CustomContainer>
-              {/* <CustomContainer
+              <CustomContainer
                   scss={scss}
                   width={33}
                   label='Tax Month Range'
@@ -318,7 +318,7 @@ const Sales_V = () => {
                 <DatePicker placeholder='Month - Year From' picker="month" value={doc.period} onChange={handleDateChange} />
                 &nbsp;&nbsp;
                 <DatePicker placeholder='Month - Year To' picker="month" value={doc.period} onChange={handleDateChange} />
-              </CustomContainer> */}
+              </CustomContainer>
               <div className={scss.card+' '+scss.w33}></div>
           </div>
         </div>

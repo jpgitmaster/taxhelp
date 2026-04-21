@@ -17,6 +17,7 @@ const initSalesObj = {
     taxable_month: null,
     invoice_number: '',
     zero_rated_sales: '',
+    total_gross_amount: '',
     business_profile: {
         tin: '',
         last_name: '',

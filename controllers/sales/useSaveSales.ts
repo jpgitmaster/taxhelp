@@ -78,13 +78,13 @@ const useSaveSales = () => {
             ...doc,
             selectedTerms: selectedTerms
         })
-        setSales({
-            ...sales,
+        setSales(prev => ({
+            ...prev,
             salesObj: {
-                ...sales.salesObj,
+                ...prev.salesObj,
                 terms: selectedTerms.value
             }
-        })
+        }))
     }
 
     const handleSelectClient = (client: {
@@ -101,71 +101,105 @@ const useSaveSales = () => {
             ...doc,
             client: client
         })
-        setSales({
-            ...sales,
+        setSales(prev => ({
+            ...prev,
             salesObj: {
-                ...sales.salesObj,
+                ...prev.salesObj,
                 business_profile: {
-                    tin: client.tin,
-                    last_name: client.last_name,
-                    trade_name: client.trade_name,
-                    first_name: client.first_name,
-                    middle_name: client.middle_name,
-                    branch_code: '',
-                    first_address: '',
-                    second_address: '',
-                    classification: client.classification,
-                    registered_name: client.registered_name
+                tin: client.tin,
+                last_name: client.last_name,
+                trade_name: client.trade_name,
+                first_name: client.first_name,
+                middle_name: client.middle_name,
+                branch_code: '',
+                first_address: '',
+                second_address: '',
+                classification: client.classification,
+                registered_name: client.registered_name
                 }
             }
-        })
+        }))
     }
 
-    const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = event.target
-        const alphaNumeric = /^[a-zA-Z0-9]+$/
-        const regexNumericOnly = /^(0|[1-9]\d*)$/
-        const regexNumericDecimalOnly = /^\d*\.?\d*$/;
-        if(name === 'search'){
-            clientSetFilter(prev => ({
-                ...prev,
-                search: value,
-                currentPage: 1
-            }))
-            setDoc({
-                ...doc,
-                [name]: value
-            })
-            return
-        }
+    const handleChange = (
+        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    ) => {
+    const { name, value } = event.target
+    const alphaNumeric = /^[a-zA-Z0-9]+$/
+    const regexNumericDecimalOnly = /^\d*\.?\d*$/
 
-        switch (name) {
-            case 'atc':
-                if(value === '' || alphaNumeric.test(value)){
-                    setSales({
-                        ...sales,
-                        salesObj: {
-                            ...sales.salesObj,
-                            [name]: value?.toUpperCase()
-                        }
-                    })
-                }
-                break;
-            case 'exempt_sales':
-            case 'vatable_sales':
-            case 'zero_rated_sales':
-                if (value === '' || regexNumericDecimalOnly.test(value)) {
-                    setSales({
-                        ...sales,
-                        salesObj: {
-                            ...sales.salesObj,
-                            [name]: value
-                        }
-                    })
-                }
+    if (name === 'search') {
+        clientSetFilter(prev => ({
+        ...prev,
+        search: value,
+        currentPage: 1
+        }))
+
+        setDoc(prev => ({
+        ...prev,
+        [name]: value
+        }))
+        return
+    }
+
+    switch (name) {
+        case 'atc':
+        if (value === '' || alphaNumeric.test(value)) {
+            setSales(prev => ({
+            ...prev,
+            salesObj: {
+                ...prev.salesObj,
+                [name]: value.toUpperCase()
+            }
+            }))
         }
-        
-        handleRemoveErr(sales.salesErr, name)
+        break
+
+        case 'exempt_sales':
+        case 'vatable_sales':
+        case 'zero_rated_sales':
+        case 'ewt_rate':
+        if (value === '' || regexNumericDecimalOnly.test(value)) {
+            setSales(prev => {
+            const updatedSalesObj = {
+                ...prev.salesObj,
+                [name]: value
+            }
+
+            const exempt = parseFloat(updatedSalesObj.exempt_sales || '0')
+            const zeroRated = parseFloat(updatedSalesObj.zero_rated_sales || '0')
+            const vatable = parseFloat(updatedSalesObj.vatable_sales || '0')
+
+            // ✅ FIXED VAT (constant)
+            const VAT_RATE = 0.12
+
+            const grossAmount = exempt + zeroRated + vatable
+            const vatAmount = vatable * VAT_RATE
+            const grossTaxable = vatable + vatAmount
+            const totalGrossAmount = grossAmount + vatAmount
+
+            // ✅ Optional: EWT computation
+            const ewtRate = parseFloat(updatedSalesObj.ewt_rate || '0') / 100
+            const taxAmount = vatable * ewtRate
+
+            return {
+                ...prev,
+                salesObj: {
+                ...updatedSalesObj,
+                vat_rate: '12%', // always enforced
+                gross_amount: grossAmount.toFixed(2),
+                vat_amount: vatAmount.toFixed(2),
+                gross_taxable: grossTaxable.toFixed(2),
+                total_gross_amount: totalGrossAmount.toFixed(2),
+                tax_amount: taxAmount.toFixed(2)
+                }
+            }
+            })
+        }
+        break
+    }
+
+    handleRemoveErr(sales.salesErr, name)
     }
     
     const handleDate = (date: Dayjs | null, dateString: string | string[], name: string) => {

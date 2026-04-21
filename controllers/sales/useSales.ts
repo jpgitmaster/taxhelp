@@ -81,9 +81,10 @@ const useSales = () => {
         documentFilter.search
     )
 
-    // const { data: dataDocument } = useGetDocument(
-    //     Number(documentID)
-    // )
+    const { data: dataDocument } = useGetDocument(
+        Number(documentID)
+    )
+    console.log(dataDocument)
     const { data: dataSales, isLoading: isLoadingSales, isFetching: isFetchingSales } = useGetSales(
         salesFilter.currentPage,
         salesFilter.recordsLimit,

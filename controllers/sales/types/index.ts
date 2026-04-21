@@ -17,6 +17,7 @@ interface SalesObj{
     vatable_sales: string
     invoice_number: string
     zero_rated_sales: string
+    total_gross_amount: string
     taxable_month: Dayjs | null
     business_profile: {
         tin: string

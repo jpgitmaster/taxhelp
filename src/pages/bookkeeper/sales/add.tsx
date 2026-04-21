@@ -38,14 +38,14 @@ const AddSalesRecord_V = () => {
         { loader && <Loader scss={scss} position='absolute' />}
         <div className={scss.box}>
           <div className={scss.boxTitle}>
-            Client Details
+            Customer Details
           </div>
           <div className={scss.cards}>
             <CustomContainer
               scss={scss}
               width={50}
               required={true}
-              label='Client'
+              label='Customer'
               labelFor='client'
               err={sales.salesErr.client as string}
             >
@@ -73,6 +73,7 @@ const AddSalesRecord_V = () => {
                   err={sales.salesErr.classification as string}
                 >
                   <input
+                    readOnly
                     type='text'
                     id='classification'
                     name='classification'
@@ -93,8 +94,9 @@ const AddSalesRecord_V = () => {
                 >
                   <input
                     id='tin'
-                    type='text'
+                    readOnly
                     name='tin'
+                    type='text'
                     maxLength={20}
                     autoComplete='off'
                     placeholder='000-000-000'
@@ -114,10 +116,11 @@ const AddSalesRecord_V = () => {
               err={sales.salesErr.first_name as string}
             >
               <input
-                id='first_name'
+                readOnly
                 type='text'
-                name='first_name'
                 maxLength={20}
+                id='first_name'
+                name='first_name'
                 autoComplete='off'
                 className={scss.lblContent}
                 value={sales.salesObj.business_profile.first_name}
@@ -133,10 +136,11 @@ const AddSalesRecord_V = () => {
               err={sales.salesErr.middle_name as string}
             >
               <input
-                id='middle_name'
+                readOnly
                 type='text'
-                name='middle_name'
                 maxLength={20}
+                id='middle_name'
+                name='middle_name'
                 autoComplete='off'
                 className={scss.lblContent}
                 value={sales.salesObj.business_profile.middle_name}
@@ -152,10 +156,11 @@ const AddSalesRecord_V = () => {
               err={sales.salesErr.last_name as string}
             >
               <input
-                id='last_name'
+                readOnly
                 type='text'
-                name='last_name'
                 maxLength={20}
+                id='last_name'
+                name='last_name'
                 autoComplete='off'
                 className={scss.lblContent}
                 value={sales.salesObj.business_profile.last_name}
@@ -171,11 +176,12 @@ const AddSalesRecord_V = () => {
               err={sales.salesErr.registered_name as string}
             >
               <input
-                id='registered_name'
+                readOnly
                 type='text'
-                name='registered_name'
                 maxLength={20}
                 autoComplete='off'
+                id='registered_name'
+                name='registered_name'
                 className={scss.lblContent}
                 value={sales.salesObj.business_profile.registered_name}
                 onKeyUp={handleBlur}
@@ -190,10 +196,11 @@ const AddSalesRecord_V = () => {
               err={sales.salesErr.trade_name as string}
             >
               <input
-                id='trade_name'
+                readOnly
                 type='text'
-                name='trade_name'
                 maxLength={20}
+                id='trade_name'
+                name='trade_name'
                 autoComplete='off'
                 className={scss.lblContent}
                 value={sales.salesObj.business_profile.trade_name}
@@ -346,6 +353,178 @@ const AddSalesRecord_V = () => {
                 onChange={handleChange}
               />
             </CustomContainer>
+            
+            <CustomContainer
+              scss={scss}
+              width={25}
+              required={true}
+              label='Exempt Sales'
+              labelFor='exempt_sales'
+              err={sales.salesErr.exempt_sales as string}
+            >
+              <input
+                type='text'
+                maxLength={20}
+                id='exempt_sales'
+                autoComplete='off'
+                placeholder='0.00'
+                name='exempt_sales'
+                value={sales.salesObj.exempt_sales}
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+              />
+            </CustomContainer>
+            <CustomContainer
+              scss={scss}
+              width={25}
+              required={true}
+              label='Zero Rated Sales'
+              labelFor='zero_rated_sales'
+              err={sales.salesErr.zero_rated_sales as string}
+            >
+              <input
+                type='text'
+                maxLength={20}
+                autoComplete='off'
+                placeholder='0.00'
+                id='zero_rated_sales'
+                name='zero_rated_sales'
+                value={sales.salesObj.zero_rated_sales}
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+              />
+            </CustomContainer>
+            <CustomContainer
+              scss={scss}
+              width={25}
+              required={true}
+              label='Vatable Sales'
+              labelFor='vatable_sales'
+              err={sales.salesErr.vatable_sales as string}
+            >
+              <input
+                type='text'
+                maxLength={20}
+                autoComplete='off'
+                id='vatable_sales'
+                name='vatable_sales'
+                placeholder='0.00'
+                value={sales.salesObj.vatable_sales}
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+              />
+            </CustomContainer>
+            <CustomContainer
+              scss={scss}
+              width={25}
+              required={true}
+              label='Gross Amount'
+              labelFor='gross_amount'
+              err={sales.salesErr.gross_amount as string}
+            >
+              <input
+                readOnly
+                type='text'
+                maxLength={20}
+                id='gross_amount'
+                autoComplete='off'
+                placeholder='0.00'
+                name='gross_amount'
+                className={scss.lblContent}
+                value={sales.salesObj.gross_amount}
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+              />
+            </CustomContainer>
+            <CustomContainer
+              scss={scss}
+              width={25}
+              required={true}
+              label='VAT Rate'
+              labelFor='vat_rate'
+              err={sales.salesErr.vat_rate as string}
+            >
+              <input
+                readOnly
+                type='text'
+                id='vat_rate'
+                maxLength={20}
+                name='vat_rate'
+                placeholder='12%'
+                autoComplete='off'
+                className={scss.lblContent}
+                value={sales.salesObj.vat_rate}
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+              />
+            </CustomContainer>
+            <CustomContainer
+              scss={scss}
+              width={25}
+              required={true}
+              label='VAT Amount'
+              labelFor='vat_amount'
+              err={sales.salesErr.vat_amount as string}
+            >
+              <input
+                readOnly
+                type='text'
+                maxLength={20}
+                id='vat_amount'
+                name='vat_amount'
+                autoComplete='off'
+                placeholder='0.00'
+                className={scss.lblContent}
+                value={sales.salesObj.vat_amount}
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+              />
+            </CustomContainer>
+            <CustomContainer
+              scss={scss}
+              width={25}
+              required={true}
+              label='Gross Taxable'
+              labelFor='gross_taxable'
+              err={sales.salesErr.gross_taxable as string}
+            >
+              <input
+                readOnly
+                type='text'
+                maxLength={20}
+                autoComplete='off'
+                id='gross_taxable'
+                name='gross_taxable'
+                placeholder='0.00'
+                className={scss.lblContent}
+                value={sales.salesObj.gross_taxable}
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+              />
+            </CustomContainer>
+            <CustomContainer
+              scss={scss}
+              width={25}
+              required={true}
+              label='Total Gross Amount'
+              labelFor='total_gross_amount'
+              err={sales.salesErr.total_gross_amount as string}
+            >
+              <input
+                readOnly
+                type='text'
+                maxLength={20}
+                autoComplete='off'
+                id='total_gross_amount'
+                name='total_gross_amount'
+                placeholder='0.00'
+                className={scss.lblContent}
+                value={sales.salesObj.total_gross_amount}
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+              />
+            </CustomContainer>
+            
             <CustomContainer
               scss={scss}
               width={33}
@@ -370,7 +549,7 @@ const AddSalesRecord_V = () => {
               scss={scss}
               width={33}
               required={true}
-              label='EWT Rate'
+              label='Withholding Tax Rate'
               labelFor='ewt_rate'
               err={sales.salesErr.ewt_rate as string}
             >
@@ -389,112 +568,12 @@ const AddSalesRecord_V = () => {
               scss={scss}
               width={33}
               required={true}
-              label='VAT Rate'
-              labelFor='vat_rate'
-              err={sales.salesErr.vat_rate as string}
-            >
-              <input
-                type='text'
-                id='vat_rate'
-                maxLength={20}
-                name='vat_rate'
-                placeholder='12%'
-                autoComplete='off'
-                value={sales.salesObj.vat_rate}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={33}
-              required={true}
-              label='Exempt Sales'
-              labelFor='exempt_sales'
-              err={sales.salesErr.exempt_sales as string}
-            >
-              <input
-                type='text'
-                maxLength={20}
-                id='exempt_sales'
-                autoComplete='off'
-                placeholder='0.00'
-                name='exempt_sales'
-                value={sales.salesObj.exempt_sales}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={33}
-              required={true}
-              label='Zero Rated Sales'
-              labelFor='zero_rated_sales'
-              err={sales.salesErr.zero_rated_sales as string}
-            >
-              <input
-                type='text'
-                maxLength={20}
-                autoComplete='off'
-                placeholder='0.00'
-                id='zero_rated_sales'
-                name='zero_rated_sales'
-                value={sales.salesObj.zero_rated_sales}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={33}
-              required={true}
-              label='Vatable Sales'
-              labelFor='vatable_sales'
-              err={sales.salesErr.vatable_sales as string}
-            >
-              <input
-                type='text'
-                maxLength={20}
-                autoComplete='off'
-                id='vatable_sales'
-                name='vatable_sales'
-                placeholder='0.00'
-                value={sales.salesObj.vatable_sales}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={33}
-              required={true}
-              label='Gross Amount'
-              labelFor='gross_amount'
-              err={sales.salesErr.gross_amount as string}
-            >
-              <input
-                type='text'
-                maxLength={20}
-                id='gross_amount'
-                autoComplete='off'
-                placeholder='0.00'
-                name='gross_amount'
-                className={scss.lblContent}
-                value={sales.salesObj.gross_amount}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={33}
-              required={true}
-              label='Tax Amount'
+              label='Witholding Tax Amount'
               labelFor='tax_amount'
               err={sales.salesErr.tax_amount as string}
             >
               <input
+                readOnly
                 type='text'
                 maxLength={20}
                 id='tax_amount'
@@ -507,48 +586,7 @@ const AddSalesRecord_V = () => {
                 onChange={handleChange}
               />
             </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={33}
-              required={true}
-              label='VAT Amount'
-              labelFor='vat_amount'
-              err={sales.salesErr.vat_amount as string}
-            >
-              <input
-                type='text'
-                maxLength={20}
-                id='vat_amount'
-                name='vat_amount'
-                autoComplete='off'
-                placeholder='0.00'
-                className={scss.lblContent}
-                value={sales.salesObj.vat_amount}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={33}
-              required={true}
-              label='Gross Taxable'
-              labelFor='gross_taxable'
-              err={sales.salesErr.gross_taxable as string}
-            >
-              <input
-                type='text'
-                maxLength={20}
-                autoComplete='off'
-                id='gross_taxable'
-                name='gross_taxable'
-                placeholder='0.00'
-                className={scss.lblContent}
-                value={sales.salesObj.gross_taxable}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
+            
           </div>
         </div>
         <button type='submit' className={scss.button+' '+scss.btnblue} style={{display: 'block', maxWidth: '300px', margin: '30px auto'}} onKeyDown={handleResubmit}>
