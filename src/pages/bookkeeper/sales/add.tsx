@@ -219,39 +219,6 @@ const AddSalesRecord_V = () => {
           <div className={scss.cards}>
             <CustomContainer
               scss={scss}
-              width={100}
-              required={true}
-              label='VAT Type'
-              labelFor='vat_type'
-              err={sales.salesErr.vat_type as string}
-            >
-              <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                
-                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <input
-                    type="radio"
-                    name="vat_type"
-                    checked={sales.salesObj.vat_type === 'EXCLUSIVE'}
-                    onChange={() => setVatType('EXCLUSIVE')}
-                  />
-
-                  Exclusive
-                </label>
-
-                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <input
-                    type="radio"
-                    name="vat_type"
-                    checked={sales.salesObj.vat_type === 'INCLUSIVE'}
-                    onChange={() => setVatType('INCLUSIVE')}
-                  />
-                  Inclusive
-                </label>
-
-              </div>
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
               width={33}
               required={true}
               label='Taxable Month'
@@ -388,7 +355,39 @@ const AddSalesRecord_V = () => {
                 onChange={handleChange}
               />
             </CustomContainer>
-            
+            <CustomContainer
+              scss={scss}
+              width={100}
+              required={true}
+              label='VAT Type'
+              labelFor='vat_type'
+              err={sales.salesErr.vat_type as string}
+            >
+              <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                
+                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <input
+                    type="radio"
+                    name="vat_type"
+                    checked={sales.salesObj.vat_type === 'EXCLUSIVE'}
+                    onChange={() => setVatType('EXCLUSIVE')}
+                  />
+
+                  Exclusive
+                </label>
+
+                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <input
+                    type="radio"
+                    name="vat_type"
+                    checked={sales.salesObj.vat_type === 'INCLUSIVE'}
+                    onChange={() => setVatType('INCLUSIVE')}
+                  />
+                  Inclusive
+                </label>
+
+              </div>
+            </CustomContainer>
             <CustomContainer
               scss={scss}
               width={25}
