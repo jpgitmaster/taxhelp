@@ -2,6 +2,7 @@ import { Dayjs } from 'dayjs';
 interface SalesObj{
     atc: string
     terms: string
+    vat_type: string
     ewt_rate: string
     vat_rate: string
     id: number | null

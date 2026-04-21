@@ -2,6 +2,7 @@ const initSalesObj = {
     id: null,
     atc: '',
     terms: '',
+    vat_type: '',
     ewt_rate: '',
     vat_rate: '',
     tax_amount: '',

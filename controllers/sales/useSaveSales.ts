@@ -23,6 +23,20 @@ const useSaveSales = () => {
     } = useClientAPI()
     const [displayTerms, setDisplayTerms] = useState(false)
     const [displayClients, setDisplayClients] = useState(false)
+    const vatType = sales.salesObj.vat_type || 'EXCLUSIVE'
+    const setVatTypeHandler = (type: 'EXCLUSIVE' | 'INCLUSIVE') => {
+        setSales(prev => {
+            const updatedSalesObj = {
+                ...prev.salesObj,
+                vat_type: type
+            }
+
+            return {
+                ...prev,
+                salesObj: recalcSales(updatedSalesObj)
+            }
+        })
+    }
     const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = useGetClients(    
         clientFilter.currentPage,
         clientFilter.recordsLimit,
@@ -64,6 +78,50 @@ const useSaveSales = () => {
         },
         period: null,
     })
+
+    const recalcSales = (salesObj: any) => {
+        const VAT_RATE = 0.12
+
+        const exempt = parseFloat(salesObj.exempt_sales || '0')
+        const zeroRated = parseFloat(salesObj.zero_rated_sales || '0')
+        const vatableInput = parseFloat(salesObj.vatable_sales || '0')
+        const vatType = salesObj.vat_type || 'EXCLUSIVE'
+
+        let vatAmount = 0
+        let grossAmount = 0
+        let grossTaxable = 0
+        let totalGrossAmount = 0
+        let vatableBase = vatableInput
+
+        if (vatType === 'INCLUSIVE') {
+            const net = vatableInput / (1 + VAT_RATE)
+            vatAmount = vatableInput - net
+
+            vatableBase = net
+            grossAmount = exempt + zeroRated + net
+            grossTaxable = vatableInput
+            totalGrossAmount = grossAmount + vatAmount
+        } else {
+            vatAmount = vatableInput * VAT_RATE
+
+            grossAmount = exempt + zeroRated + vatableInput
+            grossTaxable = vatableInput + vatAmount
+            totalGrossAmount = grossAmount + vatAmount
+        }
+
+        const ewtRate = parseFloat(salesObj.ewt_rate || '0') / 100
+        const taxAmount = vatableBase * ewtRate
+
+        return {
+            ...salesObj,
+            vat_rate: '12%',
+            vat_amount: vatAmount.toFixed(2),
+            gross_amount: grossAmount.toFixed(2),
+            gross_taxable: grossTaxable.toFixed(2),
+            total_gross_amount: totalGrossAmount.toFixed(2),
+            tax_amount: taxAmount.toFixed(2)
+        }
+    }
     const handleToggle = (dropdown: string) => {
         if(dropdown === 'clients'){
             setDisplayClients(prevState => !prevState)
@@ -124,104 +182,79 @@ const useSaveSales = () => {
     const handleChange = (
         event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => {
-    const { name, value } = event.target
-    const alphaNumeric = /^[a-zA-Z0-9]+$/
-    const regexNumericDecimalOnly = /^\d*\.?\d*$/
+        const { name, value } = event.target
+        const alphaNumeric = /^[a-zA-Z0-9]+$/
+        const regexNumericDecimalOnly = /^\d*\.?\d*$/
 
-    if (name === 'search') {
-        clientSetFilter(prev => ({
-        ...prev,
-        search: value,
-        currentPage: 1
-        }))
-
-        setDoc(prev => ({
-        ...prev,
-        [name]: value
-        }))
-        return
-    }
-
-    switch (name) {
-        case 'atc':
-        if (value === '' || alphaNumeric.test(value)) {
-            setSales(prev => ({
+        if (name === 'search') {
+            clientSetFilter(prev => ({
             ...prev,
-            salesObj: {
-                ...prev.salesObj,
-                [name]: value.toUpperCase()
-            }
+            search: value,
+            currentPage: 1
             }))
-        }
-        break
 
-        case 'exempt_sales':
-        case 'vatable_sales':
-        case 'zero_rated_sales':
-        case 'ewt_rate':
-        if (value === '' || regexNumericDecimalOnly.test(value)) {
-            setSales(prev => {
+            setDoc(prev => ({
+            ...prev,
+            [name]: value
+            }))
+            return
+        }
+
+        switch (name) {
+            case 'atc':
+                if (value === '' || alphaNumeric.test(value)) {
+                    setSales(prev => ({
+                    ...prev,
+                    salesObj: {
+                        ...prev.salesObj,
+                        [name]: value.toUpperCase()
+                    }
+                    }))
+                }
+                break
+
+            case 'exempt_sales':
+            case 'vatable_sales':
+            case 'zero_rated_sales':
+            case 'ewt_rate':
+                if (value === '' || regexNumericDecimalOnly.test(value)) {
+                    setSales(prev => {
+                        const updatedSalesObj = {
+                            ...prev.salesObj,
+                            [name]: value
+                        }
+
+                        return {
+                            ...prev,
+                            salesObj: recalcSales(updatedSalesObj)
+                        }
+                    })
+                }
+                break
+        }
+
+        handleRemoveErr(sales.salesErr, name)
+        }
+    
+    const handleDate = (
+        date: Dayjs | null,
+        dateString: string | string[],
+        name: string
+    ) => {
+        setSales(prev => {
             const updatedSalesObj = {
                 ...prev.salesObj,
-                [name]: value
+                [name]: name === 'taxable_month' ? date : dateString
             }
-
-            const exempt = parseFloat(updatedSalesObj.exempt_sales || '0')
-            const zeroRated = parseFloat(updatedSalesObj.zero_rated_sales || '0')
-            const vatable = parseFloat(updatedSalesObj.vatable_sales || '0')
-
-            // ✅ FIXED VAT (constant)
-            const VAT_RATE = 0.12
-
-            const grossAmount = exempt + zeroRated + vatable
-            const vatAmount = vatable * VAT_RATE
-            const grossTaxable = vatable + vatAmount
-            const totalGrossAmount = grossAmount + vatAmount
-
-            // ✅ Optional: EWT computation
-            const ewtRate = parseFloat(updatedSalesObj.ewt_rate || '0') / 100
-            const taxAmount = vatable * ewtRate
 
             return {
                 ...prev,
-                salesObj: {
-                ...updatedSalesObj,
-                vat_rate: '12%', // always enforced
-                gross_amount: grossAmount.toFixed(2),
-                vat_amount: vatAmount.toFixed(2),
-                gross_taxable: grossTaxable.toFixed(2),
-                total_gross_amount: totalGrossAmount.toFixed(2),
-                tax_amount: taxAmount.toFixed(2)
-                }
+                salesObj: updatedSalesObj
             }
-            })
-        }
-        break
-    }
+        })
 
-    handleRemoveErr(sales.salesErr, name)
-    }
-    
-    const handleDate = (date: Dayjs | null, dateString: string | string[], name: string) => {
-        if(name === 'taxable_month'){
-            setSales({
-                ...sales,
-                salesObj: {
-                    ...sales.salesObj,
-                    taxable_month: date
-                }
-            })
-        }else{
-            setSales({
-                ...sales,
-                salesObj: {
-                    ...sales.salesObj,
-                    [name]: dateString
-                }
-            })
-        }
         handleRemoveErr(sales.salesErr, name)
-    };
+    }
 
     const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -233,6 +266,7 @@ const useSaveSales = () => {
         doc,
         sales,
         status,
+        vatType,
         clientArr,
         displayTerms,
         displayClients,
@@ -241,6 +275,7 @@ const useSaveSales = () => {
         // SET STATES
         setDisplayTerms,
         setDisplayClients,
+        setVatType: setVatTypeHandler,
 
         // HANDLES
         handleBlur,
