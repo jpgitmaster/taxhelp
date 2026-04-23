@@ -19,6 +19,9 @@
           transition: transform .3s ease-out;
       }
     }
+    .selected{
+      @apply truncate block;
+    }
     .erase{
       @apply relative -top-1.5 -right-1;
           filter: invert(16%) sepia(37%) saturate(7096%) hue-rotate(4deg) brightness(103%) contrast(130%);

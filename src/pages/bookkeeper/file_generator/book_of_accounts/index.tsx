@@ -142,7 +142,7 @@ const BookOfAccounts_V = () => {
             <div className={scss.cards+' '+scss.filters}>
               <CustomContainer
                   scss={scss}
-                  width={25}
+                  width={20}
                   required={true}
                   label='Select Reporting Type'
               >
@@ -157,7 +157,7 @@ const BookOfAccounts_V = () => {
               </CustomContainer>
               <CustomContainer
                   scss={scss}
-                  width={25}
+                  width={40}
                   required={true}
                   label='Select Client'
               >
@@ -177,16 +177,21 @@ const BookOfAccounts_V = () => {
               </CustomContainer>
               <CustomContainer
                   scss={scss}
-                  width={25}
+                  width={20}
                   required={true}
                   label='Month & Year'
               >
                   <DatePicker picker="month" value={doc.period} onChange={handleDateChange} />
               </CustomContainer>
-                <div className={scss.card+' '+scss.w25}>
-                  <button className={scss.button+' '+scss.btnblue} disabled={doc.client.id && doc.selectedTable.value && doc.period ? false : true}
-                    onClick={() => handleDownloadSales('journal')}
-                  >
+                <div className={scss.card+' '+scss.w20}>
+                  <button disabled={!record.recordArr?.length} type='button' className={scss.button+' '+scss.btnblue} onClick={() => {
+                    if(doc.selectedTable.value === 'SALES'){
+                      handleDownloadSales('journal')
+                    }
+                    if(doc.selectedTable.value === 'PURCHASES'){
+                      handleDownloadPurchases('journal')
+                    }
+                  }}>
                       Download Journal
                   </button>
               </div>
@@ -210,11 +215,12 @@ const BookOfAccounts_V = () => {
             }
             <div className={scss.paginationComponent}>
               {
-                record.totalRecords ? <Pagination defaultPageSize={filter.recordsLimit} total={record.totalRecords} onChange={handlePageChange} />
+                record.totalRecords ? <Pagination defaultPageSize={filter.recordsLimit} total={record.totalRecords} onChange={handlePageChange} showSizeChanger={false} />
                 : ''
               }
             </div>
           </div>
+          <br /><br />
         </div>
     )
 }

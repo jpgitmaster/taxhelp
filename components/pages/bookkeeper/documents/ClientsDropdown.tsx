@@ -70,7 +70,14 @@ export default function ClientsDropdown(props: {
         event.stopPropagation();
     };
     const ref = useOutsideClick(handleClickOutside)
+    const selectedText =
+    (doc.client.registered_name || '') ||
+    (doc.client.first_name
+        ? `${doc.client.first_name} ${doc.client.last_name}`
+        : '');
 
+    const displayText = selectedText +
+    (doc.client.trade_name ? ` - ${doc.client.trade_name}` : '');
     return (
         <div className={scss.customDropdown} onClick={handleHeaderClick}>
             <div className={scss.dropdownInput} onClick={() => handleToggle('clients')} ref={ref}>
@@ -88,8 +95,8 @@ export default function ClientsDropdown(props: {
                     </div>
                 }
                 
-                <div className={scss.selected}>
-                    {(doc.client.registered_name ? doc.client.registered_name : '') || (doc.client.first_name ? doc.client.first_name+' '+doc.client.last_name : '')} {doc.client.trade_name ? ' - '+doc.client.trade_name : ''}
+                <div className={scss.selected} title={displayText}>
+                    {displayText}
                     &nbsp;
                 </div>
             </div>
