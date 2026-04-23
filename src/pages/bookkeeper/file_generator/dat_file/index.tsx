@@ -215,7 +215,14 @@ const DAT_File_V = () => {
             }
             <div className={scss.paginationComponent}>
               {
-                record.totalRecords ? <Pagination defaultPageSize={filter.recordsLimit} total={record.totalRecords} onChange={handlePageChange} showSizeChanger={false} />
+                record.totalRecords ? 
+                <Pagination
+                  current={filter.currentPage}
+                  pageSize={filter.recordsLimit}
+                  total={record.totalRecords}
+                  onChange={handlePageChange}
+                  showSizeChanger={false}
+                />
                 : ''
               }
             </div>

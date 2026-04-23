@@ -125,6 +125,11 @@ const useFileGenerator = () => {
             client: client,
             hasSelectedClient: true
         })
+
+        setFilter(prev => ({
+            ...prev,
+            currentPage: 1
+        }))
     }
     const handleClearSelected = () => {
         setDoc({
@@ -145,6 +150,10 @@ const useFileGenerator = () => {
             ...doc,
             selectedTable: selectedTable
         })
+        setFilter(prev => ({
+            ...prev,
+            currentPage: 1
+        }))
     }
     const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target
@@ -165,6 +174,10 @@ const useFileGenerator = () => {
             ...prev,
             period: date
         }))
+        setFilter(prev => ({
+            ...prev,
+            currentPage: 1
+        }))
     }
     const handleToggle = (dropdown: string) => {
         if(dropdown === 'clients'){
@@ -176,43 +189,19 @@ const useFileGenerator = () => {
     }
 
     useEffect(() => {
-        if(sales?.records?.length){
-            setRecord(
-                {
-                    ...record,
-                    recordArr: sales.records,
-                    totalRecords: sales.totalRecords
-                }
-            )
-        }else{
-            setRecord(
-                {
-                    ...record,
-                    recordArr: [],
-                    totalRecords: 0
-                }
-            )
-        }
+        setRecord(prev => ({
+            ...prev,
+            recordArr: sales?.records || [],
+            totalRecords: sales?.totalRecords || 0
+        }))
     }, [sales])
 
     useEffect(() => {
-        if(purchases?.records?.length){
-            setRecord(
-                {
-                    ...record,
-                    recordArr: purchases.records,
-                    totalRecords: purchases.totalRecords
-                }
-            )
-        }else{
-            setRecord(
-                {
-                    ...record,
-                    recordArr: [],
-                    totalRecords: 0
-                }
-            )
-        }
+        setRecord(prev => ({
+            ...prev,
+            recordArr: purchases?.records || [],
+            totalRecords: purchases?.totalRecords || 0
+        }))
     }, [purchases])
     
     useEffect(() => {
