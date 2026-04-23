@@ -73,21 +73,35 @@ const initLinks: NavLink[] = [
         iconWidth: 20,
         url: '/bookkeeper/general_ledger',
     },
-    {
-        active: false,
-        key: 'books_of_accounts',
-        name: 'Book of Accounts',
-        icon: 'book.svg',
-        iconWidth: 20,
-        url: '/bookkeeper/book_of_accounts',
-    },
+    // {
+    //     active: false,
+    //     key: 'books_of_accounts',
+    //     name: 'Book of Accounts',
+    //     icon: 'book.svg',
+    //     iconWidth: 20,
+    //     url: '/bookkeeper/book_of_accounts',
+    // },
     {
         active: false,
         key: 'file_generator',
         name: 'File Generator',
         icon: 'file_generator.svg',
         iconWidth: 20,
-        url: '/bookkeeper/file_generator',
+        url: '',
+        children: [
+            {
+                active: false,
+                key: 'book_of_accounts',
+                name: 'Book of Accounts',
+                url: '/bookkeeper/file_generator/book_of_accounts',
+            },
+            {
+                active: false,
+                key: 'dat_file',
+                name: 'DAT File',
+                url: '/bookkeeper/file_generator/dat_file',
+            },
+        ]
     },
 ]
 export {

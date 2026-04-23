@@ -9,7 +9,7 @@ const initFilter = {
     // filter: { roleId: ['2'] },
     filter: { roleId: [] },
     currentPage: 1,
-    recordsLimit: 10
+    recordsLimit: 20
 }
 export {
     initStatus,
