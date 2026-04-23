@@ -14,7 +14,6 @@ const AddSalesRecord_V = () => {
     doc,
     sales,
     status,
-    vatType,
     clientArr,
     clientLoader,
     displayTerms,
@@ -40,14 +39,14 @@ const AddSalesRecord_V = () => {
         { loader && <Loader scss={scss} position='absolute' />}
         <div className={scss.box}>
           <div className={scss.boxTitle}>
-            Customer Details
+            Client Details
           </div>
           <div className={scss.cards}>
             <CustomContainer
               scss={scss}
               width={50}
               required={true}
-              label='Customer'
+              label='Client'
               labelFor='client'
               err={sales.salesErr.client as string}
             >

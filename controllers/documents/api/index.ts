@@ -30,6 +30,7 @@ const useDocumentAPI = () => {
                 // console.log(res.data)
                 return res
             },
+            enabled: !!id
             // placeholderData: (prev) => prev, // 👈 replaces keepPreviousData (see below)
         })
     }

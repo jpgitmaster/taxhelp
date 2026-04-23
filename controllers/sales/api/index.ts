@@ -1,7 +1,8 @@
-import { Sales } from '../types'
+import dayjs from 'dayjs'
 import { useState } from 'react'
 import { initSales } from '../states'
 import { useRouter } from 'next/router'
+import { AppliedDoc, Sales } from '../types'
 import api from '@/components/reusables/axios'
 import { Status } from '@/controllers/global/types'
 import { useQuery, useMutation } from '@tanstack/react-query'
@@ -18,31 +19,66 @@ const useSalesAPI = () => {
         limit: number,
         filter: { roleId: string[] | number[] },
         search: string,
-        documentID: number,
-        clientID: number
+        appliedDoc: AppliedDoc,
     ) => {
+        
         return useQuery({
-            queryKey: ['sales', page, limit, filter, search, documentID, clientID],
+            queryKey: [
+                'sales',
+                page,
+                limit,
+                filter,
+                search,
+                appliedDoc,
+            ],
             queryFn: async () => {
+                const hasTaxFilter =
+                    !!appliedDoc.tax_month_start && !!appliedDoc.tax_month_end
+                const hasInvoiceFilter =
+                    !!appliedDoc.invoice_date_start && !!appliedDoc.invoice_date_end
+                const hasCreatedFilter =
+                    !!appliedDoc.created_date_start && !!appliedDoc.created_date_end
+                
+                const params: any = {
+                    page,
+                    search,
+                    page_size: limit,
+                    sortOrder: 'ASC',
+                    filter: JSON.stringify(filter),
+                    upload_id: appliedDoc.document.id ?? null,
+                    client_id: appliedDoc.client.id ?? null,
+                }
+
+                if (hasTaxFilter) {
+                    params.taxable_month_from = dayjs(appliedDoc.tax_month_start).format('MM/YYYY')
+                    params.taxable_month_to = dayjs(appliedDoc.tax_month_end).format('MM/YYYY')
+                }
+
+                if (hasInvoiceFilter) {
+                    params.invoice_date_from = dayjs(appliedDoc.invoice_date_start).format('MM/DD/YYYY')
+                    params.invoice_date_to = dayjs(appliedDoc.invoice_date_end).format('MM/DD/YYYY')
+                }
+
+                if (hasCreatedFilter) {
+                    params.created_at_from = dayjs(appliedDoc.created_date_start).format('MM/DD/YYYY')
+                    params.created_at_to = dayjs(appliedDoc.created_date_end).format('MM/DD/YYYY')
+                }
+
                 const res = await api({
                     method: 'GET',
                     url: `/api/${apiVersion}/sales/records`,
-                    params: {
-                        page,
-                        search,
-                        page_size: limit,
-                        sortOrder: 'ASC',
-                        filter: JSON.stringify(filter),
-                        upload_id: documentID ? documentID : null,
-                        client_id: clientID ? clientID : null,
-                    }
+                    params
                 })
+
                 return {
                     sales: res.data?.sales ?? [],
                     totalSales: res.data?.total ?? 0
                 }
             },
-            // placeholderData: (prev) => prev, // 👈 replaces keepPreviousData (see below)
+
+            enabled:
+                (!appliedDoc.tax_month_start && !appliedDoc.tax_month_end) ||
+                (!!appliedDoc.tax_month_start && !!appliedDoc.tax_month_end)
         })
     }
 

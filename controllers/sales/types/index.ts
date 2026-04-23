@@ -19,6 +19,7 @@ interface SalesObj{
     invoice_number: string
     zero_rated_sales: string
     total_gross_amount: string
+    created_at?: Dayjs | null
     taxable_month: Dayjs | null
     business_profile: {
         tin: string
@@ -49,8 +50,48 @@ interface SalesTableRow {
   invoice_number: string
 }
 
+type AppliedDoc = {
+    client: {
+        id: number | null
+    }
+    document: {
+        id: number | null
+    }
+    tax_month_end: Dayjs | null
+    tax_month_start: Dayjs | null
+    invoice_date_end: Dayjs | null
+    invoice_date_start: Dayjs | null
+    created_date_end: Dayjs | null
+    created_date_start: Dayjs | null
+}
+
+type DocState = {
+    search: string
+    hasSelectedClient: boolean
+    hasSelectedDocument: boolean
+    client: {
+        id: number | null
+        last_name: string
+        first_name: string
+        trade_name: string
+        registered_name: string
+    }
+    document: {
+        id: number | null
+        file_name: string
+    }
+    tax_month_end: Dayjs | null
+    tax_month_start: Dayjs | null
+    invoice_date_end: Dayjs |null
+    invoice_date_start: Dayjs | null
+    created_date_end: Dayjs | null
+    created_date_start: Dayjs | null
+}
+
 export type {
     Sales,
     SalesObj,
-    SalesTableRow
+    DocState,
+    AppliedDoc,
+    SalesTableRow,
 }

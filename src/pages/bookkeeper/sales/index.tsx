@@ -68,6 +68,7 @@ const Sales_V = () => {
         first_address: sales.business_profile?.first_address,
         second_address: sales.business_profile?.second_address,
         registered_name: sales.business_profile?.registered_name,
+        created_date: sales.created_at ? dayjs(sales.created_at)?.format('MM/DD/YYYY') : '',
         invoice_date: sales.invoice_date ? dayjs(sales.invoice_date)?.format('MM/DD/YYYY') : '',
         taxable_month: sales.taxable_month ? dayjs(sales.taxable_month)?.format('MM/DD/YYYY') : '',
         business_owner: 
@@ -188,6 +189,11 @@ const Sales_V = () => {
       dataIndex: 'tax_amount',
     },
     {
+      title: 'Created Date',
+      key: 'created_date',
+      dataIndex: 'created_date',
+    },
+    {
       width: 100,
       fixed: 'right',
       title: 'Actions',
@@ -295,9 +301,9 @@ const Sales_V = () => {
                   width={33}
                   label='Tax Month Range'
               >
-                <DatePicker placeholder='Month - Year From' picker="month" value={doc.period} onChange={handleDateChange} />
+                <DatePicker placeholder='Month - Year From' picker="month" value={doc.tax_month_start} onChange={(e) => handleDateChange(e, 'tax_month_start')} />
                 &nbsp;&nbsp;
-                <DatePicker placeholder='Month - Year To' picker="month" value={doc.period} onChange={handleDateChange} />
+                <DatePicker disabled={!doc.tax_month_start} placeholder='Month - Year To' picker="month" value={doc.tax_month_end} onChange={(e) => handleDateChange(e, 'tax_month_end')} />
               </CustomContainer>
               <CustomContainer
                   scss={scss}
@@ -305,9 +311,9 @@ const Sales_V = () => {
                   className={scss.btmDate}
                   label='Invoice Date Range'
               >
-                <DatePicker placeholder='Month - Year From' picker="month" value={doc.period} onChange={handleDateChange} />
+                <DatePicker placeholder='Date From' value={doc.invoice_date_start} onChange={(e) => handleDateChange(e, 'invoice_date_start')} />
                 &nbsp;&nbsp;
-                <DatePicker placeholder='Month - Year To' picker="month" value={doc.period} onChange={handleDateChange} />
+                <DatePicker disabled={!doc.invoice_date_start} placeholder='Date To' value={doc.invoice_date_end} onChange={(e) => handleDateChange(e, 'invoice_date_end')} />
               </CustomContainer>
               <CustomContainer
                   scss={scss}
@@ -315,9 +321,9 @@ const Sales_V = () => {
                   className={scss.btmDate}
                   label='Created Date Range'
               >
-                <DatePicker placeholder='Month - Year From' picker="month" value={doc.period} onChange={handleDateChange} />
+                <DatePicker placeholder='Date From' value={doc.created_date_start} onChange={(e) => handleDateChange(e, 'created_date_start')} />
                 &nbsp;&nbsp;
-                <DatePicker placeholder='Month - Year To' picker="month" value={doc.period} onChange={handleDateChange} />
+                <DatePicker disabled={!doc.created_date_start} placeholder='Date To' value={doc.created_date_end} onChange={(e) => handleDateChange(e, 'created_date_end')} />
               </CustomContainer>
               <div className={scss.card+' '+scss.w33}></div>
           </div>

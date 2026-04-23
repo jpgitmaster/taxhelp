@@ -6,7 +6,7 @@
 @reference 'tailwindcss';
 
 .header{
-    @apply inline-block w-full mb-3.75;
+  @apply inline-block w-full mb-0 mt-0;
     .button{
       @apply -mt-1 mr-2.5 w-auto;
       &.btnorange{

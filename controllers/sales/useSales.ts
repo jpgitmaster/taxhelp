@@ -1,8 +1,8 @@
 import { Dayjs } from 'dayjs';
 import useSalesAPI from "./api";
-import { SalesObj } from './types';
 import useClientAPI from '../clients/api';
 import useDocumentAPI from '../documents/api';
+import { AppliedDoc, DocState, SalesObj } from './types';
 import { useState, useEffect, ChangeEvent } from "react";
 
 
@@ -39,23 +39,17 @@ const useSales = () => {
     const [tableWidth, setTableWidth] = useState(0)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayDocuments, setDisplayDocuments] = useState(false)
-    const [doc, setDoc] = useState<{
-        search: string
-        hasSelectedClient: boolean
-        hasSelectedDocument: boolean
-        client: {
-            id: number | null,
-            last_name: string
-            first_name: string
-            trade_name: string
-            registered_name: string
-        },
-        document: {
-            id: number | null
-            file_name: string
-        },
-        period: Dayjs | null
-    }>({
+    const [appliedDoc, setAppliedDoc] = useState<AppliedDoc>({
+        client: { id: null },
+        document: { id: null },
+        tax_month_end: null,
+        tax_month_start: null,
+        invoice_date_end: null,
+        invoice_date_start: null,
+        created_date_end: null,
+        created_date_start: null
+    })
+    const [doc, setDoc] = useState<DocState>({
         search: '',
         hasSelectedClient: false,
         hasSelectedDocument: false,
@@ -70,9 +64,13 @@ const useSales = () => {
             id: null,
             file_name: ''
         },
-        period: null,
+        tax_month_end: null,
+        tax_month_start: null,
+        invoice_date_end: null,
+        invoice_date_start: null,
+        created_date_end: null,
+        created_date_start: null
     })
-
 
     const { data: dataDocuments, isLoading: isLoadingDocuments, isFetching: isFetchingDocuments } = useGetDocuments(
         documentFilter.currentPage,
@@ -84,14 +82,12 @@ const useSales = () => {
     const { data: dataDocument } = useGetDocument(
         Number(documentID)
     )
-    console.log(dataDocument)
     const { data: dataSales, isLoading: isLoadingSales, isFetching: isFetchingSales } = useGetSales(
         salesFilter.currentPage,
         salesFilter.recordsLimit,
         salesFilter.filter,
         salesFilter.search,
-        Number(doc.document.id),
-        Number(doc.client.id),
+        appliedDoc
     )
 
     const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = useGetClients(    
@@ -125,20 +121,31 @@ const useSales = () => {
         trade_name: string
         registered_name: string
     }) => {
-        setDoc({
+        const updatedDoc = {
             ...doc,
-            client: client,
+            client,
             hasSelectedClient: true
-        })
-        salesSetFilter({
-            ...salesFilter,
+        }
+
+        setDoc(updatedDoc)
+
+        // 👇 apply immediately
+        setAppliedDoc(prev => ({
+            ...prev,
+            client: {
+                id: client.id
+            }
+        }))
+
+        salesSetFilter(prev => ({
+            ...prev,
             currentPage: 1,
-        })
+        }))
     }
     const handleClearSelected = (dropdown: string) => {
-        if(dropdown === 'client'){
-            setDoc({
-                ...doc,
+        if (dropdown === 'client') {
+            setDoc(prev => ({
+                ...prev,
                 client: {
                     id: null,
                     last_name: '',
@@ -147,24 +154,40 @@ const useSales = () => {
                     registered_name: '',
                 },
                 hasSelectedClient: false
-            })
+            }))
+
+            // 👇 IMPORTANT: trigger refetch
+            setAppliedDoc(prev => ({
+                ...prev,
+                client: { id: null }
+            }))
+
             setDisplayClients(false)
         }
-        if(dropdown === 'document'){
-            setDoc({
-                ...doc,
+
+        if (dropdown === 'document') {
+            setDoc(prev => ({
+                ...prev,
                 document: {
                     id: null,
                     file_name: ''
                 },
                 hasSelectedDocument: false
-            })
+            }))
+
+            // 👇 IMPORTANT: trigger refetch
+            setAppliedDoc(prev => ({
+                ...prev,
+                document: { id: null }
+            }))
+
             setDisplayDocuments(false)
         }
-        salesSetFilter({
-            ...salesFilter,
+
+        salesSetFilter(prev => ({
+            ...prev,
             currentPage: 1,
-        })
+        }))
     }
 
     const handleDeleteRecord = (id: number) => {
@@ -176,15 +199,26 @@ const useSales = () => {
         id: number | null,
         file_name: string
     }) => {
-        setDoc({
+        const updatedDoc = {
             ...doc,
-            document: document,
+            document,
             hasSelectedDocument: true
-        })
-        salesSetFilter({
-            ...salesFilter,
+        }
+
+        setDoc(updatedDoc)
+
+        // 👇 apply immediately
+        setAppliedDoc(prev => ({
+            ...prev,
+            document: {
+                id: document.id
+            }
+        }))
+
+        salesSetFilter(prev => ({
+            ...prev,
             currentPage: 1,
-        })
+        }))
     }
     const handleToggleDelete = (id: number) => {
         const { salesArr } = sales
@@ -208,11 +242,46 @@ const useSales = () => {
             setDisplayDocuments(prevState => !prevState)
         }
     }
-    const handleDateChange = (date: Dayjs | null) => {
-        setDoc(prev => ({
-            ...prev,
-            period: date
-        }))
+    const handleDateChange = (date: Dayjs | null, name: string) => {
+        const updatedDoc = {
+            ...doc,
+            [name]: date
+        }
+
+        // reset paired fields
+        if (name === 'tax_month_start') updatedDoc.tax_month_end = null
+        if (name === 'invoice_date_start') updatedDoc.invoice_date_end = null
+        if (name === 'created_date_start') updatedDoc.created_date_end = null
+
+        setDoc(updatedDoc)
+
+        // ---- helpers
+        const isPairValid = (start: any, end: any) =>
+            (!!start && !!end) || (!start && !end)
+
+        const taxValid = isPairValid(updatedDoc.tax_month_start, updatedDoc.tax_month_end)
+        const invoiceValid = isPairValid(updatedDoc.invoice_date_start, updatedDoc.invoice_date_end)
+        const createdValid = isPairValid(updatedDoc.created_date_start, updatedDoc.created_date_end)
+
+        // ❗ Only apply filters if ALL groups are in valid state
+        if (taxValid && invoiceValid && createdValid) {
+            setAppliedDoc(prev => ({
+                ...prev,
+                tax_month_start: updatedDoc.tax_month_start,
+                tax_month_end: updatedDoc.tax_month_end,
+
+                invoice_date_start: updatedDoc.invoice_date_start,
+                invoice_date_end: updatedDoc.invoice_date_end,
+
+                created_date_start: updatedDoc.created_date_start,
+                created_date_end: updatedDoc.created_date_end,
+            }))
+
+            salesSetFilter(prev => ({
+                ...prev,
+                currentPage: 1
+            }))
+        }
     }
     const handlePageChange = (current: number) => {
         salesSetFilter((prev) => ({
@@ -244,6 +313,60 @@ const useSales = () => {
         }
     }, [dataSales])
 
+    useEffect(() => {
+        if(dataDocument?.data){
+            const { file } = dataDocument.data
+            if(file){
+                setDoc(prev => ({
+                    ...prev,
+                    hasSelectedClient: true,
+                    hasSelectedDocument: true,
+                    document: {
+                        id: file.id,
+                        file_name: file.file_name
+                    },
+                    client: {
+                        id: file.client?.id,
+                        last_name: file.client?.last_name,
+                        first_name: file.client?.first_name,
+                        trade_name: file.client?.trade_name,
+                        registered_name: file.client?.registered_name,
+                    }
+                }))
+
+                // 👇 apply immediately
+                setAppliedDoc(prev => ({
+                    ...prev,
+                    document: {
+                        id: file.id
+                    }
+                }))
+            }
+        }else{
+            setDoc(prev => ({
+                ...prev,
+                hasSelectedClient: false,
+                hasSelectedDocument: false,
+                document: {
+                    id: null,
+                    file_name: ''
+                },
+                client: {
+                    id: null,
+                    last_name: '',
+                    first_name: '',
+                    trade_name: '',
+                    registered_name: '',
+                }
+            }))
+            setAppliedDoc(prev => ({
+                ...prev,
+                document: {
+                    id: null
+                }
+            }))
+        }
+    }, [dataDocument?.data])
     useEffect(() => {
         if(typeof window !== 'undefined'){
             setTableWidth(window.innerWidth - 240)

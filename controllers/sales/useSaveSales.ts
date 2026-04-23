@@ -234,7 +234,7 @@ const useSaveSales = () => {
         }
 
         handleRemoveErr(sales.salesErr, name)
-        }
+    }
     
     const handleDate = (
         date: Dayjs | null,
@@ -266,7 +266,6 @@ const useSaveSales = () => {
         doc,
         sales,
         status,
-        vatType,
         clientArr,
         displayTerms,
         displayClients,
