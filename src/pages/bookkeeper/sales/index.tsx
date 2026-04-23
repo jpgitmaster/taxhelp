@@ -367,7 +367,14 @@ const Sales_V = () => {
             }
             <div className={scss.paginationComponent}>
                 {
-                sales.totalSales ? <Pagination defaultPageSize={salesFilter.recordsLimit} total={sales.totalSales} onChange={handlePageChange} />
+                sales.totalSales ?
+                <Pagination
+                  current={salesFilter.currentPage}
+                  pageSize={salesFilter.recordsLimit}
+                  total={sales.totalSales}
+                  onChange={handlePageChange}
+                  showSizeChanger={false}
+                />
                 : ''
                 }
             </div>

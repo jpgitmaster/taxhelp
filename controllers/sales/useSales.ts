@@ -282,6 +282,10 @@ const useSales = () => {
                 currentPage: 1
             }))
         }
+        salesSetFilter(prev => ({
+            ...prev,
+            currentPage: 1
+        }))
     }
     const handlePageChange = (current: number) => {
         salesSetFilter((prev) => ({
@@ -291,26 +295,14 @@ const useSales = () => {
     }
 
     useEffect(() => {
-        if(dataSales?.sales?.length){
-            setSales(
-                {
-                    ...sales,
-                    salesArr: dataSales.sales?.map((sales_: SalesObj[]) => ({
+        setSales(prev => ({
+            ...prev,
+            salesArr: dataSales?.sales?.map((sales_: SalesObj[]) => ({
                         ...sales_,
                         toDelete: false
-                    })),
-                    totalSales: dataSales.totalSales
-                }
-            )
-        }else{
-            setSales(
-                {
-                    ...sales,
-                    salesArr: [],
-                    totalSales: 0
-                }
-            )
-        }
+                    })) || [],
+            totalSales: dataSales?.totalSales || 0
+        }))
     }, [dataSales])
 
     useEffect(() => {
