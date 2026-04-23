@@ -43,12 +43,12 @@
   background-color: $lightGray;
   border: 1px solid rgba($gray, .5);
   @apply rounded-[20px] p-3.5 pb-1 w-full mb-3 -mt-2.5;
-  // .cards{
-  //   @apply justify-normal flex-nowrap mb-3;
-  //   .npt{
-  //     @apply p-0;
-  //   }
-  // }
+  .cards{
+    // @apply justify-normal flex-nowrap mb-3;
+    .npt{
+      @apply pb-5;
+    }
+  }
   .cards .btmDate{
     @apply p-0;
   }

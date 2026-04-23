@@ -185,7 +185,7 @@ const BookOfAccounts_V = () => {
               </CustomContainer>
                 <div className={scss.card+' '+scss.w25}>
                   <button className={scss.button+' '+scss.btnblue} disabled={doc.client.id && doc.selectedTable.value && doc.period ? false : true}
-                    onClick={() => handleDownloadPurchases('journal')}
+                    onClick={() => handleDownloadSales('journal')}
                   >
                       Download Journal
                   </button>
