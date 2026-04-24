@@ -79,7 +79,7 @@
 @media (max-width: 768px) {
   .header {
     .button{
-      @apply mr-2;
+      @apply mr-2 text-[11px];
       &.btnorange{
         @apply mr-0;
       }
