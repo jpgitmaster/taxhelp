@@ -76,3 +76,29 @@
     }
   }
 }
+@media (max-width: 768px) {
+  .header {
+    .button{
+      @apply mr-2;
+      &.btnorange{
+        @apply mr-0;
+      }
+    }
+    .searchComponent{
+        @apply w-full mt-5;
+    }
+  }
+  .tableRecords{
+    @apply w-full!;
+  }
+  .filters{
+    .cards{
+      .card.w33{
+        width: calc((100% - 10px) / 2);
+        .npt{
+          @apply pb-5;
+        }
+      }
+    }
+  }
+}

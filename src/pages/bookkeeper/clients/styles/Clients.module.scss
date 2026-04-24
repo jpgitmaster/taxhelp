@@ -11,7 +11,7 @@
       @apply mr-2.5;
   }
   .searchComponent{
-    @apply float-right -mt-2;
+    @apply float-right -mt-0.5;
     input[type=text]{
       @apply h-9.5;
     }
@@ -85,6 +85,12 @@
 
 @media (max-width: 768px) {
   .header {
+    .button{
+      @apply mr-2;
+      &.btnorange{
+        @apply mr-0;
+      }
+    }
     .searchComponent{
         @apply w-full mt-5;
     }

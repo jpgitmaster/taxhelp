@@ -13,7 +13,7 @@
       }
     }
     .searchComponent{
-        @apply float-right -mt-2;
+        @apply float-right -mt-0.5;
         .button{
             @apply mr-0 mt-0;
         }
@@ -224,4 +224,21 @@
 @keyframes dashCheck {
   0% { stroke-dashoffset: -100; }
   100% { stroke-dashoffset: 900; }
+}
+
+@media (max-width: 768px) {
+  .header {
+    .button{
+      @apply mr-2;
+      &.btnorange{
+        @apply mr-0;
+      }
+    }
+    .searchComponent{
+        @apply w-full mt-5;
+    }
+  }
+  .tableRecords{
+    @apply w-full!;
+  }
 }
