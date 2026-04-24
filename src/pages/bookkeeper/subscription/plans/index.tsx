@@ -1,7 +1,7 @@
+import PlanCard from './PlanCard'
 import { signOut, getSession } from 'next-auth/react'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
-import PlanCard from './PlanCard'
 
 const SubscriptionPlans_V = () => {
     const plans = [
@@ -36,7 +36,7 @@ const SubscriptionPlans_V = () => {
             </div>
 
             {/* Billing Toggle */}
-            <div className="flex justify-center my-3">
+            <div className="flex justify-center my-4">
                 <div className="bg-gray-100 p-1 rounded-lg flex text-sm">
                 <button className="px-4 py-1 rounded-md bg-white shadow">
                     Monthly

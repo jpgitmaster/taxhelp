@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const PlanCard = ({ plan }: any) => {
   return (
     <div
@@ -36,9 +38,9 @@ const PlanCard = ({ plan }: any) => {
             Current Plan
           </button>
         ) : (
-          <button className="w-full bg-black text-white py-2 rounded-lg text-sm hover:opacity-90">
+          <Link href='/bookkeeper/subscription/plans/gcash_payment' className="w-full inline-block text-center bg-black text-white py-2 rounded-lg text-sm hover:opacity-90">
             Choose Plan
-          </button>
+          </Link>
         )}
       </div>
     </div>
