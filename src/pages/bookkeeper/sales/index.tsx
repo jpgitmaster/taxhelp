@@ -217,7 +217,7 @@ const Sales_V = () => {
                   </span>
               </Link>
               <Popconfirm
-                title="Delete the task"
+                title="Delete the record"
                 description="Are you sure to delete this record?"
                 onConfirm={() => handleDeleteRecord(Number(record.id))}
                 onCancel={() => handleToggleDelete(Number(record.id))}

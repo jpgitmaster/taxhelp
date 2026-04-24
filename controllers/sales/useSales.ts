@@ -1,5 +1,6 @@
 import { Dayjs } from 'dayjs';
 import useSalesAPI from "./api";
+import { useRouter } from 'next/router';
 import useClientAPI from '../clients/api';
 import useDocumentAPI from '../documents/api';
 import useGlobal from '@/controllers/global/useGlobal'
@@ -7,6 +8,7 @@ import { AppliedDoc, DocState, SalesObj } from './types';
 import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
 
 const useSales = () => {
+    const router = useRouter()
     const {
         handleBlur,
         handleResubmit
@@ -14,7 +16,6 @@ const useSales = () => {
     const {
         sales,
         status,
-        router,
         filter: salesFilter,
 
         setSales,
@@ -136,6 +137,7 @@ const useSales = () => {
         trade_name: string
         registered_name: string
     }) => {
+        if (appliedDoc.client.id === client.id) return // ✅ prevent refetch
         const updatedDoc = {
             ...doc,
             client,
@@ -290,11 +292,6 @@ const useSales = () => {
 
                 created_date_start: updatedDoc.created_date_start,
                 created_date_end: updatedDoc.created_date_end,
-            }))
-
-            salesSetFilter(prev => ({
-                ...prev,
-                currentPage: 1
             }))
         }
         salesSetFilter(prev => ({

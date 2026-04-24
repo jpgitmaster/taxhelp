@@ -19,9 +19,11 @@ const UploadNewDocument_V = () => {
         width_,
         options,
         clientArr,
+        rowSelection,
         clientLoader,
         displayDocsTbl,
         displayClients,
+        selectedRowKeys,
 
         setRows,
         setDisplayClients,
@@ -35,6 +37,7 @@ const UploadNewDocument_V = () => {
         handleFileChange,
         handleSelectTable,
         handleSelectClient,
+        handleDeleteSelected,
     } = useUploadDocuments()
     const { loader } = status
     return (
@@ -98,13 +101,14 @@ const UploadNewDocument_V = () => {
                             </div>
                         </div>
                     </div>
-                    <div className={scss.tableRecords} style={{width:width_+'px'}}>
+                    <div className={scss.tableRecords} style={{width:width_+'px', marginTop: '15px'}}>
                         { loader && <Loader scss={scss} position='absolute' />}
                         <Table
                             rowKey='id'
                             dataSource={rows}
                             pagination={false}
                             columns={getColumns()}
+                            rowSelection={rowSelection}
                             scroll={{ x: 'max-content' }}
                         />
                         <div className={scss.tblBtns}>
@@ -113,6 +117,14 @@ const UploadNewDocument_V = () => {
                             </button>
                             <button type='button' className={scss.button+' '+scss.btnorange} onClick={() => setRows([])}>
                                 Cancel
+                            </button>
+                            <button
+                                type='button'
+                                className={scss.button + ' ' + scss.btnred}
+                                onClick={handleDeleteSelected}
+                                disabled={!selectedRowKeys.length}
+                            >
+                                Delete Selected
                             </button>
                         </div>
                     </div>

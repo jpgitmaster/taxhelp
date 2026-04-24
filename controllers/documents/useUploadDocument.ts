@@ -28,13 +28,13 @@ const useUploadDocuments = () => {
             value: 'PURCHASES'
         },
     ])
-    const { data: dataClients, isLoading, isFetching } = useGetClients(
-        clientFilter.currentPage,
-        clientFilter.recordsLimit,
-        clientFilter.filter,
-        clientFilter.search
-    )
-    const clientArr = dataClients?.clients;
+    const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([])
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: (newSelectedRowKeys: React.Key[]) => {
+            setSelectedRowKeys(newSelectedRowKeys as number[])
+        },
+    }
     const [width_, setWidth] = useState(0)
     const [file, setFile] = useState<File | null>(null)
     const [displayClients, setDisplayClients] = useState(false)
@@ -67,6 +67,14 @@ const useUploadDocuments = () => {
             label: 'SUMMARY LIST OF SALES (SLS)'
         }
     })
+
+    const { data: dataClients, isLoading, isFetching } = useGetClients(
+        clientFilter.currentPage,
+        clientFilter.recordsLimit,
+        clientFilter.filter,
+        clientFilter.search
+    )
+    const clientArr = dataClients?.clients;
 
     const getColumns = () => {
         if(doc.selectedTable.value === 'SALES') {
@@ -108,6 +116,15 @@ const useUploadDocuments = () => {
             ]
         }
     }
+
+    const handleDeleteSelected = () => {
+        if (!selectedRowKeys.length) return
+
+        const filtered = rows.filter(row => !selectedRowKeys.includes(row.id))
+        setRows(filtered)
+        setSelectedRowKeys([]) // reset after delete
+    }
+
     const handleSelectTable = (selectedTable: {
         value: string,
         label: string
@@ -182,7 +199,7 @@ const useUploadDocuments = () => {
             const data = evt.target?.result
             if (!data) return
 
-            const workbook = XLSX.read(data, { type: 'binary' })
+            const workbook = XLSX.read(data, { type: 'array' })
 
             const { salesSheet, purchaseSheet } = detectSheet(workbook)
 
@@ -319,7 +336,7 @@ const useUploadDocuments = () => {
             setRows(tableRows)
         }
 
-        reader.readAsBinaryString(f)
+        reader.readAsArrayBuffer(f)
     }
     const handleUpload = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -476,8 +493,10 @@ const useUploadDocuments = () => {
         width_,
         options,
         clientArr,
+        rowSelection,
         displayDocsTbl,
         displayClients,
+        selectedRowKeys,
         clientLoader: isLoading || isFetching,
 
         // SET STATES
@@ -490,10 +509,11 @@ const useUploadDocuments = () => {
         // HANDLES
         handleUpload,
         handleChange,
+        handleToggle,
         handleFileChange,
         handleSelectTable,
         handleSelectClient,
-        handleToggle
+        handleDeleteSelected,
     }
 }
 
