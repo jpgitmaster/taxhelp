@@ -17,7 +17,7 @@ body, html{
             @apply absolute cursor-pointer rounded-[5px] top-5.5 h-6.25 w-6.25 p-1.5 -right-2.5;
         }
         &.slideRight{
-            @apply w-50;
+            @apply w-45;
             transition: width .3s ease;
             .sidebarArrow{
                 transform: rotate(90deg);
@@ -148,7 +148,7 @@ body, html{
                         }
                         @apply flex flex-row hover:bg-app-blue-dark rounded-[10px] cursor-pointer;
                         .linkArrow{
-                            @apply w-10 h-9 p-2.75 -mt-3.5 right-0 top-4.5 float-right relative cursor-pointer;
+                            @apply w-4 h-9 py-2.75 -mt-3.5 right-2.5 top-4.5 float-right relative cursor-pointer;
                             img{
                                 @apply w-full;
                             }
@@ -201,7 +201,7 @@ body, html{
                     }
                     li{
                         border-left: 1px dotted $white;
-                        @apply relative pt-2 w-40 pl-3 py-0.5 mb-px;
+                        @apply relative pt-2 w-36 pl-3 py-0.5 mb-px;
                         &::before{
                             content: "";
                             display: inherit;

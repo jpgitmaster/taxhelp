@@ -86,7 +86,7 @@ const UploadNewDocument_V = () => {
                                 />
                             </CustomContainer>
                             <div className={scss.card+' '+scss.w33}>
-                                <div className={scss.searchComponent}
+                                {/* <div className={scss.searchComponent}
                                     // onSubmit={handleSubmitSearch}
                                 >
                                     <input id='search' type='text' name='search' maxLength={50} autoComplete='search' placeholder='Enter keyword...'
@@ -97,7 +97,7 @@ const UploadNewDocument_V = () => {
                                     >
                                     Search
                                     </button>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
@@ -109,7 +109,7 @@ const UploadNewDocument_V = () => {
                             pagination={false}
                             columns={getColumns()}
                             rowSelection={rowSelection}
-                            scroll={{ x: 'max-content' }}
+                            scroll={{ x: 'max-content', y: 90 * 5 }}
                         />
                         <div className={scss.tblBtns}>
                             <button type='submit' className={scss.button+' '+scss.btnblue}>
