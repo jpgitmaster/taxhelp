@@ -240,7 +240,7 @@ const usePurchases = () => {
 
     useEffect(() => {
         if(typeof window !== 'undefined'){
-            setTableWidth(window.innerWidth - 240)
+            setTableWidth(window.innerWidth - 220)
         }
 
         const successMessage = sessionStorage.getItem('successMessage');

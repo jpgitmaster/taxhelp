@@ -22,10 +22,10 @@
 .header{
     @apply inline-block w-full mb-0 mt-3;
     .button{
-      @apply mr-2.5;
+      @apply mr-2.5 w-auto float-left;
     }
     .searchComponent{
-      @apply float-right -mt-2;
+      @apply float-right mt-0;
       input[type=text]{
         @apply h-9.5;
       }
@@ -62,7 +62,7 @@
   }
 }
 .tableRecords{
-  @apply relative mt-4;
+  @apply relative mt-2;
   .activeRow, .activeRow td, .activeRow:hover td{
     background-color: #fbdfdf !important;
   }

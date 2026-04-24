@@ -46,6 +46,14 @@ const CMS_Layout: FC<MastertProps> = ({ children }) => {
 			</Link>
 			),
 		},
+    {
+      key: '4',
+      label: (
+        <Link href={'/bookkeeper/subscription'} className={scss.actionItem}>
+          Manage Subscription
+        </Link>
+      ),
+    },
 	];
   return (
     isPageLoad &&

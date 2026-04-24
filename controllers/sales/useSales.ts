@@ -44,6 +44,13 @@ const useSales = () => {
     const [tableWidth, setTableWidth] = useState(0)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayDocuments, setDisplayDocuments] = useState(false)
+    const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([])
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: (newSelectedRowKeys: React.Key[]) => {
+            setSelectedRowKeys(newSelectedRowKeys as number[])
+        },
+    }
     const [appliedDoc, setAppliedDoc] = useState<AppliedDoc>({
         client: { id: null },
         document: { id: null },
@@ -373,7 +380,7 @@ const useSales = () => {
     }, [dataDocument?.data])
     useEffect(() => {
         if(typeof window !== 'undefined'){
-            setTableWidth(window.innerWidth - 240)
+            setTableWidth(window.innerWidth - 220)
         }
 
         const successMessage = sessionStorage.getItem('successMessage');
@@ -402,7 +409,9 @@ const useSales = () => {
         tableWidth,
         documentArr,
         salesFilter,
+        rowSelection,
         displayClients,
+        selectedRowKeys,
         displayDocuments,
         clientLoader: isLoadingClients || isFetchingClients,
         documentLoader: isLoadingDocuments || isFetchingDocuments,

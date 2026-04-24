@@ -25,9 +25,11 @@ const Sales_V = () => {
     salesFilter,
     salesloader,
     documentArr,
+    rowSelection,
     clientLoader,
     documentLoader,
     displayClients,
+    selectedRowKeys,
     displayDocuments,
     
     setDisplayClients,
@@ -320,6 +322,14 @@ const Sales_V = () => {
           <Link href='/bookkeeper/sales/add' className={scss.button+' '+scss.btnblue}>
             Add Record
           </Link>
+          <button
+              type='button'
+              className={scss.button + ' ' + scss.btnred}
+              // onClick={handleDeleteSelected}
+              disabled={!selectedRowKeys.length}
+          >
+              Delete Selected
+          </button>
           <form className={scss.searchComponent}
             onSubmit={handleSubmitSearch}
           >
@@ -343,6 +353,7 @@ const Sales_V = () => {
                 rowClassName={(record) =>
                   record.toDelete ? scss.activeRow : ''
                 }
+                rowSelection={rowSelection}
                 scroll={{ x: 'max-content', y: 60 * 5 }}
             />
         </div>

@@ -252,7 +252,7 @@ const Documents_V = () => {
                   </button>
               </form>
           </div>
-        <div className={scss.tableRecords} style={{width:tableWidth+'px'}}>
+        <div className={scss.tableRecords} style={{width:tableWidth+'px', marginTop: '15px'}}>
           { loader && <Loader scss={scss} position='absolute' />}
             <Table
               rowKey='id'
