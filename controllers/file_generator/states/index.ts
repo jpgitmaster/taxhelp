@@ -1,6 +1,7 @@
 const initRecordObj = {
     id: null,
     terms: '',
+    toDelete: false,
     particulars: '',
     account_name: '',
     invoice_date: null,

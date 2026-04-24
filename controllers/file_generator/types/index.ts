@@ -3,6 +3,7 @@ import { Dayjs } from "dayjs";
 interface Record_Obj{
     id: number | null
     terms: string
+    toDelete: boolean
     particulars: string
     account_name: string
     invoice_date: Dayjs | null

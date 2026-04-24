@@ -6,16 +6,19 @@
 @reference 'tailwindcss';
 
 .header{
-    @apply inline-block w-full mb-3.75;
+  @apply inline-block w-full mb-0;
+  .button{
+      @apply mr-2.5;
+  }
+  .searchComponent{
+    @apply float-right -mt-2;
+    input[type=text]{
+      @apply h-9.5;
+    }
     .button{
-        @apply mr-2.5;
+        @apply mr-0;
     }
-    .searchComponent{
-        @apply float-right -mt-2;
-        .button{
-            @apply mr-0;
-        }
-    }
+  }
 }
 .addClient, .viewClient{
     @apply w-220 mx-auto relative pt-2 -mt-2.5;

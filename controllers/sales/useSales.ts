@@ -2,11 +2,15 @@ import { Dayjs } from 'dayjs';
 import useSalesAPI from "./api";
 import useClientAPI from '../clients/api';
 import useDocumentAPI from '../documents/api';
+import useGlobal from '@/controllers/global/useGlobal'
 import { AppliedDoc, DocState, SalesObj } from './types';
-import { useState, useEffect, ChangeEvent } from "react";
-
+import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
 
 const useSales = () => {
+    const {
+        handleBlur,
+        handleResubmit
+    } = useGlobal()
     const {
         sales,
         status,
@@ -30,7 +34,7 @@ const useSales = () => {
 
     const {
         filter: documentFilter,
-        setFilter: documentSetFilter,
+        // setFilter: documentSetFilter,
 
         useGetDocument,
         useGetDocuments
@@ -100,6 +104,17 @@ const useSales = () => {
     const clientArr = dataClients?.clients;
     const documentArr = dataDocuments?.documents; 
 
+    const handleSubmitSearch = async (e: SyntheticEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setStatus({...status, loader: true})
+    }
+    const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
+        salesSetFilter({
+            ...salesFilter,
+            [name]: value
+        })
+    }
     const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target
         if(name === 'search'){
@@ -402,13 +417,17 @@ const useSales = () => {
         
 
         // HANDLES
+        handleBlur,
         handleChange,
         handleToggle,
+        handleSearch,
+        handleResubmit,
         handleDateChange,
         handlePageChange,
         handleToggleDelete,
         handleSelectClient,
         handleDeleteRecord,
+        handleSubmitSearch,
         handleClearSelected,
         handleSelectDocument,
     }

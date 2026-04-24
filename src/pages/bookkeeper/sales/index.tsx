@@ -4,10 +4,10 @@ import Image from 'next/image'
 import scss from './styles/Sales.module.scss'
 import type { ColumnsType } from 'antd/es/table'
 import useSales from '@/controllers/sales/useSales'
-import { Table, Pagination, DatePicker } from 'antd'
 import { signOut, getSession } from 'next-auth/react'
 import { SalesTableRow } from '@/controllers/sales/types'
 import Loader from '@/components/reusables/RotatingLoader'
+import { Table, Pagination, DatePicker, Popconfirm } from 'antd'
 import SuccessMessage from '@/components/reusables/SuccessMessage'
 import CustomContainer from '@/components/reusables/CustomContainer'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
@@ -33,15 +33,19 @@ const Sales_V = () => {
     setDisplayClients,
     setDisplayDocuments,
     
+    handleBlur,
     handleChange,
     handleToggle,
+    handleSearch,
+    handleResubmit,
     handleDateChange,
     handlePageChange,
     handleToggleDelete,
     handleSelectClient,
     handleDeleteRecord,
+    handleSubmitSearch,
+    handleClearSelected,
     handleSelectDocument,
-    handleClearSelected
   } = useSales()
   const { message } = status
   const { salesArr } = sales
@@ -212,39 +216,23 @@ const Sales_V = () => {
                       Edit
                   </span>
               </Link>
-              <div className={scss.onDelete}>
-                {
-                  record.toDelete &&
-                  <div className={scss.popover+' '+scss.flipInY}>
-                    <div className={scss.arrow}></div>
-                    <div className={scss.popoverBody}>
-                      <div className={scss.deleteDetails}>
-                        <p>
-                          You want to delete this record?
-                        </p>
-                        <div className={scss.deleteActions}>
-                          <button type='button' className={scss.deleteAction+' '+scss.yes}
-                            onClick={() => handleDeleteRecord(Number(record.id))}
-                          >
-                            Yes
-                          </button>
-                          <button type='button' className={scss.deleteAction+' '+scss.no}
-                            onClick={() => handleToggleDelete(Number(record.id))}
-                          >
-                            No
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                }
-                <button type='button' onClick={() => handleToggleDelete(Number(record.id))} className={scss.action+' '+scss.delete}>
+              <Popconfirm
+                title="Delete the task"
+                description="Are you sure to delete this record?"
+                onConfirm={() => handleDeleteRecord(Number(record.id))}
+                onCancel={() => handleToggleDelete(Number(record.id))}
+                okText="Yes"
+                cancelText="No"
+              >
+                <button type='button'
+                  onClick={() => handleToggleDelete(Number(record.id))}
+                  className={scss.action+' '+scss.delete}>
                     <Image src='/svgs/delete.svg' alt='Delete' priority width={18} height={18} unoptimized={true} />
                     <span>
                         Delete
                     </span>
                 </button>
-              </div>
+              </Popconfirm>
           </div>
     },
   ];
@@ -333,13 +321,13 @@ const Sales_V = () => {
             Add Record
           </Link>
           <form className={scss.searchComponent}
-            // onSubmit={handleSubmitSearch}
+            onSubmit={handleSubmitSearch}
           >
               <input id='search' type='text' name='search' maxLength={50} autoComplete='search' placeholder='Enter keyword...'
-                  // value={salesFilter.search} onKeyUp={handleBlur} onChange={handleSearch}
+                  value={salesFilter.search} onKeyUp={handleBlur} onChange={handleSearch}
               />
               <button type='submit' className={`${scss.button} ${scss.btnblue}`}
-                  // onKeyDown={handleResubmit}
+                  onKeyDown={handleResubmit}
               >
               Search
               </button>
@@ -355,7 +343,7 @@ const Sales_V = () => {
                 rowClassName={(record) =>
                   record.toDelete ? scss.activeRow : ''
                 }
-                scroll={{ x: 'max-content' }}
+                scroll={{ x: 'max-content', y: 60 * 5 }}
             />
         </div>
         <div className={scss.pagination}>

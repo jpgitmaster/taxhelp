@@ -4,7 +4,6 @@
 @use '@/styles/colors' as *;
 
 @reference 'tailwindcss';
-
 .header{
   @apply inline-block w-full mb-0 mt-0;
     .button{
@@ -19,6 +18,27 @@
             @apply mr-0 mt-0;
         }
     }
+}
+.uploader{
+  @apply w-125 mx-auto;
+  .npt{
+    @apply p-0;
+  }
+}
+.customCards{
+  @apply mb-0;
+  .npt{
+    @apply p-0;
+  }
+  .searchComponent{
+    @apply float-right w-full;
+    input[type=text]{
+      @apply h-9.5;
+    }
+    .button{
+        @apply mr-0;
+    }
+  }
 }
 .tableRecords{
     @apply relative;

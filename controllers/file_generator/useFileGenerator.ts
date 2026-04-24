@@ -1,9 +1,18 @@
 import { Dayjs } from 'dayjs';
+import { Record_Obj } from './types';
+import useSalesAPI from '../sales/api';
 import useFileGeneratorAPI from './api';
 import useClientAPI from '../clients/api';
+import usePurchasesAPI from '../purchases/api';
 import { useState, useEffect, ChangeEvent } from "react";
 
 const useFileGenerator = () => {
+    const {
+        useDeleteSalesRecord
+    } = useSalesAPI()
+    const {
+        useDeletePurchasesRecord
+    } = usePurchasesAPI()
     const {
         filter: clientFilter,
         setFilter: clientSetFilter,
@@ -113,6 +122,31 @@ const useFileGenerator = () => {
         }))
     }
 
+    const handleDeleteRecord = (id: number) => {
+        setStatus({...status, loader: true})
+        if(doc.selectedTable.value === 'SALES'){
+            useDeleteSalesRecord.mutate(id)
+        }
+        if(doc.selectedTable.value === 'PURCHASES'){
+            useDeletePurchasesRecord.mutate(id)
+        }
+    }
+
+    const handleToggleDelete = (id: number) => {
+        const { recordArr } = record
+        const newRecordArr = recordArr?.map((record_) => record_.id == id ? {
+            ...record_,
+            toDelete: !record_.toDelete
+        } : {
+            ...record_,
+            toDelete: false,
+        })
+        setRecord({
+            ...record,
+            recordArr: newRecordArr as Record_Obj[]
+        })
+    }
+    
     const handleSelectClient = (client: {
         id: number | null,
         last_name: string
@@ -208,6 +242,22 @@ const useFileGenerator = () => {
         if(typeof window !== 'undefined'){
             setTableWidth(window.innerWidth - 240)
         }
+
+        const successMessage = sessionStorage.getItem('successMessage');
+        if (successMessage) {
+            setStatus(prev => ({
+                ...prev,
+                message: successMessage
+            }))
+
+            setTimeout(() => {
+                setStatus(prev => ({
+                    ...prev,
+                    message: ''
+                }))
+                sessionStorage.removeItem('successMessage')
+            }, 5000)
+        }
     },[])
     return {
         // STATES
@@ -233,7 +283,9 @@ const useFileGenerator = () => {
         handlePageChange,
         handleDateChange,
         handleSelectTable,
+        handleDeleteRecord,
         handleSelectClient,
+        handleToggleDelete,
         handleDownloadSales,
         handleClearSelected,
         handleDownloadPurchases,

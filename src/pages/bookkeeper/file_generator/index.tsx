@@ -6,11 +6,11 @@ import scss from './styles/DatFile.module.scss'
 import type { ColumnsType } from 'antd/es/table'
 import { signOut, getSession } from 'next-auth/react'
 import Loader from '@/components/reusables/RotatingLoader'
-import { Table, DatePicker, Pagination, Dropdown } from 'antd'
 import { Record_Obj } from '@/controllers/file_generator/types'
 import CustomContainer from '@/components/reusables/CustomContainer'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
+import { Table, DatePicker, Pagination, Dropdown, Popconfirm } from 'antd'
 import useFileGenerator from '@/controllers/file_generator/useFileGenerator'
 import ClientsDropdown from '@/components/pages/bookkeeper/documents/ClientsDropdown'
 import DocumentsTableDropdown from '@/components/pages/bookkeeper/documents/DocumentsTableDropdown'
@@ -37,6 +37,8 @@ const FileGenerator_V = () => {
       handlePageChange,
       handleDateChange,
       handleSelectTable,
+      handleToggleDelete,
+      handleDeleteRecord,
       handleSelectClient,
       handleDownloadSales,
       handleClearSelected,
@@ -46,6 +48,7 @@ const FileGenerator_V = () => {
     const dataSource: Record_Obj[] = record.recordArr?.map(doc => ({
       id: doc.id,
       terms: doc.terms,
+      toDelete: doc.toDelete,
       particulars: doc.particulars,
       account_name: doc.account_name,
       invoice_date: doc.invoice_date,
@@ -129,12 +132,23 @@ const FileGenerator_V = () => {
                         Edit
                     </span>
                 </Link>
-                <Link href={''} className={scss.action+' '+scss.delete}>
-                    <Image src='/svgs/delete.svg' alt='Delete' priority width={18} height={18} unoptimized={true} />
-                    <span>
-                        Delete
-                    </span>
-                </Link>
+                <Popconfirm
+                  title="Delete the task"
+                  description="Are you sure to delete this record?"
+                  onConfirm={() => handleDeleteRecord(Number(record.id))}
+                  onCancel={() => handleToggleDelete(Number(record.id))}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <button type='button'
+                    onClick={() => handleToggleDelete(Number(record.id))}
+                    className={scss.action+' '+scss.delete}>
+                      <Image src='/svgs/delete.svg' alt='Delete' priority width={18} height={18} unoptimized={true} />
+                      <span>
+                          Delete
+                      </span>
+                  </button>
+                </Popconfirm>
             </div>
     },
     ]
@@ -234,7 +248,7 @@ const FileGenerator_V = () => {
                 columns={columns}
                 pagination={false}
                 dataSource={dataSource}
-                scroll={{ x: 'max-content' }}
+                scroll={{ x: 'max-content', y: 90 * 5 }}
             />
           </div>
           <div className={scss.pagination}>

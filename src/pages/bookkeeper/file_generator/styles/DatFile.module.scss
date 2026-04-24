@@ -4,7 +4,17 @@
 @use '@/styles/colors' as *;
 
 @reference 'tailwindcss';
-
+:global(.ant-popover-container) {
+  @apply rounded-[20px]!;
+}
+:global(.ant-popconfirm-buttons) {
+  display: flex;
+  justify-content: center; /* centers buttons */
+  gap: 8px; /* optional spacing */
+}
+:global(.ant-btn) {
+  @apply px-5 -mx-1.5;
+}
 .pageHeader.form{
     @apply inline-block w-full mb-0 relative;
     .cards{
@@ -31,6 +41,18 @@
 }
 .tableRecords{
   @apply relative;
+  .activeRow, .activeRow td, .activeRow:hover td{
+    background-color: #fbdfdf !important;
+  }
+  .actions{
+    @apply flex items-center justify-center;
+    .action{
+      @apply mx-1.5 cursor-pointer;
+      span{
+        @apply relative text-[7px];
+      }
+    }
+  }
 }
 .actionItem{
   @apply cursor-pointer;

@@ -28,7 +28,7 @@ const usePurchases = () => {
 
     const {
         filter: documentFilter,
-        setFilter: documentSetFilter,
+        // setFilter: documentSetFilter,
 
         useGetDocuments
     } = useDocumentAPI()

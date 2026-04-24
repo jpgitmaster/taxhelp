@@ -7,6 +7,11 @@ import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
 
 const useSaveClient = () => {
     const {
+        handleBlur,
+        handleResubmit,
+        handleRemoveErr
+    } = useGlobal()
+    const {
         status,
         client,
         
@@ -17,11 +22,6 @@ const useSaveClient = () => {
         useUpdateClient,
         useCreateClient
     } = useClientAPI()
-    const {
-        handleBlur,
-        handleResubmit,
-        handleRemoveErr
-    } = useGlobal()
     const router = useRouter()
     const { clientID } = router.query
     const clientIdNumber = Number(clientID)

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import type { ColumnsType } from 'antd/es/table'
 import scss from './styles/Purchases.module.scss'
-import { Table, Pagination, DatePicker } from 'antd'
+import { Table, Pagination, Popconfirm } from 'antd'
 import { signOut, getSession } from 'next-auth/react'
 import Loader from '@/components/reusables/RotatingLoader'
 import usePurchases from '@/controllers/purchases/usePurchases'
@@ -227,39 +227,23 @@ const Purchases_V = () => {
                       Edit
                   </span>
               </Link>
-              <div className={scss.onDelete}>
-                {
-                  record.toDelete &&
-                  <div className={scss.popover+' '+scss.flipInY}>
-                    <div className={scss.arrow}></div>
-                    <div className={scss.popoverBody}>
-                      <div className={scss.deleteDetails}>
-                        <p>
-                          You want to delete this record?
-                        </p>
-                        <div className={scss.deleteActions}>
-                          <button type='button' className={scss.deleteAction+' '+scss.yes}
-                            onClick={() => handleDeleteRecord(Number(record.id))}
-                          >
-                            Yes
-                          </button>
-                          <button type='button' className={scss.deleteAction+' '+scss.no}
-                            onClick={() => handleToggleDelete(Number(record.id))}
-                          >
-                            No
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                }
-                <button type='button' onClick={() => handleToggleDelete(Number(record.id))} className={scss.action+' '+scss.delete}>
+              <Popconfirm
+                title="Delete the task"
+                description="Are you sure to delete this record?"
+                onConfirm={() => handleDeleteRecord(Number(record.id))}
+                onCancel={() => handleToggleDelete(Number(record.id))}
+                okText="Yes"
+                cancelText="No"
+              >
+                <button type='button'
+                  onClick={() => handleToggleDelete(Number(record.id))}
+                  className={scss.action+' '+scss.delete}>
                     <Image src='/svgs/delete.svg' alt='Delete' priority width={18} height={18} unoptimized={true} />
                     <span>
                         Delete
                     </span>
                 </button>
-              </div>
+              </Popconfirm>
           </div>
     },
   ];
@@ -348,7 +332,7 @@ const Purchases_V = () => {
                 rowClassName={(record) =>
                   record.toDelete ? scss.activeRow : ''
                 }
-                scroll={{ x: 'max-content' }}
+                scroll={{ x: 'max-content', y: 90 * 5 }}
             />
         </div>
         <div className={scss.pagination}>

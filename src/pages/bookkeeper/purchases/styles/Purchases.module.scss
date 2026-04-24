@@ -8,8 +8,16 @@
   border: 1px solid $gray;
   background-color: $white;
 }
-:global(.ant-table-content){
-  @apply -mt-3 pt-8;
+:global(.ant-popover-container) {
+  @apply rounded-[20px]!;
+}
+:global(.ant-popconfirm-buttons) {
+  display: flex;
+  justify-content: center; /* centers buttons */
+  gap: 8px; /* optional spacing */
+}
+:global(.ant-btn) {
+  @apply px-5 -mx-1.5;
 }
 .header{
     @apply inline-block w-full mb-0 mt-3;
@@ -51,7 +59,7 @@
   }
 }
 .tableRecords{
-  @apply relative;
+  @apply relative mt-4;
   .activeRow, .activeRow td, .activeRow:hover td{
     background-color: #fbdfdf !important;
   }

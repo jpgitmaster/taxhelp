@@ -120,12 +120,13 @@ const UploadNewDocument_V = () => {
                 :
                 <>
                     <br />
-                    <div className={scss.cards} style={{width: '500px', margin: '0 auto'}}>
+                    <div className={scss.cards+' '+scss.uploader}>
                         <CustomContainer
                             scss={scss}
                             width={100}
                             required={true}
                             label='Select Client'
+                            className={scss.selectedClient}
                         >
                             <ClientsDropdown
                                 doc={doc}
