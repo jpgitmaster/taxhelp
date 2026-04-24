@@ -102,3 +102,15 @@
     }
   }
 }
+@media (max-width: 600px) {
+  .filters{
+    .cards{
+      .card.w33{
+        @apply w-full;
+        .npt{
+          @apply pb-5;
+        }
+      }
+    }
+  }
+}
