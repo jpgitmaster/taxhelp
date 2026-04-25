@@ -133,3 +133,34 @@
         }
     }
 }
+@media (max-width: 1200px) {
+    .box{
+        @apply w-full;
+
+        .plans{
+            @apply flex flex-col max-w-300;
+            .plan{
+                @apply w-full;
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .box{
+        background-color: $transparent;
+        @apply border-0 py-0 px-2;
+        .plans{
+            @apply mt-5 px-0;
+            .plan{
+                scale: inherit !important;
+            }
+        }
+    }
+    .customSolutions{
+        @apply px-0! w-full mt-8!;
+        .button.btnblue{
+            @apply w-full!;
+        }
+    }
+}
