@@ -41,7 +41,8 @@ const useUploadDocuments = () => {
     const [displayDocsTbl, setDisplayDocsTbl] = useState(false)
     const [rows, setRows] = useState<(ExcelRow & { id: number })[]>([])
     const [doc, setDoc] = useState<{
-        search: string
+        docSearch: string
+        clientSearch: string
         selectedTable: {
             value: string,
             label: string
@@ -54,7 +55,8 @@ const useUploadDocuments = () => {
             registered_name: string
         }
     }>({
-        search: '',
+        docSearch: '',
+        clientSearch: '',
         client: {
             id: null,
             last_name: '',
@@ -148,7 +150,7 @@ const useUploadDocuments = () => {
     }
     const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target
-        if(name === 'search'){
+        if(name === 'clientSearch'){
             setFilter(prev => ({
                 ...prev,
                 search: value,

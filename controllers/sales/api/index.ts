@@ -80,7 +80,6 @@ const useSalesAPI = () => {
                     url: `/api/${apiVersion}/sales/records`,
                     params
                 })
-
                 return {
                     sales: res.data?.sales ?? [],
                     totalSales: res.data?.total ?? 0

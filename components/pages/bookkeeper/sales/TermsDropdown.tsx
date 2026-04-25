@@ -3,7 +3,7 @@ import scss from './../documents/styles/CustomDropdown.module.scss'
 import { useRef, useEffect, MouseEvent, Dispatch, SetStateAction } from 'react'
 export default function TermsDropdown(props: {
     doc: {
-        search: string
+        clientSearch: string
         selectedTerms?: {
             value: string,
             label: string

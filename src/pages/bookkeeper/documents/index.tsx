@@ -50,7 +50,7 @@ const Documents_V = () => {
 		{
 			key: '2',
 			label: (
-			<Link href={'/bookkeeper/purchases'} className={scss.actionItem}>
+			<Link href={'/bookkeeper/purchases?documentID='+id} className={scss.actionItem}>
 				Purchases
 			</Link>
 			),

@@ -142,7 +142,7 @@ const Clients_V = () => {
                 <form className={scss.searchComponent}
                     // onSubmit={handleSubmitSearch}
                 >
-                    <input id='search' type='text' name='search' maxLength={50} autoComplete='search' placeholder='Enter keyword...'
+                    <input id='search' type='text' name='search' maxLength={50} autoComplete='search' placeholder='Search by Name or TIN...'
                         // value={filter.search} onKeyUp={handleBlur} onChange={handleSearch}
                     />
                     <button type='submit' className={`${scss.button} ${scss.btnblue}`}

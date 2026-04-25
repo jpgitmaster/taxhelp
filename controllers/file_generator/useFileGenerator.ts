@@ -3,16 +3,12 @@ import { Record_Obj } from './types';
 import useSalesAPI from '../sales/api';
 import useFileGeneratorAPI from './api';
 import useClientAPI from '../clients/api';
-import usePurchasesAPI from '../purchases/api';
 import { useState, useEffect, ChangeEvent } from "react";
 
 const useFileGenerator = () => {
     const {
         useDeleteSalesRecord
     } = useSalesAPI()
-    const {
-        useDeletePurchasesRecord
-    } = usePurchasesAPI()
     const {
         filter: clientFilter,
         setFilter: clientSetFilter,
@@ -49,10 +45,17 @@ const useFileGenerator = () => {
     ]
     const [doc, setDoc] = useState<{
         search: string
+        docSearch: string
+        clientSearch: string
         hasSelectedClient: boolean
+        hasSelectedDocument: boolean
         selectedTable: {
             value: string,
             label: string
+        }
+        document: {
+            id: number | null
+            file_name: string
         }
         client: {
             id: number | null,
@@ -62,9 +65,14 @@ const useFileGenerator = () => {
             registered_name: string
         },
         period: Dayjs | null
+        tax_month_end: Dayjs | null
+        tax_month_start: Dayjs | null
     }>({
         search: '',
+        docSearch: '',
+        clientSearch: '',
         hasSelectedClient: false,
+        hasSelectedDocument: false,
         client: {
             id: null,
             last_name: '',
@@ -72,11 +80,17 @@ const useFileGenerator = () => {
             trade_name: '',
             registered_name: '',
         },
+        document: {
+            id: null,
+            file_name: ''
+        },
         selectedTable: {
             value: 'SALES',
             label: 'SUMMARY LIST OF SALES (SLS)'
         },
         period: null,
+        tax_month_end: null,
+        tax_month_start: null,
     })
 
     const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = useGetClients(    
@@ -128,7 +142,7 @@ const useFileGenerator = () => {
             useDeleteSalesRecord.mutate(id)
         }
         if(doc.selectedTable.value === 'PURCHASES'){
-            useDeletePurchasesRecord.mutate(id)
+            
         }
     }
 
@@ -240,23 +254,7 @@ const useFileGenerator = () => {
     
     useEffect(() => {
         if(typeof window !== 'undefined'){
-            setTableWidth(window.innerWidth - 220)
-        }
-
-        const successMessage = sessionStorage.getItem('successMessage');
-        if (successMessage) {
-            setStatus(prev => ({
-                ...prev,
-                message: successMessage
-            }))
-
-            setTimeout(() => {
-                setStatus(prev => ({
-                    ...prev,
-                    message: ''
-                }))
-                sessionStorage.removeItem('successMessage')
-            }, 5000)
+            setTableWidth(window.innerWidth - 240)
         }
     },[])
     return {

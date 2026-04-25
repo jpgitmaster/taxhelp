@@ -155,10 +155,10 @@ const SubscriptionPlans_V = () => {
     ]
 
     return (
-        <section className="space-y-10">
+        <section>
 
             {/* Header */}
-            <div className="text-center space-y-3">
+            <div className="text-center">
                 <h2 className="text-3xl font-bold tracking-tight">
                     Choose Your Plan
                 </h2>

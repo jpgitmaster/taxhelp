@@ -35,7 +35,7 @@ const useSales = () => {
 
     const {
         filter: documentFilter,
-        // setFilter: documentSetFilter,
+        setFilter: documentSetFilter,
 
         useGetDocument,
         useGetDocuments
@@ -63,6 +63,8 @@ const useSales = () => {
     })
     const [doc, setDoc] = useState<DocState>({
         search: '',
+        docSearch: '',
+        clientSearch: '',
         hasSelectedClient: false,
         hasSelectedDocument: false,
         client: {
@@ -114,18 +116,29 @@ const useSales = () => {
 
     const handleSubmitSearch = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
-        setStatus({...status, loader: true})
+        salesSetFilter(prev => ({
+            ...prev,
+            search: doc.search,   // 👈 trigger API search
+            currentPage: 1        // 👈 reset pagination
+        }))
     }
     const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
-        salesSetFilter({
-            ...salesFilter,
+        setDoc({
+            ...doc,
             [name]: value
         })
     }
     const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target
-        if(name === 'search'){
+        if(name === 'docSearch'){
+            documentSetFilter(prev => ({
+                ...prev,
+                search: value,
+                currentPage: 1
+            }))
+        }
+        if(name === 'clientSearch'){
             clientSetFilter(prev => ({
                 ...prev,
                 search: value,

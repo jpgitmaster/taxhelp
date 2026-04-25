@@ -3,10 +3,10 @@ import Link from 'next/link'
 import Image from 'next/image'
 import type { ColumnsType } from 'antd/es/table'
 import scss from './styles/Purchases.module.scss'
-import { Table, Pagination, Popconfirm } from 'antd'
 import { signOut, getSession } from 'next-auth/react'
 import Loader from '@/components/reusables/RotatingLoader'
 import usePurchases from '@/controllers/purchases/usePurchases'
+import { Table, Pagination, DatePicker, Popconfirm } from 'antd'
 import { PurchasesTableRow } from '@/controllers/purchases/types'
 import SuccessMessage from '@/components/reusables/SuccessMessage'
 import CustomContainer from '@/components/reusables/CustomContainer'
@@ -23,23 +23,29 @@ const Purchases_V = () => {
     clientArr,
     tableWidth,
     documentArr,
+    rowSelection,
     clientLoader,
     documentLoader,
     displayClients,
     purchasesFilter,
     purchasesLoader,
+    selectedRowKeys,
     displayDocuments,
     
     setDisplayClients,
     setDisplayDocuments,
     
+    handleBlur,
     handleChange,
     handleToggle,
+    handleSearch,
+    handleResubmit,
     handleDateChange,
     handlePageChange,
     handleToggleDelete,
     handleSelectClient,
     handleDeleteRecord,
+    handleSubmitSearch,
     handleClearSelected,
     handleSelectDocument,
   } = usePurchases()
@@ -258,6 +264,7 @@ const Purchases_V = () => {
               <CustomContainer
                   scss={scss}
                   width={33}
+                  className={scss.btmDate}
                   label='Filter by Document'
               >
                 <DocumentsDropdown
@@ -277,6 +284,7 @@ const Purchases_V = () => {
               <CustomContainer
                   scss={scss}
                   width={33}
+                  className={scss.btmDate}
                   label='Filter by Client'
               >
                 <ClientsDropdown
@@ -293,15 +301,35 @@ const Purchases_V = () => {
                     handleClearSelected={handleClearSelected}
                 />
               </CustomContainer>
-              {/* <CustomContainer
+              <CustomContainer
                   scss={scss}
                   width={33}
-                  label='Month Range'
+                  label='Tax Month Range'
               >
-                <DatePicker placeholder='Month - Year From' picker="month" value={doc.period} onChange={handleDateChange} />
+                <DatePicker placeholder='Month - Year From' picker="month" value={doc.tax_month_start} onChange={(e) => handleDateChange(e, 'tax_month_start')} />
                 &nbsp;&nbsp;
-                <DatePicker placeholder='Month - Year To' picker="month" value={doc.period} onChange={handleDateChange} />
-              </CustomContainer> */}
+                <DatePicker disabled={!doc.tax_month_start} placeholder='Month - Year To' picker="month" value={doc.tax_month_end} onChange={(e) => handleDateChange(e, 'tax_month_end')} />
+              </CustomContainer>
+              <CustomContainer
+                  scss={scss}
+                  width={33}
+                  className={scss.btmDate}
+                  label='Invoice Date Range'
+              >
+                <DatePicker placeholder='Date From' value={doc.invoice_date_start} onChange={(e) => handleDateChange(e, 'invoice_date_start')} />
+                &nbsp;&nbsp;
+                <DatePicker disabled={!doc.invoice_date_start} placeholder='Date To' value={doc.invoice_date_end} onChange={(e) => handleDateChange(e, 'invoice_date_end')} />
+              </CustomContainer>
+              <CustomContainer
+                  scss={scss}
+                  width={33}
+                  className={scss.btmDate}
+                  label='Created Date Range'
+              >
+                <DatePicker placeholder='Date From' value={doc.created_date_start} onChange={(e) => handleDateChange(e, 'created_date_start')} />
+                &nbsp;&nbsp;
+                <DatePicker disabled={!doc.created_date_start} placeholder='Date To' value={doc.created_date_end} onChange={(e) => handleDateChange(e, 'created_date_end')} />
+              </CustomContainer>
               <div className={scss.card+' '+scss.w33}></div>
           </div>
         </div>
@@ -309,14 +337,22 @@ const Purchases_V = () => {
           <Link href='/bookkeeper/purchases/add' className={scss.button+' '+scss.btnblue}>
             Add Record
           </Link>
-          <form className={scss.searchComponent}
-            // onSubmit={handleSubmitSearch}
+          <button
+              type='button'
+              className={scss.button + ' ' + scss.btnred}
+              // onClick={handleDeleteSelected}
+              disabled={!selectedRowKeys.length}
           >
-              <input id='search' type='text' name='search' maxLength={50} autoComplete='search' placeholder='Enter keyword...'
-                  // value={salesFilter.search} onKeyUp={handleBlur} onChange={handleSearch}
+              Delete Selected
+          </button>
+          <form className={scss.searchComponent}
+            onSubmit={handleSubmitSearch}
+          >
+              <input id='search' type='text' name='search' maxLength={50} autoComplete='search' placeholder='Search by TIN, Name or Invoice Number...'
+                  value={doc.search} onKeyUp={handleBlur} onChange={handleSearch}
               />
               <button type='submit' className={`${scss.button} ${scss.btnblue}`}
-                  // onKeyDown={handleResubmit}
+                  onKeyDown={handleResubmit}
               >
               Search
               </button>
@@ -329,6 +365,7 @@ const Purchases_V = () => {
                 columns={columns}
                 pagination={false}
                 dataSource={dataSource}
+                rowSelection={rowSelection}
                 rowClassName={(record) =>
                   record.toDelete ? scss.activeRow : ''
                 }

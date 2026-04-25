@@ -42,7 +42,13 @@ const useDocumentAPI = () => {
         search: string
     ) => {
         return useQuery({
-            queryKey: ['documents', page, limit, filter, search],
+            queryKey: [
+                'documents',
+                page,
+                limit,
+                search,
+                (filter?.roleId ?? []).join(',')
+            ],
             queryFn: async () => {
                 const res = await api({
                     method: 'GET',
@@ -51,17 +57,17 @@ const useDocumentAPI = () => {
                         page,
                         search,
                         page_size: limit,
-                        // sortOrder: 'ASC',
-                        // filter: JSON.stringify(filter)
                     }
                 })
-                // console.log(res.data)
+
                 return {
                     documents: res.data?.files ?? [],
                     totalDocs: res.data?.total ?? 0
                 }
             },
-            // placeholderData: (prev) => prev, // 👈 replaces keepPreviousData (see below)
+
+            // ✅ prevents UI flicker / "delay feeling"
+            placeholderData: (prev) => prev,
         })
     }
 

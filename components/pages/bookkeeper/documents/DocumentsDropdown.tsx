@@ -5,7 +5,7 @@ import Loader from '@/components/reusables/RotatingLoader'
 import { useRef, useEffect, ChangeEvent, MouseEvent, Dispatch, SetStateAction } from 'react'
 export default function DocumentsDropdown(props: {
     doc: {
-        search: string
+        docSearch: string
         hasSelectedDocument: boolean
         selectedTerms?: {
             value: string,
@@ -97,7 +97,7 @@ export default function DocumentsDropdown(props: {
                         <div className={scss.searchIcon}>
                             <Image src='/svgs/search.svg' alt='Search' priority width={12} height={12} unoptimized={true} />
                         </div>
-                        <input name='search' type='text' value={doc.search} onChange={handleChange} />
+                        <input name='docSearch' type='text' value={doc.docSearch} onChange={handleChange} />
                     </div>
                     {
                         documents?.length ?

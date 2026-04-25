@@ -23,7 +23,6 @@ const useSaveSales = () => {
     } = useClientAPI()
     const [displayTerms, setDisplayTerms] = useState(false)
     const [displayClients, setDisplayClients] = useState(false)
-    const vatType = sales.salesObj.vat_type || 'EXCLUSIVE'
     const setVatTypeHandler = (type: 'EXCLUSIVE' | 'INCLUSIVE') => {
         setSales(prev => {
             const updatedSalesObj = {
@@ -46,7 +45,7 @@ const useSaveSales = () => {
     const clientArr = dataClients?.clients;
 
     const [doc, setDoc] = useState<{
-        search: string
+        clientSearch: string
         selectedTable?: {
             value: string,
             label: string
@@ -64,7 +63,7 @@ const useSaveSales = () => {
         },
         period: Dayjs | null
     }>({
-        search: '',
+        clientSearch: '',
         client: {
             id: null,
             last_name: '',

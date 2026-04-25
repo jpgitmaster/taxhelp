@@ -25,7 +25,13 @@ const useClientAPI = () => {
         search: string
     ) => {
         return useQuery({
-            queryKey: ['clients', page, limit, filter, search],
+            queryKey: [
+                'clients',
+                page,
+                limit,
+                search,
+                (filter?.roleId ?? []).join(',')
+            ],
             queryFn: async () => {
                 const res = await api({
                     method: 'GET',
@@ -44,7 +50,9 @@ const useClientAPI = () => {
                     totalClients: res.data?.total ?? 0
                 }
             },
-            // placeholderData: (prev) => prev, // 👈 replaces keepPreviousData (see below)
+
+            // ✅ keeps previous page while fetching new one
+            placeholderData: (prev) => prev,
         })
     }
 

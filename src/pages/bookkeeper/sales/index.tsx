@@ -333,8 +333,8 @@ const Sales_V = () => {
           <form className={scss.searchComponent}
             onSubmit={handleSubmitSearch}
           >
-              <input id='search' type='text' name='search' maxLength={50} autoComplete='search' placeholder='Enter keyword...'
-                  value={salesFilter.search} onKeyUp={handleBlur} onChange={handleSearch}
+              <input id='search' type='text' name='search' maxLength={50} autoComplete='search' placeholder='Search by TIN, Name or Invoice Number...'
+                  value={doc.search} onKeyUp={handleBlur} onChange={handleSearch}
               />
               <button type='submit' className={`${scss.button} ${scss.btnblue}`}
                   onKeyDown={handleResubmit}

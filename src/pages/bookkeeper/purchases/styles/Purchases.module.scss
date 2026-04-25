@@ -22,10 +22,10 @@
 .header{
     @apply inline-block w-full mb-0 mt-3;
     .button{
-      @apply mr-2.5;
+      @apply mr-2.5 w-auto float-left;
     }
     .searchComponent{
-      @apply float-right -mt-2;
+      @apply float-right mt-0;
       input[type=text]{
         @apply h-9.5;
       }
@@ -33,6 +33,20 @@
           @apply mr-0;
       }
     }
+}
+.filters{
+  background-color: $lightGray;
+  border: 1px solid rgba($gray, .5);
+  @apply rounded-[20px] p-3.5 pb-1 w-full mb-3 -mt-2.5;
+  .cards{
+    // @apply justify-normal flex-nowrap mb-3;
+    .npt{
+      @apply pb-5;
+    }
+  }
+  .cards .btmDate{
+    @apply p-0;
+  }
 }
 .box{
   border: 1px solid $gray;
@@ -47,17 +61,7 @@
     background-color: $transparent;
   }
 }
-.filters{
-  background-color: $lightGray;
-  border: 1px solid rgba($gray, .5);
-  @apply rounded-[20px] p-3.5 pb-1 w-full mb-3 -mt-2.5;
-  .cards{
-    @apply justify-normal flex-nowrap mb-3;
-    .npt{
-      @apply p-0;
-    }
-  }
-}
+
 .tableRecords{
   @apply relative mt-4;
   .activeRow, .activeRow td, .activeRow:hover td{
@@ -192,4 +196,43 @@
     100% {
         -webkit-transform: perspective(500px) rotateY(0deg);
     }
+}
+
+@media (max-width: 768px) {
+  .header {
+    .button{
+      @apply mr-2;
+      &.btnorange{
+        @apply mr-0;
+      }
+    }
+    .searchComponent{
+        @apply w-full mt-5;
+    }
+  }
+  .tableRecords{
+    @apply w-full!;
+  }
+  .filters{
+    .cards{
+      .card.w33{
+        width: calc((100% - 10px) / 2);
+        .npt{
+          @apply pb-5;
+        }
+      }
+    }
+  }
+}
+@media (max-width: 600px) {
+  .filters{
+    .cards{
+      .card.w33{
+        @apply w-full;
+        .npt{
+          @apply pb-5;
+        }
+      }
+    }
+  }
 }

@@ -3,7 +3,7 @@ import scss from './styles/CustomDropdown.module.scss'
 import { useRef, useEffect, MouseEvent, Dispatch, SetStateAction } from 'react'
 export default function DocumentsTableDropdown(props: {
     doc: {
-        search: string
+        docSearch: string
         selectedTable: {
             value: string,
             label: string

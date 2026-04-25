@@ -67,6 +67,8 @@ type AppliedDoc = {
 
 type DocState = {
     search: string
+    docSearch: string
+    clientSearch: string
     hasSelectedClient: boolean
     hasSelectedDocument: boolean
     client: {
