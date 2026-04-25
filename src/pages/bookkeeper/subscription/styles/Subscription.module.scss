@@ -4,3 +4,132 @@
 @use '@/styles/colors' as *;
 
 @reference 'tailwindcss';
+
+.box{
+  border: 1px solid rgba($gray, .8);
+  background-color: rgba($lightGray, .5);
+  @apply w-280 mx-auto relative h-full rounded-[20px] p-5 pt-8 flex flex-col mb-10;
+  .boxTitle{
+    @apply text-center;
+    h2{
+        color: $orange;
+        @apply text-3xl font-semibold tracking-tight mb-2;
+    }
+    p{
+        color: $lightBlack;
+        @apply text-sm max-w-md mx-auto;
+    }
+  }
+  .billingToggle{
+    @apply flex justify-center mt-6;
+    .toggle{
+        background-color: rgba($lightGray2, .3);
+        @apply p-1 rounded-xl flex text-sm shadow-inner;
+    }
+    .btn{
+        color: $blue;
+        @apply px-5 py-2 rounded-lg transition cursor-pointer;
+        &.active{
+            color: $white;
+            background-color: $blue;
+            @apply shadow font-medium;
+        }
+    }
+  }
+
+  .plans{
+    @apply grid md:grid-cols-3 gap-8 max-w-6xl mx-auto px-4 mt-10;
+    .plan{
+        background-color: $white;
+        border: 1px solid $lightBlue;
+        @apply rounded-2xl border p-6 flex flex-col justify-between transition hover:shadow-xl;
+        &.active{
+            border: 1px solid $orange;
+            @apply shadow-lg scale-105;
+            .planTopDetails h3{ color: $orange; }
+        }
+        .popular{
+            color: $white;
+            background-color: $orange;
+            @apply text-xs font-semibold px-3 py-1 rounded-full w-fit mb-3;
+        }
+        .planTopDetails{
+            @apply space-y-2;
+            h3{
+                color: $blue;
+                @apply text-xl font-semibold m-0;
+            }
+            p{
+                color: $lightBlack;
+                @apply text-sm;
+            }
+        }
+        .price{
+            color: $lightBlue;
+            @apply text-3xl font-bold mt-3;
+            span{
+                color: $lightBlue;
+                @apply text-sm;
+            }
+        }
+        .features{
+            color: $black;
+            @apply mt-4 space-y-3 text-sm;
+            
+            .feature{
+                @apply flex items-start gap-2 font-medium;
+                &.checked{
+                    .featureCheck{
+                        filter: invert(60%) sepia(59%) saturate(5191%) hue-rotate(89deg) brightness(98%) contrast(86%);
+                    }
+                }
+                .featureCheck{
+                    @apply flex items-start gap-2 font-medium;
+                    filter: invert(51%) sepia(60%) saturate(4288%) hue-rotate(2deg) brightness(103%) contrast(88%);
+                }
+            }
+            .children{
+                color: $darkgray;
+                @apply ml-6 mt-2 space-y-1;
+                li{
+                    @apply pl-4;
+                }
+            }
+        }
+    }
+  }
+    .note{
+        color: $black;
+        @apply text-xs mt-3 text-center italic;
+    }
+    
+    .customSolutions{
+        @apply max-w-5xl mx-auto px-4 mt-18 mb-12;
+        .customSolution{
+            border: 1px solid $lightBlue;
+            background-color: rgba($lightBlue, .1);
+            @apply rounded-2xl p-8 shadow-sm text-center;
+            h3{
+                color: $lightBlue;
+                @apply text-xl font-semibold mb-2;
+            }
+            p{
+                color: $lightBlack;
+                @apply text-sm max-w-xl mx-auto mb-6;
+            }
+            .customFeatures{
+                @apply grid md:grid-cols-2 gap-4 text-sm my-6 text-left max-w-3xl mx-auto;
+                ul{
+                    list-style: disc;
+                    li{
+                        @apply py-0.5;
+                        color: $lightBlack;
+                    }
+                }
+            }
+            .button{
+                @apply w-80;
+            }
+        }
+    }
+}
