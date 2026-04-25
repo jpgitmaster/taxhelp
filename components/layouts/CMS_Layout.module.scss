@@ -201,7 +201,7 @@ body, html{
                     }
                     li{
                         border-left: 1px dotted $white;
-                        @apply relative pt-2 w-36 pl-3 py-0.5 mb-px;
+                        @apply relative pt-2 w-35 pl-3 py-0.5 mb-px;
                         &::before{
                             content: "";
                             display: inherit;
@@ -392,6 +392,18 @@ body, html{
         }
         &.slideRight {
             @apply w-38;
+            .appSidebarLinks{
+                .links{
+                    .sublinks{
+                        &.open.hasTwo{
+                            @apply h-30;
+                        }
+                        li{
+                            @apply w-28 text-center;
+                        }
+                    }
+                }
+            }
         }
         .appSidebarLinks{
             .links{
