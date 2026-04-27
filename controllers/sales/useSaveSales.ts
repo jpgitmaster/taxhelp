@@ -12,8 +12,9 @@ const useSaveSales = () => {
     const {
         sales,
         status,
-
-        setSales
+        
+        setSales,
+        setStatus,
     } = useSalesAPI()
     const {
         filter: clientFilter,
@@ -23,6 +24,7 @@ const useSaveSales = () => {
     } = useClientAPI()
     const [displayTerms, setDisplayTerms] = useState(false)
     const [displayClients, setDisplayClients] = useState(false)
+    const [displayCustomers, setDisplayCustomers] = useState(false)
     const setVatTypeHandler = (type: 'EXCLUSIVE' | 'INCLUSIVE') => {
         setSales(prev => {
             const updatedSalesObj = {
@@ -46,6 +48,7 @@ const useSaveSales = () => {
 
     const [doc, setDoc] = useState<{
         clientSearch: string
+        customerSearch: string
         selectedTable?: {
             value: string,
             label: string
@@ -61,10 +64,25 @@ const useSaveSales = () => {
             trade_name: string
             registered_name: string
         },
+        customer: {
+            id: number | null,
+            last_name: string
+            first_name: string
+            trade_name: string
+            registered_name: string
+        },
         period: Dayjs | null
     }>({
         clientSearch: '',
+        customerSearch: '',
         client: {
+            id: null,
+            last_name: '',
+            first_name: '',
+            trade_name: '',
+            registered_name: '',
+        },
+        customer: {
             id: null,
             last_name: '',
             first_name: '',
@@ -127,6 +145,9 @@ const useSaveSales = () => {
         }
         if(dropdown === 'terms'){
             setDisplayTerms(prevState => !prevState)
+        }
+        if(dropdown === 'customers'){
+            setDisplayCustomers(prevState => !prevState)
         }
     }
 
@@ -203,11 +224,11 @@ const useSaveSales = () => {
             case 'atc':
                 if (value === '' || alphaNumeric.test(value)) {
                     setSales(prev => ({
-                    ...prev,
-                    salesObj: {
-                        ...prev.salesObj,
-                        [name]: value.toUpperCase()
-                    }
+                        ...prev,
+                        salesObj: {
+                            ...prev.salesObj,
+                            [name]: value.toUpperCase()
+                        }
                     }))
                 }
                 break
@@ -257,7 +278,7 @@ const useSaveSales = () => {
 
     const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
-        
+        setStatus({...status, loader: true})
     }
     
     return {
@@ -268,11 +289,13 @@ const useSaveSales = () => {
         clientArr,
         displayTerms,
         displayClients,
+        displayCustomers,
         clientLoader: isLoadingClients || isFetchingClients,
 
         // SET STATES
         setDisplayTerms,
         setDisplayClients,
+        setDisplayCustomers,
         setVatType: setVatTypeHandler,
 
         // HANDLES

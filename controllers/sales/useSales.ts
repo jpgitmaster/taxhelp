@@ -5,7 +5,7 @@ import useClientAPI from '../clients/api';
 import useDocumentAPI from '../documents/api';
 import useGlobal from '@/controllers/global/useGlobal'
 import { AppliedDoc, DocState, SalesObj } from './types';
-import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
+import { useState, useEffect, Key, ChangeEvent, SyntheticEvent } from "react";
 
 const useSales = () => {
     const router = useRouter()
@@ -47,7 +47,7 @@ const useSales = () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([])
     const rowSelection = {
         selectedRowKeys,
-        onChange: (newSelectedRowKeys: React.Key[]) => {
+        onChange: (newSelectedRowKeys: Key[]) => {
             setSelectedRowKeys(newSelectedRowKeys as number[])
         },
     }

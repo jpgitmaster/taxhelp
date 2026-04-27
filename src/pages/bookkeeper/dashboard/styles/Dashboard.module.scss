@@ -1,3 +1,6 @@
+@use '@/styles/forms';
+@use '@/styles/helpers';
+@use '@/styles/reuseable';
 @use '@/styles/colors' as *;
 
 @reference 'tailwindcss';
@@ -85,10 +88,15 @@
             }
         }
     }
-
-    
 }
-
+.addSchedule{
+    @apply relative;
+    .addSchedLbl{
+        color: $blue;
+        font-weight: 500;
+        @apply text-[25px] mt-1 mb-8;
+    }
+}
 @media (max-width: 768px) {
   .dashboardWrapper {
     @apply px-0;
