@@ -3,7 +3,11 @@ interface ScheduleObj{
   id: number | null
   title: string
   client: string
-  category: string
+  category: {
+    value: string
+    label: string
+    color: string
+  }
   description: string
   schedule: [Dayjs | null, Dayjs | null] | null
 }

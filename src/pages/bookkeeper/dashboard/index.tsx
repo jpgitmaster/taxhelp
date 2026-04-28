@@ -6,11 +6,14 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import Loader from '@/components/reusables/RotatingLoader';
+import { initDashboard } from '@/controllers/dashboard/states';
 import useDashboard from '@/controllers/dashboard/useDashboard';
 import CustomContainer from '@/components/reusables/CustomContainer'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types';
 import ClientsDropdown from '@/components/pages/bookkeeper/documents/ClientsDropdown'
+import ScheduleCategoryDropdown from '@/components/pages/bookkeeper/dashboard/ScheduleCategoryDropdown';
+
 const { RangePicker } = DatePicker;
 const Dashboard_V = () => {
   const {
@@ -24,9 +27,13 @@ const Dashboard_V = () => {
     clientLoader,
     displayClients,
     calendarHeight,
+    displayCategory,
 
     // SET STATES
+    setDoc,
+    setDashboard,
     setDisplayClients,
+    setDisplayCategory,
     
     // HANDLES
     handleDate,
@@ -38,6 +45,7 @@ const Dashboard_V = () => {
     handleOpenModal,
     handleCloseModal,
     handleSelectClient,
+    handleSelectCategory,
   } = useDashboard()
   const { loader } = status
   return (
@@ -108,7 +116,18 @@ const Dashboard_V = () => {
         <Modal
           footer={null}
           open={isModalOpen}
-          onCancel={handleCloseModal}
+          onCancel={() => {
+              handleCloseModal()
+              setDoc({
+                ...doc,
+                selectedCategory: {
+                  value: '',
+                  label: '',
+                  color: ''
+                }
+              })
+              setDashboard(initDashboard)
+          }}
         >
           <div className={scss.addSchedule}>
             <h3 className={scss.addSchedLbl}>
@@ -139,13 +158,13 @@ const Dashboard_V = () => {
                   width={50}
                   required={true}
                   label='Schedule'
-                  labelFor='title'
-                  err={dashboard.scheduleErr.title as string}
+                  labelFor='schedule'
+                  err={dashboard.scheduleErr.schedule as string}
                 >
                   <RangePicker suffixIcon={''}
                     onChange={handleDate}
                     value={dashboard.scheduleObj.schedule}
-                    style={{ border: '1px solid #D9D9D9' }}
+                    style={{ border: dashboard.scheduleErr.schedule ? '1px solid #F00' : '1px solid #D9D9D9' }}
                   />
                 </CustomContainer>
                 <CustomContainer
@@ -156,31 +175,44 @@ const Dashboard_V = () => {
                   labelFor='category'
                   err={dashboard.scheduleErr.category as string}
                 >
-                  <input
+                  {/* <input
                     type='text'
                     id='category'
                     name='category'
                     value={dashboard.scheduleObj.category}
                     onKeyUp={handleBlur}
                     onChange={handleChange}
-                  />
-                  {/* <ClientsDropdown
-                    doc={doc}
-                    clients={clientArr}
-                    loader={clientLoader}
-                    displayClients={displayClients}
-
-                    setDisplayClients={setDisplayClients}
-
-                    handleChange={handleChange}
-                    handleToggle={handleToggle}
-                    handleSelectClient={handleSelectClient}
                   /> */}
+                  <ScheduleCategoryDropdown
+                    doc={doc}
+                    options={[
+                      {
+                        label: 'Holidays',
+                        value: '',
+                        color: '#0077c0',
+                      },
+                      {
+                        label: 'Client Schedule',
+                        value: '',
+                        color: '#14b11c',
+                      },
+                      {
+                        label: 'Deadlines',
+                        value: '',
+                        color: '#f00',
+                      }
+                    ]}
+                    displayCategory={displayCategory}
+                    err={dashboard.scheduleErr.category ? true : false}
+                    setDisplayCategory={setDisplayCategory}
+
+                    handleToggle={handleToggle}
+                    handleSelectCategory={handleSelectCategory}
+                  />
                 </CustomContainer>
                 <CustomContainer
                   scss={scss}
                   width={100}
-                  required={true}
                   label='Client'
                   labelFor='client'
                   err={dashboard.scheduleObj.client as string}
@@ -190,7 +222,6 @@ const Dashboard_V = () => {
                     clients={clientArr}
                     loader={clientLoader}
                     displayClients={displayClients}
-
                     setDisplayClients={setDisplayClients}
 
                     handleChange={handleChange}
@@ -201,7 +232,6 @@ const Dashboard_V = () => {
                 <CustomContainer
                   scss={scss}
                   width={100}
-                  required={true}
                   label='Description'
                   labelFor='description'
                   err={dashboard.scheduleErr.description as string}

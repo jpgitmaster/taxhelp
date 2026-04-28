@@ -2,7 +2,11 @@ const initScheduleObj = {
     id: null,
     title: '',
     client: '',
-    category: '',
+    category: {
+        value: '',
+        label: '',
+        color: ''
+    },
     description: '',
     schedule: null,
 }

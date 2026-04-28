@@ -1,7 +1,9 @@
 import { Dayjs } from 'dayjs';
 import useDashboardAPI from './api';
+import { ScheduleErr } from './types';
 import useClientAPI from '../clients/api';
 import useGlobal from '@/controllers/global/useGlobal'
+import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
 import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
 const useDashboard = () => {
     const {
@@ -26,8 +28,14 @@ const useDashboard = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [calendarHeight, setCalendarHeight] = useState(500)
     const [displayClients, setDisplayClients] = useState(false)
+    const [displayCategory, setDisplayCategory] = useState(false)
     const [doc, setDoc] = useState<{
         clientSearch: string
+        selectedCategory: {
+            value: string,
+            label: string,
+            color: string
+        },
         client: {
             id: number | null,
             last_name: string
@@ -37,6 +45,11 @@ const useDashboard = () => {
         },
     }>({
         clientSearch: '',
+        selectedCategory: {
+            value: '',
+            label: '',
+            color: '',
+        },
         client: {
             id: null,
             last_name: '',
@@ -45,6 +58,11 @@ const useDashboard = () => {
             registered_name: '',
         },
     })
+    const fieldValidations = {
+        title: { usename: 'Title', required: true },
+        schedule: { usename: 'Schedule', required: true },
+        category: { usename: 'Category', required: true },
+    }
 
     const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = useGetClients(    
         clientFilter.currentPage,
@@ -86,10 +104,31 @@ const useDashboard = () => {
         }))
         handleRemoveErr(dashboard.scheduleErr, name)
     }
+    const handleSelectCategory = (selectedCategory: {
+        value: string,
+        label: string,
+        color: string
+    }) => {
+        setDoc({
+            ...doc,
+            selectedCategory: selectedCategory
+        })
+        setDashboard(prev => ({
+            ...prev,
+            scheduleObj: {
+                ...prev.scheduleObj,
+                category: selectedCategory
+            }
+        }))
+        handleRemoveErr(dashboard.scheduleErr, 'category')
+    }
 
     const handleToggle = (dropdown: string) => {
         if(dropdown === 'clients'){
             setDisplayClients(prevState => !prevState)
+        }
+        if(dropdown === 'categories'){
+            setDisplayCategory(prevState => !prevState)
         }
     }
 
@@ -112,7 +151,6 @@ const useDashboard = () => {
         dates: [Dayjs | null, Dayjs | null] | null,
         // dateStrings: [string, string]
         ) => {
-        console.log(dates)
         setDashboard(prev => ({
             ...prev,
             scheduleObj: {
@@ -126,6 +164,25 @@ const useDashboard = () => {
     const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         setStatus({...status, loader: true})
+        const {
+            validation_errors,
+            validation_has_error,
+        } = ValidatorV3(fieldValidations, {
+            ...dashboard.scheduleObj,
+            category: dashboard.scheduleObj?.category?.label ? dashboard.scheduleObj.category.label : '',
+            schedule: dashboard.scheduleObj?.schedule ? String(dashboard.scheduleObj) : '',
+        })
+        if (validation_has_error) {
+            const timer = setTimeout(() => {
+                setDashboard({
+                    ...dashboard,
+                    scheduleErr: validation_errors as ScheduleErr
+                })
+                setStatus({...status, loader: false})
+                return false
+            }, 500)
+            return () => clearTimeout(timer)
+        }
     }
     useEffect(() => {
         const handleResize = () => {
@@ -150,11 +207,15 @@ const useDashboard = () => {
         isModalOpen,
         displayClients,
         calendarHeight,
+        displayCategory,
         clientLoader: isLoadingClients || isFetchingClients,
 
         // SET STATES
+        setDoc,
+        setDashboard,
         setDisplayClients,
-
+        setDisplayCategory,
+        
         // HANDLES
         handleDate,
         handleBlur,
@@ -166,6 +227,7 @@ const useDashboard = () => {
         handleOpenModal,
         handleCloseModal,
         handleSelectClient,
+        handleSelectCategory,
     }
 }
 
