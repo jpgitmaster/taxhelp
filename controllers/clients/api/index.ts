@@ -110,7 +110,7 @@ const useClientAPI = () => {
                 'successMessage',
                 'Your client has been created.'
             )
-            router.push('/bookkeeper/clients')
+            router.push('/bookkeeper/users/clients')
         },
         onError: (error: any) => {
             console.log(error)
@@ -199,7 +199,7 @@ const useClientAPI = () => {
             );
 
             if (client?.id) {
-                router.push(`/bookkeeper/clients/${client.id}`);
+                router.push(`/bookkeeper/users/clients/${client.id}`);
             }
         }
     });
