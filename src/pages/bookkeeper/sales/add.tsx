@@ -420,7 +420,15 @@ const AddSalesRecord_V = () => {
               err={sales.salesErr.vat_type as string}
             >
               <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                
+                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <input
+                    type="radio"
+                    name="vat_type"
+                    checked={sales.salesObj.vat_type === 'INCLUSIVE'}
+                    onChange={() => setVatType('INCLUSIVE')}
+                  />
+                  Inclusive
+                </label>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                   <input
                     type="radio"
@@ -431,17 +439,6 @@ const AddSalesRecord_V = () => {
 
                   Exclusive
                 </label>
-
-                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <input
-                    type="radio"
-                    name="vat_type"
-                    checked={sales.salesObj.vat_type === 'INCLUSIVE'}
-                    onChange={() => setVatType('INCLUSIVE')}
-                  />
-                  Inclusive
-                </label>
-
               </div>
             </CustomContainer>
             <div className={scss.w50+' '+scss.card}></div>
@@ -501,8 +498,8 @@ const AddSalesRecord_V = () => {
                 name='vatable_sales'
                 placeholder='0.00'
                 value={sales.salesObj.vatable_sales}
-                readOnly={sales.salesObj.vat_type === 'EXCLUSIVE'}
-                className={sales.salesObj.vat_type === 'EXCLUSIVE' ? scss.lblContent : ''}
+                readOnly={sales.salesObj.vat_type === 'INCLUSIVE'}
+                className={sales.salesObj.vat_type === 'INCLUSIVE' ? scss.lblContent : ''}
                 onKeyUp={handleBlur}
                 onChange={handleChange}
               />
@@ -589,8 +586,8 @@ const AddSalesRecord_V = () => {
                 name='gross_taxable'
                 placeholder='0.00'
                 value={sales.salesObj.gross_taxable}
-                readOnly={sales.salesObj.vat_type === 'INCLUSIVE'}
-                className={sales.salesObj.vat_type === 'INCLUSIVE' ? scss.lblContent : ''}
+                readOnly={sales.salesObj.vat_type === 'EXCLUSIVE'}
+                className={sales.salesObj.vat_type === 'EXCLUSIVE' ? scss.lblContent : ''}
                 onKeyUp={handleBlur}
                 onChange={handleChange}
               />

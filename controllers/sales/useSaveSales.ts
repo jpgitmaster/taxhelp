@@ -100,54 +100,68 @@ const useSaveSales = () => {
 
     const recalcSales = (salesObj: any) => {
         const VAT_RATE = 0.12
-
-        // ✅ helper: always return a valid number
         const toNumber = (val: any) => parseFloat(val) || 0
 
         const exempt = toNumber(salesObj.exempt_sales)
         const zeroRated = toNumber(salesObj.zero_rated_sales)
-        const vatableInput = toNumber(salesObj.vatable_sales)
         const vatType = salesObj.vat_type || 'EXCLUSIVE'
 
+        let netVatable = 0
         let vatAmount = 0
-        let grossAmount = 0
-        let grossTaxable = 0
-        let totalGrossAmount = 0
-        let vatableBase = vatableInput
+        let grossInput = toNumber(salesObj.vatable_sales)
 
+        // =========================
+        // VAT LOGIC NORMALIZATION
+        // =========================
         if (vatType === 'INCLUSIVE') {
-            const net = vatableInput / (1 + VAT_RATE)
-            vatAmount = vatableInput - net
-
-            vatableBase = net
-            grossAmount = exempt + zeroRated + net
-            grossTaxable = vatableInput
-            totalGrossAmount = grossAmount + vatAmount
+            // Gross → Net
+            netVatable = grossInput / (1 + VAT_RATE)
+            vatAmount = grossInput - netVatable
         } else {
-            vatAmount = vatableInput * VAT_RATE
-
-            grossAmount = exempt + zeroRated + vatableInput
-            grossTaxable = vatableInput + vatAmount
-            totalGrossAmount = grossAmount + vatAmount
+            // Net → Gross
+            netVatable = grossInput
+            vatAmount = grossInput * VAT_RATE
         }
 
+        // =========================
+        // TOTAL COMPUTATION
+        // =========================
+        const netSalesTotal = exempt + zeroRated + netVatable
+        const totalGrossAmount = netSalesTotal + vatAmount
+
         const ewtRate = toNumber(salesObj.ewt_rate) / 100
-        const taxAmount = vatableBase * ewtRate
+        const taxAmount = netVatable * ewtRate
 
         return {
             ...salesObj,
             vat_rate: '12%',
-            vat_amount: salesObj.vatable_sales ? vatAmount.toFixed(2) : '',
-            gross_amount: (salesObj.vatable_sales || salesObj.exempt_sales || salesObj.zero_rated_sales)
-                ? grossAmount.toFixed(2)
-                : '',
-            gross_taxable: salesObj.vatable_sales ? grossTaxable.toFixed(2) : '',
-            total_gross_amount: (salesObj.vatable_sales || salesObj.exempt_sales || salesObj.zero_rated_sales)
-                ? totalGrossAmount.toFixed(2)
-                : '',
-            tax_amount: salesObj.ewt_rate && salesObj.vatable_sales
-                ? taxAmount.toFixed(2)
-                : ''
+
+            // VAT RESULT
+            vat_amount: salesObj.vatable_sales ? vatAmount : '',
+
+            // NET VATTABLE (normalized)
+            vatable_sales: salesObj.vatable_sales,
+
+            // GROSS BASE (for display consistency)
+            gross_taxable: grossInput || '',
+
+            // NET TOTAL (exempt + zero rated + vatable net)
+            gross_amount:
+                (salesObj.vatable_sales || salesObj.exempt_sales || salesObj.zero_rated_sales)
+                    ? netSalesTotal
+                    : '',
+
+            // FINAL TOTAL INCLUDING VAT
+            total_gross_amount:
+                (salesObj.vatable_sales || salesObj.exempt_sales || salesObj.zero_rated_sales)
+                    ? totalGrossAmount
+                    : '',
+
+            // WITHHOLDING TAX
+            tax_amount:
+                salesObj.ewt_rate && salesObj.vatable_sales
+                    ? taxAmount
+                    : ''
         }
     }
     const handleToggle = (dropdown: string) => {
@@ -259,7 +273,7 @@ const useSaveSales = () => {
 
                             if (vatType === 'EXCLUSIVE') {
                                 // gross_taxable = vatable + VAT
-                                vatable_sales = (gross / (1 + VAT_RATE)).toFixed(2)
+                                vatable_sales = (gross / (1 + VAT_RATE)).toString()
                             } else {
                                 // INCLUSIVE: gross_taxable already equals vatable input
                                 vatable_sales = value

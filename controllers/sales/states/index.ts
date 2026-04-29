@@ -2,7 +2,7 @@ const initSalesObj = {
     id: null,
     atc: '',
     terms: '',
-    vat_type: 'EXCLUSIVE',
+    vat_type: 'INCLUSIVE',
     ewt_rate: '',
     vat_rate: '',
     tax_amount: '',
