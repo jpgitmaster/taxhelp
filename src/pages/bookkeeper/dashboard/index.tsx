@@ -161,6 +161,11 @@ const Dashboard_V = () => {
                   labelFor='schedule'
                   err={dashboard.scheduleErr.schedule as string}
                 >
+                  {/* <DatePicker
+                    // onChange={handleDate}
+                    // value={dashboard.scheduleObj.schedule}
+                    style={{ border: dashboard.scheduleErr.schedule ? '1px solid #F00' : '1px solid #D9D9D9' }}
+                  /> */}
                   <RangePicker suffixIcon={''}
                     onChange={handleDate}
                     value={dashboard.scheduleObj.schedule}
@@ -175,14 +180,6 @@ const Dashboard_V = () => {
                   labelFor='category'
                   err={dashboard.scheduleErr.category as string}
                 >
-                  {/* <input
-                    type='text'
-                    id='category'
-                    name='category'
-                    value={dashboard.scheduleObj.category}
-                    onKeyUp={handleBlur}
-                    onChange={handleChange}
-                  /> */}
                   <ScheduleCategoryDropdown
                     doc={doc}
                     options={[

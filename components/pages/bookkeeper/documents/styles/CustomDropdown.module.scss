@@ -66,5 +66,16 @@
     .noClient{
       @apply inline-block text-center text-[12px] w-full mt-5;
     }
+    .createNewCategory{
+      @apply absolute bottom-0 text-[11px] py-1 my-1 text-center left-0 right-0;
+      button{
+        color: $blue;
+        border-bottom: 1px solid $transparent;
+        @apply cursor-pointer;
+        &:hover{
+          border-bottom: 1px solid $blue;
+        }
+      }
+    }
   }
 }

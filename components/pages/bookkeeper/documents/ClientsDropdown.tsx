@@ -96,7 +96,7 @@ export default function ClientsDropdown(props: {
                 }
                 
                 <div className={scss.selected} title={displayText}>
-                    {displayText}
+                    {displayText} Search by Client Name or TIN
                     &nbsp;
                 </div>
             </div>
@@ -107,7 +107,7 @@ export default function ClientsDropdown(props: {
                         <div className={scss.searchIcon}>
                             <Image src='/svgs/search.svg' alt='Search' priority width={12} height={12} unoptimized={true} />
                         </div>
-                        <input name='clientSearch' type='text' value={doc.clientSearch} onChange={handleChange} />
+                        <input name='clientSearch' placeholder='Search by Client or TIN' type='text' value={doc.clientSearch} onChange={handleChange} />
                     </div>
                     {
                         clients?.length ?

@@ -66,6 +66,34 @@ const AddSalesRecord_V = () => {
                 handleSelectClient={handleSelectClient}
               />
             </CustomContainer>
+          </div>
+        </div>
+        <div className={scss.box}>
+          <div className={scss.boxTitle}>
+            Customer Details
+          </div>
+          <div className={scss.cards}>
+            <CustomContainer
+              scss={scss}
+              width={50}
+              required={true}
+              label='Customer'
+              labelFor='customer'
+              err={sales.salesErr.customer as string}
+            >
+              <CustomersDropdown
+                doc={doc}
+                customers={clientArr}
+                loader={clientLoader}
+                displayCustomers={displayCustomers}
+
+                setDisplayCustomers={setDisplayCustomers}
+
+                handleChange={handleChange}
+                handleToggle={handleToggle}
+                handleSelectClient={handleSelectClient}
+              />
+            </CustomContainer>
             <div className={scss.card+' '+scss.w50}>
               <div className={scss.cards} style={{margin: 0}}>
                 <CustomContainer
@@ -380,180 +408,6 @@ const AddSalesRecord_V = () => {
         </div>
         <div className={scss.box}>
           <div className={scss.boxTitle}>
-            Customer Details
-          </div>
-          <div className={scss.cards}>
-            <CustomContainer
-              scss={scss}
-              width={50}
-              required={true}
-              label='Customer'
-              labelFor='customer'
-              err={sales.salesErr.customer as string}
-            >
-              <CustomersDropdown
-                doc={doc}
-                customers={clientArr}
-                loader={clientLoader}
-                displayCustomers={displayCustomers}
-
-                setDisplayCustomers={setDisplayCustomers}
-
-                handleChange={handleChange}
-                handleToggle={handleToggle}
-                handleSelectClient={handleSelectClient}
-              />
-            </CustomContainer>
-            <div className={scss.card+' '+scss.w50}>
-              <div className={scss.cards} style={{margin: 0}}>
-                <CustomContainer
-                  scss={scss}
-                  width={50}
-                  required={true}
-                  label='Classification'
-                  labelFor='classification'
-                  err={sales.salesErr.classification as string}
-                >
-                  <input
-                    readOnly
-                    type='text'
-                    id='classification'
-                    name='classification'
-                    className={scss.lblContent}
-                    value={sales.salesObj.business_profile.classification?.toLowerCase()}
-                    onKeyUp={handleBlur}
-                    onChange={handleChange}
-                    style={{textTransform: 'capitalize'}}
-                  />
-                </CustomContainer>
-                <CustomContainer
-                  scss={scss}
-                  width={50}
-                  required={true}
-                  label='TIN No.'
-                  labelFor='tin'
-                  err={sales.salesErr.tin as string}
-                >
-                  <input
-                    id='tin'
-                    readOnly
-                    name='tin'
-                    type='text'
-                    maxLength={20}
-                    autoComplete='off'
-                    placeholder='000-000-000'
-                    className={scss.lblContent}
-                    value={sales.salesObj.business_profile.tin}
-                    onKeyUp={handleBlur}
-                    onChange={handleChange}
-                  />
-                </CustomContainer>
-              </div>
-            </div>
-            <CustomContainer
-              scss={scss}
-              width={33}
-              label='First Name'
-              labelFor='first_name'
-              err={sales.salesErr.first_name as string}
-            >
-              <input
-                readOnly
-                type='text'
-                maxLength={20}
-                id='first_name'
-                name='first_name'
-                autoComplete='off'
-                className={scss.lblContent}
-                value={sales.salesObj.business_profile.first_name}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={33}
-              label='Middle Name'
-              labelFor='middle_name'
-              err={sales.salesErr.middle_name as string}
-            >
-              <input
-                readOnly
-                type='text'
-                maxLength={20}
-                id='middle_name'
-                name='middle_name'
-                autoComplete='off'
-                className={scss.lblContent}
-                value={sales.salesObj.business_profile.middle_name}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={33}
-              label='Last Name'
-              labelFor='last_name'
-              err={sales.salesErr.last_name as string}
-            >
-              <input
-                readOnly
-                type='text'
-                maxLength={20}
-                id='last_name'
-                name='last_name'
-                autoComplete='off'
-                className={scss.lblContent}
-                value={sales.salesObj.business_profile.last_name}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={50}
-              label='Registered Name'
-              labelFor='registered_name'
-              err={sales.salesErr.registered_name as string}
-            >
-              <input
-                readOnly
-                type='text'
-                maxLength={20}
-                autoComplete='off'
-                id='registered_name'
-                name='registered_name'
-                className={scss.lblContent}
-                value={sales.salesObj.business_profile.registered_name}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={50}
-              label='Trade Name'
-              labelFor='trade_name'
-              err={sales.salesErr.trade_name as string}
-            >
-              <input
-                readOnly
-                type='text'
-                maxLength={20}
-                id='trade_name'
-                name='trade_name'
-                autoComplete='off'
-                className={scss.lblContent}
-                value={sales.salesObj.business_profile.trade_name}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-          </div>
-        </div>
-        <div className={scss.box}>
-          <div className={scss.boxTitle}>
             Tax Details
           </div>
           <div className={scss.cards}>
@@ -647,6 +501,8 @@ const AddSalesRecord_V = () => {
                 name='vatable_sales'
                 placeholder='0.00'
                 value={sales.salesObj.vatable_sales}
+                readOnly={sales.salesObj.vat_type === 'EXCLUSIVE'}
+                className={sales.salesObj.vat_type === 'EXCLUSIVE' ? scss.lblContent : ''}
                 onKeyUp={handleBlur}
                 onChange={handleChange}
               />
@@ -726,15 +582,15 @@ const AddSalesRecord_V = () => {
               err={sales.salesErr.gross_taxable as string}
             >
               <input
-                readOnly
                 type='text'
                 maxLength={20}
                 autoComplete='off'
                 id='gross_taxable'
                 name='gross_taxable'
                 placeholder='0.00'
-                className={scss.lblContent}
                 value={sales.salesObj.gross_taxable}
+                readOnly={sales.salesObj.vat_type === 'INCLUSIVE'}
+                className={sales.salesObj.vat_type === 'INCLUSIVE' ? scss.lblContent : ''}
                 onKeyUp={handleBlur}
                 onChange={handleChange}
               />

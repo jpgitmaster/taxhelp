@@ -11,12 +11,40 @@ const initLinks: NavLink[] = [
     },
     {
         active: false,
-        key: 'clients',
-        name: 'Clients',
+        key: 'users',
+        name: 'Users',
         icon: 'users.svg',
         iconWidth: 20,
-        url: '/bookkeeper/clients',
+        url: '',
+        children: [
+            {
+                active: false,
+                key: 'clients',
+                name: 'Clients',
+                url: '/bookkeeper/users/clients',
+            },
+            {
+                active: false,
+                key: 'customers',
+                name: 'Customers',
+                url: '/bookkeeper/users/customers',
+            },
+            {
+                active: false,
+                key: 'suppliers',
+                name: 'Suppliers',
+                url: '/bookkeeper/users/suppliers',
+            },
+        ]
     },
+    // {
+    //     active: false,
+    //     key: 'clients',
+    //     name: 'Clients',
+    //     icon: 'users.svg',
+    //     iconWidth: 20,
+    //     url: '/bookkeeper/clients',
+    // },
     {
         active: false,
         key: 'documents',

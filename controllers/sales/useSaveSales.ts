@@ -26,11 +26,13 @@ const useSaveSales = () => {
     const [displayClients, setDisplayClients] = useState(false)
     const [displayCustomers, setDisplayCustomers] = useState(false)
     const setVatTypeHandler = (type: 'EXCLUSIVE' | 'INCLUSIVE') => {
-        setSales(prev => {
-            const updatedSalesObj = {
-                ...prev.salesObj,
-                vat_type: type
-            }
+    setSales(prev => {
+        const updatedSalesObj = {
+            ...prev.salesObj,
+            vat_type: type,
+            vatable_sales: '',
+            gross_taxable: ''
+        }
 
             return {
                 ...prev,
@@ -99,9 +101,12 @@ const useSaveSales = () => {
     const recalcSales = (salesObj: any) => {
         const VAT_RATE = 0.12
 
-        const exempt = parseFloat(salesObj.exempt_sales || '0')
-        const zeroRated = parseFloat(salesObj.zero_rated_sales || '0')
-        const vatableInput = parseFloat(salesObj.vatable_sales || '0')
+        // ✅ helper: always return a valid number
+        const toNumber = (val: any) => parseFloat(val) || 0
+
+        const exempt = toNumber(salesObj.exempt_sales)
+        const zeroRated = toNumber(salesObj.zero_rated_sales)
+        const vatableInput = toNumber(salesObj.vatable_sales)
         const vatType = salesObj.vat_type || 'EXCLUSIVE'
 
         let vatAmount = 0
@@ -126,17 +131,23 @@ const useSaveSales = () => {
             totalGrossAmount = grossAmount + vatAmount
         }
 
-        const ewtRate = parseFloat(salesObj.ewt_rate || '0') / 100
+        const ewtRate = toNumber(salesObj.ewt_rate) / 100
         const taxAmount = vatableBase * ewtRate
 
         return {
             ...salesObj,
             vat_rate: '12%',
-            vat_amount: vatAmount.toFixed(2),
-            gross_amount: grossAmount.toFixed(2),
-            gross_taxable: grossTaxable.toFixed(2),
-            total_gross_amount: totalGrossAmount.toFixed(2),
-            tax_amount: taxAmount.toFixed(2)
+            vat_amount: salesObj.vatable_sales ? vatAmount.toFixed(2) : '',
+            gross_amount: (salesObj.vatable_sales || salesObj.exempt_sales || salesObj.zero_rated_sales)
+                ? grossAmount.toFixed(2)
+                : '',
+            gross_taxable: salesObj.vatable_sales ? grossTaxable.toFixed(2) : '',
+            total_gross_amount: (salesObj.vatable_sales || salesObj.exempt_sales || salesObj.zero_rated_sales)
+                ? totalGrossAmount.toFixed(2)
+                : '',
+            tax_amount: salesObj.ewt_rate && salesObj.vatable_sales
+                ? taxAmount.toFixed(2)
+                : ''
         }
     }
     const handleToggle = (dropdown: string) => {
@@ -232,7 +243,42 @@ const useSaveSales = () => {
                     }))
                 }
                 break
+            case 'vat_type':
+                setVatTypeHandler(value as 'EXCLUSIVE' | 'INCLUSIVE')
+                break;
+            case 'gross_taxable':
+                if (value === '' || regexNumericDecimalOnly.test(value)) {
+                    setSales(prev => {
+                        const vatType = prev.salesObj.vat_type || 'EXCLUSIVE'
+                        const VAT_RATE = 0.12
 
+                        let vatable_sales = ''
+
+                        if (value !== '') {
+                            const gross = parseFloat(value) || 0
+
+                            if (vatType === 'EXCLUSIVE') {
+                                // gross_taxable = vatable + VAT
+                                vatable_sales = (gross / (1 + VAT_RATE)).toFixed(2)
+                            } else {
+                                // INCLUSIVE: gross_taxable already equals vatable input
+                                vatable_sales = value
+                            }
+                        }
+
+                        const updatedSalesObj = {
+                            ...prev.salesObj,
+                            gross_taxable: value,
+                            vatable_sales
+                        }
+
+                        return {
+                            ...prev,
+                            salesObj: recalcSales(updatedSalesObj)
+                        }
+                    })
+                }
+                break
             case 'exempt_sales':
             case 'vatable_sales':
             case 'zero_rated_sales':
@@ -250,7 +296,16 @@ const useSaveSales = () => {
                         }
                     })
                 }
-                break
+                break;
+            default:
+                setSales(prev => ({
+                    ...prev,
+                    salesObj: {
+                        ...prev.salesObj,
+                        [name]: value
+                    }
+                }))
+                break;
         }
 
         handleRemoveErr(sales.salesErr, name)

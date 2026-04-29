@@ -193,7 +193,7 @@ const DAT_File_V = () => {
                   scss={scss}
                   width={20}
                   required={true}
-                  label='Month & Year'
+                  label='Taxable Month & Year'
               >
                   <DatePicker picker="month" value={doc.period} onChange={handleDateChange} />
               </CustomContainer>
