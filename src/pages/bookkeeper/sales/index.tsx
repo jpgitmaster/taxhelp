@@ -88,6 +88,7 @@ const Sales_V = () => {
       title: 'Taxable Month',
       key: 'taxable_month',
       dataIndex: 'taxable_month',
+      render: (value) => dayjs(value)?.format('YYYY-MM'),
     },
     {
       title: 'Invoice Date',

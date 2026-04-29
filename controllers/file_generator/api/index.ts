@@ -55,8 +55,8 @@ const useFileGeneratorAPI = () => {
                         // sortOrder: 'ASC',
                         // filter: JSON.stringify(filter),
                         clientId: doc.client.id,
-                        month: doc.period?.format('MM') ?? null,
-                        year: doc.period?.format('YYYY') ?? null
+                        taxable_month_from: doc.period?.format('MM/YYYY') ?? null,
+                        taxable_month_to: doc.period?.format('MM/YYYY') ?? null,
                     }
                 })
                 console.log(res.data);
@@ -101,8 +101,8 @@ const useFileGeneratorAPI = () => {
                         sortOrder: 'ASC',
                         filter: JSON.stringify(filter),
                         clientId: doc.client.id,
-                        month: doc.period?.format('MM') ?? null,
-                        year: doc.period?.format('YYYY') ?? null
+                        taxable_month_from: doc.period?.format('MM/YYYY') ?? null,
+                        taxable_month_to: doc.period?.format('MM/YYYY') ?? null,
                     }
                 })
                 return {

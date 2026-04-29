@@ -103,13 +103,13 @@ const AddCustomer_V = () => {
                     >
                       <input
                         type='text'
+                        maxLength={50}
+                        autoComplete='off'
                         id='representative_email'
                         name='representative_email'
-                        maxLength={30}
-                        autoComplete='off'
+                        placeholder='jrizal@gmail.com'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        placeholder='jrizal@gmail.com'
                         value={client.clientObj.representative_email}
                       />
                     </CustomContainer>
