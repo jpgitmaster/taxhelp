@@ -363,7 +363,7 @@ const AddCustomer_V = () => {
                     >
                       <input
                         type='text'
-                        maxLength={30}
+                        maxLength={50}
                         autoComplete='off'
                         id='email'
                         name='email'
