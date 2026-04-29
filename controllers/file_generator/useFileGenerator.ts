@@ -33,7 +33,7 @@ const useFileGenerator = () => {
     const [tableWidth, setTableWidth] = useState(0)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayDocsTbl, setDisplayDocsTbl] = useState(false)
-    const options =[
+    const datFileOptions =[
         {
             label: 'SUMMARY LIST OF SALES (SLS)',
             value: 'SALES'
@@ -41,6 +41,110 @@ const useFileGenerator = () => {
         {
             label: 'SUMMARY LIST OF PURCHASES (SLP)',
             value: 'PURCHASES'
+        },
+        {
+            label: 'QUARTERLY ALPHALIST OF PAYEES (QAP)',
+            value: 'QAP',
+            children: [
+                {
+                    label: '1601E',
+                    value: '1601E',
+                },
+                {
+                    label: '1601F',
+                    value: '1601F',
+                },
+                {
+                    label: '1621',
+                    value: '1621',
+                }
+            ]
+        },
+        {
+            label: 'SUMMARY ALPHALIST OF WITHHOLDING TAXES',
+            value: 'SAWT',
+            children: [
+                {
+                    label: '1700',
+                    value: '1700',
+                },
+                {
+                    label: '1701Q',
+                    value: '1701Q',
+                },
+                {
+                    label: '1701',
+                    value: '1701',
+                },
+                {
+                    label: '1702Q',
+                    value: '1702Q',
+                },
+                {
+                    label: '1702',
+                    value: '1702',
+                },
+                {
+                    label: '2550M',
+                    value: '2550M',
+                },
+                {
+                    label: '2550Q',
+                    value: '2550Q',
+                },
+                {
+                    label: '2551Q',
+                    value: '2551Q',
+                },
+                {
+                    label: '2553',
+                    value: '2553',
+                }
+            ]
+        },
+        {
+            label: 'MONTHLY ALPHALIST OF PAYEES',
+            value: 'MAP',
+            children: [
+                {
+                    label: '1600VT',
+                    value: '1600VT',
+                },
+                {
+                    label: '1600PT',
+                    value: '1600PT',
+                },
+            ]
+        },
+    ]
+    const booksOfAccountsOptions =[
+        {
+            label: 'SALES JOURNAL (SJ)',
+            value: 'SJ'
+        },
+        {
+            label: 'PURCHASES JOURNAL (PJ)',
+            value: 'PJ'
+        },
+        {
+            label: 'CASH RECEIPTS JOURNAL (CRJ)',
+            value: 'CRJ'
+        },
+        {
+            label: 'CASH DISBURSEMENTS JOURNAL (CDJ)',
+            value: 'CDJ'
+        },
+        {
+            label: 'GENERAL JOURNAL (GJ)',
+            value: 'GJ'
+        },
+        {
+            label: 'GENERAL LEDGER (GL)',
+            value: 'GL'
+        },
+        {
+            label: 'TRIAL BALANCE (TB)',
+            value: 'TB'
         },
     ]
     const [doc, setDoc] = useState<{
@@ -263,11 +367,12 @@ const useFileGenerator = () => {
         status,
         filter,
         record,
-        options,
         clientArr,
         tableWidth,
+        datFileOptions,
         displayClients,
         displayDocsTbl,
+        booksOfAccountsOptions,
         clientLoader: isLoadingClients || isFetchingClients,
         loader: isLoadingSales || isFetchingSales || isLoadingPurchases || isFetchingPurchases,
 

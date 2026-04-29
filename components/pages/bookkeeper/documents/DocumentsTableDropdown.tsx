@@ -16,6 +16,10 @@ export default function DocumentsTableDropdown(props: {
     options: {
         label: string
         value: string
+        children?: {
+            label: string
+            value: string
+        }[]
     }[]
     displayDocsTbl: boolean
 
@@ -92,6 +96,20 @@ export default function DocumentsTableDropdown(props: {
                                         handleSelectTable(option)
                                     }}>
                                         {option.label}
+                                        {
+                                            option?.children?.length ?
+                                            <ul>
+                                                {
+                                                    option?.children.map((opt, indx) =>
+                                                        <li key={indx}>
+                                                            {opt.label}
+                                                        </li>
+                                                    )
+                                                }
+                                            </ul>
+                                            :
+                                            null
+                                        }
                                     </li>
                                 )
                                 : ''

@@ -36,7 +36,7 @@
   .dropwdownList {
     border: 1px solid $gray;
     background-color: $white;
-    @apply left-0 top-12 z-1 w-full min-h-30 absolute rounded-[10px] py-5 px-2.5;
+    @apply left-0 top-12 z-1 w-full max-h-55 overflow-y-auto absolute rounded-[10px] py-5 px-2.5;
     .dropwdownSearch {
       @apply relative w-full inline-block;
       .searchIcon {
@@ -53,7 +53,7 @@
     ul {
       @apply h-55 mt-3 overflow-y-auto;
       li{
-        @apply px-3 py-2 text-[11px] cursor-pointer rounded-[10px];
+        @apply px-3 py-1.5 text-[11px] cursor-pointer rounded-[10px];
         &:hover{
           color: $darkBlue;
           background-color: rgba($lightBlue, .1);
@@ -63,6 +63,9 @@
         }
         p{
           @apply text-[11px] m-0;
+        }
+        ul{
+          @apply m-0 h-auto;
         }
       }
     }

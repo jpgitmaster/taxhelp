@@ -133,21 +133,21 @@ const useSaveSales = () => {
 
             vat_rate: '12%',
 
-            vat_amount: vatAmount || '',
+            vat_amount: vatAmount ? Number(vatAmount).toFixed(2) : '',
 
             gross_amount:
                 (salesObj.exempt_sales || salesObj.zero_rated_sales || salesObj.vatable_sales)
-                    ? netSalesTotal
+                    ? Number(netSalesTotal).toFixed(2)
                     : '',
 
             total_gross_amount:
                 (salesObj.exempt_sales || salesObj.zero_rated_sales || salesObj.vatable_sales)
-                    ? totalGrossAmount
+                    ? Number(totalGrossAmount).toFixed(2)
                     : '',
 
             tax_amount:
                 salesObj.ewt_rate && salesObj.vatable_sales
-                    ? taxAmount
+                    ? Number(taxAmount).toFixed(2)
                     : ''
         }
     }
@@ -312,8 +312,8 @@ const useSaveSales = () => {
 
                             updatedSalesObj = {
                                 ...updatedSalesObj,
-                                gross_taxable: gross ? gross.toFixed(2) : '',
-                                vat_amount: vat ? vat.toFixed(2) : ''
+                                gross_taxable: gross ? Number(gross).toFixed(2) : '',
+                                vat_amount: vat ? Number(vat).toFixed(2) : ''
                             }
                         }
 

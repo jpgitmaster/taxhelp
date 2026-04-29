@@ -21,12 +21,12 @@ const DAT_File_V = () => {
       filter,
       record,
       loader,
-      options,
       clientArr,
       tableWidth,
       clientLoader,
       displayClients,
       displayDocsTbl,
+      datFileOptions,
 
       setDisplayClients,
       setDisplayDocsTbl,
@@ -162,7 +162,7 @@ const DAT_File_V = () => {
               >
                 <DocumentsTableDropdown
                   doc={doc}
-                  options={options}
+                  options={datFileOptions}
                   displayDocsTbl={displayDocsTbl}
                   setDisplayDocsTbl={setDisplayDocsTbl}
                   handleToggle={handleToggle}

@@ -22,12 +22,12 @@ const BookOfAccounts_V = () => {
       filter,
       record,
       loader,
-      options,
       clientArr,
       tableWidth,
       clientLoader,
       displayClients,
       displayDocsTbl,
+      booksOfAccountsOptions,
 
       setDisplayClients,
       setDisplayDocsTbl,
@@ -167,8 +167,8 @@ const BookOfAccounts_V = () => {
               >
                 <DocumentsTableDropdown
                   doc={doc}
-                  options={options}
                   displayDocsTbl={displayDocsTbl}
+                  options={booksOfAccountsOptions}
                   setDisplayDocsTbl={setDisplayDocsTbl}
                   handleToggle={handleToggle}
                   handleSelectTable={handleSelectTable}
