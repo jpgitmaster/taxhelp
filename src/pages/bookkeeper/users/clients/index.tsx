@@ -108,13 +108,13 @@ const Clients_V = () => {
             align: 'center',
             render: (record: ClientTableRow) =>
                 <div className={scss.actions}>
-                    <Link href={'/bookkeeper/clients/'+record.id} className={scss.action+' '+scss.purchases}>
+                    <Link href={'/bookkeeper/users/clients/'+record.id} className={scss.action+' '+scss.purchases}>
                         <Image src='/svgs/eyecon_check.svg' alt='Purchases' priority width={22} height={22} unoptimized={true} />
                         <span style={{top: '-2px'}}>
                             View
                         </span>
                     </Link>
-                    <Link href={'/bookkeeper/clients/'+record.id+'/edit'} className={scss.action+' '+scss.edit}>
+                    <Link href={'/bookkeeper/users/clients/'+record.id+'/edit'} className={scss.action+' '+scss.edit}>
                         <Image src='/svgs/edit.svg' alt='Edit' priority width={20} height={20} unoptimized={true} />
                         <span>
                             Edit
