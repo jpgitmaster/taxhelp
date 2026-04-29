@@ -24,6 +24,9 @@
     }
     .selected{
       @apply truncate block;
+      .placeholder{
+        color: rgba($lightBlack, .5);
+      }
     }
     .erase{
       @apply relative -top-1.5 -right-1;

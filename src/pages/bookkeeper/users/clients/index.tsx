@@ -133,10 +133,10 @@ const Clients_V = () => {
     return (
         <>
             <div className={scss.header}>
-                <Link href='/bookkeeper/clients/add_client' className={scss.button+' '+scss.btnblue}>
+                <Link href='/bookkeeper/users/clients/add_client' className={scss.button+' '+scss.btnblue}>
                     Add Client
                 </Link>
-                <Link href='/bookkeeper/clients/add_client' className={scss.button+' '+scss.btnorange}>
+                <Link href='/bookkeeper/users/clients' className={scss.button+' '+scss.btnorange}>
                     Export Clients
                 </Link>
                 <form className={scss.searchComponent}
