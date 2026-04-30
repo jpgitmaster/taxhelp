@@ -52,19 +52,27 @@
     }
     ul {
       @apply h-55 mt-3 overflow-y-auto;
-      li{
+      li {
         @apply px-3 py-1.5 text-[11px] cursor-pointer rounded-[10px];
-        &:hover{
+
+        &:not(.hasChildren):hover {
           color: $darkBlue;
           background-color: rgba($lightBlue, .1);
         }
-        strong{
+
+        &.hasChildren {
+          cursor: default;
+        }
+
+        strong {
           @apply font-semibold text-[12px];
         }
-        p{
+
+        p {
           @apply text-[11px] m-0;
         }
-        ul{
+
+        ul {
           @apply m-0 h-auto;
         }
       }

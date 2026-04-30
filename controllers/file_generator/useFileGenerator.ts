@@ -189,8 +189,8 @@ const useFileGenerator = () => {
             file_name: ''
         },
         selectedTable: {
-            value: 'SALES',
-            label: 'SUMMARY LIST OF SALES (SLS)'
+            value: '',
+            label: ''
         },
         period: null,
         tax_month_end: null,

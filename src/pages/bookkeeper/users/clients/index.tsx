@@ -48,7 +48,7 @@ const Clients_V = () => {
         //     dataIndex: 'id',
         // },
         {
-            title: 'Classification',
+            title: 'Taxpayer Classification',
             key: 'classification',
             dataIndex: 'classification',
             render: (text: string) => <span style={{textTransform: 'capitalize'}}>{text?.toLowerCase()}</span>

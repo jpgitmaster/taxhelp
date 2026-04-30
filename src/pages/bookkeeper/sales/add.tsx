@@ -44,7 +44,7 @@ const AddSalesRecord_V = () => {
           <div className={scss.boxTitle}>
             Client Details
           </div>
-          <div className={scss.cards}>
+          <div className={scss.cards} style={{marginBottom: 0}}>
             <CustomContainer
               scss={scss}
               width={50}

@@ -92,12 +92,14 @@ export default function DocumentsTableDropdown(props: {
                             {
                                 options?.length ? options?.map((option, index) => 
                                     <li key={index} value={option.value} onClick={() => {
-                                        setDisplayDocsTbl(false)
-                                        handleSelectTable(option)
-                                    }}>
+                                            setDisplayDocsTbl(false)
+                                            handleSelectTable(option)
+                                        }}
+                                        className={option.children?.length ? scss.hasChildren : ''}
+                                    >
                                         {option.label}
                                         {
-                                            option?.children?.length ?
+                                            option.children?.length ?
                                             <ul>
                                                 {
                                                     option?.children.map((opt, indx) =>
