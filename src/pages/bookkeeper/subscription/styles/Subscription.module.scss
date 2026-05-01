@@ -37,72 +37,100 @@
     }
   }
 
-  .plans{
-    @apply grid md:grid-cols-3 gap-8 max-w-6xl mx-auto px-4 mt-10;
-    .plan{
-        background-color: $white;
-        border: 1px solid $lightBlue;
-        @apply rounded-2xl border p-6 flex flex-col justify-between transition hover:shadow-xl;
-        &.active{
-            border: 1px solid $orange;
-            @apply shadow-lg scale-105;
-            .planTopDetails h3{ color: $orange; }
-        }
-        .popular{
-            color: $white;
-            background-color: $orange;
-            @apply text-xs font-semibold px-3 py-1 rounded-full w-fit mb-3;
-        }
-        .planTopDetails{
-            @apply space-y-2;
-            h3{
-                color: $blue;
-                @apply text-xl font-semibold m-0;
+    .plans{
+        @apply grid md:grid-cols-3 gap-8 max-w-6xl mx-auto px-4 mt-10;
+        .plan{
+            background-color: $white;
+            border: 1px solid $lightBlue;
+            @apply rounded-2xl border p-6 flex flex-col justify-between transition hover:shadow-xl;
+            &.active{
+                border: 1px solid $orange;
+                @apply shadow-lg scale-105;
+                .planTopDetails h3{ color: $orange; }
             }
-            p{
-                color: $lightBlack;
-                @apply text-sm;
+            .popular{
+                color: $white;
+                background-color: $orange;
+                @apply text-xs font-semibold px-3 py-1 rounded-full w-fit mb-3;
             }
-        }
-        .price{
-            color: $lightBlue;
-            @apply text-3xl font-bold mt-3;
-            span{
+            .planTopDetails{
+                @apply space-y-2;
+                h3{
+                    color: $blue;
+                    @apply text-xl font-semibold m-0;
+                }
+                p{
+                    color: $lightBlack;
+                    @apply text-sm;
+                }
+            }
+            .price{
                 color: $lightBlue;
-                @apply text-sm;
+                @apply text-3xl font-bold mt-3;
+                span{
+                    color: $lightBlue;
+                    @apply text-sm;
+                }
             }
-        }
-        .features{
-            color: $black;
-            @apply mt-4 space-y-3 text-sm;
-            
-            .feature{
-                @apply flex items-start gap-2 font-medium;
-                &.checked{
+            .features{
+                color: $black;
+                @apply mt-4 space-y-3 text-sm;
+                
+                .feature{
+                    @apply flex items-start gap-2 font-medium;
+                    &.checked{
+                        .featureCheck{
+                            filter: invert(60%) sepia(59%) saturate(5191%) hue-rotate(89deg) brightness(98%) contrast(86%);
+                        }
+                    }
                     .featureCheck{
-                        filter: invert(60%) sepia(59%) saturate(5191%) hue-rotate(89deg) brightness(98%) contrast(86%);
+                        @apply flex items-start gap-2 font-medium;
+                        filter: invert(51%) sepia(60%) saturate(4288%) hue-rotate(2deg) brightness(103%) contrast(88%);
                     }
                 }
-                .featureCheck{
-                    @apply flex items-start gap-2 font-medium;
-                    filter: invert(51%) sepia(60%) saturate(4288%) hue-rotate(2deg) brightness(103%) contrast(88%);
-                }
-            }
-            .children{
-                color: $darkgray;
-                @apply ml-6 mt-2 space-y-1;
-                li{
-                    @apply pl-4;
+                .children{
+                    color: $darkgray;
+                    @apply ml-6 mt-2 space-y-1;
+                    li{
+                        @apply pl-4;
+                    }
                 }
             }
         }
     }
-  }
+    .selectedPlan{
+        background-color: $white;
+        border: 1px solid $lightBlue;
+        @apply rounded-2xl w-160 mx-auto border p-6 flex flex-col justify-between transition hover:shadow-xl mt-6;
+        h3{
+            color: $blue;
+            @apply text-xl font-semibold mb-1;
+        }
+        .details{
+            @apply flex justify-between text-sm m-1;
+            span{
+                @apply capitalize;
+            }
+        }
+        .total{
+            border-color: $orange;
+            @apply border-t pt-3 mt-1 flex justify-between font-medium;
+            span{
+                color: $blue;
+            }
+        }
+        ol{
+            color: $black;
+            @apply text-sm space-y-1 list-decimal list-inside mt-2;
+        }
+    }
     .note{
         color: $black;
         @apply text-xs mt-3 text-center italic;
     }
-    
+    .button{
+        @apply text-center;
+    }
     .customSolutions{
         @apply max-w-5xl mx-auto px-4 mt-18 mb-12;
         .customSolution{

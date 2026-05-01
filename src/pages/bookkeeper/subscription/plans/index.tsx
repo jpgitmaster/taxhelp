@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
 import { signOut, getSession } from 'next-auth/react'
@@ -13,6 +14,7 @@ const SubscriptionPlans_V = () => {
         {
             name: 'Basic FREE',
             price: 0,
+            key: 'basic',
             description: 'Perfect for getting started',
             highlight: false,
             features: [
@@ -66,6 +68,7 @@ const SubscriptionPlans_V = () => {
         },
         {
             name: 'Pro',
+            key: 'pro',
             price: billing === 'monthly' ? 79 : 599,
             description: 'Best for growing businesses',
             highlight: true,
@@ -114,10 +117,10 @@ const SubscriptionPlans_V = () => {
         },
         {
             name: 'Enterprise',
+            key: 'enterprise',
             price: billing === 'monthly' ? 129 : 1299,
             description: 'Advanced tools for large operations',
             highlight: false,
-            isEnterprise: true,
             features: [
                 { title: 'Unlimited rows' },
                 { title: 'Unlimited clients' },
@@ -262,12 +265,8 @@ const SubscriptionPlans_V = () => {
                                 </p>
                             )}
                             {/* CTA */}
-                            <button
-                                onClick={() =>
-                                    plan.isEnterprise
-                                        ? setShowModal(true)
-                                        : console.log('Select plan:', plan.name)
-                                }
+                            <Link
+                                href={`/bookkeeper/subscription/plans/gcash_payment?plan=${plan.key}&price=${plan.price}&billing=${billing}`}
                                 className={scss.button + (
                                     plan.highlight
                                         ? ' '+scss.btnorange
@@ -275,7 +274,7 @@ const SubscriptionPlans_V = () => {
                                 ) + ' mt-4'}
                             >
                                 {plan.cta}
-                            </button>
+                            </Link>
                         </div>
                     ))}
                 </div>
@@ -311,11 +310,11 @@ const SubscriptionPlans_V = () => {
                             onClick={() => setShowModal(true)}
                             className={scss.button+' '+scss.btnblue}
                         >
-                            Let’s Talk Business
+                            Let&rsquo;s Talk Business
                         </button>
 
                         <p className={scss.note}>
-                            We’ll discuss your requirements and build a solution that fits your business.
+                            We&rsquo;ll discuss your requirements and build a solution that fits your business.
                         </p>
                     </div>
                 </div>
@@ -326,7 +325,7 @@ const SubscriptionPlans_V = () => {
                 <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
                     <div className="bg-white rounded-xl p-6 w-full max-w-md space-y-4">
                         <h3 className="text-lg font-semibold">
-                            Let’s Build Something for Your Business
+                            Let&rsquo;s Build Something for Your Business
                         </h3>
 
                         <input type="text" placeholder="Business Name" className="w-full border rounded-lg px-3 py-2 text-sm" />
