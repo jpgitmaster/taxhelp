@@ -2,21 +2,21 @@ import Image from 'next/image'
 import scss from './styles/Customers.module.scss'
 import { signOut, getSession } from 'next-auth/react'
 import Loader from '@/components/reusables/RotatingLoader'
-import useSaveClient from '@/controllers/clients/useSaveClient'
 import CustomContainer from '@/components/reusables/CustomContainer'
+import useSaveCustomer from '@/controllers/customers/useSaveCustomer'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 
 const AddCustomer_V = () => {
   const {
-    client,
     status,
+    customer,
 
     handleBlur,
     handleChange,
     handleSubmit,
     handleResubmit,
-  } = useSaveClient()
+  } = useSaveCustomer()
   const { loader } = status
   return (
       <form onSubmit={handleSubmit} className={scss.addClient}>
@@ -39,7 +39,7 @@ const AddCustomer_V = () => {
                       required={true}
                       label='Taxpayer Classification'
                       labelFor='classification'
-                      err={client.clientErr.classification as string}
+                      err={customer.customerErr.classification as string}
                     >
                       <select
                         id='classification'
@@ -47,7 +47,7 @@ const AddCustomer_V = () => {
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.classification}
+                        value={customer.customerObj.classification}
                       >
                         <option value='NON-INDIVIDUAL'>Non-Individual</option>
                         <option value='INDIVIDUAL'>Individual</option>
@@ -59,7 +59,7 @@ const AddCustomer_V = () => {
                       required={true}
                       label='TIN No.'
                       labelFor='tin'
-                      err={client.clientErr.tin as string}
+                      err={customer.customerErr.tin as string}
                     >
                       <input
                         id='tin'
@@ -70,18 +70,18 @@ const AddCustomer_V = () => {
                         onKeyUp={handleBlur}
                         onChange={handleChange}
                         placeholder="000-000-000"
-                        value={client.clientObj.tin}
+                        value={customer.customerObj.tin}
                       />
                     </CustomContainer>
                     {
-                      client.clientObj.classification === 'NON-INDIVIDUAL' &&
+                      customer.customerObj.classification === 'NON-INDIVIDUAL' &&
                       <CustomContainer
                         scss={scss}
                         width={100}
                         label='Registered Name'
                         labelFor='registered_name'
-                        err={client.clientErr.registered_name as string}
-                        required={client.clientObj.classification === 'NON-INDIVIDUAL' ? true : false}
+                        err={customer.customerErr.registered_name as string}
+                        required={customer.customerObj.classification === 'NON-INDIVIDUAL' ? true : false}
                       >
                         <input
                           id='registered_name'
@@ -89,22 +89,22 @@ const AddCustomer_V = () => {
                           name='registered_name'
                           maxLength={100}
                           autoComplete='off'
-                          value={client.clientObj.registered_name}
+                          value={customer.customerObj.registered_name}
                           onKeyUp={handleBlur}
                           onChange={handleChange}
                         />
                       </CustomContainer>
                     }
                     {
-                      client.clientObj.classification === 'INDIVIDUAL' &&
+                      customer.customerObj.classification === 'INDIVIDUAL' &&
                       <>
                         <CustomContainer
                           scss={scss}
                           width={33}
                           label="First Name"
                           labelFor='first_name'
-                          err={client.clientErr.first_name as string}
-                          required={client.clientObj.classification === 'INDIVIDUAL' ? true : false}
+                          err={customer.customerErr.first_name as string}
+                          required={customer.customerObj.classification === 'INDIVIDUAL' ? true : false}
                         >
                           <input
                             id='first_name'
@@ -113,7 +113,7 @@ const AddCustomer_V = () => {
                             maxLength={20}
                             autoComplete='off'
                             placeholder='Andres'
-                            value={client.clientObj.first_name}
+                            value={customer.customerObj.first_name}
                             onKeyUp={handleBlur}
                             onChange={handleChange}
                           />
@@ -123,7 +123,7 @@ const AddCustomer_V = () => {
                           width={33}
                           label="Middle Name"
                           labelFor='middle_name'
-                          err={client.clientErr.middle_name as string}
+                          err={customer.customerErr.middle_name as string}
                         >
                           <input
                             type='text'
@@ -132,7 +132,7 @@ const AddCustomer_V = () => {
                             maxLength={20}
                             autoComplete='off'
                             placeholder='de Castro'
-                            value={client.clientObj.middle_name}
+                            value={customer.customerObj.middle_name}
                             onKeyUp={handleBlur}
                             onChange={handleChange}
                           />
@@ -142,8 +142,8 @@ const AddCustomer_V = () => {
                           width={33}
                           label="Last Name"
                           labelFor='last_name'
-                          err={client.clientErr.last_name as string}
-                          required={client.clientObj.classification === 'INDIVIDUAL' ? true : false}
+                          err={customer.customerErr.last_name as string}
+                          required={customer.customerObj.classification === 'INDIVIDUAL' ? true : false}
                         >
                           <input
                             id='last_name'
@@ -152,7 +152,7 @@ const AddCustomer_V = () => {
                             maxLength={20}
                             autoComplete='off'
                             placeholder='Bonifacio'
-                            value={client.clientObj.last_name}
+                            value={customer.customerObj.last_name}
                             onKeyUp={handleBlur}
                             onChange={handleChange}
                           />
@@ -161,11 +161,10 @@ const AddCustomer_V = () => {
                     }
                     <CustomContainer
                       scss={scss}
-                      width={50}
+                      width={100}
                       label='Trade Name'
                       labelFor='trade_name'
-                      err={client.clientErr.trade_name as string}
-                      required={client.clientObj.classification === 'NON-INDIVIDUAL' ? true : false}
+                      err={customer.customerErr.trade_name as string}
                     >
                       <input
                         id='trade_name'
@@ -173,7 +172,7 @@ const AddCustomer_V = () => {
                         name='trade_name'
                         maxLength={100}
                         autoComplete='off'
-                        value={client.clientObj.trade_name}
+                        value={customer.customerObj.trade_name}
                         onKeyUp={handleBlur}
                         onChange={handleChange}
                       />
@@ -182,9 +181,29 @@ const AddCustomer_V = () => {
                       scss={scss}
                       width={50}
                       required={true}
+                      label='Phone Number'
+                      labelFor='phone'
+                      err={customer.customerErr.phone as string}
+                    >
+                      <input
+                        id='phone'
+                        type='text'
+                        name='phone'
+                        maxLength={30}
+                        autoComplete='off'
+                        placeholder='(+63)926-123-4567'
+                        onKeyUp={handleBlur}
+                        onChange={handleChange}
+                        value={customer.customerObj.phone}
+                      />
+                    </CustomContainer>
+                    <CustomContainer
+                      scss={scss}
+                      width={50}
+                      required={true}
                       label='Email'
                       labelFor='email'
-                      err={client.clientErr.email as string}
+                      err={customer.customerErr.email as string}
                     >
                       <input
                         type='text'
@@ -195,7 +214,7 @@ const AddCustomer_V = () => {
                         placeholder='yourname@yourcompany.com'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.email}
+                        value={customer.customerObj.email}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -203,7 +222,7 @@ const AddCustomer_V = () => {
                       width={40}
                       label='Substreet'
                       labelFor='sub_street'
-                      err={client.clientErr.sub_street as string}
+                      err={customer.customerErr.sub_street as string}
                     >
                       <input
                         id='sub_street'
@@ -213,7 +232,7 @@ const AddCustomer_V = () => {
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.sub_street}
+                        value={customer.customerObj.sub_street}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -221,7 +240,7 @@ const AddCustomer_V = () => {
                       width={40}
                       label='Street'
                       labelFor='street'
-                      err={client.clientErr.street as string}
+                      err={customer.customerErr.street as string}
                     >
                       <input
                         id='street'
@@ -231,7 +250,7 @@ const AddCustomer_V = () => {
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.street}
+                        value={customer.customerObj.street}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -239,7 +258,7 @@ const AddCustomer_V = () => {
                       width={20}
                       label='Barangay'
                       labelFor='barangay'
-                      err={client.clientErr.barangay as string}
+                      err={customer.customerErr.barangay as string}
                     >
                       <input
                         id='barangay'
@@ -249,7 +268,7 @@ const AddCustomer_V = () => {
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.barangay}
+                        value={customer.customerObj.barangay}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -257,7 +276,7 @@ const AddCustomer_V = () => {
                       width={40}
                       label='District / Municipality'
                       labelFor='district'
-                      err={client.clientErr.district as string}
+                      err={customer.customerErr.district as string}
                     >
                       <input
                         id='district'
@@ -267,7 +286,7 @@ const AddCustomer_V = () => {
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.district}
+                        value={customer.customerObj.district}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -275,7 +294,7 @@ const AddCustomer_V = () => {
                       width={40}
                       label='City / Province'
                       labelFor='city'
-                      err={client.clientErr.city as string}
+                      err={customer.customerErr.city as string}
                     >
                       <input
                         id='city'
@@ -285,7 +304,7 @@ const AddCustomer_V = () => {
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.city}
+                        value={customer.customerObj.city}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -293,7 +312,7 @@ const AddCustomer_V = () => {
                       width={20}
                       label='Zip Code'
                       labelFor='zip_code'
-                      err={client.clientErr.zip_code as string}
+                      err={customer.customerErr.zip_code as string}
                     >
                       <input
                         id='zip_code'
@@ -303,7 +322,7 @@ const AddCustomer_V = () => {
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.zip_code}
+                        value={customer.customerObj.zip_code}
                       />
                     </CustomContainer>
                   </div>

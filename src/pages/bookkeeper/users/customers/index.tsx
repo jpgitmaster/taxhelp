@@ -28,6 +28,14 @@ const Customers_V = () => {
         {
             id: customer.id,
             tin: customer.tin,
+            city: customer.city,
+            email: customer.email,
+            phone: customer.phone,
+            street: customer.street,
+            zip_code: customer.zip_code,
+            district: customer.district,
+            barangay: customer.barangay,
+            sub_street: customer.sub_street,
             trade_name: customer.trade_name,
             classification: customer.classification,
             registered_name: customer.registered_name,
@@ -102,9 +110,9 @@ const Customers_V = () => {
             <Link href='/bookkeeper/users/customers/add_customer' className={scss.button+' '+scss.btnblue}>
               Add Customer
             </Link>
-            <Link href='/bookkeeper/users/customers' className={scss.button+' '+scss.btnorange}>
+            {/* <Link href='/bookkeeper/users/customers' className={scss.button+' '+scss.btnorange}>
               Export Customers
-            </Link>
+            </Link> */}
             <form className={scss.searchComponent}
                 // onSubmit={handleSubmitSearch}
             >

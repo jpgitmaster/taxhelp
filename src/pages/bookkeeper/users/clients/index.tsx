@@ -136,9 +136,9 @@ const Clients_V = () => {
                 <Link href='/bookkeeper/users/clients/add_client' className={scss.button+' '+scss.btnblue}>
                     Add Client
                 </Link>
-                <Link href='/bookkeeper/users/clients' className={scss.button+' '+scss.btnorange}>
+                {/* <Link href='/bookkeeper/users/clients' className={scss.button+' '+scss.btnorange}>
                     Export Clients
-                </Link>
+                </Link> */}
                 <form className={scss.searchComponent}
                     // onSubmit={handleSubmitSearch}
                 >

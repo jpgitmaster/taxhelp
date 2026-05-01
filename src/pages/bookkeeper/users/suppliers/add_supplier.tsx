@@ -2,21 +2,21 @@ import Image from 'next/image'
 import scss from './styles/Suppliers.module.scss'
 import { signOut, getSession } from 'next-auth/react'
 import Loader from '@/components/reusables/RotatingLoader'
-import useSaveClient from '@/controllers/clients/useSaveClient'
 import CustomContainer from '@/components/reusables/CustomContainer'
+import useSaveSupplier from '@/controllers/suppliers/useSaveSupplier'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 
 const AddSupplier_V = () => {
   const {
-    client,
     status,
+    supplier,
 
     handleBlur,
     handleChange,
     handleSubmit,
     handleResubmit,
-  } = useSaveClient()
+  } = useSaveSupplier()
   const { loader } = status
   return (
       <form onSubmit={handleSubmit} className={scss.addClient}>
@@ -39,7 +39,7 @@ const AddSupplier_V = () => {
                       required={true}
                       label='Taxpayer Classification'
                       labelFor='classification'
-                      err={client.clientErr.classification as string}
+                      err={supplier.supplierErr.classification as string}
                     >
                       <select
                         id='classification'
@@ -47,7 +47,7 @@ const AddSupplier_V = () => {
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.classification}
+                        value={supplier.supplierObj.classification}
                       >
                         <option value='NON-INDIVIDUAL'>Non-Individual</option>
                         <option value='INDIVIDUAL'>Individual</option>
@@ -59,7 +59,7 @@ const AddSupplier_V = () => {
                       required={true}
                       label='TIN No.'
                       labelFor='tin'
-                      err={client.clientErr.tin as string}
+                      err={supplier.supplierErr.tin as string}
                     >
                       <input
                         id='tin'
@@ -70,18 +70,18 @@ const AddSupplier_V = () => {
                         onKeyUp={handleBlur}
                         onChange={handleChange}
                         placeholder="000-000-000"
-                        value={client.clientObj.tin}
+                        value={supplier.supplierObj.tin}
                       />
                     </CustomContainer>
                     {
-                      client.clientObj.classification === 'NON-INDIVIDUAL' &&
+                      supplier.supplierObj.classification === 'NON-INDIVIDUAL' &&
                       <CustomContainer
                         scss={scss}
                         width={100}
                         label='Registered Name'
                         labelFor='registered_name'
-                        err={client.clientErr.registered_name as string}
-                        required={client.clientObj.classification === 'NON-INDIVIDUAL' ? true : false}
+                        err={supplier.supplierErr.registered_name as string}
+                        required={supplier.supplierObj.classification === 'NON-INDIVIDUAL' ? true : false}
                       >
                         <input
                           id='registered_name'
@@ -89,22 +89,22 @@ const AddSupplier_V = () => {
                           name='registered_name'
                           maxLength={100}
                           autoComplete='off'
-                          value={client.clientObj.registered_name}
+                          value={supplier.supplierObj.registered_name}
                           onKeyUp={handleBlur}
                           onChange={handleChange}
                         />
                       </CustomContainer>
                     }
                     {
-                      client.clientObj.classification === 'INDIVIDUAL' &&
+                      supplier.supplierObj.classification === 'INDIVIDUAL' &&
                       <>
                         <CustomContainer
                           scss={scss}
                           width={33}
                           label="First Name"
                           labelFor='first_name'
-                          err={client.clientErr.first_name as string}
-                          required={client.clientObj.classification === 'INDIVIDUAL' ? true : false}
+                          err={supplier.supplierErr.first_name as string}
+                          required={supplier.supplierObj.classification === 'INDIVIDUAL' ? true : false}
                         >
                           <input
                             id='first_name'
@@ -113,7 +113,7 @@ const AddSupplier_V = () => {
                             maxLength={20}
                             autoComplete='off'
                             placeholder='Andres'
-                            value={client.clientObj.first_name}
+                            value={supplier.supplierObj.first_name}
                             onKeyUp={handleBlur}
                             onChange={handleChange}
                           />
@@ -123,7 +123,7 @@ const AddSupplier_V = () => {
                           width={33}
                           label="Middle Name"
                           labelFor='middle_name'
-                          err={client.clientErr.middle_name as string}
+                          err={supplier.supplierErr.middle_name as string}
                         >
                           <input
                             type='text'
@@ -132,7 +132,7 @@ const AddSupplier_V = () => {
                             maxLength={20}
                             autoComplete='off'
                             placeholder='de Castro'
-                            value={client.clientObj.middle_name}
+                            value={supplier.supplierObj.middle_name}
                             onKeyUp={handleBlur}
                             onChange={handleChange}
                           />
@@ -142,8 +142,8 @@ const AddSupplier_V = () => {
                           width={33}
                           label="Last Name"
                           labelFor='last_name'
-                          err={client.clientErr.last_name as string}
-                          required={client.clientObj.classification === 'INDIVIDUAL' ? true : false}
+                          err={supplier.supplierErr.last_name as string}
+                          required={supplier.supplierObj.classification === 'INDIVIDUAL' ? true : false}
                         >
                           <input
                             id='last_name'
@@ -152,7 +152,7 @@ const AddSupplier_V = () => {
                             maxLength={20}
                             autoComplete='off'
                             placeholder='Bonifacio'
-                            value={client.clientObj.last_name}
+                            value={supplier.supplierObj.last_name}
                             onKeyUp={handleBlur}
                             onChange={handleChange}
                           />
@@ -164,8 +164,7 @@ const AddSupplier_V = () => {
                       width={50}
                       label='Trade Name'
                       labelFor='trade_name'
-                      err={client.clientErr.trade_name as string}
-                      required={client.clientObj.classification === 'NON-INDIVIDUAL' ? true : false}
+                      err={supplier.supplierErr.trade_name as string}
                     >
                       <input
                         id='trade_name'
@@ -173,7 +172,7 @@ const AddSupplier_V = () => {
                         name='trade_name'
                         maxLength={100}
                         autoComplete='off'
-                        value={client.clientObj.trade_name}
+                        value={supplier.supplierObj.trade_name}
                         onKeyUp={handleBlur}
                         onChange={handleChange}
                       />
@@ -184,7 +183,7 @@ const AddSupplier_V = () => {
                       required={true}
                       label='Email'
                       labelFor='email'
-                      err={client.clientErr.email as string}
+                      err={supplier.supplierErr.email as string}
                     >
                       <input
                         type='text'
@@ -195,7 +194,7 @@ const AddSupplier_V = () => {
                         placeholder='yourname@yourcompany.com'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.email}
+                        value={supplier.supplierObj.email}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -203,7 +202,7 @@ const AddSupplier_V = () => {
                       width={40}
                       label='Substreet'
                       labelFor='sub_street'
-                      err={client.clientErr.sub_street as string}
+                      err={supplier.supplierErr.sub_street as string}
                     >
                       <input
                         id='sub_street'
@@ -213,7 +212,7 @@ const AddSupplier_V = () => {
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.sub_street}
+                        value={supplier.supplierObj.sub_street}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -221,7 +220,7 @@ const AddSupplier_V = () => {
                       width={40}
                       label='Street'
                       labelFor='street'
-                      err={client.clientErr.street as string}
+                      err={supplier.supplierErr.street as string}
                     >
                       <input
                         id='street'
@@ -231,7 +230,7 @@ const AddSupplier_V = () => {
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.street}
+                        value={supplier.supplierObj.street}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -239,7 +238,7 @@ const AddSupplier_V = () => {
                       width={20}
                       label='Barangay'
                       labelFor='barangay'
-                      err={client.clientErr.barangay as string}
+                      err={supplier.supplierErr.barangay as string}
                     >
                       <input
                         id='barangay'
@@ -249,7 +248,7 @@ const AddSupplier_V = () => {
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.barangay}
+                        value={supplier.supplierObj.barangay}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -257,7 +256,7 @@ const AddSupplier_V = () => {
                       width={40}
                       label='District / Municipality'
                       labelFor='district'
-                      err={client.clientErr.district as string}
+                      err={supplier.supplierErr.district as string}
                     >
                       <input
                         id='district'
@@ -267,7 +266,7 @@ const AddSupplier_V = () => {
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.district}
+                        value={supplier.supplierObj.district}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -275,7 +274,7 @@ const AddSupplier_V = () => {
                       width={40}
                       label='City / Province'
                       labelFor='city'
-                      err={client.clientErr.city as string}
+                      err={supplier.supplierErr.city as string}
                     >
                       <input
                         id='city'
@@ -285,7 +284,7 @@ const AddSupplier_V = () => {
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.city}
+                        value={supplier.supplierObj.city}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -293,7 +292,7 @@ const AddSupplier_V = () => {
                       width={20}
                       label='Zip Code'
                       labelFor='zip_code'
-                      err={client.clientErr.zip_code as string}
+                      err={supplier.supplierErr.zip_code as string}
                     >
                       <input
                         id='zip_code'
@@ -303,7 +302,7 @@ const AddSupplier_V = () => {
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.zip_code}
+                        value={supplier.supplierObj.zip_code}
                       />
                     </CustomContainer>
                   </div>

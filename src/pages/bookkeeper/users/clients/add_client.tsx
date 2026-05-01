@@ -340,7 +340,6 @@ const AddCustomer_V = () => {
                       label='Trade Name'
                       labelFor='trade_name'
                       err={client.clientErr.trade_name as string}
-                      required={client.clientObj.classification === 'NON-INDIVIDUAL' ? true : false}
                     >
                       <input
                         id='trade_name'
