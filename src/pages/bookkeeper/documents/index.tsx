@@ -27,13 +27,14 @@ const Documents_V = () => {
     setActiveRowId,
 
     handleBlur,
+    handleResubmit,
+    handleSubmitTpl,
     handleOpenModal,
     handleCloseModal,
     handlePageChange,
     handleCheckedTpls,
-    handleDownloadTemplate
   } = useDocuments()
-  const { message } = status
+  const { message, loader:tplLoader } = status
   const dataSource: TableRow[] = doc.docArr?.map(doc => ({
     id: doc.id,
     file_name: doc.file_name,
@@ -310,7 +311,8 @@ const Documents_V = () => {
               handleCloseModal()
           }}
         >
-          <div className={scss.tpls}>
+          <form onSubmit={handleSubmitTpl} className={scss.tpls}>
+            { tplLoader && <Loader scss={scss} position='absolute' />}
             <h3>
               Document Templates
             </h3>
@@ -342,10 +344,10 @@ const Documents_V = () => {
                 )
                 )
             }
-            <button type='button' className={scss.button+' '+scss.btnblue} onClick={handleDownloadTemplate}>
+            <button type='submit' className={scss.button+' '+scss.btnblue} disabled={!checkedTpl?.length} onKeyDown={handleResubmit}>
               Download Template
             </button>
-          </div>
+          </form>
         </Modal>
       </div>
   )

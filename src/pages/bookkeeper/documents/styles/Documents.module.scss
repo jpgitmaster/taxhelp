@@ -41,7 +41,7 @@
   }
 }
 .tpls{
-  @apply mt-2;
+  @apply mt-2 relative;
   h3{
     color: $blue;
     @apply text-xl font-semibold mb-1;
@@ -51,25 +51,63 @@
     .tpltype{
         border: 1px solid $gray;
         background-color: rgba($lightGray, .5);
-        @apply rounded-[20px] w-full m-0.5 p-4 cursor-pointer flex flex-row;
+        @apply rounded-[20px] relative w-full m-0.5 p-4 cursor-pointer flex flex-row;
         img{
             width: 30px;
             margin: 0 10px 0 0;
-            filter: invert(51%) sepia(60%) saturate(4288%) hue-rotate(2deg) brightness(103%) contrast(88%);
+            filter: invert(73%) sepia(24%) saturate(13%) hue-rotate(344deg) brightness(106%) contrast(95%);
         }
         input{
             @apply hidden;
         }
         strong{
           color: $blue;
-          @apply font-semibold;
+          @apply font-bold;
         }
         p{
+          color: $darkgray;
           @apply leading-tight text-[11px] italic;
         }
+        &:hover, &.checked{
+          border-color: $lightBlue;
+          background-color: rgba($lightBlue, .1);
+          img{
+            filter: invert(45%) sepia(15%) saturate(6682%) hue-rotate(179deg) brightness(102%) contrast(106%);
+          }
+          .checkmark {
+            background-color: rgba($lightBlue, .8);
+          }
+        }
         &.checked{
-            border: 1px solid $lightBlue;
-            background-color: rgba($lightBlue, .08);
+          input[type=checkbox]{
+            &:checked ~ .checkmark {
+              background-color: $lightBlue;
+              &:after {
+                @apply block;
+              }
+            }
+          }
+        }
+        input[type=checkbox]{
+          @apply w-0 h-0 opacity-0;
+          &:checked ~ .checkmark {
+            &:after {
+              @apply hidden;
+            }
+          }
+        }
+        .checkmark {
+          background-color: $gray;
+          @apply top-3 right-3 w-4 h-4 rounded-sm absolute;
+          &:after {
+            content: "";
+            border: solid $white;
+            border-width: 0 2px 2px 0;
+            -webkit-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+            @apply hidden absolute top-0.5 left-1.5 w-1.25 h-2.5;
+          }
         }
     }
     &:nth-child(2){

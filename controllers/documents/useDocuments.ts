@@ -1,6 +1,6 @@
 import useDocumentAPI from "./api";
 import useGlobal from '@/controllers/global/useGlobal';
-import { useState, useEffect, ChangeEvent } from "react";
+import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
 const useDocuments = () => {
     const {
         handleBlur,
@@ -18,7 +18,7 @@ const useDocuments = () => {
     } = useDocumentAPI()
     const [tableWidth, setTableWidth] = useState(0)
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [checkedTpl, setCheckedTpl ] = useState<string[]>([''])
+    const [checkedTpl, setCheckedTpl ] = useState<string[]>([])
     const [activeRowId, setActiveRowId] = useState<number | null>(null)
     const { refetch: downloadTemplate, isFetching: isDownloading } = useGetTemplate()
     const { data, isLoading, isFetching } = useGetDocuments(
@@ -30,9 +30,11 @@ const useDocuments = () => {
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
+        setCheckedTpl([])
     }
     const handleCloseModal = () => {
         setIsModalOpen(false);
+        setCheckedTpl([])
     };
     const handleCheckedTpls = (event: ChangeEvent<HTMLInputElement>) => {
         const { value, checked } = event.target;
@@ -75,7 +77,17 @@ const useDocuments = () => {
             console.error('Download failed:', error)
         }
     }
-
+    const handleSubmitTpl = async (e: SyntheticEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setStatus({...status, loader: true})
+        const timer = setTimeout(() => {
+            handleCloseModal()
+            handleDownloadTemplate()
+            setStatus({...status, loader: false})
+            return false
+        }, 500)
+        return () => clearTimeout(timer)
+    }
     useEffect(() => {
         if(data?.documents?.length){
             setDocument(
@@ -125,6 +137,8 @@ const useDocuments = () => {
 
         // HANDLES
         handleBlur,
+        handleResubmit,
+        handleSubmitTpl,
         handleOpenModal,
         handlePageChange,
         handleCloseModal,
