@@ -260,7 +260,7 @@ const Documents_V = () => {
               <button type='button' className={scss.button+' '+scss.btnorange}
                 onClick={handleOpenModal}
               >
-                Templates
+                Select Template
               </button>
               <form className={scss.searchComponent}
                   // onSubmit={handleSubmitSearch}
