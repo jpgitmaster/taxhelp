@@ -40,6 +40,50 @@
     }
   }
 }
+.tpls{
+  @apply mt-2;
+  h3{
+    color: $blue;
+    @apply text-xl font-semibold mb-1;
+  }
+  .tpl{
+    @apply p-0 my-4;
+    .tpltype{
+        border: 1px solid $gray;
+        background-color: rgba($lightGray, .5);
+        @apply rounded-[20px] w-full m-0.5 p-4 cursor-pointer flex flex-row;
+        img{
+            width: 30px;
+            margin: 0 10px 0 0;
+            filter: invert(51%) sepia(60%) saturate(4288%) hue-rotate(2deg) brightness(103%) contrast(88%);
+        }
+        input{
+            @apply hidden;
+        }
+        strong{
+          color: $blue;
+          @apply font-semibold;
+        }
+        p{
+          @apply leading-tight text-[11px] italic;
+        }
+        &.checked{
+            border: 1px solid $lightBlue;
+            background-color: rgba($lightBlue, .08);
+        }
+    }
+    &:nth-child(2){
+        .tpltype{
+            img{
+                @apply w-6.25 ml-1.25;
+            }
+        }
+    }
+  }
+  .button{
+    @apply my-4;
+  }
+}
 .tableRecords{
     @apply relative;
     .check{

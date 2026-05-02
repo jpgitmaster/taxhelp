@@ -34,7 +34,7 @@ const GCashPaymentPage = () => {
           </p>
       </div>
       <div className={scss.selectedPlan}>
-        <h3>Order Summary</h3>
+        <h3>Payment Summary</h3>
 
         <div className={scss.details}>
           <span>{plan} Plan</span>
@@ -43,7 +43,7 @@ const GCashPaymentPage = () => {
 
         <div className={scss.details}>
           <span>Billing Cycle</span>
-          <span>Monthly</span>
+          <span>{billing}</span>
         </div>
 
         <div className={scss.total}>

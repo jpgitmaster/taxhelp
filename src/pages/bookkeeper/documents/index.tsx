@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import Link from 'next/link'
+import { Modal } from 'antd'
 import Image from 'next/image'
 import type { ColumnsType } from 'antd/es/table'
 import scss from './styles/Documents.module.scss'
@@ -18,12 +19,18 @@ const Documents_V = () => {
     status,
     filter,
     loader,
+    checkedTpl,
     tableWidth,
     activeRowId,
+    isModalOpen,
 
     setActiveRowId,
 
+    handleBlur,
+    handleOpenModal,
+    handleCloseModal,
     handlePageChange,
+    handleCheckedTpls,
     handleDownloadTemplate
   } = useDocuments()
   const { message } = status
@@ -226,6 +233,20 @@ const Documents_V = () => {
       </div>
     },
   ]
+  const templates = [
+    {
+        value: 'template1',
+        label: 'DAT File Only',
+        icon: 'doc.svg',
+        description: 'Generate and export only the DAT file required for submission. Best for users who already maintain their own books of accounts.'
+    },
+    {
+        value: 'template2',
+        label: 'DAT File and Books of Accounts',
+        icon: 'docs.svg',
+        description: 'Generate the DAT file along with complete books of accounts, including organized financial records for reporting and compliance.'
+    },
+  ];
   return (
       <div>
         {
@@ -236,8 +257,10 @@ const Documents_V = () => {
               <Link href='/bookkeeper/documents/upload_new_document' className={scss.button+' '+scss.btnblue}>
                 Upload New Document
               </Link>
-              <button type='button' className={scss.button+' '+scss.btnorange} onClick={handleDownloadTemplate}>
-                Download Template
+              <button type='button' className={scss.button+' '+scss.btnorange}
+                onClick={handleOpenModal}
+              >
+                Templates
               </button>
               <form className={scss.searchComponent}
                   // onSubmit={handleSubmitSearch}
@@ -279,6 +302,51 @@ const Documents_V = () => {
             }
           </div>
         </div>
+
+        <Modal
+          footer={null}
+          open={isModalOpen}
+          onCancel={() => {
+              handleCloseModal()
+          }}
+        >
+          <div className={scss.tpls}>
+            <h3>
+              Document Templates
+            </h3>
+            {
+                templates.map((template, index) => (
+                    <div key={index} className={scss.tpl}>
+                        <label className={scss.tpltype
+                            + (checkedTpl.includes(template.value) ? ' '+scss.checked : '')
+                        }>
+                            <Image src={'/svgs/'+template.icon} alt={template.label} priority width={40} height={40} />
+                            <div>
+                                <strong>
+                                    {template.label}
+                                </strong>
+                                <p>
+                                    {template.description}
+                                </p>
+                            </div>
+                            <input type='checkbox'
+                                name='user_account'
+                                onKeyUp={handleBlur}
+                                value={template.value}
+                                checked={checkedTpl.includes(template.value)}
+                                onChange={handleCheckedTpls}
+                            />
+                            <span className={scss.checkmark}></span>
+                        </label>
+                    </div>
+                )
+                )
+            }
+            <button type='button' className={scss.button+' '+scss.btnblue} onClick={handleDownloadTemplate}>
+              Download Template
+            </button>
+          </div>
+        </Modal>
       </div>
   )
 }

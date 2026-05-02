@@ -1,6 +1,11 @@
 import useDocumentAPI from "./api";
-import { useState, useEffect } from "react";
+import useGlobal from '@/controllers/global/useGlobal';
+import { useState, useEffect, ChangeEvent } from "react";
 const useDocuments = () => {
+    const {
+        handleBlur,
+        handleResubmit,
+    } = useGlobal()
     const {
         doc,
         filter,
@@ -12,6 +17,8 @@ const useDocuments = () => {
         useGetDocuments
     } = useDocumentAPI()
     const [tableWidth, setTableWidth] = useState(0)
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [checkedTpl, setCheckedTpl ] = useState<string[]>([''])
     const [activeRowId, setActiveRowId] = useState<number | null>(null)
     const { refetch: downloadTemplate, isFetching: isDownloading } = useGetTemplate()
     const { data, isLoading, isFetching } = useGetDocuments(
@@ -20,6 +27,24 @@ const useDocuments = () => {
         filter.filter,
         filter.search
     )
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    }
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+    const handleCheckedTpls = (event: ChangeEvent<HTMLInputElement>) => {
+        const { value, checked } = event.target;
+        
+        if (checked) {
+            // Only one role can be checked at a time
+            setCheckedTpl([value]);
+        } else {
+            // If unchecked, clear the selection
+            setCheckedTpl([]);
+        }
+    };
     const handlePageChange = (current: number) => {
         setFilter((prev) => ({
             ...prev,
@@ -89,14 +114,21 @@ const useDocuments = () => {
         doc,
         filter,
         status,
+        checkedTpl,
         tableWidth,
         activeRowId,
+        isModalOpen,
         loader: isLoading || isFetching || isDownloading,
+
         // SET STATES
         setActiveRowId,
 
         // HANDLES
+        handleBlur,
+        handleOpenModal,
         handlePageChange,
+        handleCloseModal,
+        handleCheckedTpls,
         handleDownloadTemplate
     }
 }
