@@ -35,7 +35,8 @@ const useDashboard = () => {
         useGetSchedules,
         useGetScheduleCategories,
 
-        useCreateSchedule
+        useCreateSchedule,
+        useDeleteSchedule
     } = useDashboardAPI()
     const {
         filter: clientFilter,
@@ -108,6 +109,29 @@ const useDashboard = () => {
         clientFilter.search
     )
     const clientArr = dataClients?.clients;
+    const handleDeleteRecord = (id: number) => {
+        setStatus({...status, loader: true})
+        useDeleteSchedule.mutate(id, {
+            onSuccess: () => {
+                setDoc({
+                    clientSearch: '',
+                    selectedCategory: {
+                        id: null,
+                        name: '',
+                        color: '',
+                    },
+                    client: {
+                        id: null,
+                        last_name: '',
+                        first_name: '',
+                        trade_name: '',
+                        registered_name: '',
+                    },
+                })
+                handleCloseModal()
+            }
+        })
+    }
 
     const openEventModal = (event: EventLike) => {
         const start = event.start ? dayjs(event.start) : null;
@@ -218,7 +242,7 @@ const useDashboard = () => {
             ...prev,
             scheduleObj: {
                 ...prev.scheduleObj,
-                clientID: client.id
+                client_id: client.id
             }
         }))
     }
@@ -329,6 +353,7 @@ const useDashboard = () => {
         window.addEventListener('resize', handleResize);
 
         return () => window.removeEventListener('resize', handleResize);
+        
     }, []);
     return {
         // STATES
@@ -364,6 +389,7 @@ const useDashboard = () => {
         handleOpenModal,
         handleCloseModal,
         handleEventClick,
+        handleDeleteRecord,
         handleSelectClient,
         handleSelectCategory,
     }

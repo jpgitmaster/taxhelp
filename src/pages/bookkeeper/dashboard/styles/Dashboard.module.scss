@@ -4,7 +4,9 @@
 @use '@/styles/colors' as *;
 
 @reference 'tailwindcss';
-
+:global(.ant-modal), :global(.ant-modal .ant-modal-close) {
+    @apply outline-none!;
+}
 .dashboardWrapper {
     @apply min-h-screen px-2;
     /* CONTENT */
@@ -43,7 +45,7 @@
                 .createBtn {
                     color: $white;
                     background-color: $orange;
-                    @apply mb-5 cursor-pointer px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 float-left;
+                    @apply mb-5 cursor-pointer outline-none px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 float-left;
                 }
                 h3 {
                     color: $orange;

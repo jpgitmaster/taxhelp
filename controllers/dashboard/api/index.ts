@@ -106,13 +106,58 @@ const useDashboardAPI = () => {
             return res.data
         },
         onSuccess: () => {
-            setStatus({...status, loader: false})
+            setStatus(prev => ({
+                ...prev,
+                loader: false,
+                message: 'Schedule created successfully.'
+            }))
+
+            setTimeout(() => {
+                setStatus(prev => ({
+                    ...prev,
+                    message: ''
+                }))
+            }, 5000)
+
             setDashboard({
                 ...dashboard,
                 scheduleObj: initScheduleObj
             })
+
             queryClient.invalidateQueries({ queryKey: ['schedules'] })
         },
+        onError: (error: any) => {
+            console.log(error)
+        }
+    })
+
+    const useDeleteSchedule = useMutation({
+        mutationFn: async (id: number) => {
+            const res = await api.delete(`/api/${apiVersion}/schedules/${id}`)
+            return res.data
+        },
+
+        onSuccess: () => {
+            setDashboard({
+                ...dashboard,
+                scheduleObj: initScheduleObj
+            })
+            setStatus(prev => ({
+                ...prev,
+                loader: false,
+                message: 'Your schedule record has been deleted.'
+            }))
+            // auto-clear after 5s
+            setTimeout(() => {
+                setStatus(prev => ({
+                    ...prev,
+                    message: ''
+                }))
+            }, 5000)
+            
+            queryClient.invalidateQueries({ queryKey: ['schedules'] })
+        },
+
         onError: (error: any) => {
             console.log(error)
         }
@@ -135,6 +180,7 @@ const useDashboardAPI = () => {
         // MUTATION
         useCreateSchedule,
         useCreateCategory,
+        useDeleteSchedule,
 
         //HANDLES
     }

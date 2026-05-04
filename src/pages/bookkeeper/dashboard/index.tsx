@@ -10,6 +10,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import Loader from '@/components/reusables/RotatingLoader';
 import { initDashboard } from '@/controllers/dashboard/states';
 import useDashboard from '@/controllers/dashboard/useDashboard';
+import SuccessMessage from '@/components/reusables/SuccessMessage';
 import CustomContainer from '@/components/reusables/CustomContainer'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types';
@@ -52,11 +53,16 @@ const Dashboard_V = () => {
     handleCloseModal,
     handleEventClick,
     handleSelectClient,
+    handleDeleteRecord,
     handleSelectCategory,
   } = useDashboard()
-  const { loader } = status
+  const { message, loader } = status
   return (
       <div className={scss.dashboardWrapper}>
+        {
+          message &&
+          <SuccessMessage message={message} />
+        }
         <div className={scss.contentArea}>
           {/* STATS */}
           <div className={scss.statsGrid}>
@@ -76,7 +82,9 @@ const Dashboard_V = () => {
           <div className={scss.scheduleWrapper}>
             {/* UPCOMING SCHEDULES */}
             <div className={scss.upcomingList}>
-              <button className={scss.createBtn} onClick={handleOpenModal}>
+              <button className={scss.createBtn} onClick={() => {
+                handleOpenModal()
+              }}>
                 + Create Schedule
               </button>
               <h3>Upcoming Schedules</h3>
@@ -181,7 +189,7 @@ const Dashboard_V = () => {
                 <Popconfirm
                   title="Delete the record"
                   description="Are you sure to delete this schedule?"
-                  // onConfirm={() => handleDeleteRecord(Number(record.id))}
+                  onConfirm={() => handleDeleteRecord(Number(dashboard.scheduleObj.id))}
                   // onCancel={() => handleToggleDelete(Number(record.id))}
                   okText="Yes"
                   cancelText="No"
@@ -316,10 +324,10 @@ const Dashboard_V = () => {
                 >
                   {
                     dashboard.scheduleObj.id ?
-                    <input
-                      type='text'
+                    <textarea
                       id='description'
                       name='description'
+                      style={{minHeight: '100px'}}
                       value={dashboard.scheduleObj.description}
                       readOnly={dashboard.scheduleObj.id ? true : false}
                       className={dashboard.scheduleObj.id ? scss.lblContent : ''}
@@ -328,6 +336,7 @@ const Dashboard_V = () => {
                     <textarea
                       id='description'
                       name='description'
+                      style={{minHeight: '100px'}}
                       value={dashboard.scheduleObj.description}
                       onKeyUp={handleBlur}
                       onChange={handleChange}
