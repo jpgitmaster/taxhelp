@@ -36,6 +36,7 @@ const Dashboard_V = () => {
     // SET STATES
     setDoc,
     setDashboard,
+    openEventModal,
     setDisplayClients,
     setDisplayCategory,
     
@@ -87,7 +88,7 @@ const Dashboard_V = () => {
                     start: string
                     backgroundColor: string
                   }) =>
-                    <li key={event.id}>
+                    <li key={event.id} onClick={() => openEventModal(event)}>
                       <div  style={{backgroundColor: event.backgroundColor}} className={scss.categoryColor}></div>
                       <div>
                         <strong>

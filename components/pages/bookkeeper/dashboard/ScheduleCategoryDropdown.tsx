@@ -158,7 +158,7 @@ export default function ScheduleCategoryDropdown(props: {
             
             {
                 displayCategory &&
-                <div className={scss.dropwdownList} style={{padding: '10px 8px 30px'}}>
+                <div className={scss.dropwdownList} style={{padding: '10px 8px 30px', marginTop: '-5px'}}>
                     {(categoryLoader || loader) && (
                     <Loader scss={scss} position='absolute' />
                     )}
@@ -166,7 +166,7 @@ export default function ScheduleCategoryDropdown(props: {
                         !displayAddCat ?
                             (
                                 schedCategories?.length ?
-                                    <ul style={{height: 'auto', margin: 0}}>
+                                    <ul style={{height: '80px', padding: 0, margin: 0}}>
                                         {
                                             schedCategories?.length ? schedCategories?.map((option: { id: number,  name: string, color: string }) => 
                                                 <li key={option.id} onClick={() => {

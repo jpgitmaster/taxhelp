@@ -5,7 +5,13 @@ import { EventClickArg } from '@fullcalendar/core';
 import { ScheduleErr, ScheduleObj } from './types';
 import useGlobal from '@/controllers/global/useGlobal'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
-
+type EventLike = {
+  title: string;
+  start: Date | string;
+  end: Date | string | null;
+  backgroundColor?: string;
+  extendedProps?: EventExtendedProps;
+};
 type EventExtendedProps = {
   description?: string;
   categoryId?: number;
@@ -94,6 +100,34 @@ const useDashboard = () => {
         schedule: { usename: 'Schedule', required: true },
         category: { usename: 'Category', required: true },
     }
+
+    const openEventModal = (event: EventLike) => {
+        const start = event.start ? dayjs(event.start) : null;
+        const end = event.end ? dayjs(event.end) : start;
+
+        setDashboard(prev => ({
+            ...prev,
+            scheduleObj: {
+            ...prev.scheduleObj,
+            title: event.title,
+            schedule: start
+                ? [start, (end ?? start).subtract(1, 'day')]
+                : null,
+            description: event.extendedProps?.description || '',
+            }
+        }));
+
+        setDoc(prev => ({
+            ...prev,
+            selectedCategory: {
+            id: event.extendedProps?.categoryId ?? null,
+            name: event.extendedProps?.categoryName ?? '',
+            color: event.extendedProps?.categoryColor ?? event.backgroundColor ?? ''
+            }
+        }));
+
+        handleOpenModal();
+        };
 
     const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = useGetClients(    
         clientFilter.currentPage,
@@ -310,6 +344,7 @@ const useDashboard = () => {
         // SET STATES
         setDoc,
         setDashboard,
+        openEventModal,
         setDisplayClients,
         setDisplayCategory,
         
