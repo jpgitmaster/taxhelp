@@ -10,7 +10,7 @@ const useDashboardAPI = () => {
     const [filter, setFilter] = useState(initFilter)
     const apiVersion = process.env?.NEXT_PUBLIC_API_VERSION
     const [status, setStatus] = useState<Status>(initStatus)
-    const [displayAddCat, setDisplayAddCat] = useState(false)
+    
     const [dashboard, setDashboard] = useState<Dashboard>(initDashboard)
 
     const useGetScheduleCategories = () => {
@@ -82,7 +82,6 @@ const useDashboardAPI = () => {
             return res.data
         },
         onSuccess: () => {
-            setDisplayAddCat(false)
             queryClient.invalidateQueries({ queryKey: ['schedule_categories'] })
         },
         onError: (error: any) => {
@@ -123,13 +122,11 @@ const useDashboardAPI = () => {
         filter,
         status,
         dashboard,
-        displayAddCat,
         
         // SET STATES
         setFilter,
         setStatus,
         setDashboard,
-        setDisplayAddCat,
 
         // QUERIES
         useGetSchedules,

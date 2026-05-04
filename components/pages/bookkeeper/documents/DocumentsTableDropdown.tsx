@@ -88,7 +88,7 @@ export default function DocumentsTableDropdown(props: {
                 <div className={scss.dropwdownList} style={{padding: '15px 10px'}}>
                     {
                         options?.length ?
-                        <ul style={{height: 'auto', margin: 0}}>
+                        <ul style={{margin: 0}}>
                             {
                                 options?.length ? options?.map((option, index) => 
                                     <li key={index} value={option.value} onClick={() => {

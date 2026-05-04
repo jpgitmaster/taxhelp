@@ -27,8 +27,10 @@ const Dashboard_V = () => {
     clientArr,
     isModalOpen,
     clientLoader,
+    categoryLoader,
     displayClients,
     calendarHeight,
+    schedCategories,
     displayCategory,
 
     // SET STATES
@@ -76,9 +78,30 @@ const Dashboard_V = () => {
               </button>
               <h3>Upcoming Schedules</h3>
               <ul>
-                <li>Accounts Payable - 30 Mar 2026</li>
+                {
+                  events.map((event: {
+                    id: number
+                    end: string
+                    title: string
+                    start: string
+                    backgroundColor: string
+                  }) =>
+                    <li key={event.id}>
+                      <div  style={{backgroundColor: event.backgroundColor}} className={scss.categoryColor}></div>
+                      <div>
+                        <strong>
+                          {event.title}
+                        </strong>
+                        <p>
+                          {event.start === event.end ? dayjs(event.start).format('MMMMM DD, YYYY') : dayjs(event.start).format('MMMM DD, YYYY')+' - '+dayjs(event.end).format('MMMM DD, YYYY')}
+                        </p>
+                      </div>
+                    </li>
+                  )
+                }
+                {/* <li>Accounts Payable - 30 Mar 2026</li>
                 <li>Meeting - 2 Apr 2026</li>
-                <li>Filing & Documentation - 23 Apr 2026</li>
+                <li>Filing & Documentation - 23 Apr 2026</li> */}
               </ul>
             </div>
             {/* CALENDAR */}
@@ -94,6 +117,17 @@ const Dashboard_V = () => {
                     selectable={true}
                     contentHeight={calendarHeight}
                   />
+                  <div className={scss.legends}>
+                    <strong>Legends:</strong>
+                    <ul>
+                      {schedCategories?.map((category: { id: number,  name: string, color: string }) =>
+                        <li key={category.id}>
+                          <div  style={{backgroundColor: category.color}} className={scss.categoryColor}></div>
+                          {category.name}
+                        </li>
+                      )}
+                    </ul>
+                  </div>
                 </div>
               </div>
             }
@@ -183,7 +217,9 @@ const Dashboard_V = () => {
                 >
                   <ScheduleCategoryDropdown
                     doc={doc}
+                    categoryLoader={categoryLoader}
                     displayCategory={displayCategory}
+                    schedCategories={schedCategories}
                     err={dashboard.scheduleErr.category ? true : false}
                     setDisplayCategory={setDisplayCategory}
 

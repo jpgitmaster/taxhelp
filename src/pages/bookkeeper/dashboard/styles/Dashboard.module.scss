@@ -51,9 +51,15 @@
                 }
 
                 ul {
-                    @apply list-disc list-inside space-y-2 text-sm text-gray-700;
+                    @apply list-none space-y-2 text-sm text-gray-700;
                     li {
-                        @apply hover:text-blue-600 cursor-pointer;
+                        @apply cursor-pointer flex flex-row items-center mb-4;
+                        .categoryColor{
+                            @apply h-2 w-2 rounded-[50%] mr-3;
+                        }
+                        p{
+                            @apply text-[11px];
+                        }
                     }
                 }
             }
@@ -84,6 +90,22 @@
                 }
                 :global(.fc-theme-standard td){
                     @apply text-[13px];
+                }
+
+                .legends{
+                    @apply mt-1;
+                    strong{
+                        @apply text-[12px];
+                    }
+                    ul{
+                        @apply flex flex-row mt-1;
+                        li{
+                            @apply text-[11.5px] pr-3 flex flex-row items-center;
+                            .categoryColor{
+                                @apply h-2 w-2 rounded-[50%] mr-1;
+                            }
+                        }
+                    }
                 }
             }
         }

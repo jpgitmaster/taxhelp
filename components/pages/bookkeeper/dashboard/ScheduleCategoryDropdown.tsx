@@ -2,7 +2,6 @@ import Image from 'next/image'
 import { CirclePicker } from 'react-color'
 import { CloseOutlined } from '@ant-design/icons';
 import useGlobal from '@/controllers/global/useGlobal';
-import { ClientErr } from '@/controllers/clients/types';
 import useDashboardAPI from '@/controllers/dashboard/api';
 import Loader from '@/components/reusables/RotatingLoader';
 import scss from './../documents/styles/CustomDropdown.module.scss'
@@ -16,6 +15,10 @@ export default function ScheduleCategoryDropdown(props: {
             color: string
         }
     }
+    schedCategories: {
+        id: number,  name: string, color: string
+    }[]
+    categoryLoader: boolean
     displayCategory: boolean
 
     setDisplayCategory: Dispatch<SetStateAction<boolean>>
@@ -30,7 +33,9 @@ export default function ScheduleCategoryDropdown(props: {
     const {
         doc,
         err,
+        categoryLoader,
         displayCategory,
+        schedCategories,
         
         setDisplayCategory,
 
@@ -41,18 +46,16 @@ export default function ScheduleCategoryDropdown(props: {
         handleBlur,
     } = useGlobal()
     const {
-        displayAddCat,
-        setDisplayAddCat,
         useCreateCategory,
-        useGetScheduleCategories
     } = useDashboardAPI()
     const [catErr, setCatErr] = useState<any>({
         name: '',
         color: ''
     })
+    const [loader, setLoader] = useState(false)
     const [cat, setCat] = useState({ name: '', color: '' })
-    const { data, isLoading, isFetching } = useGetScheduleCategories()
-    const schedCategories = data?.schedCategories
+    const [displayAddCat, setDisplayAddCat] = useState(false)
+    
     const fieldValidations = {
         name: { usename: 'Category Name', required: true },
         color: { usename: 'Color', required: true },
@@ -102,21 +105,29 @@ export default function ScheduleCategoryDropdown(props: {
         setCatErr({ name: '', color: '' })
     }
     const handleCreateCategory = async () => {
+        setLoader(true)
         const {
             validation_errors,
             validation_has_error,
         } = ValidatorV3(fieldValidations, cat)
         if (validation_has_error) {
             const timer = setTimeout(() => {
+                setLoader(false)
                 setCatErr(validation_errors)
                 return false
             }, 500)
             return () => clearTimeout(timer)
         }
 
-        useCreateCategory.mutate(cat)
-        setCat({ name: '', color: '' })
-        setCatErr({ name: '', color: '' });
+        useCreateCategory.mutate(cat, {
+            onSuccess: () => {
+                setCat({ name: '', color: '' })
+                setCatErr({ name: '', color: '' })
+                setDisplayAddCat(false)
+                setLoader(false)
+            }
+        })
+        
     }
     return (
         <div className={scss.customDropdown} onClick={handleHeaderClick}>
@@ -148,7 +159,7 @@ export default function ScheduleCategoryDropdown(props: {
             {
                 displayCategory &&
                 <div className={scss.dropwdownList} style={{padding: '10px 8px 30px'}}>
-                    {(isLoading || isFetching) && (
+                    {(categoryLoader || loader) && (
                     <Loader scss={scss} position='absolute' />
                     )}
                     {
@@ -177,10 +188,13 @@ export default function ScheduleCategoryDropdown(props: {
                                                     {option.name}
                                                 </li>
                                             )
-                                            : ''
+                                            : null
                                         }
                                     </ul>
-                                    : null
+                                    :
+                                    <div className={scss.noCategory}>
+                                        No category yet
+                                    </div>
                             )
                         :
                         <div className={scss.categoryCreation}>

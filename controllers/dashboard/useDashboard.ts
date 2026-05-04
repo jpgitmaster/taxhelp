@@ -18,6 +18,8 @@ const useDashboard = () => {
         setStatus,
         setDashboard,
         useGetSchedules,
+        useGetScheduleCategories,
+
         useCreateSchedule
     } = useDashboardAPI()
     const {
@@ -60,9 +62,12 @@ const useDashboard = () => {
             registered_name: '',
         },
     })
-    const { data } = useGetSchedules()
+    const { data: scheds } = useGetSchedules()
+    const { data, isLoading: isLoadingCategories, isFetching: isFetchingCategories } = useGetScheduleCategories()
+    const schedCategories = data?.schedCategories
     const events =
-            data?.schedules?.map((schedule: ScheduleObj) => ({
+            scheds?.schedules?.map((schedule: ScheduleObj) => ({
+                id: schedule.id,
                 title: schedule.title,
                 start: dayjs(schedule.schedule_date_from).format('YYYY-MM-DD'),
                 end: dayjs(schedule.schedule_date_to).format('YYYY-MM-DD'),
@@ -248,7 +253,9 @@ const useDashboard = () => {
         displayClients,
         calendarHeight,
         displayCategory,
+        schedCategories,
         clientLoader: isLoadingClients || isFetchingClients,
+        categoryLoader: isLoadingCategories || isFetchingCategories,
 
         // SET STATES
         setDoc,
