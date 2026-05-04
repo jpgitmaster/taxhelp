@@ -184,6 +184,8 @@ const Dashboard_V = () => {
                     id='title'
                     name='title'
                     value={dashboard.scheduleObj.title}
+                    readOnly={dashboard.scheduleObj.id ? true : false}
+                    className={dashboard.scheduleObj.id ? scss.lblContent : ''}
                     onKeyUp={handleBlur}
                     onChange={handleChange}
                   />
@@ -196,19 +198,26 @@ const Dashboard_V = () => {
                   labelFor='schedule'
                   err={dashboard.scheduleErr.schedule as string}
                 >
-                  {/* <DatePicker
-                    // onChange={handleDate}
-                    // value={dashboard.scheduleObj.schedule}
-                    style={{ border: dashboard.scheduleErr.schedule ? '1px solid #F00' : '1px solid #D9D9D9' }}
-                  /> */}
-                  <RangePicker suffixIcon={''}
-                    onChange={handleDate}
-                    value={dashboard.scheduleObj.schedule}
-                    disabledDate={(current) => {
-                      return current && current < dayjs().startOf('day');
-                    }}
-                    style={{ border: dashboard.scheduleErr.schedule ? '1px solid #F00' : '1px solid #D9D9D9', margin: 0 }}
-                  />
+                  {
+                    dashboard.scheduleObj.id ?
+                    <input
+                      type='text'
+                      id='schedule'
+                      name='schedule'
+                      value={dashboard.scheduleObj.schedule?.[0]?.format('MM/DD/YYYY')+'  -  '+dashboard.scheduleObj.schedule?.[1]?.format('MM/DD/YYYY')}
+                      readOnly={dashboard.scheduleObj.id ? true : false}
+                      className={dashboard.scheduleObj.id ? scss.lblContent : ''}
+                    />
+                    :
+                    <RangePicker suffixIcon={''}
+                      onChange={handleDate}
+                      value={dashboard.scheduleObj.schedule}
+                      disabledDate={(current) => {
+                        return current && current < dayjs().startOf('day');
+                      }}
+                      style={{ border: dashboard.scheduleErr.schedule ? '1px solid #F00' : '1px solid #D9D9D9', margin: 0 }}
+                    />
+                  }
                 </CustomContainer>
                 <CustomContainer
                   scss={scss}
@@ -218,17 +227,37 @@ const Dashboard_V = () => {
                   labelFor='category'
                   err={dashboard.scheduleErr.category as string}
                 >
-                  <ScheduleCategoryDropdown
-                    doc={doc}
-                    categoryLoader={categoryLoader}
-                    displayCategory={displayCategory}
-                    schedCategories={schedCategories}
-                    err={dashboard.scheduleErr.category ? true : false}
-                    setDisplayCategory={setDisplayCategory}
+                  {
+                    dashboard.scheduleObj.id ?
+                    <>
+                      <div style={{
+                          backgroundColor: doc.selectedCategory.color,
+                          height: '10px', width: '10px',
+                          borderRadius: '50%', position: 'absolute',
+                          right: 0, top: '15px'
+                      }}></div>
+                      <input
+                        type='text'
+                        id='category'
+                        name='category'
+                        value={doc.selectedCategory.name}
+                        readOnly={dashboard.scheduleObj.id ? true : false}
+                        className={dashboard.scheduleObj.id ? scss.lblContent : ''}
+                      />
+                    </>
+                    :
+                    <ScheduleCategoryDropdown
+                      doc={doc}
+                      categoryLoader={categoryLoader}
+                      displayCategory={displayCategory}
+                      schedCategories={schedCategories}
+                      err={dashboard.scheduleErr.category ? true : false}
+                      setDisplayCategory={setDisplayCategory}
 
-                    handleToggle={handleToggle}
-                    handleSelectCategory={handleSelectCategory}
-                  />
+                      handleToggle={handleToggle}
+                      handleSelectCategory={handleSelectCategory}
+                    />
+                  }
                 </CustomContainer>
                 <CustomContainer
                   scss={scss}
@@ -256,18 +285,33 @@ const Dashboard_V = () => {
                   labelFor='description'
                   err={dashboard.scheduleErr.description as string}
                 >
-                  <textarea
-                    id='description'
-                    name='description'
-                    value={dashboard.scheduleObj.description}
-                    onKeyUp={handleBlur}
-                    onChange={handleChange}
-                  />
+                  {
+                    dashboard.scheduleObj.id ?
+                    <input
+                      type='text'
+                      id='description'
+                      name='description'
+                      value={dashboard.scheduleObj.description}
+                      readOnly={dashboard.scheduleObj.id ? true : false}
+                      className={dashboard.scheduleObj.id ? scss.lblContent : ''}
+                    />
+                    :
+                    <textarea
+                      id='description'
+                      name='description'
+                      value={dashboard.scheduleObj.description}
+                      onKeyUp={handleBlur}
+                      onChange={handleChange}
+                    />
+                  }
                 </CustomContainer>
               </div>
-              <button type='submit' className={scss.button+' '+scss.btnblue} style={{display: 'block', maxWidth: '300px', margin: '-10px auto 30px'}} onKeyDown={handleResubmit}>
-                Save Schedule
-              </button>
+              {
+                !dashboard.scheduleObj.id &&
+                <button type='submit' className={scss.button+' '+scss.btnblue} style={{display: 'block', maxWidth: '300px', margin: '-10px auto 30px'}} onKeyDown={handleResubmit}>
+                  Save Schedule
+                </button>
+              }
             </form>
           </div>
         </Modal>
