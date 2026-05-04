@@ -1,7 +1,7 @@
 const initScheduleObj = {
     id: null,
     title: '',
-    clientID: null,
+    client_id: null,
     category: {
         id: null,
         name: '',

@@ -1,9 +1,17 @@
-import dayjs, { Dayjs } from 'dayjs';
 import useDashboardAPI from './api';
-import { ScheduleErr, ScheduleObj } from './types';
+import dayjs, { Dayjs } from 'dayjs';
 import useClientAPI from '../clients/api';
+import { EventClickArg } from '@fullcalendar/core';
+import { ScheduleErr, ScheduleObj } from './types';
 import useGlobal from '@/controllers/global/useGlobal'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
+
+type EventExtendedProps = {
+  description?: string;
+  categoryId?: number;
+  categoryName?: string;
+  categoryColor?: string;
+};
 import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
 const useDashboard = () => {
     const {
@@ -66,14 +74,21 @@ const useDashboard = () => {
     const { data, isLoading: isLoadingCategories, isFetching: isFetchingCategories } = useGetScheduleCategories()
     const schedCategories = data?.schedCategories
     const events =
-            scheds?.schedules?.map((schedule: ScheduleObj) => ({
-                id: schedule.id,
-                title: schedule.title,
-                start: dayjs(schedule.schedule_date_from).format('YYYY-MM-DD'),
-                end: dayjs(schedule.schedule_date_to).format('YYYY-MM-DD'),
-                backgroundColor: schedule.category?.color,
-                borderColor: schedule.category?.color,
-            })) || [];
+        scheds?.schedules?.map((schedule: ScheduleObj) => ({
+            id: schedule.id,
+            title: schedule.title,
+            client_id: schedule.client_id,
+            start: dayjs(schedule.schedule_date_from).format('YYYY-MM-DD'),
+            end: dayjs(schedule.schedule_date_to).format('YYYY-MM-DD'),
+            backgroundColor: schedule.category?.color,
+            borderColor: schedule.category?.color,
+            extendedProps: {
+            description: schedule.description,
+            categoryId: schedule.category?.id,
+            categoryName: schedule.category?.name,
+            categoryColor: schedule.category?.color
+            }
+        })) || [];
     const fieldValidations = {
         title: { usename: 'Title', required: true },
         schedule: { usename: 'Schedule', required: true },
@@ -184,6 +199,41 @@ const useDashboard = () => {
 
         handleRemoveErr(dashboard.scheduleErr, 'schedule')
     }
+
+    const handleEventClick = (clickInfo: EventClickArg) => {
+        const event = clickInfo.event;
+        const props = event.extendedProps as EventExtendedProps;
+
+        const start = event.start;
+        const end = event.end;
+
+        setDashboard({
+            ...dashboard,
+            scheduleObj: {
+            ...dashboard.scheduleObj,
+            title: event.title,
+            schedule: start
+                ? [
+                    dayjs(start),
+                    dayjs(end ?? start).subtract(1, 'day') // 🔥 fix here
+                ]
+                : null,
+            description: props.description || '',
+            }
+        });
+
+        setDoc({
+            ...doc,
+            selectedCategory: {
+            id: props.categoryId ?? null,
+            name: props.categoryName ?? '',
+            color: props.categoryColor ?? ''
+            }
+        });
+
+        handleOpenModal();
+    };
+
     const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         setStatus({...status, loader: true})
@@ -273,6 +323,7 @@ const useDashboard = () => {
         handleRemoveErr,
         handleOpenModal,
         handleCloseModal,
+        handleEventClick,
         handleSelectClient,
         handleSelectCategory,
     }

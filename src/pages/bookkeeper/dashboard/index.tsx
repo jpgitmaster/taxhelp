@@ -48,6 +48,7 @@ const Dashboard_V = () => {
     handleResubmit,
     handleOpenModal,
     handleCloseModal,
+    handleEventClick,
     handleSelectClient,
     handleSelectCategory,
   } = useDashboard()
@@ -115,6 +116,7 @@ const Dashboard_V = () => {
                     events={events}
                     editable={true}
                     selectable={true}
+                    eventClick={handleEventClick}
                     contentHeight={calendarHeight}
                   />
                   <div className={scss.legends}>

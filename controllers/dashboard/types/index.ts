@@ -2,7 +2,7 @@ import { Dayjs } from 'dayjs';
 interface ScheduleObj{
   id: number | null
   title: string
-  clientID: number | null
+  client_id: number | null
   category: {
     id: null | number
     name: string

@@ -96,7 +96,7 @@ const useDashboardAPI = () => {
             const res = await api.post(`/api/${apiVersion}/schedules`, {
                 title: schedule.title,
                 schedule_date_to: endDate,
-                client_id: schedule.clientID,
+                client_id: schedule.client_id,
                 schedule_date_from: startDate,
                 category_id: schedule.category.id,
                 description: schedule.description,
