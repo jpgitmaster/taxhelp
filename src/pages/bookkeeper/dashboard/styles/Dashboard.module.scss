@@ -118,6 +118,21 @@
         font-weight: 500;
         @apply text-[25px] mt-1 mb-8;
     }
+    .actions{
+        @apply float-right w-20 -mt-10;
+        .action{
+            @apply cursor-pointer;
+            &.edit{
+                @apply relative -top-px;
+                span{
+                    @apply m-0;
+                }
+            }
+        }
+    }
+    .schedForm{
+        @apply clear-both w-full;
+    }
 }
 @media (max-width: 768px) {
   .dashboardWrapper {

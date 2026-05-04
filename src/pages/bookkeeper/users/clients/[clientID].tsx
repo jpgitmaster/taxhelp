@@ -26,7 +26,7 @@ const Client_V = () => {
           <SuccessMessage message={message} />
         }
         { (loader || isLoading) && <Loader scss={scss} position='absolute' />}
-        <Link href={`/bookkeeper/clients/${client.clientObj.id}/edit`} className={scss.editLink}>
+        <Link href={`/bookkeeper/users/clients/${client.clientObj.id}/edit`} className={scss.editLink}>
           <Image src='/svgs/edit.svg' alt='Edit Details' priority width={20} height={20} unoptimized={true} />
           Edit Details
         </Link>

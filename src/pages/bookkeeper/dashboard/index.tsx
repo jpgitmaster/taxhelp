@@ -1,10 +1,11 @@
 import dayjs from 'dayjs';
-import { Modal, DatePicker } from 'antd';
+import Image from 'next/image';
 import { getSession } from 'next-auth/react';
 import FullCalendar from '@fullcalendar/react';
 import scss from './styles/Dashboard.module.scss';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import { Modal, DatePicker, Popconfirm } from 'antd';
 import interactionPlugin from '@fullcalendar/interaction';
 import Loader from '@/components/reusables/RotatingLoader';
 import { initDashboard } from '@/controllers/dashboard/states';
@@ -168,7 +169,35 @@ const Dashboard_V = () => {
             <h3 className={scss.addSchedLbl}>
               {dashboard.scheduleObj.id ? 'View' : 'Add'}  Schedule
             </h3>
-            <form onSubmit={handleSubmit}>
+            {
+              dashboard.scheduleObj.id &&
+              <div className={scss.actions}>
+                <button type='button' className={scss.action+' '+scss.edit}>
+                    <Image src='/svgs/edit.svg' alt='Edit' priority width={20} height={20} unoptimized={true} />
+                    <span>
+                        Edit
+                    </span>
+                </button>
+                <Popconfirm
+                  title="Delete the record"
+                  description="Are you sure to delete this schedule?"
+                  // onConfirm={() => handleDeleteRecord(Number(record.id))}
+                  // onCancel={() => handleToggleDelete(Number(record.id))}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <button type='button'
+                    // onClick={() => handleToggleDelete(Number(record.id))}
+                    className={scss.action+' '+scss.delete}>
+                      <Image src='/svgs/delete.svg' alt='Delete' priority width={18} height={18} unoptimized={true} />
+                      <span>
+                          Delete
+                      </span>
+                  </button>
+                </Popconfirm>
+              </div>
+            }
+            <form onSubmit={handleSubmit} className={scss.schedForm}>
               { loader && <Loader scss={scss} position='absolute' />}
               <div className={scss.cards}>
                 <CustomContainer
