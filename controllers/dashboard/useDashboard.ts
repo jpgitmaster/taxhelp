@@ -1,6 +1,6 @@
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import useDashboardAPI from './api';
-import { ScheduleErr } from './types';
+import { ScheduleErr, ScheduleObj } from './types';
 import useClientAPI from '../clients/api';
 import useGlobal from '@/controllers/global/useGlobal'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
@@ -17,6 +17,8 @@ const useDashboard = () => {
 
         setStatus,
         setDashboard,
+        useGetSchedules,
+        useCreateSchedule
     } = useDashboardAPI()
     const {
         filter: clientFilter,
@@ -32,8 +34,8 @@ const useDashboard = () => {
     const [doc, setDoc] = useState<{
         clientSearch: string
         selectedCategory: {
-            value: string,
-            label: string,
+            id: null | number
+            name: string
             color: string
         },
         client: {
@@ -46,8 +48,8 @@ const useDashboard = () => {
     }>({
         clientSearch: '',
         selectedCategory: {
-            value: '',
-            label: '',
+            id: null,
+            name: '',
             color: '',
         },
         client: {
@@ -58,6 +60,15 @@ const useDashboard = () => {
             registered_name: '',
         },
     })
+    const { data } = useGetSchedules()
+    const events =
+            data?.schedules?.map((schedule: ScheduleObj) => ({
+                title: schedule.title,
+                start: dayjs(schedule.schedule_date_from).format('YYYY-MM-DD'),
+                end: dayjs(schedule.schedule_date_to).format('YYYY-MM-DD'),
+                backgroundColor: schedule.category?.color,
+                borderColor: schedule.category?.color,
+            })) || [];
     const fieldValidations = {
         title: { usename: 'Title', required: true },
         schedule: { usename: 'Schedule', required: true },
@@ -77,7 +88,7 @@ const useDashboard = () => {
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
-    
+
     const handleChange = (
         event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => {
@@ -105,8 +116,8 @@ const useDashboard = () => {
         handleRemoveErr(dashboard.scheduleErr, name)
     }
     const handleSelectCategory = (selectedCategory: {
-        value: string,
-        label: string,
+        id: null | number
+        name: string,
         color: string
     }) => {
         setDoc({
@@ -146,6 +157,13 @@ const useDashboard = () => {
             ...doc,
             client: client
         })
+        setDashboard(prev => ({
+            ...prev,
+            scheduleObj: {
+                ...prev.scheduleObj,
+                clientID: client.id
+            }
+        }))
     }
     const handleDate = (
         dates: [Dayjs | null, Dayjs | null] | null,
@@ -169,7 +187,7 @@ const useDashboard = () => {
             validation_has_error,
         } = ValidatorV3(fieldValidations, {
             ...dashboard.scheduleObj,
-            category: dashboard.scheduleObj?.category?.label ? dashboard.scheduleObj.category.label : '',
+            category: dashboard.scheduleObj?.category?.name ? dashboard.scheduleObj.category.name : '',
             schedule: dashboard.scheduleObj?.schedule ? String(dashboard.scheduleObj) : '',
         })
         if (validation_has_error) {
@@ -183,6 +201,27 @@ const useDashboard = () => {
             }, 500)
             return () => clearTimeout(timer)
         }
+        
+        useCreateSchedule.mutate(dashboard.scheduleObj, {
+            onSuccess: () => {
+                setDoc({
+                    clientSearch: '',
+                    selectedCategory: {
+                        id: null,
+                        name: '',
+                        color: '',
+                    },
+                    client: {
+                        id: null,
+                        last_name: '',
+                        first_name: '',
+                        trade_name: '',
+                        registered_name: '',
+                    },
+                })
+                handleCloseModal()
+            }
+        })
     }
     useEffect(() => {
         const handleResize = () => {
@@ -200,6 +239,7 @@ const useDashboard = () => {
     return {
         // STATES
         doc,
+        events,
         status,
         mounted,
         dashboard,

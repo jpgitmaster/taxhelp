@@ -2,13 +2,15 @@ import { Dayjs } from 'dayjs';
 interface ScheduleObj{
   id: number | null
   title: string
-  client: string
+  clientID: number | null
   category: {
-    value: string
-    label: string
+    id: null | number
+    name: string
     color: string
   }
   description: string
+  schedule_date_to: string
+  schedule_date_from: string
   schedule: [Dayjs | null, Dayjs | null] | null
 }
 

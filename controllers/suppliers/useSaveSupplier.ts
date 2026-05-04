@@ -117,6 +117,15 @@ const useSaveSupplier = () => {
                     }
                 })
                 break;
+            case 'phone':
+                setSupplier({
+                    ...supplier,
+                    supplierObj: {
+                        ...supplier.supplierObj,
+                        phone: formatPhoneNumber(value)
+                    }
+                })
+                break;
             default:
                 setSupplier({
                     ...supplier,

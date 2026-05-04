@@ -1,19 +1,22 @@
 const initScheduleObj = {
     id: null,
     title: '',
-    client: '',
+    clientID: null,
     category: {
-        value: '',
-        label: '',
+        id: null,
+        name: '',
         color: ''
     },
     description: '',
     schedule: null,
+    schedule_date_to: '',
+    schedule_date_from: '',
 }
 const initDashboard = {
     scheduleArr: [],
     scheduleErr: {
         title: '',
+        client: '',
         category: '',
         description: '',
         endDateTime: '',
@@ -24,5 +27,6 @@ const initDashboard = {
 }
 
 export {
-    initDashboard
+    initDashboard,
+    initScheduleObj
 };

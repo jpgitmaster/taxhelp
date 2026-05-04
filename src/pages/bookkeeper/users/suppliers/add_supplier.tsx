@@ -161,7 +161,7 @@ const AddSupplier_V = () => {
                     }
                     <CustomContainer
                       scss={scss}
-                      width={50}
+                      width={100}
                       label='Trade Name'
                       labelFor='trade_name'
                       err={supplier.supplierErr.trade_name as string}
@@ -180,7 +180,25 @@ const AddSupplier_V = () => {
                     <CustomContainer
                       scss={scss}
                       width={50}
-                      required={true}
+                      label='Phone Number'
+                      labelFor='phone'
+                      err={supplier.supplierErr.phone as string}
+                    >
+                      <input
+                        id='phone'
+                        type='text'
+                        name='phone'
+                        maxLength={30}
+                        autoComplete='off'
+                        placeholder='(+63)926-123-4567'
+                        onKeyUp={handleBlur}
+                        onChange={handleChange}
+                        value={supplier.supplierObj.phone}
+                      />
+                    </CustomContainer>
+                    <CustomContainer
+                      scss={scss}
+                      width={50}
                       label='Email'
                       labelFor='email'
                       err={supplier.supplierErr.email as string}

@@ -117,6 +117,15 @@ const useSaveCustomer = () => {
                     }
                 })
                 break;
+            case 'phone':
+                setCustomer({
+                    ...customer,
+                    customerObj: {
+                        ...customer.customerObj,
+                        phone: formatPhoneNumber(value)
+                    }
+                })
+                break;
             default:
                 setCustomer({
                     ...customer,

@@ -180,7 +180,6 @@ const AddCustomer_V = () => {
                     <CustomContainer
                       scss={scss}
                       width={50}
-                      required={true}
                       label='Phone Number'
                       labelFor='phone'
                       err={customer.customerErr.phone as string}
@@ -200,7 +199,6 @@ const AddCustomer_V = () => {
                     <CustomContainer
                       scss={scss}
                       width={50}
-                      required={true}
                       label='Email'
                       labelFor='email'
                       err={customer.customerErr.email as string}

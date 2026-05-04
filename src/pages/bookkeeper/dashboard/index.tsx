@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { Modal, DatePicker } from 'antd';
 import { getSession } from 'next-auth/react';
 import FullCalendar from '@fullcalendar/react';
@@ -19,6 +20,7 @@ const Dashboard_V = () => {
   const {
     // STATES
     doc,
+    events,
     status,
     mounted,
     dashboard,
@@ -87,11 +89,7 @@ const Dashboard_V = () => {
                   <FullCalendar
                     plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                     initialView="dayGridMonth"
-                    events={[
-                      { title: 'Accounts Payable', date: '2026-03-30' },
-                      { title: 'Meeting', date: '2026-04-02' },
-                      { title: 'Filing & Documentation', date: '2026-04-23' },
-                    ]}
+                    events={events}
                     editable={true}
                     selectable={true}
                     contentHeight={calendarHeight}
@@ -121,8 +119,8 @@ const Dashboard_V = () => {
               setDoc({
                 ...doc,
                 selectedCategory: {
-                  value: '',
-                  label: '',
+                  id: null,
+                  name: '',
                   color: ''
                 }
               })
@@ -169,7 +167,10 @@ const Dashboard_V = () => {
                   <RangePicker suffixIcon={''}
                     onChange={handleDate}
                     value={dashboard.scheduleObj.schedule}
-                    style={{ border: dashboard.scheduleErr.schedule ? '1px solid #F00' : '1px solid #D9D9D9' }}
+                    disabledDate={(current) => {
+                      return current && current < dayjs().startOf('day');
+                    }}
+                    style={{ border: dashboard.scheduleErr.schedule ? '1px solid #F00' : '1px solid #D9D9D9', margin: 0 }}
                   />
                 </CustomContainer>
                 <CustomContainer
@@ -182,23 +183,6 @@ const Dashboard_V = () => {
                 >
                   <ScheduleCategoryDropdown
                     doc={doc}
-                    options={[
-                      {
-                        label: 'Holidays',
-                        value: '',
-                        color: '#0077c0',
-                      },
-                      {
-                        label: 'Client Schedule',
-                        value: '',
-                        color: '#14b11c',
-                      },
-                      {
-                        label: 'Deadlines',
-                        value: '',
-                        color: '#f00',
-                      }
-                    ]}
                     displayCategory={displayCategory}
                     err={dashboard.scheduleErr.category ? true : false}
                     setDisplayCategory={setDisplayCategory}
@@ -212,7 +196,7 @@ const Dashboard_V = () => {
                   width={100}
                   label='Client'
                   labelFor='client'
-                  err={dashboard.scheduleObj.client as string}
+                  err={dashboard.scheduleErr.client as string}
                 >
                   <ClientsDropdown
                     doc={doc}
@@ -229,7 +213,7 @@ const Dashboard_V = () => {
                 <CustomContainer
                   scss={scss}
                   width={100}
-                  label='Description'
+                  label='Agenda'
                   labelFor='description'
                   err={dashboard.scheduleErr.description as string}
                 >

@@ -1,37 +1,35 @@
 import Image from 'next/image'
 import { CirclePicker } from 'react-color'
+import { CloseOutlined } from '@ant-design/icons';
+import useGlobal from '@/controllers/global/useGlobal';
+import { ClientErr } from '@/controllers/clients/types';
+import useDashboardAPI from '@/controllers/dashboard/api';
+import Loader from '@/components/reusables/RotatingLoader';
 import scss from './../documents/styles/CustomDropdown.module.scss'
-import CustomContainer from '@/components/reusables/CustomContainer'
-import { useRef, useEffect, MouseEvent, Dispatch, SetStateAction, useState } from 'react'
+import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
+import { useRef, useEffect, MouseEvent, Dispatch, SetStateAction, useState, ChangeEvent } from 'react'
 export default function ScheduleCategoryDropdown(props: {
     err: boolean
     doc: {
         selectedCategory: {
-            value: string,
-            label: string,
+            name: string,
             color: string
         }
     }
-    options: {
-        label: string
-        value: string
-        color: string
-    }[]
     displayCategory: boolean
 
     setDisplayCategory: Dispatch<SetStateAction<boolean>>
 
     handleToggle(dropdown: string): void
     handleSelectCategory(selectedCategory: {
-        value: string,
-        label: string
+        name: string,
+        color: string
     }): void
     
 }) {
     const {
         doc,
         err,
-        options,
         displayCategory,
         
         setDisplayCategory,
@@ -39,7 +37,26 @@ export default function ScheduleCategoryDropdown(props: {
         handleToggle,
         handleSelectCategory,
     } = props
-    const [displayAddCat, setDisplayAddCat] = useState(false)
+    const {
+        handleBlur,
+    } = useGlobal()
+    const {
+        displayAddCat,
+        setDisplayAddCat,
+        useCreateCategory,
+        useGetScheduleCategories
+    } = useDashboardAPI()
+    const [catErr, setCatErr] = useState<any>({
+        name: '',
+        color: ''
+    })
+    const [cat, setCat] = useState({ name: '', color: '' })
+    const { data, isLoading, isFetching } = useGetScheduleCategories()
+    const schedCategories = data?.schedCategories
+    const fieldValidations = {
+        name: { usename: 'Category Name', required: true },
+        color: { usename: 'Color', required: true },
+    }
     // CLICK OUTSIDE
     const useOutsideClick = (callback: () => void) => {
         const ref = useRef<HTMLDivElement>(null)
@@ -66,6 +83,41 @@ export default function ScheduleCategoryDropdown(props: {
         event.stopPropagation();
     };
     const ref = useOutsideClick(handleClickOutside)
+
+    const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const { name, value } = event.target
+        // setRole({ ...role, [name]: value });
+        setCat({
+            ...cat,
+            [name]: value
+        })
+        setCatErr({ name: '', color: '' })
+    }
+    // HANDLE COLOR CHANGES
+    const handleColorChange = (color: { hex: string }) => {
+        setCat({
+            ...cat,
+            color: color.hex
+        })
+        setCatErr({ name: '', color: '' })
+    }
+    const handleCreateCategory = async () => {
+        const {
+            validation_errors,
+            validation_has_error,
+        } = ValidatorV3(fieldValidations, cat)
+        if (validation_has_error) {
+            const timer = setTimeout(() => {
+                setCatErr(validation_errors)
+                return false
+            }, 500)
+            return () => clearTimeout(timer)
+        }
+
+        useCreateCategory.mutate(cat)
+        setCat({ name: '', color: '' })
+        setCatErr({ name: '', color: '' });
+    }
     return (
         <div className={scss.customDropdown} onClick={handleHeaderClick}>
             <div className={scss.dropdownInput + (err ? ' '+scss.err : '')} onClick={() => handleToggle('categories')} ref={ref}
@@ -89,20 +141,24 @@ export default function ScheduleCategoryDropdown(props: {
                         height: '10px', width: '10px',
                         borderRadius: '50%', marginRight: '5px'
                     }}></div>
-                    {doc.selectedCategory.label} &nbsp; {err}
+                    {doc.selectedCategory.name} &nbsp; {err}
                 </div>
             </div>
+            
             {
                 displayCategory &&
-                <div className={scss.dropwdownList} style={{padding: '15px 10px 30px'}}>
+                <div className={scss.dropwdownList} style={{padding: '10px 8px 30px'}}>
+                    {(isLoading || isFetching) && (
+                    <Loader scss={scss} position='absolute' />
+                    )}
                     {
                         !displayAddCat ?
                             (
-                                options?.length ?
+                                schedCategories?.length ?
                                     <ul style={{height: 'auto', margin: 0}}>
                                         {
-                                            options?.length ? options?.map((option, index) => 
-                                                <li key={index} value={option.value} onClick={() => {
+                                            schedCategories?.length ? schedCategories?.map((option: { id: number,  name: string, color: string }) => 
+                                                <li key={option.id} onClick={() => {
                                                     setDisplayCategory(false)
                                                     handleSelectCategory(option)
                                                 }}
@@ -118,7 +174,7 @@ export default function ScheduleCategoryDropdown(props: {
                                                         height: '10px', width: '10px',
                                                         borderRadius: '50%', marginRight: '5px'
                                                     }}></div>
-                                                    {option.label}
+                                                    {option.name}
                                                 </li>
                                             )
                                             : ''
@@ -127,21 +183,38 @@ export default function ScheduleCategoryDropdown(props: {
                                     : null
                             )
                         :
-                        <div style={{paddingInline: '5px', marginBottom: '10px'}}>
-                            <input
-                                type='text'
-                                id='category_name'
-                                name='category_name'
-                                placeholder='Category Name'
-                                // value={dashboard.scheduleObj.category_name}
-                                // onKeyUp={handleBlur}
-                                // onChange={handleChange}
-                                style={{marginBottom: '15px'}}
-                            />
+                        <div className={scss.categoryCreation}>
+                            <button onClick={() =>
+                                {
+                                    setDisplayAddCat(false);
+                                    setCat({ name: '', color: '' });
+                                    setCatErr({ name: '', color: '' });
+                                }
+                            } className={scss.categoryClose}>
+                                <CloseOutlined style={{width: '100%'}} />
+                            </button>
+                            <div className={scss.inputCategory + ((catErr.name || catErr.color) ? ' '+scss.catErr : '')}>
+                                <div className={scss.selectedColor} style={{
+                                    backgroundColor: cat.color || ''
+                                }}></div>
+                                <input
+                                    type='text'
+                                    name='name'
+                                    placeholder='Category Name'
+                                    value={cat.name}
+                                    maxLength={30}
+                                    onKeyUp={handleBlur}
+                                    onChange={handleChange}
+                                    style={{marginBottom: '20px'}}
+                                />
+                                <span className={scss.catErr}>{catErr.name ? catErr.name : catErr.color ? catErr.color : ''}&nbsp;</span>
+                            </div>
                             <CirclePicker
                                 width='220px'
-                                circleSize={15}   // default is ~28
+                                circleSize={15}
                                 circleSpacing={8}
+                                onChangeComplete={handleColorChange}
+                                color={cat.color || ''}
                             />
                         </div>
                     }
@@ -152,7 +225,9 @@ export default function ScheduleCategoryDropdown(props: {
                                 Create New Category
                             </button>
                             :
-                            <button type='button' onClick={() => setDisplayAddCat(false)}>
+                            <button type='button' onClick={() => {
+                                handleCreateCategory();
+                            }}>
                                 Save New Category
                             </button>
                         }
