@@ -166,7 +166,7 @@ const Dashboard_V = () => {
         >
           <div className={scss.addSchedule}>
             <h3 className={scss.addSchedLbl}>
-              Add Schedule
+              {dashboard.scheduleObj.id ? 'View' : 'Add'}  Schedule
             </h3>
             <form onSubmit={handleSubmit}>
               { loader && <Loader scss={scss} position='absolute' />}

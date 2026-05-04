@@ -6,11 +6,12 @@ import { ScheduleErr, ScheduleObj } from './types';
 import useGlobal from '@/controllers/global/useGlobal'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
 type EventLike = {
-  title: string;
-  start: Date | string;
-  end: Date | string | null;
-  backgroundColor?: string;
-  extendedProps?: EventExtendedProps;
+    id: number | null
+    title: string;
+    start: Date | string;
+    end: Date | string | null;
+    backgroundColor?: string;
+    extendedProps?: EventExtendedProps;
 };
 type EventExtendedProps = {
   description?: string;
@@ -100,6 +101,13 @@ const useDashboard = () => {
         schedule: { usename: 'Schedule', required: true },
         category: { usename: 'Category', required: true },
     }
+    const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = useGetClients(    
+        clientFilter.currentPage,
+        clientFilter.recordsLimit,
+        clientFilter.filter,
+        clientFilter.search
+    )
+    const clientArr = dataClients?.clients;
 
     const openEventModal = (event: EventLike) => {
         const start = event.start ? dayjs(event.start) : null;
@@ -109,33 +117,27 @@ const useDashboard = () => {
             ...prev,
             scheduleObj: {
             ...prev.scheduleObj,
-            title: event.title,
-            schedule: start
-                ? [start, (end ?? start).subtract(1, 'day')]
-                : null,
-            description: event.extendedProps?.description || '',
+                id: event.id,
+                title: event.title,
+                schedule: start
+                    ? [start, (end ?? start).subtract(1, 'day')]
+                    : null,
+                description: event.extendedProps?.description || '',
             }
         }));
 
         setDoc(prev => ({
             ...prev,
             selectedCategory: {
-            id: event.extendedProps?.categoryId ?? null,
-            name: event.extendedProps?.categoryName ?? '',
-            color: event.extendedProps?.categoryColor ?? event.backgroundColor ?? ''
+                id: event.extendedProps?.categoryId ?? null,
+                name: event.extendedProps?.categoryName ?? '',
+                color: event.extendedProps?.categoryColor ?? event.backgroundColor ?? ''
             }
         }));
 
         handleOpenModal();
-        };
-
-    const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = useGetClients(    
-        clientFilter.currentPage,
-        clientFilter.recordsLimit,
-        clientFilter.filter,
-        clientFilter.search
-    )
-    const clientArr = dataClients?.clients;
+    };
+    
     const handleOpenModal = () => {
         setIsModalOpen(true);
     }
@@ -169,6 +171,7 @@ const useDashboard = () => {
         }))
         handleRemoveErr(dashboard.scheduleErr, name)
     }
+
     const handleSelectCategory = (selectedCategory: {
         id: null | number
         name: string,
@@ -219,6 +222,7 @@ const useDashboard = () => {
             }
         }))
     }
+
     const handleDate = (
         dates: [Dayjs | null, Dayjs | null] | null,
         // dateStrings: [string, string]
@@ -244,15 +248,16 @@ const useDashboard = () => {
         setDashboard({
             ...dashboard,
             scheduleObj: {
-            ...dashboard.scheduleObj,
-            title: event.title,
-            schedule: start
-                ? [
-                    dayjs(start),
-                    dayjs(end ?? start).subtract(1, 'day') // 🔥 fix here
-                ]
-                : null,
-            description: props.description || '',
+                ...dashboard.scheduleObj,
+                id: Number(event.id),
+                title: event.title,
+                schedule: start
+                    ? [
+                        dayjs(start),
+                        dayjs(end ?? start).subtract(1, 'day') // 🔥 fix here
+                    ]
+                    : null,
+                description: props.description || '',
             }
         });
 
