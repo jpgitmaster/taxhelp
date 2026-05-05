@@ -35,6 +35,7 @@ const useDashboard = () => {
         useGetSchedules,
         useGetScheduleCategories,
 
+        useUpdateSchedule,
         useCreateSchedule,
         useDeleteSchedule
     } = useDashboardAPI()
@@ -45,6 +46,7 @@ const useDashboard = () => {
         useGetClients
     } = useClientAPI()
     const [mounted, setMounted] = useState(false)
+    const [isEditMode, setIsEditMode] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [calendarHeight, setCalendarHeight] = useState(500)
     const [displayClients, setDisplayClients] = useState(false)
@@ -319,27 +321,49 @@ const useDashboard = () => {
             }, 500)
             return () => clearTimeout(timer)
         }
-        
-        useCreateSchedule.mutate(dashboard.scheduleObj, {
-            onSuccess: () => {
-                setDoc({
-                    clientSearch: '',
-                    selectedCategory: {
-                        id: null,
-                        name: '',
-                        color: '',
-                    },
-                    client: {
-                        id: null,
-                        last_name: '',
-                        first_name: '',
-                        trade_name: '',
-                        registered_name: '',
-                    },
-                })
-                handleCloseModal()
-            }
-        })
+        if(dashboard.scheduleObj.id){
+            useUpdateSchedule.mutate(dashboard.scheduleObj, {
+                onSuccess: () => {
+                    setDoc({
+                        clientSearch: '',
+                        selectedCategory: {
+                            id: null,
+                            name: '',
+                            color: '',
+                        },
+                        client: {
+                            id: null,
+                            last_name: '',
+                            first_name: '',
+                            trade_name: '',
+                            registered_name: '',
+                        },
+                    })
+                    handleCloseModal()
+                }
+            })
+        }else{
+            useCreateSchedule.mutate(dashboard.scheduleObj, {
+                onSuccess: () => {
+                    setDoc({
+                        clientSearch: '',
+                        selectedCategory: {
+                            id: null,
+                            name: '',
+                            color: '',
+                        },
+                        client: {
+                            id: null,
+                            last_name: '',
+                            first_name: '',
+                            trade_name: '',
+                            registered_name: '',
+                        },
+                    })
+                    handleCloseModal()
+                }
+            })
+        }
     }
     useEffect(() => {
         const handleResize = () => {
@@ -363,6 +387,7 @@ const useDashboard = () => {
         mounted,
         dashboard,
         clientArr,
+        isEditMode,
         isModalOpen,
         displayClients,
         calendarHeight,
@@ -373,6 +398,7 @@ const useDashboard = () => {
 
         // SET STATES
         setDoc,
+        setIsEditMode,
         setDashboard,
         openEventModal,
         setDisplayClients,

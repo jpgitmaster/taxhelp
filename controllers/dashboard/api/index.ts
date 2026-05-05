@@ -131,6 +131,48 @@ const useDashboardAPI = () => {
         }
     })
 
+    const useUpdateSchedule = useMutation({
+        mutationFn: async (schedule: ScheduleObj) => {
+            const startDate = schedule.schedule?.[0]?.format('YYYY-MM-DD');
+            const endDate = schedule.schedule?.[1]?.format('YYYY-MM-DD');
+            const res = await api.put(`/api/${apiVersion}/schedules/${schedule.id}`, {
+                title: schedule.title,
+                schedule_date_to: endDate,
+                client_id: schedule.client_id,
+                schedule_date_from: startDate,
+                category_id: schedule.category.id,
+                description: schedule.description,
+                category_name: schedule.category.name,
+                category_color: schedule.category.color,
+            })
+            return res.data
+        },
+        onSuccess: () => {
+            setStatus(prev => ({
+                ...prev,
+                loader: false,
+                message: 'Schedule updated successfully.'
+            }))
+
+            setTimeout(() => {
+                setStatus(prev => ({
+                    ...prev,
+                    message: ''
+                }))
+            }, 5000)
+
+            setDashboard({
+                ...dashboard,
+                scheduleObj: initScheduleObj
+            })
+
+            queryClient.invalidateQueries({ queryKey: ['schedules'] })
+        },
+        onError: (error: any) => {
+            console.log(error)
+        }
+    })
+
     const useDeleteSchedule = useMutation({
         mutationFn: async (id: number) => {
             const res = await api.delete(`/api/${apiVersion}/schedules/${id}`)
@@ -162,6 +204,7 @@ const useDashboardAPI = () => {
             console.log(error)
         }
     })
+
     return {
         //STATES
         filter,
@@ -178,6 +221,7 @@ const useDashboardAPI = () => {
         useGetScheduleCategories,
 
         // MUTATION
+        useUpdateSchedule,
         useCreateSchedule,
         useCreateCategory,
         useDeleteSchedule,

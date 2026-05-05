@@ -27,6 +27,7 @@ const Dashboard_V = () => {
     mounted,
     dashboard,
     clientArr,
+    isEditMode,
     isModalOpen,
     clientLoader,
     categoryLoader,
@@ -37,6 +38,7 @@ const Dashboard_V = () => {
 
     // SET STATES
     setDoc,
+    setIsEditMode,
     setDashboard,
     openEventModal,
     setDisplayClients,
@@ -175,17 +177,31 @@ const Dashboard_V = () => {
         >
           <div className={scss.addSchedule}>
             <h3 className={scss.addSchedLbl}>
-              {dashboard.scheduleObj.id ? 'View' : 'Add'}  Schedule
+              {!dashboard.scheduleObj.id ? 'Add' : isEditMode ? 'Edit' : 'View'}  Schedule
             </h3>
             {
               dashboard.scheduleObj.id &&
               <div className={scss.actions}>
-                <button type='button' className={scss.action+' '+scss.edit}>
-                    <Image src='/svgs/edit.svg' alt='Edit' priority width={20} height={20} unoptimized={true} />
-                    <span>
-                        Edit
-                    </span>
-                </button>
+                {
+                  !isEditMode ?
+                  <button type='button' className={scss.action+' '+scss.edit}
+                    onClick={() => setIsEditMode(true)}
+                  >
+                      <Image src='/svgs/edit.svg' alt='Edit' priority width={20} height={20} unoptimized={true} />
+                      <span>
+                          Edit
+                      </span>
+                  </button>
+                  :
+                  <button type='button' className={scss.action+' '+scss.edit}
+                    onClick={() => setIsEditMode(false)}
+                  >
+                      <Image src='/svgs/eyecon_check.svg' alt='View' priority width={20} height={20} unoptimized={true} />
+                      <span>
+                          View
+                      </span>
+                  </button>
+                }
                 <Popconfirm
                   title="Delete the record"
                   description="Are you sure to delete this schedule?"
@@ -221,8 +237,8 @@ const Dashboard_V = () => {
                     id='title'
                     name='title'
                     value={dashboard.scheduleObj.title}
-                    readOnly={dashboard.scheduleObj.id ? true : false}
-                    className={dashboard.scheduleObj.id ? scss.lblContent : ''}
+                    readOnly={(dashboard.scheduleObj.id && !isEditMode) ? true : false}
+                    className={(dashboard.scheduleObj.id && !isEditMode) ? scss.lblContent : ''}
                     onKeyUp={handleBlur}
                     onChange={handleChange}
                   />
@@ -236,7 +252,7 @@ const Dashboard_V = () => {
                   err={dashboard.scheduleErr.schedule as string}
                 >
                   {
-                    dashboard.scheduleObj.id ?
+                    (dashboard.scheduleObj.id && !isEditMode) ?
                     <input
                       type='text'
                       id='schedule'
@@ -265,7 +281,7 @@ const Dashboard_V = () => {
                   err={dashboard.scheduleErr.category as string}
                 >
                   {
-                    dashboard.scheduleObj.id ?
+                    (dashboard.scheduleObj.id && !isEditMode) ?
                     <>
                       <div style={{
                           backgroundColor: doc.selectedCategory.color,
@@ -323,7 +339,7 @@ const Dashboard_V = () => {
                   err={dashboard.scheduleErr.description as string}
                 >
                   {
-                    dashboard.scheduleObj.id ?
+                    (dashboard.scheduleObj.id && !isEditMode) ?
                     <textarea
                       id='description'
                       name='description'
@@ -345,7 +361,8 @@ const Dashboard_V = () => {
                 </CustomContainer>
               </div>
               {
-                !dashboard.scheduleObj.id &&
+                
+                (!dashboard.scheduleObj.id || isEditMode) &&
                 <button type='submit' className={scss.button+' '+scss.btnblue} style={{display: 'block', maxWidth: '300px', margin: '-10px auto 30px'}} onKeyDown={handleResubmit}>
                   Save Schedule
                 </button>
