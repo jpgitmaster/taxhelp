@@ -25,7 +25,6 @@ const useDashboardAPI = () => {
                     method: 'GET',
                     url: `/api/${apiVersion}/schedule-categories`
                 })
-                console.log(res)
                 return {
                     schedCategories: res.data?.categories ?? [],
                     totalCategories: res.data?.total ?? 0
@@ -76,6 +75,22 @@ const useDashboardAPI = () => {
     const useCreateCategory = useMutation({
         mutationFn: async (category: { name: string, color: string }) => {
             const res = await api.post(`/api/${apiVersion}/schedule-categories`, {
+                name: category.name,
+                color: category.color
+            })
+            return res.data
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['schedule_categories'] })
+        },
+        onError: (error: any) => {
+            console.log(error)
+        }
+    })
+
+    const useUpdateCategory = useMutation({
+        mutationFn: async (category: { id: number, name: string, color: string }) => {
+            const res = await api.put(`/api/${apiVersion}/schedule-categories/${category.id}`, {
                 name: category.name,
                 color: category.color
             })
@@ -225,6 +240,7 @@ const useDashboardAPI = () => {
         useCreateSchedule,
         useCreateCategory,
         useDeleteSchedule,
+        useUpdateCategory,
 
         //HANDLES
     }

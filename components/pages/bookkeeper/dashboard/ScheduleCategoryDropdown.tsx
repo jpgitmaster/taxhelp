@@ -46,6 +46,7 @@ export default function ScheduleCategoryDropdown(props: {
         handleBlur,
     } = useGlobal()
     const {
+        useUpdateCategory,
         useCreateCategory,
     } = useDashboardAPI()
     const [catErr, setCatErr] = useState<any>({
@@ -53,6 +54,11 @@ export default function ScheduleCategoryDropdown(props: {
         color: ''
     })
     const [loader, setLoader] = useState(false)
+    const [editCat, setEditCat] = useState<{
+        id: number
+        name: string
+        color: string
+    } | null>(null)
     const [cat, setCat] = useState({ name: '', color: '' })
     const [displayAddCat, setDisplayAddCat] = useState(false)
     
@@ -129,6 +135,43 @@ export default function ScheduleCategoryDropdown(props: {
         })
         
     }
+
+    const handleUpdateCategory = () => {
+        if (!editCat) return
+
+        setLoader(true)
+        const {
+            validation_errors,
+            validation_has_error,
+        } = ValidatorV3(fieldValidations, cat)
+        if (validation_has_error) {
+            const timer = setTimeout(() => {
+                setLoader(false)
+                setCatErr(validation_errors)
+                return false
+            }, 500)
+            return () => clearTimeout(timer)
+        }
+
+        useUpdateCategory.mutate(
+            { id: editCat.id, name: cat.name, color: cat.color },
+            {
+                onSuccess: () => {
+                    if (doc.selectedCategory.name === editCat.name) {
+                        handleSelectCategory({
+                            name: cat.name,
+                            color: cat.color
+                        })
+                    }
+                    setEditCat(null)
+                    setCat({ name: '', color: '' })
+                    setDisplayAddCat(false)
+                    setLoader(false)
+                }
+            }
+        )
+    }
+    const isEditing = !!editCat;
     return (
         <div className={scss.customDropdown} onClick={handleHeaderClick}>
             <div className={scss.dropdownInput + (err ? ' '+scss.err : '')} onClick={() => handleToggle('categories')} ref={ref}
@@ -189,7 +232,10 @@ export default function ScheduleCategoryDropdown(props: {
 
                                                     <button type='button' className={scss.action+' '+scss.edit}
                                                         onClick={(e) => {
-                                                            e.preventDefault()
+                                                            e.stopPropagation()
+                                                            setEditCat(option);   // load selected category into edit mode
+                                                            setDisplayAddCat(true); // reuse your form UI
+                                                            setCat({ name: option.name, color: option.color });
                                                         }}
                                                     >
                                                         <Image src='/svgs/edit.svg' alt='Edit' priority width={20} height={20} unoptimized={true} />
@@ -248,9 +294,9 @@ export default function ScheduleCategoryDropdown(props: {
                             </button>
                             :
                             <button type='button' onClick={() => {
-                                handleCreateCategory();
+                                isEditing ? handleUpdateCategory() : handleCreateCategory();
                             }}>
-                                Save New Category
+                                {isEditing ? 'Update Category' : 'Save New Category'}
                             </button>
                         }
                         
