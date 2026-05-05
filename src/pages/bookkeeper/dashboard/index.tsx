@@ -67,7 +67,7 @@ const Dashboard_V = () => {
         }
         <div className={scss.contentArea}>
           {/* STATS */}
-          <div className={scss.statsGrid}>
+          {/* <div className={scss.statsGrid}>
             <div className={scss.card}>
               <p>Total Events</p>
               <h2>12</h2>
@@ -80,11 +80,11 @@ const Dashboard_V = () => {
               <p>Completed</p>
               <h2>7</h2>
             </div>
-          </div>
+          </div> */}
           <div className={scss.scheduleWrapper}>
             {/* UPCOMING SCHEDULES */}
             <div className={scss.upcomingList}>
-              <button className={scss.createBtn} onClick={() => {
+              <button className={scss.button+' '+scss.btnorange} onClick={() => {
                 handleOpenModal()
               }}>
                 + Create Schedule
@@ -146,7 +146,14 @@ const Dashboard_V = () => {
               </div>
             }
             <div className={scss.scheduleBox}>
-              ADVERTISEMENTS
+              <div className={scss.feedbackActions}>
+                <button className={scss.button+' '+scss.btnblue}>
+                  Add Feedback
+                </button>
+                <button className={scss.button+' '+scss.btnorange}>
+                  Report a bug
+                </button>
+              </div>
               <div className={scss.box}>
 
               </div>

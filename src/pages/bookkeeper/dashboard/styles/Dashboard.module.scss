@@ -31,7 +31,7 @@
             }
         }
         .scheduleWrapper {
-            @apply flex flex-row gap-6 mt-5;
+            @apply flex flex-row gap-6 mt-0;
             .scheduleBox{
                 @apply w-80;
                 .box{
@@ -42,10 +42,8 @@
             }
             .upcomingList {
                 @apply w-1/4 p-4;
-                .createBtn {
-                    color: $white;
-                    background-color: $orange;
-                    @apply mb-5 cursor-pointer outline-none px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 float-left;
+                .button{
+                    @apply w-auto -mt-5 block mb-4 py-1.5;
                 }
                 h3 {
                     color: $orange;
@@ -65,9 +63,16 @@
                     }
                 }
             }
+            .feedbackActions{
+                @apply flex flex-row mt-0;
+                .button{
+                    @apply mx-1;
+                }
+            }
+
             /* CALENDAR */
             .calendarContainer{
-                @apply w-160 mt-5 inline-block;
+                @apply w-160 mt-0 inline-block;
                 .calender{
                     @apply clear-both w-full;
                 }
