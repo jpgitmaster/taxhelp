@@ -59,6 +59,14 @@ const Dashboard_V = () => {
     handleSelectCategory,
   } = useDashboard()
   const { message, loader } = status
+  const selectedText =
+    (doc.client.registered_name || '') ||
+    (doc.client.first_name
+        ? `${doc.client.first_name} ${doc.client.last_name}`
+        : '');
+
+    const displayText = selectedText +
+    (doc.client.trade_name ? ` - ${doc.client.trade_name}` : '');
   return (
       <div className={scss.dashboardWrapper}>
         {
@@ -326,17 +334,28 @@ const Dashboard_V = () => {
                   labelFor='client'
                   err={dashboard.scheduleErr.client as string}
                 >
-                  <ClientsDropdown
-                    doc={doc}
-                    clients={clientArr}
-                    loader={clientLoader}
-                    displayClients={displayClients}
-                    setDisplayClients={setDisplayClients}
+                  {
+                    (dashboard.scheduleObj.id && !isEditMode) ?
+                      <input
+                        id='client'
+                        type='text'
+                        value={displayText}
+                        readOnly={dashboard.scheduleObj.id ? true : false}
+                        className={dashboard.scheduleObj.id ? scss.lblContent : ''}
+                      />
+                      :
+                      <ClientsDropdown
+                        doc={doc}
+                        clients={clientArr}
+                        loader={clientLoader}
+                        displayClients={displayClients}
+                        setDisplayClients={setDisplayClients}
 
-                    handleChange={handleChange}
-                    handleToggle={handleToggle}
-                    handleSelectClient={handleSelectClient}
-                  />
+                        handleChange={handleChange}
+                        handleToggle={handleToggle}
+                        handleSelectClient={handleSelectClient}
+                      />
+                  }
                 </CustomContainer>
                 <CustomContainer
                   scss={scss}
@@ -359,6 +378,7 @@ const Dashboard_V = () => {
                     <textarea
                       id='description'
                       name='description'
+                      maxLength={1000}
                       style={{minHeight: '100px'}}
                       value={dashboard.scheduleObj.description}
                       onKeyUp={handleBlur}

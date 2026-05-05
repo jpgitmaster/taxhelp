@@ -53,7 +53,7 @@
     ul {
       @apply h-55 mt-3 overflow-y-auto pb-20;
       li {
-        @apply px-3 py-1.5 text-[11px] cursor-pointer rounded-[10px];
+        @apply px-3 py-1.5 text-[11px] cursor-pointer rounded-[10px] relative;
 
         &:not(.hasChildren):hover {
           color: $darkBlue;
@@ -62,6 +62,11 @@
 
         &.hasChildren {
           cursor: default;
+        }
+
+        .edit{
+          @apply absolute right-1 w-4 cursor-pointer;
+          filter: invert(27%) sepia(25%) saturate(6814%) hue-rotate(185deg) brightness(98%) contrast(101%);
         }
 
         strong {

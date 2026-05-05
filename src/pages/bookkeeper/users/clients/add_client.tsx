@@ -401,7 +401,7 @@ const AddCustomer_V = () => {
                       <textarea
                         id='description'
                         name='description'
-                        maxLength={100}
+                        maxLength={1000}
                         autoComplete='off'
                         value={client.clientObj.description}
                         onKeyUp={handleBlur}

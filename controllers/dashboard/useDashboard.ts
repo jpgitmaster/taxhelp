@@ -14,10 +14,17 @@ type EventLike = {
     extendedProps?: EventExtendedProps;
 };
 type EventExtendedProps = {
-  description?: string;
-  categoryId?: number;
-  categoryName?: string;
-  categoryColor?: string;
+    client?: {
+        id: number | null,
+        last_name: string
+        first_name: string
+        trade_name: string
+        registered_name: string
+    }; // or proper client type
+    description?: string;
+    categoryId?: number;
+    categoryName?: string;
+    categoryColor?: string;
 };
 import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
 const useDashboard = () => {
@@ -88,15 +95,17 @@ const useDashboard = () => {
             id: schedule.id,
             title: schedule.title,
             client_id: schedule.client_id,
+            client: schedule.client,
             start: dayjs(schedule.schedule_date_from).format('YYYY-MM-DD'),
             end: dayjs(schedule.schedule_date_to).format('YYYY-MM-DD'),
             backgroundColor: schedule.category?.color,
             borderColor: schedule.category?.color,
             extendedProps: {
-            description: schedule.description,
-            categoryId: schedule.category?.id,
-            categoryName: schedule.category?.name,
-            categoryColor: schedule.category?.color
+                client: schedule.client,
+                description: schedule.description,
+                categoryId: schedule.category?.id,
+                categoryName: schedule.category?.name,
+                categoryColor: schedule.category?.color
             }
         })) || [];
     const fieldValidations = {
@@ -158,6 +167,13 @@ const useDashboard = () => {
                 id: event.extendedProps?.categoryId ?? null,
                 name: event.extendedProps?.categoryName ?? '',
                 color: event.extendedProps?.categoryColor ?? event.backgroundColor ?? ''
+            },
+            client: event.extendedProps?.client || { // 👈 SET CLIENT HERE
+                id: null,
+                last_name: '',
+                first_name: '',
+                trade_name: '',
+                registered_name: '',
             }
         }));
 
@@ -290,9 +306,16 @@ const useDashboard = () => {
         setDoc({
             ...doc,
             selectedCategory: {
-            id: props.categoryId ?? null,
-            name: props.categoryName ?? '',
-            color: props.categoryColor ?? ''
+                id: props.categoryId ?? null,
+                name: props.categoryName ?? '',
+                color: props.categoryColor ?? '',
+            },
+            client: props.client || {
+                id: null,
+                last_name: '',
+                first_name: '',
+                trade_name: '',
+                registered_name: '',
             }
         });
 

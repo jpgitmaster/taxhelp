@@ -186,6 +186,14 @@ export default function ScheduleCategoryDropdown(props: {
                                                         borderRadius: '50%', marginRight: '5px'
                                                     }}></div>
                                                     {option.name}
+
+                                                    <button type='button' className={scss.action+' '+scss.edit}
+                                                        onClick={(e) => {
+                                                            e.preventDefault()
+                                                        }}
+                                                    >
+                                                        <Image src='/svgs/edit.svg' alt='Edit' priority width={20} height={20} unoptimized={true} />
+                                                    </button>
                                                 </li>
                                             )
                                             : null

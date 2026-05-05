@@ -8,6 +8,13 @@ interface ScheduleObj{
     name: string
     color: string
   }
+  client?: {
+    id: number | null,
+    last_name: string
+    first_name: string
+    trade_name: string
+    registered_name: string
+  },
   description: string
   schedule_date_to: string
   schedule_date_from: string
