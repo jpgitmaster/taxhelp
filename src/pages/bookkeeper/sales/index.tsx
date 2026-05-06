@@ -51,6 +51,7 @@ const Sales_V = () => {
   } = useSales()
   const { message } = status
   const { salesArr } = sales
+  // console.log(salesArr)
   const dataSource = salesArr?.length ? salesArr.map(sales => (
       {
         id: sales.id,
@@ -64,23 +65,23 @@ const Sales_V = () => {
         particulars: sales.particulars,
         exempt_sales: sales.exempt_sales,
         account_name: sales.account_name,
-        tin: sales.business_profile?.tin,
+        tin: sales.customer?.tin,
         gross_amount: sales.gross_amount,
         gross_taxable: sales.gross_taxable,
         vatable_sales: sales.vatable_sales,
         invoice_number: sales.invoice_number,
         zero_rated_sales: sales.zero_rated_sales,
-        branch_code: sales.business_profile?.branch_code,
-        first_address: sales.business_profile?.first_address,
-        second_address: sales.business_profile?.second_address,
-        registered_name: sales.business_profile?.registered_name,
+        branch_code: sales.customer?.branch_code,
+        first_address: sales.customer?.first_address,
+        second_address: sales.customer?.second_address,
+        registered_name: sales.customer?.registered_name,
         created_date: sales.created_at ? dayjs(sales.created_at)?.format('MM/DD/YYYY') : '',
         invoice_date: sales.invoice_date ? dayjs(sales.invoice_date)?.format('MM/DD/YYYY') : '',
         taxable_month: sales.taxable_month ? dayjs(sales.taxable_month)?.format('MM/DD/YYYY') : '',
         business_owner: 
-          (sales.business_profile?.first_name ? sales.business_profile.first_name+' ' : '')+
-          (sales.business_profile?.middle_name ? sales.business_profile.middle_name+' ' : '')+
-          (sales.business_profile?.last_name ? sales.business_profile.last_name : ''),
+          (sales.customer?.first_name ? sales.customer.first_name+' ' : '')+
+          (sales.customer?.middle_name ? sales.customer.middle_name+' ' : '')+
+          (sales.customer?.last_name ? sales.customer.last_name : ''),
       }
   )) : []
   const columns: ColumnsType<SalesTableRow> = [
@@ -90,16 +91,16 @@ const Sales_V = () => {
       dataIndex: 'taxable_month',
       render: (value) => dayjs(value)?.format('YYYY-MM'),
     },
-    {
-      title: 'Invoice Date',
-      key: 'invoice_date',
-      dataIndex: 'invoice_date',
-    },
-    {
-      title: 'Invoice No.',
-      key: 'invoice_number',
-      dataIndex: 'invoice_number',
-    },
+    // {
+    //   title: 'Invoice Date',
+    //   key: 'invoice_date',
+    //   dataIndex: 'invoice_date',
+    // },
+    // {
+    //   title: 'Invoice No.',
+    //   key: 'invoice_number',
+    //   dataIndex: 'invoice_number',
+    // },
     {
       title: 'TIN No.',
       key: 'tin',
@@ -130,26 +131,21 @@ const Sales_V = () => {
       key: 'second_address',
       dataIndex: 'second_address',
     },
-    {
-      title: 'Particulars',
-      key: 'particulars',
-      dataIndex: 'particulars',
-    },
-    {
-      title: 'Terms',
-      key: 'terms',
-      dataIndex: 'terms',
-    },
-    {
-      title: 'Account Name',
-      key: 'account_name',
-      dataIndex: 'account_name',
-    },
-    {
-      title: 'Gross Amount',
-      key: 'gross_amount',
-      dataIndex: 'gross_amount',
-    },
+    // {
+    //   title: 'Particulars',
+    //   key: 'particulars',
+    //   dataIndex: 'particulars',
+    // },
+    // {
+    //   title: 'Terms',
+    //   key: 'terms',
+    //   dataIndex: 'terms',
+    // },
+    // {
+    //   title: 'Account Name',
+    //   key: 'account_name',
+    //   dataIndex: 'account_name',
+    // },
     {
       title: 'Exempt Sales',
       key: 'exempt_sales',
@@ -166,6 +162,11 @@ const Sales_V = () => {
       dataIndex: 'vatable_sales',
     },
     {
+      title: 'Gross Amount',
+      key: 'gross_amount',
+      dataIndex: 'gross_amount',
+    },
+    {
       title: 'VAT Rate',
       key: 'vat_rate',
       dataIndex: 'vat_rate',
@@ -180,21 +181,21 @@ const Sales_V = () => {
       key: 'gross_taxable',
       dataIndex: 'gross_taxable',
     },
-    {
-      title: 'ATC',
-      key: 'atc',
-      dataIndex: 'atc',
-    },
-    {
-      title: 'EWT Rate',
-      key: 'ewt_rate',
-      dataIndex: 'ewt_rate',
-    },
-    {
-      title: 'Tax Amount',
-      key: 'tax_amount',
-      dataIndex: 'tax_amount',
-    },
+    // {
+    //   title: 'ATC',
+    //   key: 'atc',
+    //   dataIndex: 'atc',
+    // },
+    // {
+    //   title: 'EWT Rate',
+    //   key: 'ewt_rate',
+    //   dataIndex: 'ewt_rate',
+    // },
+    // {
+    //   title: 'Tax Amount',
+    //   key: 'tax_amount',
+    //   dataIndex: 'tax_amount',
+    // },
     {
       title: 'Created Date',
       key: 'created_date',

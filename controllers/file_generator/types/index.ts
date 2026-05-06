@@ -2,14 +2,24 @@ import { Dayjs } from "dayjs";
 
 interface Record_Obj{
     id: number | null
-    terms: string
+    // terms: string
     toDelete: boolean
-    particulars: string
-    account_name: string
-    invoice_date: Dayjs | null
+    // particulars: string
+    // account_name: string
+    // invoice_date: Dayjs | null
     taxable_month: Dayjs | null
-    business_profile: {
+    customer?: {
         tin?: string
+        name?: string
+        last_name?: string
+        first_name?: string
+        middle_name?: string
+        branch_code?: string
+        registered_name?: string
+    }
+    supplier?: {
+        tin?: string
+        name?: string
         last_name?: string
         first_name?: string
         middle_name?: string

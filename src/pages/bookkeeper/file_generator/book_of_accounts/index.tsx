@@ -47,14 +47,14 @@ const BookOfAccounts_V = () => {
     const { message, loader: statLoader } = status
     const dataSource: Record_Obj[] = record.recordArr?.map(doc => ({
       id: doc.id,
-      terms: doc.terms,
+      // terms: doc.terms,
       toDelete: doc.toDelete,
-      particulars: doc.particulars,
-      account_name: doc.account_name,
-      invoice_date: doc.invoice_date,
+      // particulars: doc.particulars,
+      // account_name: doc.account_name,
+      // invoice_date: doc.invoice_date,
       taxable_month: doc.taxable_month,
-      business_profile: doc.business_profile,
-      name: (doc.business_profile?.first_name || '') + ' ' + (doc.business_profile?.middle_name || '') + ' ' + (doc.business_profile?.last_name || ''),
+      // business_profile: doc.business_profile,
+      // name: (doc.business_profile?.first_name || '') + ' ' + (doc.business_profile?.middle_name || '') + ' ' + (doc.business_profile?.last_name || ''),
     })) ?? []
 
     const columns: ColumnsType<Record_Obj> = [

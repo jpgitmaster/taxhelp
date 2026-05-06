@@ -16,9 +16,11 @@ const AddSalesRecord_V = () => {
     sales,
     status,
     clientArr,
+    customerArr,
     clientLoader,
     displayTerms,
     displayClients,
+    customerLoader,
     displayCustomers,
 
     setVatType,
@@ -33,7 +35,8 @@ const AddSalesRecord_V = () => {
     handleToggle,
     handleResubmit,
     handleSelectTerms,
-    handleSelectClient
+    handleSelectClient,
+    handleSelectCustomer
   } = useSaveSales()
   const { loader } = status
   const dateFormat = 'MM/DD/YYYY'
@@ -83,15 +86,15 @@ const AddSalesRecord_V = () => {
             >
               <CustomersDropdown
                 doc={doc}
-                customers={clientArr}
-                loader={clientLoader}
+                loader={customerLoader}
+                customers={customerArr}
                 displayCustomers={displayCustomers}
 
                 setDisplayCustomers={setDisplayCustomers}
 
                 handleChange={handleChange}
                 handleToggle={handleToggle}
-                handleSelectClient={handleSelectClient}
+                handleSelectCustomer={handleSelectCustomer}
               />
             </CustomContainer>
             <div className={scss.card+' '+scss.w50}>
@@ -110,7 +113,7 @@ const AddSalesRecord_V = () => {
                     id='classification'
                     name='classification'
                     className={scss.lblContent}
-                    value={sales.salesObj.business_profile.classification?.toLowerCase()}
+                    value={sales.salesObj.customer?.classification?.toLowerCase()}
                     onKeyUp={handleBlur}
                     onChange={handleChange}
                     style={{textTransform: 'capitalize'}}
@@ -133,7 +136,7 @@ const AddSalesRecord_V = () => {
                     autoComplete='off'
                     placeholder='000-000-000'
                     className={scss.lblContent}
-                    value={sales.salesObj.business_profile.tin}
+                    value={sales.salesObj.customer?.tin}
                     onKeyUp={handleBlur}
                     onChange={handleChange}
                   />
@@ -155,7 +158,7 @@ const AddSalesRecord_V = () => {
                 name='first_name'
                 autoComplete='off'
                 className={scss.lblContent}
-                value={sales.salesObj.business_profile.first_name}
+                value={sales.salesObj.customer?.first_name}
                 onKeyUp={handleBlur}
                 onChange={handleChange}
               />
@@ -175,7 +178,7 @@ const AddSalesRecord_V = () => {
                 name='middle_name'
                 autoComplete='off'
                 className={scss.lblContent}
-                value={sales.salesObj.business_profile.middle_name}
+                value={sales.salesObj.customer?.middle_name}
                 onKeyUp={handleBlur}
                 onChange={handleChange}
               />
@@ -195,7 +198,7 @@ const AddSalesRecord_V = () => {
                 name='last_name'
                 autoComplete='off'
                 className={scss.lblContent}
-                value={sales.salesObj.business_profile.last_name}
+                value={sales.salesObj.customer?.last_name}
                 onKeyUp={handleBlur}
                 onChange={handleChange}
               />
@@ -215,7 +218,7 @@ const AddSalesRecord_V = () => {
                 id='registered_name'
                 name='registered_name'
                 className={scss.lblContent}
-                value={sales.salesObj.business_profile.registered_name}
+                value={sales.salesObj.customer?.registered_name}
                 onKeyUp={handleBlur}
                 onChange={handleChange}
               />
@@ -235,7 +238,7 @@ const AddSalesRecord_V = () => {
                 name='trade_name'
                 autoComplete='off'
                 className={scss.lblContent}
-                value={sales.salesObj.business_profile.trade_name}
+                value={sales.salesObj.customer?.trade_name}
                 onKeyUp={handleBlur}
                 onChange={handleChange}
               />

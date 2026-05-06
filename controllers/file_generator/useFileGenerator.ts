@@ -33,6 +33,7 @@ const useFileGenerator = () => {
     const [tableWidth, setTableWidth] = useState(0)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayDocsTbl, setDisplayDocsTbl] = useState(false)
+    
     const datFileOptions =[
         {
             label: 'SUMMARY LIST OF SALES (SLS)',
@@ -42,6 +43,7 @@ const useFileGenerator = () => {
             label: 'SUMMARY LIST OF PURCHASES (SLP)',
             value: 'PURCHASES'
         },
+        // PURCHASES
         {
             label: 'QUARTERLY ALPHALIST OF PAYEES (QAP)',
             value: 'QAP',
@@ -60,8 +62,9 @@ const useFileGenerator = () => {
                 }
             ]
         },
+        // SALES
         {
-            label: 'SUMMARY ALPHALIST OF WITHHOLDING TAXES',
+            label: 'SUMMARY ALPHALIST OF WITHHOLDING TAXES (SAWT)',
             value: 'SAWT',
             children: [
                 {
@@ -102,6 +105,7 @@ const useFileGenerator = () => {
                 }
             ]
         },
+        // COMING SOON
         {
             label: 'MONTHLY ALPHALIST OF PAYEES',
             value: 'MAP',
@@ -196,7 +200,8 @@ const useFileGenerator = () => {
         tax_month_end: null,
         tax_month_start: null,
     })
-
+    
+    
     const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = useGetClients(    
         clientFilter.currentPage,
         clientFilter.recordsLimit,
@@ -254,7 +259,7 @@ const useFileGenerator = () => {
         const { recordArr } = record
         const newRecordArr = recordArr?.map((record_) => record_.id == id ? {
             ...record_,
-            toDelete: !record_.toDelete
+            // toDelete: !record_.toDelete
         } : {
             ...record_,
             toDelete: false,
@@ -341,20 +346,24 @@ const useFileGenerator = () => {
     }
 
     useEffect(() => {
-        setRecord(prev => ({
-            ...prev,
-            recordArr: sales?.records || [],
-            totalRecords: sales?.totalRecords || 0
-        }))
-    }, [sales])
+        if (doc.selectedTable.value === 'SALES') {
+            setRecord(prev => ({
+                ...prev,
+                recordArr: sales?.records || [],
+                totalRecords: sales?.totalRecords || 0
+            }))
+        }
+    }, [sales, doc.selectedTable.value])
 
     useEffect(() => {
-        setRecord(prev => ({
-            ...prev,
-            recordArr: purchases?.records || [],
-            totalRecords: purchases?.totalRecords || 0
-        }))
-    }, [purchases])
+        if (doc.selectedTable.value === 'PURCHASES') {
+            setRecord(prev => ({
+                ...prev,
+                recordArr: purchases?.records || [],
+                totalRecords: purchases?.totalRecords || 0
+            }))
+        }
+    }, [purchases, doc.selectedTable.value])
     
     useEffect(() => {
         if(typeof window !== 'undefined'){

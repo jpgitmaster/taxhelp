@@ -36,7 +36,7 @@ const useSaveCustomer = () => {
             condition: customer.customerObj.classification === 'INDIVIDUAL',
             required: true
         }},
-        email: { usename: 'Email', required: true, email: true },
+        email: { usename: 'Email', email: true },
         representative_phone: { usename: 'Phone', required: true },
         registered_name: { usename: 'Registered Name', ifCondition: {
             condition: customer.customerObj.classification === 'NON-INDIVIDUAL',
@@ -81,8 +81,6 @@ const useSaveCustomer = () => {
     };
     const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = event.target
-        const alphaNumeric = /^[a-zA-Z0-9]+$/
-        const regexNumericOnly = /^(0|[1-9]\d*)$/
         switch (name) {
             case 'classification':
                 if (value === 'INDIVIDUAL') {

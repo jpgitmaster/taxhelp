@@ -20,7 +20,7 @@ const initPurchasesObj = {
     vatable_purchase_of_services: '',
     vatable_purchase_of_other_goods: '',
     vatable_purchase_of_capital_goods: '',
-    business_profile: {
+    supplier: {
         tin: '',
         last_name: '',
         first_name: '',

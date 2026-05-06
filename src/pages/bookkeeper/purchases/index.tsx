@@ -18,8 +18,8 @@ import DocumentsDropdown from '@/components/pages/bookkeeper/documents/Documents
 const Purchases_V = () => {
   const {
     doc,
-    purchases,
     status,
+    purchases,
     clientArr,
     tableWidth,
     documentArr,
@@ -51,6 +51,7 @@ const Purchases_V = () => {
   } = usePurchases()
   const { message } = status
   const { purchasesArr } = purchases
+  // console.log(purchasesArr)
   const dataSource = purchasesArr?.length ? purchasesArr.map(purchases => (
       {
         id: purchases.id,
@@ -62,7 +63,7 @@ const Purchases_V = () => {
         vat_amount: purchases.vat_amount,
         wtax_amount: purchases.wtax_amount,
         particulars: purchases.particulars,
-        tin: purchases.business_profile?.tin,
+        tin: purchases.supplier?.tin,
         account_name: purchases.account_name,
         gross_amount: purchases.gross_amount,
         gross_taxable: purchases.gross_taxable,
@@ -70,19 +71,19 @@ const Purchases_V = () => {
         exempt_purchases: purchases.exempt_purchases,
         vatable_purchases: purchases.vatable_purchases,
         zero_rated_purchases: purchases.zero_rated_purchases,
-        branch_code: purchases.business_profile?.branch_code,
-        first_address: purchases.business_profile?.first_address,
-        second_address: purchases.business_profile?.second_address,
-        registered_name: purchases.business_profile?.registered_name,
+        branch_code: purchases.supplier?.branch_code,
+        first_address: purchases.supplier?.first_address,
+        second_address: purchases.supplier?.second_address,
+        registered_name: purchases.supplier?.registered_name,
         vatable_purchase_of_services: purchases.vatable_purchase_of_services,
         vatable_purchase_of_other_goods: purchases.vatable_purchase_of_other_goods,
         vatable_purchase_of_capital_goods: purchases.vatable_purchase_of_capital_goods,
         invoice_date: purchases.invoice_date ? dayjs(purchases.invoice_date)?.format('MM/DD/YYYY') : '',
         taxable_month: purchases.taxable_month ? dayjs(purchases.taxable_month)?.format('MM/DD/YYYY') : '',
         business_owner: 
-          (purchases.business_profile?.first_name ? purchases.business_profile.first_name+' ' : '')+
-          (purchases.business_profile?.middle_name ? purchases.business_profile.middle_name+' ' : '')+
-          (purchases.business_profile?.last_name ? purchases.business_profile.last_name : ''),
+          (purchases.supplier?.first_name ? purchases.supplier.first_name+' ' : '')+
+          (purchases.supplier?.middle_name ? purchases.supplier.middle_name+' ' : '')+
+          (purchases.supplier?.last_name ? purchases.supplier.last_name : ''),
       }
   )) : []
   const columns: ColumnsType<PurchasesTableRow> = [
@@ -92,16 +93,16 @@ const Purchases_V = () => {
       dataIndex: 'taxable_month',
       render: (value) => dayjs(value)?.format('YYYY-MM'),
     },
-    {
-      title: 'Invoice Date',
-      key: 'invoice_date',
-      dataIndex: 'invoice_date',
-    },
-    {
-      title: 'Invoice No.',
-      key: 'invoice_number',
-      dataIndex: 'invoice_number',
-    },
+    // {
+    //   title: 'Invoice Date',
+    //   key: 'invoice_date',
+    //   dataIndex: 'invoice_date',
+    // },
+    // {
+    //   title: 'Invoice No.',
+    //   key: 'invoice_number',
+    //   dataIndex: 'invoice_number',
+    // },
     {
       title: 'TIN No.',
       key: 'tin',
@@ -132,26 +133,21 @@ const Purchases_V = () => {
       key: 'second_address',
       dataIndex: 'second_address',
     },
-    {
-      title: 'Particulars',
-      key: 'particulars',
-      dataIndex: 'particulars',
-    },
-    {
-      title: 'Terms',
-      key: 'terms',
-      dataIndex: 'terms',
-    },
-    {
-      title: 'Account Name',
-      key: 'account_name',
-      dataIndex: 'account_name',
-    },
-    {
-      title: 'Gross Amount',
-      key: 'gross_amount',
-      dataIndex: 'gross_amount',
-    },
+    // {
+    //   title: 'Particulars',
+    //   key: 'particulars',
+    //   dataIndex: 'particulars',
+    // },
+    // {
+    //   title: 'Terms',
+    //   key: 'terms',
+    //   dataIndex: 'terms',
+    // },
+    // {
+    //   title: 'Account Name',
+    //   key: 'account_name',
+    //   dataIndex: 'account_name',
+    // },
     {
       title: 'Exempt Purchases',
       key: 'exempt_purchases',
@@ -186,6 +182,11 @@ const Purchases_V = () => {
       dataIndex: 'vatable_purchase_of_other_goods',
     },
     {
+      title: 'Gross Amount',
+      key: 'gross_amount',
+      dataIndex: 'gross_amount',
+    },
+    {
       title: 'VAT Rate',
       key: 'vat_rate',
       dataIndex: 'vat_rate',
@@ -200,21 +201,21 @@ const Purchases_V = () => {
       key: 'gross_taxable',
       dataIndex: 'gross_taxable',
     },
-    {
-      title: 'ATC',
-      key: 'atc',
-      dataIndex: 'atc',
-    },
-    {
-      title: 'W/ Tax Rate',
-      key: 'wtax_rate',
-      dataIndex: 'wtax_rate',
-    },
-    {
-      title: 'W/ Tax Amount',
-      key: 'wtax_amount',
-      dataIndex: 'wtax_amount',
-    },
+    // {
+    //   title: 'ATC',
+    //   key: 'atc',
+    //   dataIndex: 'atc',
+    // },
+    // {
+    //   title: 'W/ Tax Rate',
+    //   key: 'wtax_rate',
+    //   dataIndex: 'wtax_rate',
+    // },
+    // {
+    //   title: 'W/ Tax Amount',
+    //   key: 'wtax_amount',
+    //   dataIndex: 'wtax_amount',
+    // },
     {
       width: 100,
       fixed: 'right',
@@ -335,9 +336,9 @@ const Purchases_V = () => {
           </div>
         </div>
         <div className={scss.header}>
-          <Link href='/bookkeeper/purchases/add' className={scss.button+' '+scss.btnblue}>
+          {/* <Link href='/bookkeeper/purchases/add' className={scss.button+' '+scss.btnblue}>
             Add Record
-          </Link>
+          </Link> */}
           <button
               type='button'
               className={scss.button + ' ' + scss.btnred}

@@ -2,9 +2,9 @@ const initRecordObj = {
     id: null,
     terms: '',
     toDelete: false,
-    particulars: '',
-    account_name: '',
-    invoice_date: null,
+    // particulars: '',
+    // account_name: '',
+    // invoice_date: null,
     taxable_month: null,
     business_profile: {
         tin: '',

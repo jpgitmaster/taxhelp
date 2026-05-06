@@ -39,7 +39,7 @@ const Suppliers_V = () => {
             trade_name: supplier.trade_name,
             classification: supplier.classification,
             registered_name: supplier.registered_name,
-            supplier_name: supplier.first_name+' '+supplier.last_name,
+            supplier_name: (supplier.first_name || '')+' '+(supplier.last_name || ''),
             created_at: supplier.created_at ? dayjs(supplier.created_at).format('MM/DD/YYYY h:mm A') : '',
         }
     )) : []

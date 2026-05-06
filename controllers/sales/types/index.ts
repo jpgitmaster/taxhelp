@@ -21,7 +21,7 @@ interface SalesObj{
     total_gross_amount: string
     created_at?: Dayjs | null
     taxable_month: Dayjs | null
-    business_profile: {
+    customer: {
         tin: string
         trade_name: string
         last_name: string

@@ -6,7 +6,7 @@ import { useRef, useEffect, ChangeEvent, MouseEvent, Dispatch, SetStateAction } 
 export default function CustomersDropdown(props: {
     doc: {
         customerSearch: string
-        hasSelectedClient?: boolean
+        hasSelectedCustomer?: boolean
         selectedTerms?: {
             value: string,
             label: string
@@ -28,7 +28,7 @@ export default function CustomersDropdown(props: {
     handleToggle(dropdown: string): void
     handleClearSelected?: (dropdown: string) => void
     handleChange(event: ChangeEvent<HTMLInputElement>): void
-    handleSelectClient(client: { id: null | number, registered_name: string }): void
+    handleSelectCustomer(customer: { id: null | number, registered_name: string }): void
     
 }) {
     const {
@@ -41,8 +41,8 @@ export default function CustomersDropdown(props: {
 
         handleToggle,
         handleChange,
-        handleSelectClient,
-        handleClearSelected
+        handleClearSelected,
+        handleSelectCustomer,
     } = props
     // CLICK OUTSIDE
     const useOutsideClick = (callback: () => void) => {
@@ -82,7 +82,7 @@ export default function CustomersDropdown(props: {
         <div className={scss.customDropdown} onClick={handleHeaderClick}>
             <div className={scss.dropdownInput} onClick={() => handleToggle('customers')} ref={ref}>
                 {
-                    doc.hasSelectedClient ?
+                    doc.hasSelectedCustomer ?
                     <div className={scss.erase} onClick={(e) => {
                         e.stopPropagation();
                         handleClearSelected?.('client');
@@ -120,7 +120,7 @@ export default function CustomersDropdown(props: {
                                 customers.map(customer => customer.id &&
                                     <li key={customer.id} value={customer.id} onClick={() => {
                                         setDisplayCustomers(false)
-                                        handleSelectClient(customer)
+                                        handleSelectCustomer(customer)
                                     }}>
                                         <strong>
                                             {customer.registered_name || (customer.first_name+' '+customer.last_name)}

@@ -19,7 +19,7 @@ const initSalesObj = {
     invoice_number: '',
     zero_rated_sales: '',
     total_gross_amount: '',
-    business_profile: {
+    customer: {
         tin: '',
         last_name: '',
         first_name: '',

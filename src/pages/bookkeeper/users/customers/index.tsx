@@ -39,7 +39,7 @@ const Customers_V = () => {
             trade_name: customer.trade_name,
             classification: customer.classification,
             registered_name: customer.registered_name,
-            customer_name: customer.first_name+' '+customer.last_name,
+            customer_name: (customer.first_name || '')+' '+(customer.last_name || ''),
             created_at: customer.created_at ? dayjs(customer.created_at).format('MM/DD/YYYY h:mm A') : '',
         }
     )) : []

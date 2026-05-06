@@ -20,12 +20,12 @@ interface PurchasesObj{
     vatable_purchase_of_services: string
     vatable_purchase_of_other_goods: string
     vatable_purchase_of_capital_goods: string
-    business_profile: {
+    supplier: {
         tin: string
-        branch_code: string
         last_name: string
         first_name: string
         middle_name: string
+        branch_code: string
         first_address: string
         second_address: string
         registered_name: string

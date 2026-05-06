@@ -1,6 +1,7 @@
 import { Dayjs } from 'dayjs';
 import useSalesAPI from "./api"
 import useClientAPI from '../clients/api';
+import useCustomerAPI from '../customers/api';
 import useGlobal from '@/controllers/global/useGlobal'
 import { useState, ChangeEvent, SyntheticEvent } from "react"
 const useSaveSales = () => {
@@ -22,6 +23,11 @@ const useSaveSales = () => {
 
         useGetClients
     } = useClientAPI()
+    const {
+        filter: customerFilter,
+        setFilter: customerSetFilter,
+        useGetCustomers
+    } = useCustomerAPI()
     const [displayTerms, setDisplayTerms] = useState(false)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayCustomers, setDisplayCustomers] = useState(false)
@@ -40,6 +46,8 @@ const useSaveSales = () => {
             }
         })
     }
+    
+    // CLIENT
     const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = useGetClients(    
         clientFilter.currentPage,
         clientFilter.recordsLimit,
@@ -47,6 +55,15 @@ const useSaveSales = () => {
         clientFilter.search
     )
     const clientArr = dataClients?.clients;
+
+    // CUSTOMER
+    const { data: dataCustomers, isLoading: isLoadingCustomers, isFetching: isFetchingCustomers } = useGetCustomers(    
+        customerFilter.currentPage,
+        customerFilter.recordsLimit,
+        customerFilter.filter,
+        customerFilter.search
+    )
+    const customerArr = dataCustomers?.customers;
 
     const [doc, setDoc] = useState<{
         clientSearch: string
@@ -196,16 +213,50 @@ const useSaveSales = () => {
             salesObj: {
                 ...prev.salesObj,
                 business_profile: {
-                tin: client.tin,
-                last_name: client.last_name,
-                trade_name: client.trade_name,
-                first_name: client.first_name,
-                middle_name: client.middle_name,
-                branch_code: '',
-                first_address: '',
-                second_address: '',
-                classification: client.classification,
-                registered_name: client.registered_name
+                    tin: client.tin,
+                    last_name: client.last_name,
+                    trade_name: client.trade_name,
+                    first_name: client.first_name,
+                    middle_name: client.middle_name,
+                    branch_code: '',
+                    first_address: '',
+                    second_address: '',
+                    classification: client.classification,
+                    registered_name: client.registered_name
+                }
+            }
+        }))
+    }
+
+    const handleSelectCustomer = (customer: {
+        id: number | null,
+        tin: string
+        last_name: string
+        first_name: string
+        trade_name: string
+        middle_name: string
+        classification: string
+        registered_name: string
+    }) => {
+        setDoc({
+            ...doc,
+            customer: customer
+        })
+        setSales(prev => ({
+            ...prev,
+            salesObj: {
+                ...prev.salesObj,
+                customer: {
+                    tin: customer.tin,
+                    last_name: customer.last_name,
+                    trade_name: customer.trade_name,
+                    first_name: customer.first_name,
+                    middle_name: customer.middle_name,
+                    branch_code: '',
+                    first_address: '',
+                    second_address: '',
+                    classification: customer.classification,
+                    registered_name: customer.registered_name
                 }
             }
         }))
@@ -369,10 +420,12 @@ const useSaveSales = () => {
         sales,
         status,
         clientArr,
+        customerArr,
         displayTerms,
         displayClients,
         displayCustomers,
         clientLoader: isLoadingClients || isFetchingClients,
+        customerLoader: isLoadingCustomers || isFetchingCustomers,
 
         // SET STATES
         setDisplayTerms,
@@ -388,7 +441,8 @@ const useSaveSales = () => {
         handleToggle,
         handleResubmit,
         handleSelectTerms,
-        handleSelectClient
+        handleSelectClient,
+        handleSelectCustomer
         
     }
 }
