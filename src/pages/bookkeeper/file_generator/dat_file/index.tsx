@@ -82,7 +82,8 @@ const DAT_File_V = () => {
               </Popconfirm>
           </div>
       )
-  }
+    }
+    console.log(record.recordArr)
     const dataSource: Record_Obj[] = record.recordArr?.map(doc => {
       const base = {
         id: doc.id,
@@ -94,17 +95,20 @@ const DAT_File_V = () => {
         return {
           ...base,
           customer: doc.customer,
+          tin: doc.customer?.tin,
+          branch_code: doc.customer?.branch_code,
+          registered_name: doc.customer?.registered_name,
           name:
             (doc.customer?.first_name || '') + ' ' +
             (doc.customer?.middle_name || '') + ' ' +
             (doc.customer?.last_name || ''),
-          // exempt_sales: doc.exempt_sales,
-          // zero_rated_sales: doc.zero_rated_sales,
-          // vatable_sales: doc.vatable_sales,
-          // gross_amount: doc.gross_amount,
-          // vat_rate: doc.vat_rate,
-          // vat_amount: doc.vat_amount,
-          // gross_taxable: doc.gross_taxable,
+          exempt_sales: doc.exempt_sales,
+          vatable_sales: doc.vatable_sales,
+          zero_rated_sales: doc.zero_rated_sales,
+          gross_amount: doc.gross_amount,
+          vat_rate: doc.vat_rate,
+          vat_amount: doc.vat_amount,
+          gross_taxable: doc.gross_taxable,
         }
       }
 
@@ -112,19 +116,23 @@ const DAT_File_V = () => {
         return {
           ...base,
           supplier: doc.supplier,
+          tin: doc.supplier?.tin,
+          branch_code: doc.supplier?.branch_code,
+          registered_name: doc.supplier?.registered_name,
           name:
             (doc.supplier?.first_name || '') + ' ' +
             (doc.supplier?.middle_name || '') + ' ' +
             (doc.supplier?.last_name || ''),
-          // exempt_purchases: doc.exempt_purchases,
-          // zero_rated_purchases: doc.zero_rated_purchases,
-          // vatable_services: doc.vatable_services,
-          // capital_goods: doc.capital_goods,
-          // other_goods: doc.other_goods,
-          // gross_amount: doc.gross_amount,
-          // vat_rate: doc.vat_rate,
-          // vat_amount: doc.vat_amount,
-          // gross_taxable: doc.gross_taxable,
+          exempt_purchases: doc.exempt_purchases,
+          zero_rated_purchases: doc.zero_rated_purchases,
+          vatable_purchases: doc.vatable_purchases,
+          vatable_services: doc.vatable_purchase_of_services,
+          vatable_purchase_of_capital_goods: doc.vatable_purchase_of_capital_goods,
+          vatable_purchase_of_other_goods: doc.vatable_purchase_of_other_goods,
+          gross_amount: doc.gross_amount,
+          vat_rate: doc.vat_rate,
+          vat_amount: doc.vat_amount,
+          gross_taxable: doc.gross_taxable,
         }
       }
 
@@ -241,15 +249,15 @@ const DAT_File_V = () => {
             },
             {
                 title: 'TIN',
-                dataIndex: ['business_profile', 'tin'],
+                dataIndex: 'tin',
             },
             {
                 title: 'Branch Code',
-                dataIndex: ['business_profile', 'branch_code'],
+                dataIndex: 'branch_code',
             },
             {
                 title: 'Registered Name',
-                dataIndex: ['business_profile', 'registered_name'],
+                dataIndex: 'registered_name',
             },
             {
                 title: 'Name',
@@ -257,11 +265,11 @@ const DAT_File_V = () => {
             },
             {
                 title: 'Address 1',
-                dataIndex: ['business_profile', 'address_one'],
+                dataIndex: 'first_address',
             },
             {
                 title: 'Address 2',
-                dataIndex: ['business_profile', 'address_two'],
+                dataIndex: 'second_address',
             },
         ]
 
@@ -284,9 +292,10 @@ const DAT_File_V = () => {
                     ...base,
                     { title: 'Exempt Purchases', dataIndex: 'exempt_purchases' },
                     { title: 'Zero-rated Purchases', dataIndex: 'zero_rated_purchases' },
-                    { title: 'Vatable Services', dataIndex: 'vatable_services' },
-                    { title: 'Capital Goods', dataIndex: 'capital_goods' },
-                    { title: 'Other Goods', dataIndex: 'other_goods' },
+                    { title: 'Vatable Purchases', dataIndex: 'vatable_purchases' },
+                    { title: 'Vatable Purchase of Services', dataIndex: 'vatable_services', width: 140, align: 'center' },
+                    { title: 'Vatable Purchase of Capital Goods', dataIndex: 'vatable_purchase_of_capital_goods', width: 140, align: 'center' },
+                    { title: 'Vatable Purchase of Goods other than Capital Goods', dataIndex: 'vatable_purchase_of_other_goods', width: 200, align: 'center' },
                     { title: 'Gross Amount', dataIndex: 'gross_amount' },
                     { title: 'VAT Rate', dataIndex: 'vat_rate' },
                     { title: 'VAT Amount', dataIndex: 'vat_amount' },

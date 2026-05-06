@@ -4,10 +4,29 @@ interface Record_Obj{
     id: number | null
     // terms: string
     toDelete: boolean
+    taxable_month: Dayjs | null
     // particulars: string
     // account_name: string
     // invoice_date: Dayjs | null
-    taxable_month: Dayjs | null
+    gross_amount?: string
+    vat_rate?: string
+    vat_amount?: string
+    gross_taxable?: string
+
+    // SALES
+    exempt_sales?: string
+    vatable_sales?: string
+    zero_rated_sales?: string
+    
+    // PURCHASES
+    exempt_purchases?: string
+    vatable_purchases?: string
+    zero_rated_purchases?: string
+    vatable_purchase_of_services?: string
+    vatable_purchase_of_capital_goods?: string
+    vatable_purchase_of_other_goods?: string
+
+    
     customer?: {
         tin?: string
         name?: string

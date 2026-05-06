@@ -45,148 +45,148 @@ const FileGenerator_V = () => {
       handleDownloadPurchases,
     } = useFileGenerator()
     const { loader: statLoader } = status
-    const dataSource: Record_Obj[] = record.recordArr?.map(doc => ({
-      id: doc.id,
-      // terms: doc.terms,
-      toDelete: doc.toDelete,
-      // particulars: doc.particulars,
-      // account_name: doc.account_name,
-      // invoice_date: doc.invoice_date,
-      taxable_month: doc.taxable_month,
-      // business_profile: doc.business_profile,
-      // name: (doc.business_profile?.first_name || '') + ' ' + (doc.business_profile?.middle_name || '') + ' ' + (doc.business_profile?.last_name || ''),
-    })) ?? []
+    // const dataSource: Record_Obj[] = record.recordArr?.map(doc => ({
+    //   id: doc.id,
+    //   // terms: doc.terms,
+    //   toDelete: doc.toDelete,
+    //   // particulars: doc.particulars,
+    //   // account_name: doc.account_name,
+    //   // invoice_date: doc.invoice_date,
+    //   taxable_month: doc.taxable_month,
+    //   // business_profile: doc.business_profile,
+    //   // name: (doc.business_profile?.first_name || '') + ' ' + (doc.business_profile?.middle_name || '') + ' ' + (doc.business_profile?.last_name || ''),
+    // })) ?? []
 
-    const columns: ColumnsType<Record_Obj> = [
-      // {
-      //   title: 'ID',
-      //   key: 'id',
-      //   dataIndex: 'id',
-      // },
-      {
-        title: 'Taxable Month',
-        key: 'taxable_month',
-        dataIndex: 'taxable_month',
-        render: (value) => dayjs(value)?.format('YYYY-MM'),
-      },
-      {
-        title: 'Invoice Date',
-        key: 'invoice_date',
-        dataIndex: 'invoice_date',
-        render: (value) => dayjs(value)?.format('M/DD/YYYY'),
-      },
-      {
-        title: 'TIN Number',
-        key: 'tin',
-        dataIndex: 'business_profile',
-        render: (bp) => bp?.tin,
-      },
-      {
-        title: 'Branch Code',
-        key: 'branch_code',
-        dataIndex: 'business_profile',
-        render: (bp) => bp?.branch_code,
-      },
-      {
-        title: 'Registered Name',
-        key: 'registered_name',
-        dataIndex: 'business_profile',
-        render: (bp) => bp?.registered_name,
-      },
-      {
-        title: 'Name',
-        key: 'name',
-        dataIndex: 'name',
-      },
-      {
-        title: 'Particulars',
-        key: 'particulars',
-        dataIndex: 'particulars',
-      },
-      {
-        title: 'Terms',
-        key: 'terms',
-        dataIndex: 'terms',
-      },
-      {
-        title: 'Account Name',
-        key: 'account_name',
-        dataIndex: 'account_name',
-      },
-      {
-        width: 100,
-        fixed: 'right',
-        title: 'Actions',
-        align: 'center',
-        render: (record) =>
-            <div className={scss.actions}>
-                <Link href={'/bookkeeper/clients/'+record.id} className={scss.action+' '+scss.purchases}>
-                    <Image src='/svgs/eyecon_check.svg' alt='Purchases' priority width={22} height={22} unoptimized={true} />
-                    <span style={{top: '-2px'}}>
-                        View
-                    </span>
-                </Link>
-                <Link href={'/bookkeeper/clients/'+record.id} className={scss.action+' '+scss.edit}>
-                    <Image src='/svgs/edit.svg' alt='Edit' priority width={20} height={20} unoptimized={true} />
-                    <span>
-                        Edit
-                    </span>
-                </Link>
-                <Popconfirm
-                  title="Delete the record"
-                  description="Are you sure to delete this record?"
-                  onConfirm={() => handleDeleteRecord(Number(record.id))}
-                  onCancel={() => handleToggleDelete(Number(record.id))}
-                  okText="Yes"
-                  cancelText="No"
-                >
-                  <button type='button'
-                    onClick={() => handleToggleDelete(Number(record.id))}
-                    className={scss.action+' '+scss.delete}>
-                      <Image src='/svgs/delete.svg' alt='Delete' priority width={18} height={18} unoptimized={true} />
-                      <span>
-                          Delete
-                      </span>
-                  </button>
-                </Popconfirm>
-            </div>
-    },
-    ]
-    const downloadItems = (): MenuProps['items'] => [
-      {
-        key: '1',
-        label: (
-        <button type='button' className={scss.actionItem} onClick={() => {
-          if(doc.selectedTable.value === 'SALES'){
-            handleDownloadSales('journal')
-          }
-          if(doc.selectedTable.value === 'PURCHASES'){
-            handleDownloadPurchases('journal')
-          }
-        }}>
-          Download Excel
-        </button>
-        ),
-      },
-      {
-        key: '2',
-        label: (
-        <button type='button' className={scss.actionItem} onClick={() => {
-          if(doc.selectedTable.value === 'SALES'){
-            handleDownloadSales('dat')
-          }
-          if(doc.selectedTable.value === 'PURCHASES'){
-            handleDownloadPurchases('dat')
-          }
-        }}>
-          Download DAT File
-        </button>
-        ),
-      },
-    ];
+    // const columns: ColumnsType<Record_Obj> = [
+    //   // {
+    //   //   title: 'ID',
+    //   //   key: 'id',
+    //   //   dataIndex: 'id',
+    //   // },
+    //   {
+    //     title: 'Taxable Month',
+    //     key: 'taxable_month',
+    //     dataIndex: 'taxable_month',
+    //     render: (value) => dayjs(value)?.format('YYYY-MM'),
+    //   },
+    //   {
+    //     title: 'Invoice Date',
+    //     key: 'invoice_date',
+    //     dataIndex: 'invoice_date',
+    //     render: (value) => dayjs(value)?.format('M/DD/YYYY'),
+    //   },
+    //   {
+    //     title: 'TIN Number',
+    //     key: 'tin',
+    //     dataIndex: 'business_profile',
+    //     render: (bp) => bp?.tin,
+    //   },
+    //   {
+    //     title: 'Branch Code',
+    //     key: 'branch_code',
+    //     dataIndex: 'business_profile',
+    //     render: (bp) => bp?.branch_code,
+    //   },
+    //   {
+    //     title: 'Registered Name',
+    //     key: 'registered_name',
+    //     dataIndex: 'business_profile',
+    //     render: (bp) => bp?.registered_name,
+    //   },
+    //   {
+    //     title: 'Name',
+    //     key: 'name',
+    //     dataIndex: 'name',
+    //   },
+    //   {
+    //     title: 'Particulars',
+    //     key: 'particulars',
+    //     dataIndex: 'particulars',
+    //   },
+    //   {
+    //     title: 'Terms',
+    //     key: 'terms',
+    //     dataIndex: 'terms',
+    //   },
+    //   {
+    //     title: 'Account Name',
+    //     key: 'account_name',
+    //     dataIndex: 'account_name',
+    //   },
+    //   {
+    //     width: 100,
+    //     fixed: 'right',
+    //     title: 'Actions',
+    //     align: 'center',
+    //     render: (record) =>
+    //         <div className={scss.actions}>
+    //             <Link href={'/bookkeeper/clients/'+record.id} className={scss.action+' '+scss.purchases}>
+    //                 <Image src='/svgs/eyecon_check.svg' alt='Purchases' priority width={22} height={22} unoptimized={true} />
+    //                 <span style={{top: '-2px'}}>
+    //                     View
+    //                 </span>
+    //             </Link>
+    //             <Link href={'/bookkeeper/clients/'+record.id} className={scss.action+' '+scss.edit}>
+    //                 <Image src='/svgs/edit.svg' alt='Edit' priority width={20} height={20} unoptimized={true} />
+    //                 <span>
+    //                     Edit
+    //                 </span>
+    //             </Link>
+    //             <Popconfirm
+    //               title="Delete the record"
+    //               description="Are you sure to delete this record?"
+    //               onConfirm={() => handleDeleteRecord(Number(record.id))}
+    //               onCancel={() => handleToggleDelete(Number(record.id))}
+    //               okText="Yes"
+    //               cancelText="No"
+    //             >
+    //               <button type='button'
+    //                 onClick={() => handleToggleDelete(Number(record.id))}
+    //                 className={scss.action+' '+scss.delete}>
+    //                   <Image src='/svgs/delete.svg' alt='Delete' priority width={18} height={18} unoptimized={true} />
+    //                   <span>
+    //                       Delete
+    //                   </span>
+    //               </button>
+    //             </Popconfirm>
+    //         </div>
+    // },
+    // ]
+    // const downloadItems = (): MenuProps['items'] => [
+    //   {
+    //     key: '1',
+    //     label: (
+    //     <button type='button' className={scss.actionItem} onClick={() => {
+    //       if(doc.selectedTable.value === 'SALES'){
+    //         handleDownloadSales('journal')
+    //       }
+    //       if(doc.selectedTable.value === 'PURCHASES'){
+    //         handleDownloadPurchases('journal')
+    //       }
+    //     }}>
+    //       Download Excel
+    //     </button>
+    //     ),
+    //   },
+    //   {
+    //     key: '2',
+    //     label: (
+    //     <button type='button' className={scss.actionItem} onClick={() => {
+    //       if(doc.selectedTable.value === 'SALES'){
+    //         handleDownloadSales('dat')
+    //       }
+    //       if(doc.selectedTable.value === 'PURCHASES'){
+    //         handleDownloadPurchases('dat')
+    //       }
+    //     }}>
+    //       Download DAT File
+    //     </button>
+    //     ),
+    //   },
+    // ];
     return (
         <div>
-            <div className={scss.cards+' '+scss.filters}>
+          {/* <div className={scss.cards+' '+scss.filters}>
               <CustomContainer
                   scss={scss}
                   width={20}
@@ -272,7 +272,7 @@ const FileGenerator_V = () => {
               }
             </div>
           </div>
-          <br /><br />
+          <br /><br /> */}
         </div>
     )
 }
