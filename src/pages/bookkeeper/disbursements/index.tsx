@@ -1,11 +1,20 @@
+import scss from './styles/Disbursements.module.scss'
 import { signOut, getSession } from 'next-auth/react'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 
 const Disbursements_V = () => {
   return (
-      <div>
-        Disbursements
+      <div className={scss.box}>
+        <div className={scss.card}>
+          <h3>
+            Coming soon...
+          </h3>
+          
+          <p className={scss.caption}>
+            We&rsquo;re working hard to bring you a seamless <strong>Tax<span>Help</span></strong> experience. Stay tuned!
+          </p>
+        </div>
       </div>
   )
 }
