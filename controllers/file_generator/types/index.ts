@@ -5,6 +5,7 @@ interface Record_Obj{
     // terms: string
     toDelete: boolean
     taxable_month: Dayjs | null
+
     // particulars: string
     // account_name: string
     // invoice_date: Dayjs | null
@@ -26,7 +27,11 @@ interface Record_Obj{
     vatable_purchase_of_capital_goods?: string
     vatable_purchase_of_other_goods?: string
 
-    
+    // QAP
+    atc_code?: string
+    tax_rate?: string
+    income_payment?: string
+
     customer?: {
         tin?: string
         name?: string
@@ -34,6 +39,8 @@ interface Record_Obj{
         first_name?: string
         middle_name?: string
         branch_code?: string
+        first_address?: string
+        second_address?: string
         registered_name?: string
     }
     supplier?: {
@@ -43,6 +50,8 @@ interface Record_Obj{
         first_name?: string
         middle_name?: string
         branch_code?: string
+        first_address?: string
+        second_address?: string
         registered_name?: string
     }
 }

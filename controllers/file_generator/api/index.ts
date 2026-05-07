@@ -70,6 +70,51 @@ const useFileGeneratorAPI = () => {
         })
     }
 
+    const useGetSalesTaxes = (
+        page: number,
+        limit: number,
+        filter: { roleId: string[] | number[] },
+        search: string,
+        doc: {
+            search: string
+            selectedTable: {
+                value: string,
+                label: string
+            }
+            client: {
+                id: number | null,
+                registered_name: string
+            },
+            period: Dayjs | null
+        }
+    ) => {
+        return useQuery({
+            queryKey: ['sales_taxes_file', page, limit, filter, search, doc],
+            queryFn: async () => {
+                const res = await api({
+                    method: 'GET',
+                    url: `/api/${apiVersion}/sales-taxes/records`,
+                    params: {
+                        page,
+                        search,
+                        page_size: limit,
+                        // sortOrder: 'ASC',
+                        // filter: JSON.stringify(filter),
+                        clientId: doc.client.id,
+                        taxable_month_from: doc.period?.format('MM/YYYY') ?? null,
+                        taxable_month_to: doc.period?.format('MM/YYYY') ?? null,
+                    }
+                })
+                return {
+                    records: res.data?.sales_taxes ?? [],
+                    totalRecords: res.data?.total ?? 0
+                }
+            },
+            // ✅ KEY PART
+            enabled: !!doc.period && !!doc.client.id && !!doc.selectedTable.value && doc.selectedTable.value === 'QAP', // 👈 only runs when these conditions are met
+        })
+    }
+
     const useGetPurchases = (
         page: number,
         limit: number,
@@ -260,7 +305,8 @@ const useFileGeneratorAPI = () => {
         // QUERIES
         useGetSales,
         useGetPurchases,
-
+        useGetSalesTaxes,
+        
         // MUTATION
         downloadSalesMutation,
         downloadPurchasesMutation

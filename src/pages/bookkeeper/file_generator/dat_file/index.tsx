@@ -98,6 +98,7 @@ const DAT_File_V = () => {
           tin: doc.customer?.tin,
           branch_code: doc.customer?.branch_code,
           registered_name: doc.customer?.registered_name,
+          first_address: doc.customer?.first_address,
           name:
             (doc.customer?.first_name || '') + ' ' +
             (doc.customer?.middle_name || '') + ' ' +
@@ -119,6 +120,7 @@ const DAT_File_V = () => {
           tin: doc.supplier?.tin,
           branch_code: doc.supplier?.branch_code,
           registered_name: doc.supplier?.registered_name,
+          first_address: doc.supplier?.first_address,
           name:
             (doc.supplier?.first_name || '') + ' ' +
             (doc.supplier?.middle_name || '') + ' ' +
@@ -139,7 +141,19 @@ const DAT_File_V = () => {
       if (docType === 'SAWT' || docType === 'QAP') {
         return {
           ...base,
-          // atc_code: doc.atc_code,
+          customer: doc.customer,
+          tin: doc.customer?.tin,
+          branch_code: doc.customer?.branch_code,
+          first_address: doc.customer?.first_address,
+          second_address: doc.customer?.second_address,
+          registered_name: doc.customer?.registered_name,
+          name:
+            (doc.customer?.first_name || '') + ' ' +
+            (doc.customer?.middle_name || '') + ' ' +
+            (doc.customer?.last_name || ''),
+          atc_code: doc.atc_code,
+          income_payment: doc.income_payment,
+          tax_rate: doc.tax_rate,
           // income_payment: doc.income_payment,
           // tax_rate: doc.tax_rate,
           // tax_withheld: doc.tax_withheld,
@@ -308,9 +322,9 @@ const DAT_File_V = () => {
                 return [
                     ...base,
                     { title: 'ATC Code', dataIndex: 'atc_code' },
-                    { title: 'Income Payment', dataIndex: 'income_payment' },
+                    { title: 'Amount of Income Payment', dataIndex: 'income_payment' },
                     { title: 'Tax Rate', dataIndex: 'tax_rate' },
-                    { title: 'Tax Withheld', dataIndex: 'tax_withheld' },
+                    { title: 'Amount of Tax Withheld', dataIndex: 'tax_withheld' },
                     actionColumn
                 ]
 

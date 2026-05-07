@@ -27,6 +27,8 @@ const useFileGenerator = () => {
 
         useGetSales,
         useGetPurchases,
+        useGetSalesTaxes,
+
         downloadSalesMutation,
         downloadPurchasesMutation
     } = useFileGeneratorAPI()
@@ -224,6 +226,14 @@ const useFileGenerator = () => {
         filter.search,
         doc,
     )
+
+    const { data: salesTaxes, isLoading: isLoadingSalesTaxes, isFetching: isFetchingSalesTaxes } = useGetSalesTaxes(
+        filter.currentPage,
+        filter.recordsLimit,
+        filter.filter,
+        filter.search,
+        doc,
+    )
     const handleDownloadSales = (type: string) => {
         setStatus(prev => ({
             ...prev,
@@ -364,6 +374,18 @@ const useFileGenerator = () => {
             }))
         }
     }, [purchases, doc.selectedTable.value])
+
+    useEffect(() => {
+        console.log(doc.selectedTable.value)
+        if (doc.selectedTable.value === 'QAP') {
+            console.log(salesTaxes)
+            setRecord(prev => ({
+                ...prev,
+                recordArr: salesTaxes?.records || [],
+                totalRecords: salesTaxes?.totalRecords || 0
+            }))
+        }
+    }, [salesTaxes, doc.selectedTable.value])
     
     useEffect(() => {
         if(typeof window !== 'undefined'){
@@ -383,7 +405,7 @@ const useFileGenerator = () => {
         displayDocsTbl,
         booksOfAccountsOptions,
         clientLoader: isLoadingClients || isFetchingClients,
-        loader: isLoadingSales || isFetchingSales || isLoadingPurchases || isFetchingPurchases,
+        loader: isLoadingSales || isFetchingSales || isLoadingPurchases || isFetchingPurchases || isFetchingSalesTaxes || isLoadingSalesTaxes,
 
         // SET STATES
         setDisplayClients,
