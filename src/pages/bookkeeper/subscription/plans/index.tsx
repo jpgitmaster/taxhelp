@@ -56,12 +56,6 @@ const SubscriptionPlans_V = () => {
                         'Limited calendar functionality',
                     ],
                 },
-                // {
-                //     title: 'Support',
-                //     children: [
-                //         'Community / basic support',
-                //     ],
-                // },
             ],
             note: 'Best for freelancers or small startups testing the system',
             cta: 'Get Started',
@@ -307,6 +301,7 @@ const SubscriptionPlans_V = () => {
                         </div>
 
                         <button
+                            type='button'
                             onClick={() => setShowModal(true)}
                             className={scss.button+' '+scss.btnblue}
                         >
@@ -336,7 +331,7 @@ const SubscriptionPlans_V = () => {
                         />
 
                         <div className="flex justify-end gap-2">
-                            <button onClick={() => setShowModal(false)} className="px-4 py-2 text-sm text-gray-500">
+                            <button type='button' onClick={() => setShowModal(false)} className="px-4 py-2 text-sm text-gray-500">
                                 Cancel
                             </button>
                             <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm">

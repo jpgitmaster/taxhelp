@@ -4,7 +4,9 @@
 @use '@/styles/colors' as *;
 
 @reference 'tailwindcss';
-
+:global(.ant-modal), :global(.ant-modal .ant-modal-close) {
+    @apply outline-none!;
+}
 .box{
   border: 1px solid rgba($gray, .8);
   background-color: rgba($lightGray, .5);

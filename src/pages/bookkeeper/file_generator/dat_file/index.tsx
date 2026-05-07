@@ -83,7 +83,6 @@ const DAT_File_V = () => {
           </div>
       )
     }
-    console.log(record.recordArr)
     const dataSource: Record_Obj[] = record.recordArr?.map(doc => {
       const base = {
         id: doc.id,
@@ -103,13 +102,49 @@ const DAT_File_V = () => {
             (doc.customer?.first_name || '') + ' ' +
             (doc.customer?.middle_name || '') + ' ' +
             (doc.customer?.last_name || ''),
-          exempt_sales: doc.exempt_sales,
-          vatable_sales: doc.vatable_sales,
-          zero_rated_sales: doc.zero_rated_sales,
-          gross_amount: doc.gross_amount,
+          exempt_sales: Number(doc.exempt_sales)?.toLocaleString(
+                      navigator.language,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    ),
+          vatable_sales: Number(doc.vatable_sales)?.toLocaleString(
+                      navigator.language,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    ),
+          zero_rated_sales: Number(doc.zero_rated_sales)?.toLocaleString(
+                      navigator.language,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    ),
+          gross_amount: Number(doc.gross_amount)?.toLocaleString(
+                      navigator.language,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    ),
           vat_rate: doc.vat_rate,
-          vat_amount: doc.vat_amount,
-          gross_taxable: doc.gross_taxable,
+          vat_amount: Number(doc.vat_amount)?.toLocaleString(
+                      navigator.language,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    ),
+          gross_taxable: Number(doc.gross_taxable)?.toLocaleString(
+                      navigator.language,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    ),
         }
       }
 
@@ -127,14 +162,56 @@ const DAT_File_V = () => {
             (doc.supplier?.last_name || ''),
           exempt_purchases: doc.exempt_purchases,
           zero_rated_purchases: doc.zero_rated_purchases,
-          vatable_purchases: doc.vatable_purchases,
-          vatable_services: doc.vatable_purchase_of_services,
-          vatable_purchase_of_capital_goods: doc.vatable_purchase_of_capital_goods,
-          vatable_purchase_of_other_goods: doc.vatable_purchase_of_other_goods,
-          gross_amount: doc.gross_amount,
+          vatable_purchases: Number(doc.vatable_purchases)?.toLocaleString(
+                      navigator.language,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    ),
+          vatable_services: Number(doc.vatable_purchase_of_services)?.toLocaleString(
+                      navigator.language,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    ),
+          vatable_purchase_of_capital_goods: Number(doc.vatable_purchase_of_capital_goods)?.toLocaleString(
+                      navigator.language,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    ),
+          vatable_purchase_of_other_goods: Number(doc.vatable_purchase_of_other_goods)?.toLocaleString(
+                      navigator.language,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    ),
+          gross_amount: Number(doc.gross_amount)?.toLocaleString(
+                      navigator.language,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    ),
           vat_rate: doc.vat_rate,
-          vat_amount: doc.vat_amount,
-          gross_taxable: doc.gross_taxable,
+          vat_amount: Number(doc.vat_amount)?.toLocaleString(
+                      navigator.language,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    ),
+          gross_taxable: Number(doc.gross_taxable)?.toLocaleString(
+                      navigator.language,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    ),
         }
       }
 
@@ -152,11 +229,23 @@ const DAT_File_V = () => {
             (doc.customer?.middle_name || '') + ' ' +
             (doc.customer?.last_name || ''),
           atc_code: doc.atc_code,
-          income_payment: doc.income_payment,
+          income_payment: Number(doc.income_payment)?.toLocaleString(
+                                              navigator.language,
+                                              {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                              }
+                                            ),
           tax_rate: doc.tax_rate,
           // income_payment: doc.income_payment,
           // tax_rate: doc.tax_rate,
-          // tax_withheld: doc.tax_withheld,
+          tax_amount: Number(doc.tax_amount)?.toLocaleString(
+                                              navigator.language,
+                                              {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                              }
+                                            ),
         }
       }
 
@@ -324,7 +413,7 @@ const DAT_File_V = () => {
                     { title: 'ATC Code', dataIndex: 'atc_code' },
                     { title: 'Amount of Income Payment', dataIndex: 'income_payment' },
                     { title: 'Tax Rate', dataIndex: 'tax_rate' },
-                    { title: 'Amount of Tax Withheld', dataIndex: 'tax_withheld' },
+                    { title: 'Amount of Tax Withheld', dataIndex: 'tax_amount', width: 140, align: 'center' },
                     actionColumn
                 ]
 

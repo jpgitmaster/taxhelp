@@ -15,7 +15,14 @@ const EmailVerification = () => {
 
       router.prefetch('/bookkeeper/profile/edit');
 
-      verifyUserMutation.mutate(token); // ✅ NO onSuccess here
+      verifyUserMutation.mutate(token, {
+        onSuccess: () => {
+          // mark first verified visit
+          localStorage.setItem('showPlanModal', 'true');
+
+          router.push('/bookkeeper/profile/edit');
+        },
+      });
     }, [token]);
     return (
         <div className={scss.container}>

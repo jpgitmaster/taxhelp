@@ -30,6 +30,7 @@ interface Record_Obj{
     // QAP
     atc_code?: string
     tax_rate?: string
+    tax_amount?: string
     income_payment?: string
 
     customer?: {
