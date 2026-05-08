@@ -43,9 +43,10 @@ const DAT_File_V = () => {
       handleDownloadSales,
       handleClearSelected,
       handleDownloadPurchases,
+      handleDownloadSalesTaxes
     } = useFileGenerator()
     const { loader: statLoader } = status
-    const docType = doc.selectedTable.value
+    const docType = doc.selectedTable.parentValue || doc.selectedTable.value
     const actionColumn: ColumnsType<Record_Obj>[number] = {
       width: 100,
       fixed: 'right',
@@ -214,6 +215,11 @@ const DAT_File_V = () => {
                     ),
         }
       }
+      if (docType === 'IMPORTATION') {
+        return {
+          ...base,
+        }
+      }
 
       if (docType === 'SAWT' || docType === 'QAP') {
         return {
@@ -251,97 +257,7 @@ const DAT_File_V = () => {
 
       return base
     }) ?? []
-
-    // const columns: ColumnsType<Record_Obj> = [
-    //   {
-    //     title: 'Taxable Month',
-    //     key: 'taxable_month',
-    //     dataIndex: 'taxable_month',
-    //     render: (value) => dayjs(value)?.format('YYYY-MM'),
-    //   },
-    //   {
-    //     title: 'Invoice Date',
-    //     key: 'invoice_date',
-    //     dataIndex: 'invoice_date',
-    //     render: (value) => dayjs(value)?.format('M/DD/YYYY'),
-    //   },
-    //   {
-    //     title: 'TIN Number',
-    //     key: 'tin',
-    //     dataIndex: 'business_profile',
-    //     render: (bp) => bp?.tin,
-    //   },
-    //   {
-    //     title: 'Branch Code',
-    //     key: 'branch_code',
-    //     dataIndex: 'business_profile',
-    //     render: (bp) => bp?.branch_code,
-    //   },
-    //   {
-    //     title: 'Registered Name',
-    //     key: 'registered_name',
-    //     dataIndex: 'business_profile',
-    //     render: (bp) => bp?.registered_name,
-    //   },
-    //   {
-    //     title: 'Name',
-    //     key: 'name',
-    //     dataIndex: 'name',
-    //   },
-    //   {
-    //     title: 'Particulars',
-    //     key: 'particulars',
-    //     dataIndex: 'particulars',
-    //   },
-    //   {
-    //     title: 'Terms',
-    //     key: 'terms',
-    //     dataIndex: 'terms',
-    //   },
-    //   {
-    //     title: 'Account Name',
-    //     key: 'account_name',
-    //     dataIndex: 'account_name',
-    //   },
-    //   {
-    //     width: 100,
-    //     fixed: 'right',
-    //     title: 'Actions',
-    //     align: 'center',
-    //     render: (record) =>
-    //         <div className={scss.actions}>
-    //             <Link href={'/bookkeeper/clients/'+record.id} className={scss.action+' '+scss.purchases}>
-    //                 <Image src='/svgs/eyecon_check.svg' alt='Purchases' priority width={22} height={22} unoptimized={true} />
-    //                 <span style={{top: '-2px'}}>
-    //                     View
-    //                 </span>
-    //             </Link>
-    //             <Link href={'/bookkeeper/clients/'+record.id} className={scss.action+' '+scss.edit}>
-    //                 <Image src='/svgs/edit.svg' alt='Edit' priority width={20} height={20} unoptimized={true} />
-    //                 <span>
-    //                     Edit
-    //                 </span>
-    //             </Link>
-    //             <Popconfirm
-    //               title="Delete the record"
-    //               description="Are you sure to delete this record?"
-    //               onConfirm={() => handleDeleteRecord(Number(record.id))}
-    //               onCancel={() => handleToggleDelete(Number(record.id))}
-    //               okText="Yes"
-    //               cancelText="No"
-    //             >
-    //               <button type='button'
-    //                 onClick={() => handleToggleDelete(Number(record.id))}
-    //                 className={scss.action+' '+scss.delete}>
-    //                   <Image src='/svgs/delete.svg' alt='Delete' priority width={18} height={18} unoptimized={true} />
-    //                   <span>
-    //                       Delete
-    //                   </span>
-    //               </button>
-    //             </Popconfirm>
-    //         </div>
-    // },
-    // ]
+    
 
     const getColumns = (): ColumnsType<Record_Obj> => {
         const base = [
@@ -376,7 +292,7 @@ const DAT_File_V = () => {
             },
         ]
 
-        switch (doc.selectedTable.value) {
+        switch (docType) {
             case 'SALES':
                 return [
                     ...base,
@@ -405,6 +321,29 @@ const DAT_File_V = () => {
                     { title: 'Gross Taxable', dataIndex: 'gross_taxable' },
                     actionColumn
                 ]
+              case 'IMPORTATION':
+                return [
+                    {
+                        title: 'Taxable Month',
+                        dataIndex: 'taxable_month',
+                        render: (value: string) => dayjs(value)?.format('YYYY-MM'),
+                    },
+                    { title: 'Import Entery No.', dataIndex: 'exempt_purchases', width: 140, align: 'center' },
+                    { title: 'Assessment or Release Date', dataIndex: 'exempt_purchases', width: 140, align: 'center' },
+                    { title: 'Name of Seller', dataIndex: 'exempt_purchases' },
+                    { title: 'Date of Importation', dataIndex: 'exempt_purchases' },
+                    { title: 'Country of Origin', dataIndex: 'exempt_purchases' },
+                    { title: 'Total Landed Cost', dataIndex: 'exempt_purchases' },
+                    { title: 'Dutiable Value', dataIndex: 'exempt_purchases' },
+                    { title: 'Charges', dataIndex: 'exempt_purchases' },
+                    { title: 'Taxable Imports', dataIndex: 'exempt_purchases' },
+                    { title: 'Exempt Imports', dataIndex: 'exempt_purchases' },
+                    { title: 'Vat Rate', dataIndex: 'exempt_purchases' },
+                    { title: 'Vat Amount', dataIndex: 'exempt_purchases' },
+                    { title: 'OR Number', dataIndex: 'exempt_purchases' },
+                    { title: 'Date of VAT Payment', dataIndex: 'exempt_purchases' },
+                    actionColumn
+                ]
 
             case 'SAWT':
             case 'QAP':
@@ -422,6 +361,7 @@ const DAT_File_V = () => {
         }
     }
     const columns = useMemo(() => getColumns(), [doc.selectedTable.value])
+    
     return (
         <div>
             <div className={scss.cards+' '+scss.filters}>
@@ -476,8 +416,14 @@ const DAT_File_V = () => {
                   if(doc.selectedTable.value === 'PURCHASES'){
                     handleDownloadPurchases('dat')
                   }
-                  if(doc.selectedTable.value === 'QAP'){
-                    // handleDownloadPurchases('dat', '1601E')
+                  if (
+                    doc.selectedTable.parentValue === 'QAP' ||
+                    doc.selectedTable.parentValue === 'SAWT'
+                  ) {
+                    handleDownloadSalesTaxes(
+                      'dat',
+                      doc.selectedTable.value
+                    )
                   }
                 }}>
                     Download DAT File

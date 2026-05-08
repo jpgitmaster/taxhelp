@@ -6,7 +6,8 @@ export default function DocumentsTableDropdown(props: {
         docSearch: string
         selectedTable: {
             value: string,
-            label: string
+            label: string,
+            parentValue?: string
         }
         client: {
             id: number | null,
@@ -27,8 +28,9 @@ export default function DocumentsTableDropdown(props: {
 
     handleToggle(dropdown: string): void
     handleSelectTable(selectedTable: {
-        value: string,
+        value: string
         label: string
+        parentValue?: string
     }): void
     
 }) {
@@ -91,8 +93,12 @@ export default function DocumentsTableDropdown(props: {
                         <ul style={{margin: 0}}>
                             {
                                 options?.length ? options?.map((option, index) => 
-                                    <li key={index} value={option.value} onClick={() => {
+                                    <li key={index} value={option.value}
+                                        onClick={() => {
+                                            if (option.children?.length) return
+
                                             setDisplayDocsTbl(false)
+
                                             handleSelectTable(option)
                                         }}
                                         className={option.children?.length ? scss.hasChildren : ''}
@@ -103,7 +109,20 @@ export default function DocumentsTableDropdown(props: {
                                             <ul>
                                                 {
                                                     option?.children.map((opt, indx) =>
-                                                        <li key={indx}>
+                                                        <li
+                                                            key={indx}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation()
+
+                                                                setDisplayDocsTbl(false)
+
+                                                                handleSelectTable({
+                                                                    value: opt.value,
+                                                                    label: opt.label,
+                                                                    parentValue: option.value
+                                                                })
+                                                            }}
+                                                        >
                                                             {opt.label}
                                                         </li>
                                                     )

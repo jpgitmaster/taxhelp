@@ -30,7 +30,8 @@ const useFileGenerator = () => {
         useGetSalesTaxes,
 
         downloadSalesMutation,
-        downloadPurchasesMutation
+        downloadPurchasesMutation,
+        downloadSalesTaxesMutation
     } = useFileGeneratorAPI()
     const [tableWidth, setTableWidth] = useState(0)
     const [displayClients, setDisplayClients] = useState(false)
@@ -45,22 +46,30 @@ const useFileGenerator = () => {
             label: 'SUMMARY LIST OF PURCHASES (SLP)',
             value: 'PURCHASES'
         },
+        {
+            label: 'IMPORTS TRANSACTION',
+            value: 'IMPORTATION'
+        },
         // PURCHASES
         {
             label: 'QUARTERLY ALPHALIST OF PAYEES (QAP)',
             value: 'QAP',
             children: [
                 {
-                    label: '1601E',
-                    value: '1601E',
+                    label: '1601EQ  Schedule 1',
+                    value: '1601EQ',
                 },
                 {
-                    label: '1601F',
-                    value: '1601F',
+                    label: '1601FQ Schedule 1',
+                    value: '1601FQ',
                 },
                 {
-                    label: '1621',
-                    value: '1621',
+                    label: '1604E Schedule 3',
+                    value: '1604E',
+                },
+                {
+                    label: '1604F Schedule 3',
+                    value: '1604F',
                 }
             ]
         },
@@ -160,8 +169,10 @@ const useFileGenerator = () => {
         hasSelectedClient: boolean
         hasSelectedDocument: boolean
         selectedTable: {
-            value: string,
+            value: string
             label: string
+            parentValue?: string
+
         }
         document: {
             id: number | null
@@ -196,7 +207,8 @@ const useFileGenerator = () => {
         },
         selectedTable: {
             value: '',
-            label: ''
+            label: '',
+            parentValue: ''
         },
         period: null,
         tax_month_end: null,
@@ -247,6 +259,13 @@ const useFileGenerator = () => {
             loader: true
         }))
         downloadPurchasesMutation.mutate({ doc, type })
+    }
+    const handleDownloadSalesTaxes = (type: string, form_type: string) => {
+        setStatus(prev => ({
+            ...prev,
+            loader: true
+        }))
+        downloadSalesTaxesMutation.mutate({ doc, type, form_type })
     }
     const handlePageChange = (current: number) => {
         setFilter((prev) => ({
@@ -312,7 +331,14 @@ const useFileGenerator = () => {
         })
         setDisplayClients(false)
     }
-    const handleSelectTable = (selectedTable: { value: string, label: string }) => {
+    
+    const handleSelectTable = (
+        selectedTable: {
+            value: string,
+            label: string,
+            parentValue?: string
+        }
+    ) => {
         setDoc({
             ...doc,
             selectedTable: selectedTable
@@ -376,16 +402,14 @@ const useFileGenerator = () => {
     }, [purchases, doc.selectedTable.value])
 
     useEffect(() => {
-        console.log(doc.selectedTable.value)
-        if (doc.selectedTable.value === 'QAP') {
-            console.log(salesTaxes)
+        if (doc.selectedTable.parentValue === 'QAP' || doc.selectedTable.parentValue === 'SAWT') {
             setRecord(prev => ({
                 ...prev,
                 recordArr: salesTaxes?.records || [],
                 totalRecords: salesTaxes?.totalRecords || 0
             }))
         }
-    }, [salesTaxes, doc.selectedTable.value])
+    }, [salesTaxes, doc.selectedTable])
     
     useEffect(() => {
         if(typeof window !== 'undefined'){
@@ -423,6 +447,7 @@ const useFileGenerator = () => {
         handleDownloadSales,
         handleClearSelected,
         handleDownloadPurchases,
+        handleDownloadSalesTaxes
     }
 }
 
