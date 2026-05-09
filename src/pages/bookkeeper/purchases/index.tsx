@@ -146,16 +146,6 @@ const Purchases_V = () => {
       dataIndex: 'taxable_month',
       render: (value) => dayjs(value)?.format('YYYY-MM'),
     },
-    // {
-    //   title: 'Invoice Date',
-    //   key: 'invoice_date',
-    //   dataIndex: 'invoice_date',
-    // },
-    // {
-    //   title: 'Invoice No.',
-    //   key: 'invoice_number',
-    //   dataIndex: 'invoice_number',
-    // },
     {
       title: 'Taxpayer Identification Number',
       key: 'tin',
@@ -186,21 +176,6 @@ const Purchases_V = () => {
       key: 'second_address',
       dataIndex: 'second_address',
     },
-    // {
-    //   title: 'Particulars',
-    //   key: 'particulars',
-    //   dataIndex: 'particulars',
-    // },
-    // {
-    //   title: 'Terms',
-    //   key: 'terms',
-    //   dataIndex: 'terms',
-    // },
-    // {
-    //   title: 'Account Name',
-    //   key: 'account_name',
-    //   dataIndex: 'account_name',
-    // },
     {
       title: 'Exempt Purchases',
       key: 'exempt_purchases',
@@ -254,21 +229,6 @@ const Purchases_V = () => {
       key: 'gross_taxable',
       dataIndex: 'gross_taxable',
     },
-    // {
-    //   title: 'ATC',
-    //   key: 'atc',
-    //   dataIndex: 'atc',
-    // },
-    // {
-    //   title: 'W/ Tax Rate',
-    //   key: 'wtax_rate',
-    //   dataIndex: 'wtax_rate',
-    // },
-    // {
-    //   title: 'W/ Tax Amount',
-    //   key: 'wtax_amount',
-    //   dataIndex: 'wtax_amount',
-    // },
     {
       width: 100,
       fixed: 'right',
@@ -436,7 +396,7 @@ const Purchases_V = () => {
             }
             <div className={scss.paginationComponent}>
                 {
-                purchases.totalPurchases ? <Pagination defaultPageSize={purchasesFilter.recordsLimit} total={purchases.totalPurchases} onChange={handlePageChange} />
+                purchases.totalPurchases ? <Pagination defaultPageSize={purchasesFilter.recordsLimit} total={purchases.totalPurchases} showSizeChanger={false} onChange={handlePageChange} />
                 : ''
                 }
             </div>

@@ -88,7 +88,7 @@ const DAT_File_V = () => {
     const dataSource: Record_Obj[] = record.recordArr?.map(doc => {
       const base = {
         id: doc.id,
-        toDelete: false,
+        toDelete: doc.toDelete,
         taxable_month: doc.taxable_month,
       }
 
@@ -441,6 +441,9 @@ const DAT_File_V = () => {
                 columns={columns}
                 pagination={false}
                 dataSource={dataSource}
+                rowClassName={(record) =>
+                  record.toDelete ? scss.activeRow : ''
+                }
                 scroll={{ x: 'max-content', y: 90 * 5 }}
             />
           </div>

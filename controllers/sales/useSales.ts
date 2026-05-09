@@ -229,7 +229,22 @@ const useSales = () => {
 
     const handleDeleteRecord = (id: number) => {
         setStatus({...status, loader: true})
-        useDeleteSalesRecord.mutate(id)
+        useDeleteSalesRecord.mutate(id, {
+            onSuccess: () => {
+                    setStatus(prev => ({
+                ...prev,
+                loader: false,
+                message: 'Sales record deleted successfully.'
+            }))
+
+            setTimeout(() => {
+                setStatus(prev => ({
+                    ...prev,
+                    message: ''
+                }))
+            }, 5000)
+            }
+        })
     }
 
     const handleSelectDocument = (document: {

@@ -106,7 +106,6 @@ const useSalesAPI = () => {
         },
 
         onSuccess: () => {
-            // ✅ correct v5 invalidation
             queryClient.invalidateQueries({
                 queryKey: ['sales']
             })

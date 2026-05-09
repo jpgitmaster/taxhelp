@@ -69,6 +69,7 @@ const useFileGeneratorAPI = () => {
             enabled: !!doc.period && !!doc.client.id && !!doc.selectedTable.value && doc.selectedTable.value === 'SALES', // 👈 only runs when these conditions are met
         })
     }
+
     const useDeleteSalesRecord = useMutation({
         mutationFn: async (id: number) => {
             const res = await api.delete(`/api/${apiVersion}/sales/records/${id}`, {
@@ -78,7 +79,6 @@ const useFileGeneratorAPI = () => {
         },
 
         onSuccess: () => {
-            // ✅ correct v5 invalidation
             queryClient.invalidateQueries({
                 queryKey: ['sales_file']
             })
@@ -88,6 +88,8 @@ const useFileGeneratorAPI = () => {
             console.log(error)
         }
     })
+
+    
     const useGetSalesTaxes = (
         page: number,
         limit: number,
@@ -185,6 +187,22 @@ const useFileGeneratorAPI = () => {
         })
     }
     
+    const useDeletePurchasesRecord = useMutation({
+        mutationFn: async (id: number) => {
+            const res = await api.delete(`/api/${apiVersion}/purchases/records/${id}`, {
+                data: { is_active: false }
+            })
+            return res.data
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['purchases_file']
+            })
+        },
+        onError: (error: any) => {
+            console.log(error)
+        }
+    })
     const downloadSalesMutation = useMutation({
         mutationFn: async (params: {
             doc: {
@@ -402,6 +420,7 @@ const useFileGeneratorAPI = () => {
         // MUTATION
         useDeleteSalesRecord,
         downloadSalesMutation,
+        useDeletePurchasesRecord,
         downloadPurchasesMutation,
         downloadSalesTaxesMutation
 

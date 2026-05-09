@@ -153,7 +153,22 @@ const usePurchases = () => {
 
     const handleDeleteRecord = (id: number) => {
         setStatus({...status, loader: true})
-        useDeletePurchasesRecord.mutate(id)
+        useDeletePurchasesRecord.mutate(id, {
+            onSuccess: () => {
+                    setStatus(prev => ({
+                ...prev,
+                loader: false,
+                message: 'Purchase record deleted successfully.'
+            }))
+
+            setTimeout(() => {
+                setStatus(prev => ({
+                    ...prev,
+                    message: ''
+                }))
+            }, 5000)
+            }
+        })
     }
 
     const handleSelectClient = (client: {

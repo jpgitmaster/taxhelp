@@ -219,21 +219,6 @@ const Sales_V = () => {
       key: 'gross_taxable',
       dataIndex: 'gross_taxable',
     },
-    // {
-    //   title: 'ATC',
-    //   key: 'atc',
-    //   dataIndex: 'atc',
-    // },
-    // {
-    //   title: 'EWT Rate',
-    //   key: 'ewt_rate',
-    //   dataIndex: 'ewt_rate',
-    // },
-    // {
-    //   title: 'Tax Amount',
-    //   key: 'tax_amount',
-    //   dataIndex: 'tax_amount',
-    // },
     {
       title: 'Created Date',
       key: 'created_date',

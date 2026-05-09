@@ -27,6 +27,7 @@ const useFileGenerator = () => {
 
         useDeleteSalesRecord,
         downloadSalesMutation,
+        useDeletePurchasesRecord,
         downloadPurchasesMutation,
         downloadSalesTaxesMutation
     } = useFileGeneratorAPI()
@@ -282,7 +283,7 @@ const useFileGenerator = () => {
                         setStatus(prev => ({
                     ...prev,
                     loader: false,
-                    message: 'Schedule created successfully.'
+                    message: 'Sales record deleted successfully.'
                 }))
 
                 setTimeout(() => {
@@ -295,7 +296,22 @@ const useFileGenerator = () => {
             })
         }
         if(doc.selectedTable.value === 'PURCHASES'){
-            
+            useDeletePurchasesRecord.mutate(id, {
+                onSuccess: () => {
+                        setStatus(prev => ({
+                    ...prev,
+                    loader: false,
+                    message: 'Purchase record deleted successfully.'
+                }))
+
+                setTimeout(() => {
+                    setStatus(prev => ({
+                        ...prev,
+                        message: ''
+                    }))
+                }, 5000)
+                }
+            })
         }
     }
 

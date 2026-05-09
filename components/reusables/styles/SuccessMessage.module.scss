@@ -7,7 +7,7 @@
   transform-origin: center center;
   backface-visibility: hidden;
   perspective: 1000px;
-  @apply flex flex-row fixed right-5 top-29 rounded-[10px] py-2 px-3;
+  @apply flex flex-row fixed z-1 right-5 top-29 rounded-[10px] py-2 px-3;
 
   /* Sequence: flip bounce → pause → slide out */
   animation:

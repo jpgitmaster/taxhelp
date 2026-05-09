@@ -1,16 +1,15 @@
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { Purchases } from '../types'
-import { useRouter } from 'next/router'
 import { initPurchases } from '../states'
 import api from '@/components/reusables/axios'
 import { Status } from '@/controllers/global/types'
 import { AppliedDoc } from '@/controllers/sales/types'
-import { useQuery, useMutation} from '@tanstack/react-query'
 import { initStatus, initFilter } from '@/controllers/global/states'
+import { useQuery, useMutation, useQueryClient} from '@tanstack/react-query'
 
 const usePurchasesAPI = () => {
-    const router = useRouter()
+    const queryClient = useQueryClient()
     const [filter, setFilter] = useState(initFilter)
     const [status, setStatus] = useState<Status>(initStatus)
     const apiVersion = process.env?.NEXT_PUBLIC_API_VERSION
@@ -102,11 +101,9 @@ const usePurchasesAPI = () => {
             return res.data
         },
         onSuccess: () => {
-            sessionStorage.setItem(
-                'successMessage',
-                'Your Purchases record has been deleted.'
-            )
-            router.reload()
+            queryClient.invalidateQueries({
+                queryKey: ['purchases']
+            })
         },
         onError: (error: any) => {
             console.log(error)
