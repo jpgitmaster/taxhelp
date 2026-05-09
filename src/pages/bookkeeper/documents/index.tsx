@@ -180,19 +180,15 @@ const Documents_V = () => {
     },
     {
       align: 'center',
-      title: 'Receipts',
+      title: 'Imports Transaction',
     },
     {
       align: 'center',
-      title: 'Disbursements',
+      title: 'QAP',
     },
     {
       align: 'center',
-      title: 'General Journal',
-    },
-    {
-      align: 'center',
-      title: 'General Ledger',
+      title: 'SAWT',
     },
     {
       title: 'Uploaded Time & Date',

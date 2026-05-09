@@ -4,9 +4,8 @@ import { Record_ } from '../types'
 import { initRecord } from '../states'
 import api from '@/components/reusables/axios'
 import { Status } from '@/controllers/global/types'
-import { useMutation, useQuery } from '@tanstack/react-query'
 import { initStatus, initFilter } from '@/controllers/global/states'
-
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 const fileConfig: Record<string, { mime: string; ext: string }> = {
     journal: {
         mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -19,6 +18,7 @@ const fileConfig: Record<string, { mime: string; ext: string }> = {
 }
 
 const useFileGeneratorAPI = () => {
+    const queryClient = useQueryClient()
     const [filter, setFilter] = useState(initFilter)
     const apiVersion = process.env?.NEXT_PUBLIC_API_VERSION
     const [status, setStatus] = useState<Status>(initStatus)
@@ -59,7 +59,7 @@ const useFileGeneratorAPI = () => {
                         taxable_month_to: doc.period?.format('MM/YYYY') ?? null,
                     }
                 })
-                console.log(res.data);
+                
                 return {
                     records: res.data?.sales ?? [],
                     totalRecords: res.data?.total ?? 0
@@ -69,7 +69,25 @@ const useFileGeneratorAPI = () => {
             enabled: !!doc.period && !!doc.client.id && !!doc.selectedTable.value && doc.selectedTable.value === 'SALES', // 👈 only runs when these conditions are met
         })
     }
+    const useDeleteSalesRecord = useMutation({
+        mutationFn: async (id: number) => {
+            const res = await api.delete(`/api/${apiVersion}/sales/records/${id}`, {
+                data: { is_active: false }
+            })
+            return res.data
+        },
 
+        onSuccess: () => {
+            // ✅ correct v5 invalidation
+            queryClient.invalidateQueries({
+                queryKey: ['sales_file']
+            })
+        },
+
+        onError: (error: any) => {
+            console.log(error)
+        }
+    })
     const useGetSalesTaxes = (
         page: number,
         limit: number,
@@ -382,6 +400,7 @@ const useFileGeneratorAPI = () => {
         useGetSalesTaxes,
         
         // MUTATION
+        useDeleteSalesRecord,
         downloadSalesMutation,
         downloadPurchasesMutation,
         downloadSalesTaxesMutation

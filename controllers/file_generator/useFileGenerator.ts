@@ -1,14 +1,10 @@
 import { Dayjs } from 'dayjs';
 import { Record_Obj } from './types';
-import useSalesAPI from '../sales/api';
 import useFileGeneratorAPI from './api';
 import useClientAPI from '../clients/api';
 import { useState, useEffect, ChangeEvent } from "react";
 
 const useFileGenerator = () => {
-    const {
-        useDeleteSalesRecord
-    } = useSalesAPI()
     const {
         filter: clientFilter,
         setFilter: clientSetFilter,
@@ -29,6 +25,7 @@ const useFileGenerator = () => {
         useGetPurchases,
         useGetSalesTaxes,
 
+        useDeleteSalesRecord,
         downloadSalesMutation,
         downloadPurchasesMutation,
         downloadSalesTaxesMutation
@@ -275,9 +272,27 @@ const useFileGenerator = () => {
     }
 
     const handleDeleteRecord = (id: number) => {
-        setStatus({...status, loader: true})
+        setStatus(prev => ({
+            ...prev,
+            loader: true
+        }))
         if(doc.selectedTable.value === 'SALES'){
-            useDeleteSalesRecord.mutate(id)
+            useDeleteSalesRecord.mutate(id, {
+                onSuccess: () => {
+                        setStatus(prev => ({
+                    ...prev,
+                    loader: false,
+                    message: 'Schedule created successfully.'
+                }))
+
+                setTimeout(() => {
+                    setStatus(prev => ({
+                        ...prev,
+                        message: ''
+                    }))
+                }, 5000)
+                }
+            })
         }
         if(doc.selectedTable.value === 'PURCHASES'){
             
@@ -285,17 +300,23 @@ const useFileGenerator = () => {
     }
 
     const handleToggleDelete = (id: number) => {
-        const { recordArr } = record
-        const newRecordArr = recordArr?.map((record_) => record_.id == id ? {
-            ...record_,
-            // toDelete: !record_.toDelete
-        } : {
-            ...record_,
-            toDelete: false,
-        })
-        setRecord({
-            ...record,
-            recordArr: newRecordArr as Record_Obj[]
+        setRecord(prev => {
+            const newRecordArr = prev.recordArr?.map((record_) =>
+                record_.id === id
+                    ? {
+                        ...record_,
+                        toDelete: !record_.toDelete
+                    }
+                    : {
+                        ...record_,
+                        toDelete: false
+                    }
+            )
+
+            return {
+                ...prev,
+                recordArr: newRecordArr as Record_Obj[]
+            }
         })
     }
     
@@ -382,7 +403,11 @@ const useFileGenerator = () => {
     }
 
     useEffect(() => {
-        if (doc.selectedTable.value === 'SALES') {
+        if (
+            doc.selectedTable.value === 'SALES' &&
+            sales
+        ){
+            console.log(sales)
             setRecord(prev => ({
                 ...prev,
                 recordArr: sales?.records || [],
@@ -392,7 +417,7 @@ const useFileGenerator = () => {
     }, [sales, doc.selectedTable.value])
 
     useEffect(() => {
-        if (doc.selectedTable.value === 'PURCHASES') {
+        if (doc.selectedTable.value === 'PURCHASES' && purchases) {
             setRecord(prev => ({
                 ...prev,
                 recordArr: purchases?.records || [],

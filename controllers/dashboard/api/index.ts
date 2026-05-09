@@ -54,7 +54,6 @@ const useDashboardAPI = () => {
                     method: 'GET',
                     url: `/api/${apiVersion}/schedules`
                 })
-                console.log(res)
                 return {
                     schedules: res.data?.schedules ?? [],
                     totalSchedules: res.data?.total ?? 0

@@ -106,11 +106,6 @@ const useSalesAPI = () => {
         },
 
         onSuccess: () => {
-            sessionStorage.setItem(
-                'successMessage',
-                'Your Sales record has been deleted.'
-            )
-
             // ✅ correct v5 invalidation
             queryClient.invalidateQueries({
                 queryKey: ['sales']

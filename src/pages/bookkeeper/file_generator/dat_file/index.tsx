@@ -8,6 +8,7 @@ import { signOut, getSession } from 'next-auth/react'
 import Loader from '@/components/reusables/RotatingLoader'
 import { Record_Obj } from '@/controllers/file_generator/types'
 import { Table, DatePicker, Pagination, Popconfirm } from 'antd'
+import SuccessMessage from '@/components/reusables/SuccessMessage'
 import CustomContainer from '@/components/reusables/CustomContainer'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
@@ -45,7 +46,7 @@ const DAT_File_V = () => {
       handleDownloadPurchases,
       handleDownloadSalesTaxes
     } = useFileGenerator()
-    const { loader: statLoader } = status
+    const { loader: statLoader, message } = status
     const docType = doc.selectedTable.parentValue || doc.selectedTable.value
     const actionColumn: ColumnsType<Record_Obj>[number] = {
       width: 100,
@@ -363,6 +364,10 @@ const DAT_File_V = () => {
     
     return (
         <div>
+            {
+              message &&
+              <SuccessMessage message={message} />
+            }
             <div className={scss.cards+' '+scss.filters}>
               <CustomContainer
                   scss={scss}
