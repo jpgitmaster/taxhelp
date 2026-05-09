@@ -18,6 +18,7 @@ import ClientsDropdown from '@/components/pages/bookkeeper/documents/ClientsDrop
 import ScheduleCategoryDropdown from '@/components/pages/bookkeeper/dashboard/ScheduleCategoryDropdown';
 
 const { RangePicker } = DatePicker;
+
 const Dashboard_V = () => {
   const {
     // STATES

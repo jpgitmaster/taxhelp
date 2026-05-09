@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import * as XLSX from 'xlsx';
 import useDocumentAPI from './api';
 import { ExcelRow } from "./types";
@@ -77,44 +78,155 @@ const useUploadDocuments = () => {
         clientFilter.search
     )
     const clientArr = dataClients?.clients;
+    const formatTIN = (value: unknown) => {
+        const digits = String(value ?? '')
+            .replace(/\D/g, '')
+            .slice(0, 9);
 
+        const parts = digits.match(/.{1,3}/g);
+        return parts ? parts.join('-') : '';
+    };
     const getColumns = () => {
         if(doc.selectedTable.value === 'SALES') {
             return [
-                { key: 'tin', title: 'TIN', dataIndex: 'tin' },
+                { key: 'taxableMonth', title: 'Taxable Month', dataIndex: 'taxableMonth', render: (value: any) =>
+                value
+                    ? dayjs(
+                        typeof value === 'number'
+                        ? XLSX.SSF.format('m/d/yyyy', value) // convert Excel number
+                        : value
+                    ).format('MM-YYYY')
+                    : '' },
+                { key: 'tin', title: 'Taxpayer Identification Number', dataIndex: 'tin', width: 180, render: (value: string) => formatTIN(value) },
+                { key: 'branchCode', title: 'Branch Code', dataIndex: 'branchCode' },
+                { key: 'businessOwner', title: 'Business Owner', dataIndex: 'businessOwner' },
                 { key: 'registeredName', title: 'Registered Name', dataIndex: 'registeredName' },
-                { key: 'firstName', title: 'First Name', dataIndex: 'firstName' },
-                { key: 'lastName', title: 'Last Name', dataIndex: 'lastName' },
-                { key: 'grossAmount', title: 'Gross Amount', dataIndex: 'grossAmount' },
-                { key: 'exemptSales', title: 'Exempt Sales', dataIndex: 'exemptSales' },
-                { key: 'zeroRatedSales', title: 'Zero Rated', dataIndex: 'zeroRatedSales' },
-                { key: 'vatableSales', title: 'Vatable Sales', dataIndex: 'vatableSales' },
+                { key: 'address1', title: 'Address 1', dataIndex: 'address1' },
+                { key: 'address2', title: 'Address 2', dataIndex: 'address2' },
+                { key: 'exemptSales', title: 'Exempt Sales', dataIndex: 'exemptSales', render: (value: number) => Number(value)?.toLocaleString(
+                                              navigator.language,
+                                              {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                              }
+                                            )},
+                { key: 'zeroRatedSales', title: 'Zero-Rated Sales', dataIndex: 'zeroRatedSales', render: (value: number) => Number(value)?.toLocaleString(
+                                              navigator.language,
+                                              {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                              }
+                                            )},
+                { key: 'vatableSales', title: 'Vatable Sales', dataIndex: 'vatableSales', render: (value: number) => Number(value)?.toLocaleString(
+                                              navigator.language,
+                                              {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                              }
+                                            )},
+                { key: 'grossAmount', title: 'Gross Amount', dataIndex: 'grossAmount', render: (value: number) => Number(value)?.toLocaleString(
+                                              navigator.language,
+                                              {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                              }
+                                            )},
                 { key: 'vatRate', title: 'VAT Rate', dataIndex: 'vatRate' },
-                { key: 'vatAmount', title: 'VAT Amount', dataIndex: 'vatAmount' },
-                { key: 'grossTaxable', title: 'Gross Taxable', dataIndex: 'grossTaxable' },
-                { key: 'atc', title: 'ATC', dataIndex: 'atc' },
-                { key: 'ewtRate', title: 'EWT Rate', dataIndex: 'ewtRate' },
-                { key: 'taxAmount', title: 'Tax Amount', dataIndex: 'taxAmount' },
+                { key: 'vatAmount', title: 'VAT Amount', dataIndex: 'vatAmount', render: (value: number) => Number(value)?.toLocaleString(
+                                              navigator.language,
+                                              {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                              }
+                                            )},
+                { key: 'grossTaxable', title: 'Gross Taxable', dataIndex: 'grossTaxable', render: (value: number) => Number(value)?.toLocaleString(
+                                              navigator.language,
+                                              {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                              }
+                                            )},
             ]
         } else { // PURCHASES
             return [
-                { key: 'tin', title: 'TIN', dataIndex: 'tin' },
+                { key: 'taxableMonth', title: 'Taxable Month', dataIndex: 'taxableMonth', render: (value: string) =>
+                value
+                    ? dayjs(
+                        typeof value === 'number'
+                        ? XLSX.SSF.format('m/d/yyyy', value) // convert Excel number
+                        : value
+                    ).format('MM-YYYY')
+                    : '' },
+                { key: 'tin', title: 'Taxpayer Identification Number', dataIndex: 'tin', width: 180, render: (value: string) => formatTIN(value) },
+                { key: 'branchCode', title: 'Branch Code', dataIndex: 'branchCode' },
+                { key: 'businessOwner', title: 'Business Owner', dataIndex: 'businessOwner' },
                 { key: 'registeredName', title: 'Registered Name', dataIndex: 'registeredName' },
-                { key: 'firstName', title: 'First Name', dataIndex: 'firstName' },
-                { key: 'lastName', title: 'Last Name', dataIndex: 'lastName' },
-                { key: 'grossAmount', title: 'Gross Amount', dataIndex: 'grossAmount' },
-                { key: 'exemptSales', title: 'Exempt Purchases', dataIndex: 'exemptSales' },
-                { key: 'zeroRatedSales', title: 'Zero Rated Purchases', dataIndex: 'zeroRatedSales' },
-                { key: 'vatableSales', title: 'Total Vatable Purchases', dataIndex: 'vatableSales' },
-                { key: 'vatableServices', title: 'Vatable Services', dataIndex: 'vatableServices' },
-                { key: 'vatableCapital', title: 'Vatable Capital Goods', dataIndex: 'vatableCapital' },
-                { key: 'vatableGoods', title: 'Vatable Other Goods', dataIndex: 'vatableGoods' },
+                { key: 'address1', title: 'Address 1', dataIndex: 'address1' },
+                { key: 'address2', title: 'Address 2', dataIndex: 'address2' },
+                { key: 'exemptPurchases', title: 'Exempt Purchases', dataIndex: 'exemptPurchases', render: (value: number) => Number(value)?.toLocaleString(
+                                              navigator.language,
+                                              {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                              }
+                                            )},
+                { key: 'zeroRatedPurchases', title: 'Zero-Rated Purchases', dataIndex: 'zeroRatedPurchases', render: (value: number) => Number(value)?.toLocaleString(
+                                              navigator.language,
+                                              {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                              }
+                                            )},
+                { key: 'vatablePurchases', title: 'Vatable Purchases', dataIndex: 'vatablePurchases', render: (value: number) => Number(value)?.toLocaleString(
+                                              navigator.language,
+                                              {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                              }
+                                            )},
+                { key: 'vatablePurchaseServices', title: 'Vatable Purchase of Services', dataIndex: 'vatablePurchaseServices', width: 180, render: (value: number) => Number(value)?.toLocaleString(
+                                              navigator.language,
+                                              {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                              }
+                                            )},
+                { key: 'vatablePurchaseCapitalGoods', title: 'Vatable Purchase of Capital Goods', dataIndex: 'vatablePurchaseCapitalGoods', width: 180, render: (value: number) => Number(value)?.toLocaleString(
+                                              navigator.language,
+                                              {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                              }
+                                            )},
+                { key: 'vatablePurchaseCapitalGoodsOther', title: 'Vatable Purchase of Goods other than Capital Goods', dataIndex: 'vatablePurchaseCapitalGoodsOther', width: 180, render: (value: number) => Number(value)?.toLocaleString(
+                                              navigator.language,
+                                              {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                              }
+                                            )},
+                { key: 'grossAmount', title: 'Gross Amount', dataIndex: 'grossAmount', render: (value: number) => Number(value)?.toLocaleString(
+                                              navigator.language,
+                                              {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                              }
+                                            )},
                 { key: 'vatRate', title: 'VAT Rate', dataIndex: 'vatRate' },
-                { key: 'vatAmount', title: 'VAT Amount', dataIndex: 'vatAmount' },
-                { key: 'grossTaxable', title: 'Gross Taxable', dataIndex: 'grossTaxable' },
-                { key: 'atc', title: 'ATC', dataIndex: 'atc' },
-                { key: 'ewtRate', title: 'W/Tax Rate', dataIndex: 'ewtRate' },
-                { key: 'taxAmount', title: 'W/Tax Amount', dataIndex: 'taxAmount' },
+                { key: 'vatAmount', title: 'VAT Amount', dataIndex: 'vatAmount', render: (value: number) => Number(value)?.toLocaleString(
+                                              navigator.language,
+                                              {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                              }
+                                            )},
+                { key: 'grossTaxable', title: 'Gross Taxable', dataIndex: 'grossTaxable', render: (value: number) => Number(value)?.toLocaleString(
+                                              navigator.language,
+                                              {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                              }
+                                            )},
             ]
         }
     }
@@ -274,61 +386,49 @@ const useUploadDocuments = () => {
             const json = XLSX.utils.sheet_to_json(sheet, { defval: '' })
 
             const mapRow = (row: any, index: number): ExcelRow & { id: number } => {
+                // console.log(row)
+                const firstName = String(row['FIRST_NAME'] ?? '').trim();
+                const lastName = String(row['LAST_NAME'] ?? '').trim();
+                const middleName = String(row['MIDDLE_NAME'] ?? '').trim();
                 if(doc.selectedTable.value === 'SALES') {
                     return {
-                    id: index,
-                    taxableMonth: row['TAXABLE MONTH'],
-                    invoiceDate: row['INVOICE DATE'],
-                    invoiceNumber: row['INVOICE NUMBER'],
-                    tin: row['TAXPAYER IDENTIFICATION NUMBER'],
-                    branchCode: row['BRANCH CODE'],
-                    registeredName: row['REGISTERED NAME'],
-                    lastName: row['LAST_NAME'],
-                    firstName: row['FIRST_NAME'],
-                    middleName: row['MIDDLE_NAME'],
-                    address1: row['ADDRESS_1'],
-                    address2: row['ADDRESS_2'],
-                    particulars: row['PARTICULARS'],
-                    terms: row['TERMS'],
-                    accountName: row['ACCOUNT_NAME'],
-                    grossAmount: Number(row['GROSS AMOUNT *'] || 0),
-                    exemptSales: Number(row[' EXEMPT SALES'] || 0),
-                    zeroRatedSales: Number(row['ZERO-RATED SALES'] || 0),
-                    vatableSales: Number(row['VATABLE SALES'] || 0),
-                    vatRate: Number(row['VAT RATE'] || 0),
-                    vatAmount: Number(row['VAT AMOUNT*'] || 0),
-                    grossTaxable: Number(row['GROSS TAXABLE *'] || 0),
-                    atc: row['ATC'],
-                    ewtRate: Number(row['EWT RATE'] || 0),
-                    taxAmount: Number(row['TAX AMOUNT'] || 0),
+                        id: index,
+                        taxableMonth: row['TAXABLE MONTH'],
+                        tin: row['TAXPAYER IDENTIFICATION NUMBER'],
+                        branchCode: row['BRANCH CODE'],
+                        registeredName: row['REGISTERED NAME'],
+                        businessOwner: `${firstName} ${lastName}`.trim() + (middleName ? `, ${middleName}` : ''),
+                        address1: row['ADDRESS ONE'],
+                        address2: row['ADDRESS TWO'],
+                        exemptSales: Number(row[' EXEMPT SALES'] || 0),
+                        zeroRatedSales: Number(row['ZERO-RATED SALES'] || 0),
+                        vatableSales: Number(row['VATABLE SALES'] || 0),
+                        grossAmount: Number(row['GROSS AMOUNT'] || 0),
+                        vatRate: Number(row['VAT RATE'] || 0),
+                        vatAmount: Number(row['VAT AMOUNT'] || 0),
+                        grossTaxable: Number(row['GROSS TAXABLE'] || 0)
                     }
                 } else { // PURCHASES
                     return {
-                    id: index,
-                    taxableMonth: row['TAXABLE MONTH'],
-                    invoiceDate: row['INVOICE DATE'],
-                    invoiceNumber: row['INVOICE NUMBER'],
-                    tin: row['TAXPAYER IDENTIFICATION NUMBER'],
-                    branchCode: row['BRANCH CODE'],
-                    registeredName: row['REGISTERED NAME'],
-                    lastName: row['LAST_NAME'],
-                    firstName: row['FIRST_NAME'],
-                    middleName: row['MIDDLE_NAME'],
-                    address1: row['ADDRESS_1'],
-                    address2: row['ADDRESS_2'],
-                    particulars: row['PARTICULARS'],
-                    terms: row['TERMS'],
-                    accountName: row['ACCOUNT_NAME'],
-                    grossAmount: Number(row['GROSS  AMOUNT'] || 0),
-                    exemptSales: Number(row[' EXEMPT PURCHASES'] || 0),
-                    zeroRatedSales: Number(row['ZERO-RATED PURCHASES'] || 0),
-                    vatableSales: Number(row['TOTAL VATABLE PURCHASES*'] || 0),
-                    vatRate: Number(row['VAT RATE'] || 0),
-                    vatAmount: Number(row['VAT AMOUNT*'] || 0),
-                    grossTaxable: Number(row['GROSS TAXABLE*'] || 0),
-                    atc: row['ATC'],
-                    ewtRate: Number(row['W/TAX RATE'] || 0),
-                    taxAmount: Number(row['W/TAX AMOUNT*'] || 0),
+                        id: index,
+                        taxableMonth: row['TAXABLE MONTH'],
+                        tin: row['TAXPAYER IDENTIFICATION NUMBER'],
+                        branchCode: row['BRANCH CODE'],
+                        registeredName: row['REGISTERED NAME'],
+                        businessOwner: `${firstName} ${lastName}`.trim() + (middleName ? `, ${middleName}` : ''),
+                        address1: row['ADDRESS ONE'],
+                        address2: row['ADDRESS TWO'],
+                        exemptPurchases: Number(row['EXEMPT PURCHASES'] || 0),
+                        zeroRatedPurchases: Number(row['ZERO-RATED PURCHASES'] || 0),
+                        vatablePurchases: Number(row['VATABLE PURCHASES'] || 0),
+                        vatablePurchaseServices: Number(row['VATABLE PURCHASE OF SERVICES'] || 0),
+                        vatablePurchaseCapitalGoods: Number(row['VATABLE PURCHASE OF CAPITAL GOODS'] || 0),
+                        vatablePurchaseCapitalGoodsOther: Number(row['VATABLE PURCHASE OF GOODS OTHER THAN CAPITAL GOODS'] || 0),
+                        vatRate: Number(row['VAT RATE'] || 0),
+                        vatAmount: Number(row['VAT AMOUNT'] || 0),
+                        grossAmount: Number(row['GROSS AMOUNT'] || 0),
+                        grossTaxable: Number(row['GROSS TAXABLE'] || 0)
+                        
                     }
                 }
             }
@@ -361,7 +461,7 @@ const useUploadDocuments = () => {
             const data = evt.target?.result
             if (!data) return
 
-            const workbook = XLSX.read(data, { type: 'binary' })
+            const workbook = XLSX.read(data, { type: 'array' })
 
             const { salesSheet, purchaseSheet } = detectSheet(workbook)
 
@@ -412,64 +512,47 @@ const useUploadDocuments = () => {
             const json = XLSX.utils.sheet_to_json(sheet, { defval: '' })
 
             const mapRow = (row: any, index: number): ExcelRow & { id: number } => {
+                const firstName = String(row['FIRST_NAME'] ?? '').trim();
+                const lastName = String(row['LAST_NAME'] ?? '').trim();
+                const middleName = String(row['MIDDLE_NAME'] ?? '').trim();
                 if(doc.selectedTable.value === 'SALES') {
                     return {
-                    id: index,
-                    taxableMonth: row['TAXABLE MONTH'],
-                    invoiceDate: row['INVOICE DATE'],
-                    invoiceNumber: row['INVOICE NUMBER'],
-                    tin: row['TAXPAYER IDENTIFICATION NUMBER'],
-                    branchCode: row['BRANCH CODE'],
-                    registeredName: row['REGISTERED NAME'],
-                    lastName: row['LAST_NAME'],
-                    firstName: row['FIRST_NAME'],
-                    middleName: row['MIDDLE_NAME'],
-                    address1: row['ADDRESS_1'],
-                    address2: row['ADDRESS_2'],
-                    particulars: row['PARTICULARS'],
-                    terms: row['TERMS'],
-                    accountName: row['ACCOUNT_NAME'],
-                    grossAmount: Number(row['GROSS AMOUNT *'] || 0),
-                    exemptSales: Number(row[' EXEMPT SALES'] || 0),
-                    zeroRatedSales: Number(row['ZERO-RATED SALES'] || 0),
-                    vatableSales: Number(row['VATABLE SALES'] || 0),
-                    vatRate: Number(row['VAT RATE'] || 0),
-                    vatAmount: Number(row['VAT AMOUNT*'] || 0),
-                    grossTaxable: Number(row['GROSS TAXABLE *'] || 0),
-                    atc: row['ATC'],
-                    ewtRate: Number(row['EWT RATE'] || 0),
-                    taxAmount: Number(row['TAX AMOUNT'] || 0),
+                        id: index,
+                        taxableMonth: row['TAXABLE MONTH'],
+                        tin: row['TAXPAYER IDENTIFICATION NUMBER'],
+                        branchCode: row['BRANCH CODE'],
+                        registeredName: row['REGISTERED NAME'],
+                        businessOwner: `${firstName} ${lastName}`.trim() + (middleName ? `, ${middleName}` : ''),
+                        address1: row['ADDRESS ONE'],
+                        address2: row['ADDRESS TWO'],
+                        exemptSales: Number(row[' EXEMPT SALES'] || 0),
+                        grossAmount: Number(row['GROSS AMOUNT'] || 0),
+                        zeroRatedSales: Number(row['ZERO-RATED SALES'] || 0),
+                        vatableSales: Number(row['VATABLE SALES'] || 0),
+                        vatRate: Number(row['VAT RATE'] || 0),
+                        vatAmount: Number(row['VAT AMOUNT'] || 0),
+                        grossTaxable: Number(row['GROSS TAXABLE'] || 0),
                     }
                 } else { // PURCHASES
                     return {
-                    id: index,
-                    taxableMonth: row['TAXABLE MONTH'],
-                    invoiceDate: row['INVOICE DATE'],
-                    invoiceNumber: row['INVOICE NUMBER'],
-                    tin: row['TAXPAYER IDENTIFICATION NUMBER'],
-                    branchCode: row['BRANCH CODE'],
-                    registeredName: row['REGISTERED NAME'],
-                    lastName: row['LAST_NAME'],
-                    firstName: row['FIRST_NAME'],
-                    middleName: row['MIDDLE_NAME'],
-                    address1: row['ADDRESS_1'],
-                    address2: row['ADDRESS_2'],
-                    particulars: row['PARTICULARS'],
-                    terms: row['TERMS'],
-                    accountName: row['ACCOUNT_NAME'],
-                    grossAmount: Number(row['GROSS  AMOUNT'] || 0),
-                    exemptSales: Number(row[' EXEMPT PURCHASES'] || 0),
-                    zeroRatedSales: Number(row['ZERO-RATED PURCHASES'] || 0),
-                    vatableSales: Number(row['TOTAL VATABLE PURCHASES*'] || 0),
-                    vatableServices: Number(row['VATABLE PURCHASE OF SERVICES'] || 0),
-                    vatableCapital: Number(row['VATABLE PURCHASE OF CAPITAL GOODS'] || 0),
-                    vatableGoods: Number(row['VATABLE PURCHASE OF GOODS OTHER THAN CAPITAL GOODS'] || 0),
-                    vatRate: Number(row['VAT RATE'] || 0),
-                    vatAmount: Number(row['VAT AMOUNT*'] || 0),
-                    grossTaxable: Number(row['GROSS TAXABLE*'] || 0),
-                    atc: row['ATC'],
-                    ewtRate: Number(row['W/TAX RATE'] || 0),
-                    taxAmount: Number(row['W/TAX AMOUNT*'] || 0),
+                        id: index,
+                        taxableMonth: row['TAXABLE MONTH'],
+                        tin: row['TAXPAYER IDENTIFICATION NUMBER'],
+                        branchCode: row['BRANCH CODE'],
+                        registeredName: row['REGISTERED NAME'],
+                        businessOwner: `${firstName} ${lastName}`.trim() + (middleName ? `, ${middleName}` : ''),
+                        address1: row['ADDRESS ONE'],
+                        address2: row['ADDRESS TWO'],
+                        exemptPurchases: Number(row['EXEMPT PURCHASES'] || 0),
+                        zeroRatedPurchases: Number(row['ZERO-RATED PURCHASES'] || 0),
+                        vatablePurchases: Number(row['VATABLE PURCHASES'] || 0),
+                        vatablePurchaseServices: Number(row['VATABLE PURCHASE OF SERVICES'] || 0),
+                        vatablePurchaseCapitalGoods: Number(row['VATABLE PURCHASE OF CAPITAL GOODS'] || 0),
+                        vatablePurchaseCapitalGoodsOther: Number(row['VATABLE PURCHASE OF GOODS OTHER THAN CAPITAL GOODS'] || 0),
+                        grossAmount: Number(row['GROSS AMOUNT'] || 0),
+                        vatRate: Number(row['VAT RATE'] || 0),
+                        vatAmount: Number(row['VAT AMOUNT'] || 0),
+                        grossTaxable: Number(row['GROSS TAXABLE'] || 0),
                     }
                 }
                 }
@@ -477,7 +560,7 @@ const useUploadDocuments = () => {
             setRows(json.map((row, index) => mapRow(row, index)))
         }
 
-        reader.readAsBinaryString(file)
+        reader.readAsArrayBuffer(file)
     }, [doc.selectedTable, file])
 
     

@@ -55,29 +55,82 @@ const Purchases_V = () => {
   const dataSource = purchasesArr?.length ? purchasesArr.map(purchases => (
       {
         id: purchases.id,
-        atc: purchases.atc,
-        terms: purchases.terms,
         toDelete: purchases.toDelete,
-        vat_rate: purchases.vat_rate,
-        wtax_rate: purchases.wtax_rate,
-        vat_amount: purchases.vat_amount,
-        wtax_amount: purchases.wtax_amount,
-        particulars: purchases.particulars,
+        vat_rate: Number(purchases.vat_rate)?.toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      ),
+        vat_amount: Number(purchases.vat_amount)?.toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      ),
         tin: purchases.supplier?.tin,
-        account_name: purchases.account_name,
-        gross_amount: purchases.gross_amount,
-        gross_taxable: purchases.gross_taxable,
-        invoice_number: purchases.invoice_number,
-        exempt_purchases: purchases.exempt_purchases,
-        vatable_purchases: purchases.vatable_purchases,
-        zero_rated_purchases: purchases.zero_rated_purchases,
+        gross_amount: Number(purchases.gross_amount)?.toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      ),
+        gross_taxable: Number(purchases.gross_taxable)?.toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      ),
+        exempt_purchases: Number(purchases.exempt_purchases)?.toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      ),
+        vatable_purchases: Number(purchases.vatable_purchases)?.toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      ),
+        zero_rated_purchases: Number(purchases.zero_rated_purchases)?.toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      ),
         branch_code: purchases.supplier?.branch_code,
         first_address: purchases.supplier?.first_address,
         second_address: purchases.supplier?.second_address,
         registered_name: purchases.supplier?.registered_name,
-        vatable_purchase_of_services: purchases.vatable_purchase_of_services,
-        vatable_purchase_of_other_goods: purchases.vatable_purchase_of_other_goods,
-        vatable_purchase_of_capital_goods: purchases.vatable_purchase_of_capital_goods,
+        vatable_purchase_of_services: Number(purchases.vatable_purchase_of_services)?.toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      ),
+        vatable_purchase_of_other_goods: Number(purchases.vatable_purchase_of_other_goods)?.toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      ),
+        vatable_purchase_of_capital_goods: Number(purchases.vatable_purchase_of_capital_goods)?.toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      ),
         invoice_date: purchases.invoice_date ? dayjs(purchases.invoice_date)?.format('MM/DD/YYYY') : '',
         taxable_month: purchases.taxable_month ? dayjs(purchases.taxable_month)?.format('MM/DD/YYYY') : '',
         business_owner: 
@@ -104,7 +157,7 @@ const Purchases_V = () => {
     //   dataIndex: 'invoice_number',
     // },
     {
-      title: 'TIN No.',
+      title: 'Taxpayer Identification Number',
       key: 'tin',
       dataIndex: 'tin',
     },
@@ -154,7 +207,7 @@ const Purchases_V = () => {
       dataIndex: 'exempt_purchases',
     },
     {
-      title: 'Zero Rated Purchases',
+      title: 'Zero-Rated Purchases',
       key: 'zero_rated_purchases',
       dataIndex: 'zero_rated_purchases',
     },
@@ -177,7 +230,7 @@ const Purchases_V = () => {
     },
     {
       width: 150,
-      title: 'Vatable Purchase of Other Goods',
+      title: 'Vatable Purchase of Goods other than Capital Goods',
       key: 'vatable_purchase_of_other_goods',
       dataIndex: 'vatable_purchase_of_other_goods',
     },

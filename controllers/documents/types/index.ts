@@ -33,29 +33,28 @@ interface Doc{
 
 type ExcelRow = {
   taxableMonth: string
-  invoiceDate: string
-  invoiceNumber: string
   tin: string
   branchCode: string
   registeredName: string
-  lastName: string
-  firstName: string
-  middleName: string
+  businessOwner: string
   address1: string
   address2: string
-  particulars: string
-  terms: string
-  accountName: string
   grossAmount: number
-  exemptSales: number
-  zeroRatedSales: number
-  vatableSales: number
+  
+  exemptSales?: number
+  zeroRatedSales?: number
+  vatableSales?: number
+
+  exemptPurchases?: number
+  vatablePurchases?: number
+  zeroRatedPurchases?: number
+  vatablePurchaseServices?: number
+  vatablePurchaseCapitalGoods?: number
+  vatablePurchaseCapitalGoodsOther?: number
+
   vatRate: number
   vatAmount: number
   grossTaxable: number
-  atc: string
-  ewtRate: number
-  taxAmount: number
 
   // Optional purchase fields
   vatableServices?: number

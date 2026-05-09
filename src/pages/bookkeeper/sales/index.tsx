@@ -55,22 +55,60 @@ const Sales_V = () => {
   const dataSource = salesArr?.length ? salesArr.map(sales => (
       {
         id: sales.id,
-        atc: sales.atc,
         terms: sales.terms,
         toDelete: sales.toDelete,
-        ewt_rate: sales.ewt_rate,
-        vat_rate: sales.vat_rate,
         tax_amount: sales.tax_amount,
-        vat_amount: sales.vat_amount,
-        particulars: sales.particulars,
-        exempt_sales: sales.exempt_sales,
-        account_name: sales.account_name,
+        vat_rate: Number(sales.vat_rate)?.toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      ),
+        vat_amount: Number(sales.vat_amount)?.toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      ),
+        exempt_sales: Number(sales.exempt_sales)?.toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      ),
         tin: sales.customer?.tin,
-        gross_amount: sales.gross_amount,
-        gross_taxable: sales.gross_taxable,
-        vatable_sales: sales.vatable_sales,
+        gross_amount: Number(sales.gross_amount)?.toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      ),
+        gross_taxable: Number(sales.gross_taxable)?.toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      ),
+        vatable_sales: Number(sales.vatable_sales)?.toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      ),
         invoice_number: sales.invoice_number,
-        zero_rated_sales: sales.zero_rated_sales,
+        zero_rated_sales: Number(sales.zero_rated_sales)?.toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      ),
         branch_code: sales.customer?.branch_code,
         first_address: sales.customer?.first_address,
         second_address: sales.customer?.second_address,
@@ -102,7 +140,7 @@ const Sales_V = () => {
     //   dataIndex: 'invoice_number',
     // },
     {
-      title: 'TIN No.',
+      title: 'Taxpayer Identification Number',
       key: 'tin',
       dataIndex: 'tin',
     },
@@ -152,7 +190,7 @@ const Sales_V = () => {
       dataIndex: 'exempt_sales',
     },
     {
-      title: 'Zero Rated Sales',
+      title: 'Zero-Rated Sales',
       key: 'zero_rated_sales',
       dataIndex: 'zero_rated_sales',
     },

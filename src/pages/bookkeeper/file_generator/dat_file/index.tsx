@@ -258,7 +258,6 @@ const DAT_File_V = () => {
       return base
     }) ?? []
     
-
     const getColumns = (): ColumnsType<Record_Obj> => {
         const base = [
             {
@@ -267,7 +266,7 @@ const DAT_File_V = () => {
                 render: (value: string) => dayjs(value)?.format('YYYY-MM'),
             },
             {
-                title: 'TIN',
+                title: 'Taxpayer Identification Number',
                 dataIndex: 'tin',
             },
             {
@@ -279,7 +278,7 @@ const DAT_File_V = () => {
                 dataIndex: 'registered_name',
             },
             {
-                title: 'Name',
+                title: 'Business Owner',
                 dataIndex: 'name',
             },
             {
@@ -297,7 +296,7 @@ const DAT_File_V = () => {
                 return [
                     ...base,
                     { title: 'Exempt Sales', dataIndex: 'exempt_sales' },
-                    { title: 'Zero-rated Sales', dataIndex: 'zero_rated_sales' },
+                    { title: 'Zero-Rated Sales', dataIndex: 'zero_rated_sales' },
                     { title: 'Vatable Sales', dataIndex: 'vatable_sales' },
                     { title: 'Gross Amount', dataIndex: 'gross_amount' },
                     { title: 'VAT Rate', dataIndex: 'vat_rate' },
@@ -310,7 +309,7 @@ const DAT_File_V = () => {
                 return [
                     ...base,
                     { title: 'Exempt Purchases', dataIndex: 'exempt_purchases' },
-                    { title: 'Zero-rated Purchases', dataIndex: 'zero_rated_purchases' },
+                    { title: 'Zero-Rated Purchases', dataIndex: 'zero_rated_purchases' },
                     { title: 'Vatable Purchases', dataIndex: 'vatable_purchases' },
                     { title: 'Vatable Purchase of Services', dataIndex: 'vatable_services', width: 140, align: 'center' },
                     { title: 'Vatable Purchase of Capital Goods', dataIndex: 'vatable_purchase_of_capital_goods', width: 140, align: 'center' },
