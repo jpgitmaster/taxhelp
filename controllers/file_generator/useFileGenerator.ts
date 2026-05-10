@@ -29,7 +29,8 @@ const useFileGenerator = () => {
         downloadSalesMutation,
         useDeletePurchasesRecord,
         downloadPurchasesMutation,
-        downloadSalesTaxesMutation
+        downloadSalesTaxesMutation,
+        downloadPurchasesTaxesMutation
     } = useFileGeneratorAPI()
     const [tableWidth, setTableWidth] = useState(0)
     const [displayClients, setDisplayClients] = useState(false)
@@ -244,27 +245,49 @@ const useFileGenerator = () => {
         filter.search,
         doc,
     )
-    const handleDownloadSales = (type: string) => {
+    const handleDownload = (
+        type: string,
+        selectedTable: string,
+        parentTable?: string
+    ) => {
         setStatus(prev => ({
             ...prev,
-            loader: true
+            loader: true,
         }))
-        downloadSalesMutation.mutate({ doc, type })
+
+        const mutationMap: Record<string, () => void> = {
+            SALES: () =>
+                downloadSalesMutation.mutate({
+                    doc,
+                    type,
+                }),
+
+            PURCHASES: () =>
+                downloadPurchasesMutation.mutate({
+                    doc,
+                    type,
+                }),
+
+            SAWT: () =>
+                downloadSalesTaxesMutation.mutate({
+                    doc,
+                    type,
+                    form_type: selectedTable,
+                }),
+
+            QAP: () =>
+                downloadPurchasesTaxesMutation.mutate({
+                    doc,
+                    type,
+                    form_type: selectedTable,
+                }),
+        }
+
+        const key = parentTable || selectedTable
+
+        mutationMap[key]?.()
     }
-    const handleDownloadPurchases = (type: string) => {
-        setStatus(prev => ({
-            ...prev,
-            loader: true
-        }))
-        downloadPurchasesMutation.mutate({ doc, type })
-    }
-    const handleDownloadSalesTaxes = (type: string, form_type: string) => {
-        setStatus(prev => ({
-            ...prev,
-            loader: true
-        }))
-        downloadSalesTaxesMutation.mutate({ doc, type, form_type })
-    }
+    
     const handlePageChange = (current: number) => {
         setFilter((prev) => ({
             ...prev,
@@ -479,16 +502,14 @@ const useFileGenerator = () => {
         // HANDLES
         handleToggle,
         handleChange,
+        handleDownload,
         handlePageChange,
         handleDateChange,
         handleSelectTable,
         handleDeleteRecord,
         handleSelectClient,
         handleToggleDelete,
-        handleDownloadSales,
         handleClearSelected,
-        handleDownloadPurchases,
-        handleDownloadSalesTaxes
     }
 }
 

@@ -399,7 +399,73 @@ const useFileGeneratorAPI = () => {
             console.log(error)
         }
     })
+    const downloadPurchasesTaxesMutation = useMutation({
+        mutationFn: async (params: {
+            doc: {
+                search: string
+                selectedTable: {
+                    value: string,
+                    label: string
+                }
+                client: {
+                    id: number | null,
+                    registered_name: string
+                }
+                period: Dayjs | null
+            },
+            type: string
+            form_type: string
+        }) => {
+            const { doc, type, form_type } = params
 
+            const res = await api.post(
+                `/api/${apiVersion}/files/download/purchase_taxes`,
+                {
+                    type: type,
+                    form_type: form_type,
+                    client_id: doc.client.id,
+                    year: doc.period?.format('YYYY') ?? '',
+                    month: doc.period?.format('MM') ?? '',
+                },
+                {
+                    responseType: 'blob',
+                }
+            )
+            const disposition = res.headers['content-disposition']
+            const filename = disposition?.match(/filename="?([^"]+)"?/)?.[1] ?? `purchases-taxes-${type}`
+
+            return { data: res.data, type, filename }
+        },
+
+        onSuccess: ({ data, type, filename }) => {
+            const config = fileConfig[type] || {
+                mime: 'application/octet-stream',
+                ext: 'dat',
+            }
+
+            const blob = new Blob([data], { type: config.mime })
+            const url = window.URL.createObjectURL(blob)
+
+            const link = document.createElement('a')
+            link.href = url
+            link.download = filename
+
+            document.body.appendChild(link)
+            link.click()
+
+            link.remove()
+            window.URL.revokeObjectURL(url)
+            setStatus(prev => ({
+                ...prev,
+                loader: false
+            }))
+        },
+
+        onError: (error: any) => {
+            console.log(error)
+        }
+    })
+    
     return {
         //STATES
         filter,
@@ -422,7 +488,8 @@ const useFileGeneratorAPI = () => {
         downloadSalesMutation,
         useDeletePurchasesRecord,
         downloadPurchasesMutation,
-        downloadSalesTaxesMutation
+        downloadSalesTaxesMutation,
+        downloadPurchasesTaxesMutation
 
         //HANDLES
     }

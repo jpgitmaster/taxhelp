@@ -35,16 +35,14 @@ const DAT_File_V = () => {
 
       handleToggle,
       handleChange,
+      handleDownload,
       handlePageChange,
       handleDateChange,
       handleSelectTable,
       handleToggleDelete,
       handleDeleteRecord,
       handleSelectClient,
-      handleDownloadSales,
       handleClearSelected,
-      handleDownloadPurchases,
-      handleDownloadSalesTaxes
     } = useFileGenerator()
     const { loader: statLoader, message } = status
     const docType = doc.selectedTable.parentValue || doc.selectedTable.value
@@ -413,23 +411,18 @@ const DAT_File_V = () => {
                   <DatePicker picker="month" value={doc.period} onChange={handleDateChange} />
               </CustomContainer>
               <div className={scss.card+' '+scss.w20}>
-                <button type='button' disabled={!record.recordArr?.length} className={scss.button+' '+scss.btnblue} onClick={() => {
-                  if(doc.selectedTable.value === 'SALES'){
-                    handleDownloadSales('dat')
-                  }
-                  if(doc.selectedTable.value === 'PURCHASES'){
-                    handleDownloadPurchases('dat')
-                  }
-                  if (
-                    doc.selectedTable.parentValue === 'QAP' ||
-                    doc.selectedTable.parentValue === 'SAWT'
-                  ) {
-                    handleDownloadSalesTaxes(
-                      'dat',
-                      doc.selectedTable.value
-                    )
-                  }
-                }}>
+                <button
+                    type='button'
+                    disabled={!record.recordArr?.length}
+                    className={`${scss.button} ${scss.btnblue}`}
+                    onClick={() =>
+                        handleDownload(
+                            'dat',
+                            doc.selectedTable.value,
+                            doc.selectedTable.parentValue
+                        )
+                    }
+                >
                     Download DAT File
                 </button>
               </div>
