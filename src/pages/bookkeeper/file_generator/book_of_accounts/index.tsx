@@ -34,15 +34,14 @@ const BookOfAccounts_V = () => {
 
       handleToggle,
       handleChange,
+      handleDownload,
       handlePageChange,
       handleDateChange,
       handleSelectTable,
       handleDeleteRecord,
       handleToggleDelete,
       handleSelectClient,
-      handleDownloadSales,
       handleClearSelected,
-      handleDownloadPurchases,
     } = useFileGenerator()
     const { message, loader: statLoader } = status
     const dataSource: Record_Obj[] = record.recordArr?.map(doc => ({
@@ -203,16 +202,20 @@ const BookOfAccounts_V = () => {
                   <DatePicker picker="month" value={doc.period} onChange={handleDateChange} />
               </CustomContainer>
                 <div className={scss.card+' '+scss.w20}>
-                  <button disabled={!record.recordArr?.length} type='button' className={scss.button+' '+scss.btnblue} onClick={() => {
-                    if(doc.selectedTable.value === 'SALES'){
-                      handleDownloadSales('journal')
+                  <button
+                    type='button'
+                    disabled={!record.recordArr?.length}
+                    className={`${scss.button} ${scss.btnblue}`}
+                    onClick={() =>
+                        handleDownload(
+                            'journal',
+                            doc.selectedTable.value,
+                            doc.selectedTable.parentValue
+                        )
                     }
-                    if(doc.selectedTable.value === 'PURCHASES'){
-                      handleDownloadPurchases('journal')
-                    }
-                  }}>
-                      Download Journal
-                  </button>
+                >
+                    Download Journal
+                </button>
               </div>
           </div>
           <div className={scss.tableRecords} style={{width:tableWidth+'px'}}>

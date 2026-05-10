@@ -40,9 +40,7 @@ const FileGenerator_V = () => {
       handleToggleDelete,
       handleDeleteRecord,
       handleSelectClient,
-      handleDownloadSales,
       handleClearSelected,
-      handleDownloadPurchases,
     } = useFileGenerator()
     const { loader: statLoader } = status
     // const dataSource: Record_Obj[] = record.recordArr?.map(doc => ({
