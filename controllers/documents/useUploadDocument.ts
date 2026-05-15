@@ -11,6 +11,7 @@ import {
 } from 'react'
 
 const useUploadDocuments = () => {
+    const [deletedRowIds, setDeletedRowIds] = useState<number[]>([])
     const { status, setStatus, uploadDocumentMutation } = useDocumentAPI()
 
     const {
@@ -555,9 +556,9 @@ const useUploadDocuments = () => {
             defval: '',
         })
 
-        const tableRows = json.map((row, index) =>
-            mapRow(row, index)
-        )
+        const tableRows = json
+            .map((row, index) => mapRow(row, index))
+            .filter(row => !deletedRowIds.includes(row.id))
 
         setRows(tableRows)
     }
@@ -602,6 +603,11 @@ const useUploadDocuments = () => {
 
     const handleDeleteSelected = () => {
         if (!selectedRowKeys.length) return
+
+        setDeletedRowIds(prev => [
+            ...prev,
+            ...selectedRowKeys,
+        ])
 
         const filtered = rows.filter(
             row => !selectedRowKeys.includes(row.id)
@@ -705,7 +711,7 @@ const useUploadDocuments = () => {
         }
 
         reader.readAsArrayBuffer(file)
-    }, [doc.selectedTable])
+    }, [doc.selectedTable, deletedRowIds])
 
     useEffect(() => {
         if (typeof window !== 'undefined') {

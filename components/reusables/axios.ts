@@ -1,6 +1,11 @@
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+} from 'axios';
+
 import { signOut } from 'next-auth/react';
 import { Session } from '@/controllers/layouts/types/cms_types';
-import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from 'axios';
 
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   _retry?: boolean;
@@ -11,81 +16,96 @@ const api: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
-let cachedSession: Session | null = null;
-let refreshing: Promise<Session | null> | null = null;
-
+/**
+ * Always fetch latest session from NextAuth
+ * Never cache this globally
+ */
 const getSessionSafe = async (): Promise<Session | null> => {
-  if (cachedSession) return cachedSession;
+  try {
+    const res = await fetch('/api/auth/session', {
+      cache: 'no-store',
+    });
 
-  if (!refreshing) {
-    refreshing = fetch('/api/auth/session')
-      .then((res) => res.json() as Promise<Session>)
-      .finally(() => { refreshing = null; });
+    if (!res.ok) {
+      return null;
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error('Failed to fetch session', error);
+    return null;
   }
-
-  const session = await refreshing;
-  cachedSession = session;
-  return session;
 };
 
-// REQUEST INTERCEPTOR
-api.interceptors.request.use(async (config) => {
-  if (
-    config.url &&
-    !config.url.includes('/auth/login') &&
-    !config.url.includes('/auth/refresh')
-  ) {
-    const session = await getSessionSafe();
-    if (session?.accessToken) {
-      cachedSession = session; // store the latest token
-    }
-    if (session?.accessToken) {
-      config.headers = config.headers || {};
-      (config.headers as Record<string, string>).Authorization = `${session.tokenType ?? 'Bearer'} ${session.accessToken}`;
-    }
-  }
-  return config;
-}, (error) => Promise.reject(error));
+/**
+ * REQUEST INTERCEPTOR
+ */
+api.interceptors.request.use(
+  async (config) => {
+    const isAuthRoute =
+      config.url?.includes('/auth/login') ||
+      config.url?.includes('/auth/refresh');
 
-// RESPONSE INTERCEPTOR
-api.interceptors.response.use(
-  (response) => response,
-  async (error: AxiosError) => {
-    const originalRequest = error.config as CustomAxiosRequestConfig;
+    if (!isAuthRoute) {
+      const session = await getSessionSafe();
 
-    const isUnauthorized = error.response?.status === 401;
+      if (session?.accessToken) {
+        config.headers = config.headers || {};
 
-    if (
-      isUnauthorized &&
-      !originalRequest._retry &&
-      !originalRequest.url?.includes('/auth/refresh')
-    ) {
-      originalRequest._retry = true;
-
-      try {
-        // ⚠️ This does NOT refresh token — just re-gets session
-        const session = await getSessionSafe();
-
-        if (session?.accessToken) {
-          originalRequest.headers = originalRequest.headers || {};
-          originalRequest.headers.Authorization =
-            `${session.tokenType ?? 'Bearer'} ${session.accessToken}`;
-
-          return api(originalRequest);
-        }
-      } catch (err) {
-        console.error('Retry failed', err);
+        (config.headers as Record<string, string>).Authorization =
+          `${session.tokenType ?? 'Bearer'} ${session.accessToken}`;
       }
     }
 
-    // ❗ FINAL fallback → FORCE LOGOUT
-    if (isUnauthorized) {
-      cachedSession = null;
-      refreshing = null;
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-      console.log("Unauthorized → signing out");
+/**
+ * RESPONSE INTERCEPTOR
+ *
+ * NextAuth already handles refresh.
+ * If we still get 401 here,
+ * session is invalid → logout.
+ */
+api.interceptors.response.use(
+  (response) => response,
 
-      // await signOut({ callbackUrl: '/' });
+  async (error: AxiosError) => {
+    const originalRequest = error.config as CustomAxiosRequestConfig;
+
+    const isUnauthorized =
+      error.response?.status === 401;
+
+    const isRefreshRoute =
+      originalRequest?.url?.includes('/auth/refresh');
+
+    if (isUnauthorized && !isRefreshRoute) {
+      try {
+        const res = await fetch('/api/auth/session', {
+          cache: 'no-store',
+        });
+
+        const session = await res.json();
+
+        /**
+         * Only logout if refresh already failed
+         */
+        if (
+          session?.error === 'RefreshAccessTokenError' ||
+          session?.error === 'NoRefreshToken'
+        ) {
+          console.log('Unauthorized → signing out');
+
+          await signOut({
+            callbackUrl: '/',
+            redirect: true,
+          });
+        }
+      } catch (err) {
+        console.error('Session validation failed', err);
+      }
     }
 
     return Promise.reject(error);

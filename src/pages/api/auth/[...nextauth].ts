@@ -1,5 +1,5 @@
+import axios from 'axios';
 import NextAuth from 'next-auth'
-import api from '@/components/reusables/axios'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
@@ -74,40 +74,87 @@ export default NextAuth({
         token.accessTokenExpires = Date.now() + Number(user.accessTokenExpires) * 1000;
         token.refreshToken = user.refreshToken;
       }
-
+      console.log('JWT CHECK', {
+        now: Date.now(),
+        expires: token.accessTokenExpires,
+        expired: Date.now() > Number(token.accessTokenExpires),
+      });
       // Token still valid
-      if (token.accessTokenExpires && Date.now() < token.accessTokenExpires) {
+            /**
+       * No access token at all
+       */
+      if (!token.accessToken) {
+        token.error = 'NoAccessToken';
         return token;
       }
 
+      /**
+       * Refresh 1 minute BEFORE expiry
+       */
+      const shouldRefresh =
+        !token.accessTokenExpires ||
+        Date.now() >=
+          Number(token.accessTokenExpires) - 60_000;
+
+      /**
+       * Token still valid
+       */
+      if (!shouldRefresh) {
+        return token;
+      }
+
+      /**
+       * Missing refresh token
+       */
       if (!token.refreshToken) {
         token.error = 'NoRefreshToken';
         return token;
       }
 
       // At this point, token.refreshToken is guaranteed to be a string
-      if (!refreshPromises[token.refreshToken]) {
-        refreshPromises[token.refreshToken] = (async () => {
+      const currentRefreshToken = token.refreshToken as string;
+
+      if (!refreshPromises[currentRefreshToken]) {
+        refreshPromises[currentRefreshToken] = (async () => {
           try {
-            const response = await api.post(
+            console.log('REFRESHING TOKEN');
+
+            const response = await axios.post(
               `${process.env.NEXT_PUBLIC_API_URL}/api/${process.env.NEXT_PUBLIC_API_VERSION}/auth/refresh`,
-              { refresh_token: token.refreshToken }
+              {
+                refresh_token: currentRefreshToken,
+              }
             );
+
             const res = response.data.user;
+
             token.accessToken = res.access_token;
             token.refreshToken = res.refresh_token;
-            token.accessTokenExpires = Date.now() + res.expires_in * 1000;
+            console.log('LOGIN EXPIRES RAW', user.accessTokenExpires);
+            /**
+             * expires_in should be seconds remaining
+             */
+            token.accessTokenExpires =
+              Date.now() + Number(res.expires_in) * 1000;
+            
+            token.error = undefined;
+
+            console.log('TOKEN REFRESH SUCCESS');
+
             return token;
-          } catch (err: any) {
+          } catch (err) {
+            console.error('TOKEN REFRESH FAILED', err);
+
             token.error = 'RefreshAccessTokenError';
+
             return token;
           } finally {
-            delete refreshPromises[token.refreshToken as string]; // Safe because token.refreshToken is defined
+            delete refreshPromises[currentRefreshToken];
           }
         })();
       }
 
-      return await refreshPromises[token.refreshToken];
+      return refreshPromises[currentRefreshToken];
     },
     session: ({ session, token }) => {
       if (token) {
