@@ -140,17 +140,21 @@ const Dashboard_V = () => {
                     eventClick={handleEventClick}
                     contentHeight={calendarHeight}
                   />
-                  <div className={scss.legends}>
-                    <strong>Legends:</strong>
-                    <ul>
-                      {schedCategories?.map((category: { id: number,  name: string, color: string }) =>
-                        <li key={category.id}>
-                          <div  style={{backgroundColor: category.color}} className={scss.categoryColor}></div>
-                          {category.name}
-                        </li>
-                      )}
-                    </ul>
-                  </div>
+                  {
+                    schedCategories?.length ?
+                    <div className={scss.legends}>
+                      <strong>Legends:</strong>
+                      <ul>
+                        {schedCategories?.map((category: { id: number,  name: string, color: string }) =>
+                          <li key={category.id}>
+                            <div  style={{backgroundColor: category.color}} className={scss.categoryColor}></div>
+                            {category.name}
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+                    : null
+                  }
                 </div>
               </div>
             }

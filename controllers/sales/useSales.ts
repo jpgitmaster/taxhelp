@@ -231,18 +231,18 @@ const useSales = () => {
         setStatus({...status, loader: true})
         useDeleteSalesRecord.mutate(id, {
             onSuccess: () => {
-                    setStatus(prev => ({
-                ...prev,
-                loader: false,
-                message: 'Sales record deleted successfully.'
-            }))
-
-            setTimeout(() => {
                 setStatus(prev => ({
                     ...prev,
-                    message: ''
+                    loader: false,
+                    message: 'Sales record deleted successfully.'
                 }))
-            }, 5000)
+
+                setTimeout(() => {
+                    setStatus(prev => ({
+                        ...prev,
+                        message: ''
+                    }))
+                }, 5000)
             }
         })
     }

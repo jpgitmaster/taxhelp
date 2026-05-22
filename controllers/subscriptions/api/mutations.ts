@@ -1,0 +1,51 @@
+import { AxiosError } from 'axios'
+import api from '@/components/reusables/axios'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+interface ErrorItem{
+    field: string
+    message: string
+    submessage: string
+};
+type ErrorResponse = {
+    message?: ErrorItem[]
+}
+type SuccessResponse = {
+    message: string
+}
+const useMutationSubscriptions = () => {
+    const queryClient = useQueryClient()
+
+    const paymentSubscription = useMutation<
+            SuccessResponse,
+            AxiosError<ErrorResponse>,
+            string
+        >({
+        mutationFn: async (plan: string) => {
+            const res = await api({
+                method: 'POST',
+                url: '/users',
+                data: {
+                    plan: plan,
+                }
+            })
+
+            return res.data
+        },
+
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['subscriptions']
+            })
+            
+        }
+    })
+    return {
+        // STATES
+
+        // SET STATES
+
+        // REQUESTS
+    }
+}
+
+export default useMutationSubscriptions

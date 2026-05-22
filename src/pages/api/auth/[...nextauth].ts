@@ -130,7 +130,7 @@ export default NextAuth({
 
             token.accessToken = res.access_token;
             token.refreshToken = res.refresh_token;
-            console.log('LOGIN EXPIRES RAW', user.accessTokenExpires);
+            console.log('LOGIN EXPIRES RAW', user?.accessTokenExpires);
             /**
              * expires_in should be seconds remaining
              */

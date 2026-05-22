@@ -65,50 +65,14 @@ const Sales_V = () => {
                           maximumFractionDigits: 2,
                         }
                       ),
-        vat_amount: Number(sales.vat_amount)?.toLocaleString(
-                        navigator.language,
-                        {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        }
-                      ),
-        exempt_sales: Number(sales.exempt_sales)?.toLocaleString(
-                        navigator.language,
-                        {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        }
-                      ),
+        vat_amount: Number(sales.vat_amount || 0),
+        exempt_sales: Number(sales.exempt_sales || 0),
         tin: sales.customer?.tin,
-        gross_amount: Number(sales.gross_amount)?.toLocaleString(
-                        navigator.language,
-                        {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        }
-                      ),
-        gross_taxable: Number(sales.gross_taxable)?.toLocaleString(
-                        navigator.language,
-                        {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        }
-                      ),
-        vatable_sales: Number(sales.vatable_sales)?.toLocaleString(
-                        navigator.language,
-                        {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        }
-                      ),
+        gross_amount: Number(sales.gross_amount || 0),
+        gross_taxable: Number(sales.gross_taxable || 0),
+        vatable_sales: Number(sales.vatable_sales || 0),
         invoice_number: sales.invoice_number,
-        zero_rated_sales: Number(sales.zero_rated_sales)?.toLocaleString(
-                        navigator.language,
-                        {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        }
-                      ),
+        zero_rated_sales: Number(sales.zero_rated_sales || 0),
         branch_code: sales.customer?.branch_code,
         first_address: sales.customer?.first_address,
         second_address: sales.customer?.second_address,
@@ -169,55 +133,51 @@ const Sales_V = () => {
       key: 'second_address',
       dataIndex: 'second_address',
     },
-    // {
-    //   title: 'Particulars',
-    //   key: 'particulars',
-    //   dataIndex: 'particulars',
-    // },
-    // {
-    //   title: 'Terms',
-    //   key: 'terms',
-    //   dataIndex: 'terms',
-    // },
-    // {
-    //   title: 'Account Name',
-    //   key: 'account_name',
-    //   dataIndex: 'account_name',
-    // },
     {
+      align: 'left',
       title: 'Exempt Sales',
       key: 'exempt_sales',
       dataIndex: 'exempt_sales',
+      render: (value) => formatNumber(value)
     },
     {
+      align: 'left',
       title: 'Zero-Rated Sales',
       key: 'zero_rated_sales',
       dataIndex: 'zero_rated_sales',
+      render: (value) => formatNumber(value)
     },
     {
+      align: 'left',
       title: 'Vatable Sales',
       key: 'vatable_sales',
       dataIndex: 'vatable_sales',
+      render: (value) => formatNumber(value)
     },
     {
+      align: 'left',
       title: 'Gross Amount',
       key: 'gross_amount',
       dataIndex: 'gross_amount',
+      render: (value) => formatNumber(value)
     },
     {
       title: 'VAT Rate',
       key: 'vat_rate',
       dataIndex: 'vat_rate',
+      render: (value) => formatNumber(value)
     },
     {
       title: 'Vat Amount',
       key: 'vat_amount',
       dataIndex: 'vat_amount',
+      render: (value) => formatNumber(value)
     },
     {
       title: 'Gross Taxable',
       key: 'gross_taxable',
       dataIndex: 'gross_taxable',
+      render: (value) => formatNumber(value)
     },
     {
       title: 'Created Date',
@@ -263,6 +223,23 @@ const Sales_V = () => {
           </div>
     },
   ];
+  type NumericFields =
+  | 'exempt_sales'
+  | 'zero_rated_sales'
+  | 'vatable_sales'
+  | 'gross_amount'
+  | 'vat_amount'
+  | 'gross_taxable'
+  const total = (field: NumericFields) =>
+    dataSource.reduce(
+      (sum, row) => sum + Number(row[field] || 0),
+      0
+    )
+  const formatNumber = (value: number) =>
+    Number(value || 0).toLocaleString(navigator.language, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
   return (
       <div>
         {
@@ -380,6 +357,67 @@ const Sales_V = () => {
                 }
                 rowSelection={rowSelection}
                 scroll={{ x: 'max-content', y: 60 * 5 }}
+                summary={() =>
+                  salesArr?.length ? (
+                    <Table.Summary fixed>
+                      <Table.Summary.Row
+                        className={scss.summaryRow}
+                      >
+                        {/* Checkbox column */}
+                        <Table.Summary.Cell index={0} />
+
+                        {/* TOTAL */}
+                        <Table.Summary.Cell index={1}>
+                          TOTAL
+                        </Table.Summary.Cell>
+
+                        {/* Empty text columns */}
+                        {[2,3,4,5,6,7].map(i => (
+                          <Table.Summary.Cell key={i} index={i} />
+                        ))}
+
+                        {/* Exempt Sales */}
+                        <Table.Summary.Cell index={8} align="left">
+                          {formatNumber(total('exempt_sales'))}
+                        </Table.Summary.Cell>
+
+                        {/* Zero Rated Sales */}
+                        <Table.Summary.Cell index={9} align="left">
+                          {formatNumber(total('zero_rated_sales'))}
+                        </Table.Summary.Cell>
+
+                        {/* Vatable Sales */}
+                        <Table.Summary.Cell index={10} align="left">
+                          {formatNumber(total('vatable_sales'))}
+                        </Table.Summary.Cell>
+
+                        {/* Gross Amount */}
+                        <Table.Summary.Cell index={11} align="left">
+                          {formatNumber(total('gross_amount'))}
+                        </Table.Summary.Cell>
+
+                        {/* VAT Rate */}
+                        <Table.Summary.Cell index={12} />
+
+                        {/* VAT Amount */}
+                        <Table.Summary.Cell index={13} align="left">
+                          {formatNumber(total('vat_amount'))}
+                        </Table.Summary.Cell>
+
+                        {/* Gross Taxable */}
+                        <Table.Summary.Cell index={14} align="left">
+                          {formatNumber(total('gross_taxable'))}
+                        </Table.Summary.Cell>
+
+                        {/* Created Date */}
+                        <Table.Summary.Cell index={15} />
+
+                        {/* Actions */}
+                        <Table.Summary.Cell index={16} />
+                      </Table.Summary.Row>
+                    </Table.Summary>
+                  ) : null
+                }
             />
         </div>
         <div className={scss.pagination}>

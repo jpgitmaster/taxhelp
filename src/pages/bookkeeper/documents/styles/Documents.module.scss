@@ -136,6 +136,13 @@
         @apply text-[11px] -mt-0.5;
       }
     }
+    .summaryRow{
+      color: $lightBlue;
+      @apply font-bold;
+      td{
+        @apply px-2.5!;
+      }
+    }
     .actions{
         .action{
             @apply mx-1 cursor-pointer;

@@ -39,22 +39,22 @@ type ExcelRow = {
   businessOwner: string
   address1: string
   address2: string
-  grossAmount: number
+  gross_amount: number
   
-  exemptSales?: number
-  zeroRatedSales?: number
-  vatableSales?: number
+  exempt_sales?: number
+  zero_rated_sales?: number
+  vatable_sales?: number
 
-  exemptPurchases?: number
-  vatablePurchases?: number
-  zeroRatedPurchases?: number
-  vatablePurchaseServices?: number
-  vatablePurchaseCapitalGoods?: number
-  vatablePurchaseCapitalGoodsOther?: number
+  exempt_purchases?: number
+  vatable_purchases?: number
+  zero_rated_purchases?: number
+  vatable_purchase_of_services?: number
+  vatable_purchase_of_capital_goods?: number
+  vatable_purchase_of_other_goods?: number
 
   vatRate: number
-  vatAmount: number
-  grossTaxable: number
+  vat_amount: number
+  gross_taxable: number
 
   // Optional purchase fields
   vatableServices?: number

@@ -16,26 +16,26 @@ interface Record_Obj {
     name?: string
 
     // VAT COMMON
-    gross_amount?: string
-    vat_rate?: string
-    vat_amount?: string
-    gross_taxable?: string
+    gross_amount?: string | number
+    vat_rate?: string | number
+    vat_amount?: string | number
+    gross_taxable?: string | number
 
     // SALES
-    exempt_sales?: string
-    vatable_sales?: string
-    zero_rated_sales?: string
+    exempt_sales?: string | number
+    vatable_sales?: string | number
+    zero_rated_sales?: string | number
 
     // PURCHASES
-    exempt_purchases?: string
-    vatable_purchases?: string
-    zero_rated_purchases?: string
+    exempt_purchases?: string | number
+    vatable_purchases?: string | number
+    zero_rated_purchases?: string | number
 
-    vatable_services?: string
+    vatable_services?: string | number
 
-    vatable_purchase_of_services?: string
-    vatable_purchase_of_capital_goods?: string
-    vatable_purchase_of_other_goods?: string
+    vatable_purchase_of_services?: string | number
+    vatable_purchase_of_capital_goods?: string | number
+    vatable_purchase_of_other_goods?: string | number
 
     // QAP / SAWT
     atc_code?: string

@@ -1,25 +1,23 @@
 interface PurchasesObj{
     atc: string
     terms: string
-    vat_rate: string
-    wtax_rate: string
     id: number | null
     toDelete: boolean
-    vat_amount: string
-    wtax_amount: string
+    vat_rate: string | number
+    vat_amount: string | number
     particulars: string
     invoice_date: string
     account_name: string
-    gross_amount: string
-    gross_taxable: string
+    gross_amount: string | number
+    gross_taxable: string | number
     taxable_month: string
     invoice_number: string
-    exempt_purchases: string
-    vatable_purchases: string
-    zero_rated_purchases: string
-    vatable_purchase_of_services: string
-    vatable_purchase_of_other_goods: string
-    vatable_purchase_of_capital_goods: string
+    exempt_purchases: string | number
+    vatable_purchases: string | number
+    zero_rated_purchases: string | number
+    vatable_purchase_of_services: string | number
+    vatable_purchase_of_other_goods: string | number
+    vatable_purchase_of_capital_goods: string | number
     supplier: {
         tin: string
         last_name: string

@@ -102,49 +102,13 @@ const DAT_File_V = () => {
             (doc.customer?.first_name || '') + ' ' +
             (doc.customer?.middle_name || '') + ' ' +
             (doc.customer?.last_name || ''),
-          exempt_sales: Number(doc.exempt_sales)?.toLocaleString(
-                      navigator.language,
-                      {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }
-                    ),
-          vatable_sales: Number(doc.vatable_sales)?.toLocaleString(
-                      navigator.language,
-                      {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }
-                    ),
-          zero_rated_sales: Number(doc.zero_rated_sales)?.toLocaleString(
-                      navigator.language,
-                      {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }
-                    ),
-          gross_amount: Number(doc.gross_amount)?.toLocaleString(
-                      navigator.language,
-                      {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }
-                    ),
-          vat_rate: doc.vat_rate,
-          vat_amount: Number(doc.vat_amount)?.toLocaleString(
-                      navigator.language,
-                      {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }
-                    ),
-          gross_taxable: Number(doc.gross_taxable)?.toLocaleString(
-                      navigator.language,
-                      {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }
-                    ),
+          exempt_sales: Number(doc.exempt_sales || 0),
+          vatable_sales: Number(doc.vatable_sales || 0),
+          zero_rated_sales: Number(doc.zero_rated_sales || 0),
+          gross_amount: Number(doc.gross_amount || 0),
+          vat_rate: Number(doc.vat_rate || 0),
+          vat_amount: Number(doc.vat_amount || 0),
+          gross_taxable: Number(doc.gross_taxable || 0),
         }
       }
 
@@ -162,56 +126,14 @@ const DAT_File_V = () => {
             (doc.supplier?.last_name || ''),
           exempt_purchases: doc.exempt_purchases,
           zero_rated_purchases: doc.zero_rated_purchases,
-          vatable_purchases: Number(doc.vatable_purchases)?.toLocaleString(
-                      navigator.language,
-                      {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }
-                    ),
-          vatable_services: Number(doc.vatable_purchase_of_services)?.toLocaleString(
-                      navigator.language,
-                      {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }
-                    ),
-          vatable_purchase_of_capital_goods: Number(doc.vatable_purchase_of_capital_goods)?.toLocaleString(
-                      navigator.language,
-                      {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }
-                    ),
-          vatable_purchase_of_other_goods: Number(doc.vatable_purchase_of_other_goods)?.toLocaleString(
-                      navigator.language,
-                      {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }
-                    ),
-          gross_amount: Number(doc.gross_amount)?.toLocaleString(
-                      navigator.language,
-                      {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }
-                    ),
-          vat_rate: doc.vat_rate,
-          vat_amount: Number(doc.vat_amount)?.toLocaleString(
-                      navigator.language,
-                      {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }
-                    ),
-          gross_taxable: Number(doc.gross_taxable)?.toLocaleString(
-                      navigator.language,
-                      {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }
-                    ),
+          vatable_purchases: Number(doc.vatable_purchases || 0),
+          vatable_purchase_of_services: Number(doc.vatable_purchase_of_services || 0),
+          vatable_purchase_of_capital_goods: Number(doc.vatable_purchase_of_capital_goods || 0),
+          vatable_purchase_of_other_goods: Number(doc.vatable_purchase_of_other_goods || 0),
+          gross_amount: Number(doc.gross_amount || 0),
+          vat_rate: Number(doc.vat_rate || 0),
+          vat_amount: Number(doc.vat_amount || 0),
+          gross_taxable: Number(doc.gross_taxable || 0),
         }
       }
       if (docType === 'IMPORTATION') {
@@ -234,7 +156,7 @@ const DAT_File_V = () => {
             (doc.customer?.middle_name || '') + ' ' +
             (doc.customer?.last_name || ''),
           atc_code: doc.atc_code,
-          income_payment: Number(doc.income_payment)?.toLocaleString(
+          income_payment: Number(doc.income_payment || 0)?.toLocaleString(
                                               navigator.language,
                                               {
                                                 minimumFractionDigits: 2,
@@ -244,7 +166,7 @@ const DAT_File_V = () => {
           tax_rate: doc.tax_rate,
           // income_payment: doc.income_payment,
           // tax_rate: doc.tax_rate,
-          tax_amount: Number(doc.tax_amount)?.toLocaleString(
+          tax_amount: Number(doc.tax_amount || 0)?.toLocaleString(
                                               navigator.language,
                                               {
                                                 minimumFractionDigits: 2,
@@ -294,29 +216,29 @@ const DAT_File_V = () => {
             case 'SALES':
                 return [
                     ...base,
-                    { title: 'Exempt Sales', dataIndex: 'exempt_sales' },
-                    { title: 'Zero-Rated Sales', dataIndex: 'zero_rated_sales' },
-                    { title: 'Vatable Sales', dataIndex: 'vatable_sales' },
-                    { title: 'Gross Amount', dataIndex: 'gross_amount' },
-                    { title: 'VAT Rate', dataIndex: 'vat_rate' },
-                    { title: 'VAT Amount', dataIndex: 'vat_amount' },
-                    { title: 'Gross Taxable', dataIndex: 'gross_taxable' },
+                    { title: 'Exempt Sales', dataIndex: 'exempt_sales', render: (value) => formatNumber(value) },
+                    { title: 'Zero-Rated Sales', dataIndex: 'zero_rated_sales', render: (value) => formatNumber(value) },
+                    { title: 'Vatable Sales', dataIndex: 'vatable_sales', render: (value) => formatNumber(value) },
+                    { title: 'Gross Amount', dataIndex: 'gross_amount', render: (value) => formatNumber(value) },
+                    { title: 'VAT Rate', dataIndex: 'vat_rate', render: (value) => formatNumber(value) },
+                    { title: 'VAT Amount', dataIndex: 'vat_amount', render: (value) => formatNumber(value) },
+                    { title: 'Gross Taxable', dataIndex: 'gross_taxable', render: (value) => formatNumber(value) },
                     actionColumn
                 ]
 
             case 'PURCHASES':
                 return [
                     ...base,
-                    { title: 'Exempt Purchases', dataIndex: 'exempt_purchases' },
-                    { title: 'Zero-Rated Purchases', dataIndex: 'zero_rated_purchases' },
-                    { title: 'Vatable Purchases', dataIndex: 'vatable_purchases' },
-                    { title: 'Vatable Purchase of Services', dataIndex: 'vatable_services', width: 140, align: 'center' },
-                    { title: 'Vatable Purchase of Capital Goods', dataIndex: 'vatable_purchase_of_capital_goods', width: 140, align: 'center' },
-                    { title: 'Vatable Purchase of Goods other than Capital Goods', dataIndex: 'vatable_purchase_of_other_goods', width: 200, align: 'center' },
-                    { title: 'Gross Amount', dataIndex: 'gross_amount' },
-                    { title: 'VAT Rate', dataIndex: 'vat_rate' },
-                    { title: 'VAT Amount', dataIndex: 'vat_amount' },
-                    { title: 'Gross Taxable', dataIndex: 'gross_taxable' },
+                    { title: 'Exempt Purchases', dataIndex: 'exempt_purchases', render: (value) => formatNumber(value) },
+                    { title: 'Zero-Rated Purchases', dataIndex: 'zero_rated_purchases', render: (value) => formatNumber(value) },
+                    { title: 'Vatable Purchases', dataIndex: 'vatable_purchases', render: (value) => formatNumber(value) },
+                    { title: 'Vatable Purchase of Services', dataIndex: 'vatable_purchase_of_services', width: 140, render: (value) => formatNumber(value) },
+                    { title: 'Vatable Purchase of Capital Goods', dataIndex: 'vatable_purchase_of_capital_goods', width: 140, render: (value) => formatNumber(value) },
+                    { title: 'Vatable Purchase of Goods other than Capital Goods', dataIndex: 'vatable_purchase_of_other_goods', width: 200, render: (value) => formatNumber(value) },
+                    { title: 'Gross Amount', dataIndex: 'gross_amount', render: (value) => formatNumber(value) },
+                    { title: 'VAT Rate', dataIndex: 'vat_rate', render: (value) => formatNumber(value) },
+                    { title: 'VAT Amount', dataIndex: 'vat_amount', render: (value) => formatNumber(value) },
+                    { title: 'Gross Taxable', dataIndex: 'gross_taxable', render: (value) => formatNumber(value) },
                     actionColumn
                 ]
               case 'IMPORTATION':
@@ -359,7 +281,29 @@ const DAT_File_V = () => {
         }
     }
     const columns = useMemo(() => getColumns(), [doc.selectedTable.value])
-    
+    type NumericFields =
+    | 'exempt_sales'
+    | 'zero_rated_sales'
+    | 'vatable_sales'
+    | 'gross_amount'
+    | 'vat_amount'
+    | 'gross_taxable'
+    | 'exempt_purchases'
+    | 'zero_rated_purchases'
+    | 'vatable_purchases'
+    | 'vatable_purchase_of_services'
+    | 'vatable_purchase_of_other_goods'
+    | 'vatable_purchase_of_capital_goods'
+    const total = (field: NumericFields) =>
+      dataSource.reduce(
+        (sum, row) => sum + Number(row[field] || 0),
+        0
+      )
+    const formatNumber = (value: number) =>
+      Number(value || 0).toLocaleString(navigator.language, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
     return (
         <div>
             {
@@ -430,14 +374,108 @@ const DAT_File_V = () => {
           <div className={scss.tableRecords} style={{width:tableWidth+'px'}}>
             { (loader || statLoader) && <Loader scss={scss} position='absolute' />}
             <Table
-                rowKey='id'
-                columns={columns}
-                pagination={false}
-                dataSource={dataSource}
-                rowClassName={(record) =>
-                  record.toDelete ? scss.activeRow : ''
+              rowKey='id'
+              columns={columns}
+              pagination={false}
+              dataSource={dataSource}
+              rowClassName={(record) =>
+                record.toDelete ? scss.activeRow : ''
+              }
+              scroll={{ x: 'max-content', y: 90 * 5 }}
+
+              summary={() => {
+                if (!record.recordArr?.length) return null
+
+                if (docType === 'SALES') {
+                  return (
+                    <Table.Summary fixed>
+                      <Table.Summary.Row className={scss.summaryRow}>
+                        <Table.Summary.Cell index={0}>TOTAL</Table.Summary.Cell>
+
+                        {/* empty base columns */}
+                        {[1,2,3,4,5,6].map(i => (
+                          <Table.Summary.Cell key={i} index={i} />
+                        ))}
+                        <Table.Summary.Cell index={9}>
+                          {formatNumber(total('exempt_sales'))}
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={9}>
+                          {formatNumber(total('zero_rated_sales'))}
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={9}>
+                          {formatNumber(total('vatable_sales'))}
+                        </Table.Summary.Cell>
+
+                        <Table.Summary.Cell index={10}>
+                          {formatNumber(total('gross_amount'))}
+                        </Table.Summary.Cell>
+
+                        <Table.Summary.Cell index={11} />
+
+                        <Table.Summary.Cell index={12}>
+                          {formatNumber(total('vat_amount'))}
+                        </Table.Summary.Cell>
+
+                        <Table.Summary.Cell index={13}>
+                          {formatNumber(total('gross_taxable'))}
+                        </Table.Summary.Cell>
+
+                        <Table.Summary.Cell index={14} />
+                      </Table.Summary.Row>
+                    </Table.Summary>
+                  )
                 }
-                scroll={{ x: 'max-content', y: 90 * 5 }}
+
+                if (docType === 'PURCHASES') {
+                  return (
+                    <Table.Summary fixed>
+                      <Table.Summary.Row className={scss.summaryRow}>
+                        <Table.Summary.Cell index={0}>TOTAL</Table.Summary.Cell>
+
+                        {/* empty base columns */}
+                        {[1,2,3,4,5,6].map(i => (
+                          <Table.Summary.Cell key={i} index={i} />
+                        ))}
+                        <Table.Summary.Cell index={7}>
+                          {formatNumber(total('exempt_purchases'))}
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={8}>
+                          {formatNumber(total('zero_rated_purchases'))}
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={9}>
+                          {formatNumber(total('vatable_purchases'))}
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={10}>
+                          {formatNumber(total('vatable_purchase_of_services'))}
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={11}>
+                          {formatNumber(total('vatable_purchase_of_capital_goods'))}
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={12}>
+                          {formatNumber(total('vatable_purchase_of_other_goods'))}
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={13}>
+                          {formatNumber(total('gross_amount'))}
+                        </Table.Summary.Cell>
+
+                        <Table.Summary.Cell index={13} />
+
+                        <Table.Summary.Cell index={14}>
+                          {formatNumber(total('vat_amount'))}
+                        </Table.Summary.Cell>
+
+                        <Table.Summary.Cell index={15}>
+                          {formatNumber(total('gross_taxable'))}
+                        </Table.Summary.Cell>
+
+                        <Table.Summary.Cell index={16} />
+                      </Table.Summary.Row>
+                    </Table.Summary>
+                  )
+                }
+
+                return null
+              }}
             />
           </div>
           <div className={scss.pagination}>

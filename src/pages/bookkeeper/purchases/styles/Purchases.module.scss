@@ -76,6 +76,13 @@
       }
     }
   }
+  .summaryRow{
+    color: $lightBlue;
+    @apply font-bold;
+    td{
+      @apply px-2.5!;
+    }
+  }
 }
 
 .onDelete {

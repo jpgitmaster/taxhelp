@@ -57,7 +57,13 @@
 .actionItem{
   @apply cursor-pointer;
 }
-
+.summaryRow{
+  color: $lightBlue;
+  @apply font-bold;
+  td{
+    @apply px-2.5!;
+  }
+}
 .tblBtns{
     @apply flex flex-row mt-5 w-80 mx-auto;
     .button{

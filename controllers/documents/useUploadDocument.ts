@@ -188,30 +188,30 @@ const useUploadDocuments = () => {
 
     const salesColumns = [
         {
-            key: 'exemptSales',
+            key: 'exempt_sales',
             title: 'Exempt Sales',
-            dataIndex: 'exemptSales',
+            dataIndex: 'exempt_sales',
             render: formatNumber,
         },
 
         {
-            key: 'zeroRatedSales',
+            key: 'zero_rated_sales',
             title: 'Zero-Rated Sales',
-            dataIndex: 'zeroRatedSales',
+            dataIndex: 'zero_rated_sales',
             render: formatNumber,
         },
 
         {
-            key: 'vatableSales',
+            key: 'vatable_sales',
             title: 'Vatable Sales',
-            dataIndex: 'vatableSales',
+            dataIndex: 'vatable_sales',
             render: formatNumber,
         },
 
         {
-            key: 'grossAmount',
+            key: 'gross_amount',
             title: 'Gross Amount',
-            dataIndex: 'grossAmount',
+            dataIndex: 'gross_amount',
             render: formatNumber,
         },
 
@@ -219,19 +219,20 @@ const useUploadDocuments = () => {
             key: 'vatRate',
             title: 'VAT Rate',
             dataIndex: 'vatRate',
-        },
-
-        {
-            key: 'vatAmount',
-            title: 'VAT Amount',
-            dataIndex: 'vatAmount',
             render: formatNumber,
         },
 
         {
-            key: 'grossTaxable',
+            key: 'vat_amount',
+            title: 'VAT Amount',
+            dataIndex: 'vat_amount',
+            render: formatNumber,
+        },
+
+        {
+            key: 'gross_taxable',
             title: 'Gross Taxable',
-            dataIndex: 'grossTaxable',
+            dataIndex: 'gross_taxable',
             render: formatNumber,
         },
     ]
@@ -244,55 +245,55 @@ const useUploadDocuments = () => {
 
     const purchaseColumns = [
         {
-            key: 'exemptPurchases',
+            key: 'exempt_purchases',
             title: 'Exempt Purchases',
-            dataIndex: 'exemptPurchases',
+            dataIndex: 'exempt_purchases',
             render: formatNumber,
         },
 
         {
-            key: 'zeroRatedPurchases',
+            key: 'zero_rated_purchases',
             title: 'Zero-Rated Purchases',
-            dataIndex: 'zeroRatedPurchases',
+            dataIndex: 'zero_rated_purchases',
             render: formatNumber,
         },
 
         {
-            key: 'vatablePurchases',
+            key: 'vatable_purchases',
             title: 'Vatable Purchases',
-            dataIndex: 'vatablePurchases',
+            dataIndex: 'vatable_purchases',
             render: formatNumber,
         },
 
         {
-            key: 'vatablePurchaseServices',
+            key: 'vatable_purchase_of_services',
             title: 'Vatable Purchase of Services',
-            dataIndex: 'vatablePurchaseServices',
+            dataIndex: 'vatable_purchase_of_services',
             width: 180,
             render: formatNumber,
         },
 
         {
-            key: 'vatablePurchaseCapitalGoods',
+            key: 'vatable_purchase_of_capital_goods',
             title: 'Vatable Purchase of Capital Goods',
-            dataIndex: 'vatablePurchaseCapitalGoods',
+            dataIndex: 'vatable_purchase_of_capital_goods',
             width: 180,
             render: formatNumber,
         },
 
         {
-            key: 'vatablePurchaseCapitalGoodsOther',
+            key: 'vatable_purchase_of_other_goods',
             title:
                 'Vatable Purchase of Goods other than Capital Goods',
-            dataIndex: 'vatablePurchaseCapitalGoodsOther',
+            dataIndex: 'vatable_purchase_of_other_goods',
             width: 180,
             render: formatNumber,
         },
 
         {
-            key: 'grossAmount',
+            key: 'gross_amount',
             title: 'Gross Amount',
-            dataIndex: 'grossAmount',
+            dataIndex: 'gross_amount',
             render: formatNumber,
         },
 
@@ -300,19 +301,20 @@ const useUploadDocuments = () => {
             key: 'vatRate',
             title: 'VAT Rate',
             dataIndex: 'vatRate',
-        },
-
-        {
-            key: 'vatAmount',
-            title: 'VAT Amount',
-            dataIndex: 'vatAmount',
             render: formatNumber,
         },
 
         {
-            key: 'grossTaxable',
+            key: 'vat_amount',
+            title: 'VAT Amount',
+            dataIndex: 'vat_amount',
+            render: formatNumber,
+        },
+
+        {
+            key: 'gross_taxable',
             title: 'Gross Taxable',
-            dataIndex: 'grossTaxable',
+            dataIndex: 'gross_taxable',
             render: formatNumber,
         },
     ]
@@ -420,29 +422,29 @@ const useUploadDocuments = () => {
             return {
                 ...base,
 
-                exemptSales: Number(
+                exempt_sales: Number(
                     row[' EXEMPT SALES'] || 0
                 ),
 
-                zeroRatedSales: Number(
+                zero_rated_sales: Number(
                     row['ZERO-RATED SALES'] || 0
                 ),
 
-                vatableSales: Number(
+                vatable_sales: Number(
                     row['VATABLE SALES'] || 0
                 ),
 
-                grossAmount: Number(
+                gross_amount: Number(
                     row['GROSS AMOUNT'] || 0
                 ),
 
                 vatRate: Number(row['VAT RATE'] || 0),
 
-                vatAmount: Number(
+                vat_amount: Number(
                     row['VAT AMOUNT'] || 0
                 ),
 
-                grossTaxable: Number(
+                gross_taxable: Number(
                     row['GROSS TAXABLE'] || 0
                 ),
             }
@@ -451,43 +453,43 @@ const useUploadDocuments = () => {
         return {
             ...base,
 
-            exemptPurchases: Number(
+            exempt_purchases: Number(
                 row['EXEMPT PURCHASES'] || 0
             ),
 
-            zeroRatedPurchases: Number(
+            zero_rated_purchases: Number(
                 row['ZERO-RATED PURCHASES'] || 0
             ),
 
-            vatablePurchases: Number(
+            vatable_purchases: Number(
                 row['VATABLE PURCHASES'] || 0
             ),
 
-            vatablePurchaseServices: Number(
+            vatable_purchase_of_services: Number(
                 row['VATABLE PURCHASE OF SERVICES'] || 0
             ),
 
-            vatablePurchaseCapitalGoods: Number(
+            vatable_purchase_of_capital_goods: Number(
                 row['VATABLE PURCHASE OF CAPITAL GOODS'] || 0
             ),
 
-            vatablePurchaseCapitalGoodsOther: Number(
+            vatable_purchase_of_other_goods: Number(
                 row[
                     'VATABLE PURCHASE OF GOODS OTHER THAN CAPITAL GOODS'
                 ] || 0
             ),
 
-            grossAmount: Number(
+            gross_amount: Number(
                 row['GROSS AMOUNT'] || 0
             ),
 
             vatRate: Number(row['VAT RATE'] || 0),
 
-            vatAmount: Number(
+            vat_amount: Number(
                 row['VAT AMOUNT'] || 0
             ),
 
-            grossTaxable: Number(
+            gross_taxable: Number(
                 row['GROSS TAXABLE'] || 0
             ),
         }
@@ -558,7 +560,15 @@ const useUploadDocuments = () => {
 
         const tableRows = json
             .map((row, index) => mapRow(row, index))
-            .filter(row => !deletedRowIds.includes(row.id))
+            .filter(row => {
+                const tin = String(row.tin ?? '')
+                    .replace(/\D/g, '') // remove dashes/spaces/etc
+
+                return (
+                    tin.length > 0 &&
+                    !deletedRowIds.includes(row.id)
+                )
+            })
 
         setRows(tableRows)
     }
