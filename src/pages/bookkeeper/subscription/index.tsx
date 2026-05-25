@@ -1,6 +1,7 @@
 
 import Link from 'next/link'
 import { signOut, getSession } from 'next-auth/react'
+import scss from './styles/Subscription.module.scss'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 
@@ -18,10 +19,10 @@ const ManageSubscription_V = ({ session }: PageProps) => {
   const isEnterprise = subscription.plan === 'Enterprise'
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div>
       
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r p-6 space-y-6">
+      {/* <aside className="w-64 bg-white border-r p-6 space-y-6">
         <h2 className="text-xl font-semibold">Settings</h2>
 
         <nav className="space-y-2 text-sm">
@@ -34,29 +35,77 @@ const ManageSubscription_V = ({ session }: PageProps) => {
           <a className="block text-gray-600 hover:text-black">Invoices</a>
           <a className="block text-gray-600 hover:text-black">Payment Methods</a>
         </nav>
-      </aside>
+      </aside> */}
 
       {/* Main Content */}
-      <main className="flex-1 p-8 space-y-8 max-w-6xl mx-auto">
+      <main className={scss.box}>
 
         {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-semibold">Subscription</h1>
-            <p className="text-gray-500 text-sm">
-              Manage your plan, billing, and usage
-            </p>
-          </div>
-
-          <Link href='/bookkeeper/subscription/plans' className="bg-black text-white px-4 py-2 rounded-lg text-sm">
-            {isFree ? 'Upgrade Plan' : 'Change Plan'}
-          </Link>
+        <div className={scss.boxTitle}>
+          <h2>
+            Subscription
+          </h2>
+          <p>
+            Manage your plan, billing, and usage.
+          </p>
         </div>
-
-        {/* Plan Card */}
-        <section className="grid md:grid-cols-3 gap-6 my-5">
-          
-          {/* Active Plan */}
+        <section className={scss.cards+' '+scss.plantop}>
+          <div className={scss.card+' '+scss.w70}>
+            <div className={scss.planbox+' '+scss.blue}>
+              <h2>
+                {subscription.plan} Plan
+              </h2>
+              <p>
+                {isFree
+                  ? 'Free plan'
+                  : `₱${subscription.price} / ${subscription.billing === 'monthly' ? 'month' : 'year'}`
+                }
+              </p>
+              <Link href='/bookkeeper/subscription/plans' className={scss.button+' '+scss.btnblue}>
+                Change Plan
+              </Link>
+            </div>
+          </div>
+          <div className={scss.card+' '+scss.w30}>
+            <div className={scss.planbox+' '+scss.blue}>
+              <h2>
+                Usage
+              </h2>
+            </div>
+          </div>
+          <div className={scss.card+' '+scss.w50}>
+            <div className={scss.planbox+' '+scss.blue}>
+              <h2>
+                Payment Method
+              </h2>
+            </div>
+          </div>
+          <div className={scss.card+' '+scss.w50}>
+            <div className={scss.planbox+' '+scss.blue}>
+              <h2>
+                Billing Address
+              </h2>
+            </div>
+          </div>
+          <div className={scss.card+' '+scss.w100}>
+            <div className={scss.planbox+' '+scss.blue}>
+              <h2>
+                Billing History
+              </h2>
+            </div>
+          </div>
+          <div className={scss.card+' '+scss.w100}>
+            <div className={scss.planbox+' '+scss.red}>
+              <h2>
+                Cancel Subscription
+              </h2>
+              <Link href='' className={scss.button+' '+scss.btnred}>
+                Cancel Subscription
+              </Link>
+            </div>
+          </div>
+        </section>
+        {/* <section className={"grid md:grid-cols-3 gap-6 my-5"}>
           <div className="col-span-2 bg-white border rounded-xl p-6 shadow-sm relative overflow-hidden">
             <div className="absolute top-0 right-0 bg-black text-white text-xs px-3 py-1 rounded-bl-lg">
               ACTIVE
@@ -73,7 +122,6 @@ const ManageSubscription_V = ({ session }: PageProps) => {
               }
             </p>
 
-            {/* Billing Info */}
             {!isFree && (
               <div className="mt-6 grid grid-cols-2 gap-4 text-sm">
                 <div>
@@ -87,7 +135,6 @@ const ManageSubscription_V = ({ session }: PageProps) => {
               </div>
             )}
 
-            {/* 🔥 Plan Features (more detailed) */}
             <div className="mt-6 grid grid-cols-2 gap-4 text-sm">
               
               <div>
@@ -140,7 +187,6 @@ const ManageSubscription_V = ({ session }: PageProps) => {
 
             </div>
 
-            {/* Actions */}
             <div className="mt-6 flex gap-3">
               <Link href='/bookkeeper/subscription/plans' className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm">
                 Change Plan
@@ -154,7 +200,6 @@ const ManageSubscription_V = ({ session }: PageProps) => {
             </div>
           </div>
 
-          {/* Usage */}
           <div className="bg-white border rounded-xl p-6 shadow-sm">
             <h3 className="font-medium mb-4">Usage</h3>
 
@@ -190,10 +235,7 @@ const ManageSubscription_V = ({ session }: PageProps) => {
           </div>
         </section>
 
-        {/* Payment + Billing (UNCHANGED, just slightly richer) */}
         <section className="grid md:grid-cols-2 gap-6 my-5">
-          
-          {/* Payment Method */}
           <div className="bg-white border rounded-xl p-6 shadow-sm">
             <h3 className="font-medium mb-4">Payment Method</h3>
 
@@ -212,7 +254,6 @@ const ManageSubscription_V = ({ session }: PageProps) => {
             </div>
           </div>
 
-          {/* Billing Address */}
           <div className="bg-white border rounded-xl p-6 shadow-sm">
             <h3 className="font-medium mb-4">Billing Address</h3>
 
@@ -231,7 +272,6 @@ const ManageSubscription_V = ({ session }: PageProps) => {
           </div>
         </section>
 
-        {/* Billing History */}
         {!isFree && (
           <section className="bg-white border rounded-xl p-6 shadow-sm my-5">
             <div className="flex justify-between items-center mb-4">
@@ -261,7 +301,6 @@ const ManageSubscription_V = ({ session }: PageProps) => {
           </section>
         )}
 
-        {/* Danger Zone */}
         {!isFree && !isEnterprise && (
           <section className="bg-red-50 border border-red-200 rounded-xl p-6">
             <h3 className="text-red-600 font-medium mb-2">Cancel Subscription</h3>
@@ -273,8 +312,7 @@ const ManageSubscription_V = ({ session }: PageProps) => {
               Cancel Subscription
             </button>
           </section>
-        )}
-
+        )} */}
       </main>
     </div>
   )

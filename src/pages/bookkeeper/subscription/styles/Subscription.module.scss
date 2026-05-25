@@ -10,6 +10,53 @@
 .paymentForm{
     @apply relative;
 }
+
+.cards.plantop{
+    @apply justify-normal gap-5;
+    .planbox{
+        background-color: $white;
+        border: 1px solid rgba($gray, .8);
+        @apply p-5 rounded-2xl my-5 h-full relative;
+        &.blue{
+            border: 1px solid $lightBlue;
+        }
+        &.red{
+            border: 1px solid $red;
+            h2{
+                color: $red;
+            }
+        }
+        h2{
+            color: $blue;
+            @apply text-xl font-semibold m-0;
+        }
+        p{
+            color: $lightBlack;
+            @apply text-[16px];
+        }
+        .button{
+            @apply absolute top-5 right-5 w-45;
+        }
+    }
+    .card{
+        &.w30 {
+            flex: 0 0 calc(30% - 1rem);
+        }
+
+        &.w40 {
+            flex: 0 0 calc(40% - 1rem);
+        }
+
+        &.w50{
+            flex: 0 0 calc(50% - 1rem);
+        }
+
+        &.w70 {
+            flex: 0 0 calc(70% - 1rem);
+        }
+    }
+}
+
 .box{
   border: 1px solid rgba($gray, .8);
   background-color: rgba($lightGray, .5);
