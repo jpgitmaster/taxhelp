@@ -1,9 +1,9 @@
 import { Dayjs } from 'dayjs';
 import useSalesAPI from "./api"
-import useClientAPI from '../clients/api';
 import useCustomerAPI from '../customers/api';
-import useGlobal from '@/controllers/global/useGlobal'
-import { useState, ChangeEvent, SyntheticEvent } from "react"
+import useQueryClients from '../clients/api/queries';
+import useGlobal from '@/controllers/global/useGlobal';
+import { useState, ChangeEvent, SyntheticEvent } from "react";
 const useSaveSales = () => {
     const {
         handleBlur,
@@ -17,17 +17,20 @@ const useSaveSales = () => {
         setSales,
         setStatus,
     } = useSalesAPI()
+    
     const {
         filter: clientFilter,
         setFilter: clientSetFilter,
 
-        useGetClients
-    } = useClientAPI()
+        getClients
+    } = useQueryClients()
+
     const {
         filter: customerFilter,
         setFilter: customerSetFilter,
         useGetCustomers
     } = useCustomerAPI()
+
     const [displayTerms, setDisplayTerms] = useState(false)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayCustomers, setDisplayCustomers] = useState(false)
@@ -48,7 +51,7 @@ const useSaveSales = () => {
     }
     
     // CLIENT
-    const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = useGetClients(    
+    const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = getClients(    
         clientFilter.currentPage,
         clientFilter.recordsLimit,
         clientFilter.filter,

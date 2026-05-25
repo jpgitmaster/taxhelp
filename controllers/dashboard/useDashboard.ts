@@ -1,9 +1,11 @@
-import useDashboardAPI from './api';
 import dayjs, { Dayjs } from 'dayjs';
-import useClientAPI from '../clients/api';
+import useQuerySchedules from './api/queries';
 import { EventClickArg } from '@fullcalendar/core';
 import { ScheduleErr, ScheduleObj } from './types';
-import useGlobal from '@/controllers/global/useGlobal'
+import useMutationSchedules from './api/mutations';
+import useQueryClients from '../clients/api/queries';
+import useGlobal from '@/controllers/global/useGlobal';
+import useQueryUsers from '@/controllers/users/api/queries';
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
 type EventLike = {
     id: number | null
@@ -27,31 +29,52 @@ type EventExtendedProps = {
     categoryColor?: string;
 };
 import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
+
+
+
 const useDashboard = () => {
     const {
         handleBlur,
         handleResubmit,
         handleRemoveErr
     } = useGlobal()
+    // const {
+    //     status,
+    //     dashboard,
+
+    //     setStatus,
+    //     setDashboard,
+        
+    //     useUpdateSchedule,
+    //     useCreateSchedule,
+    //     useDeleteSchedule
+    // } = useDashboardAPI()
     const {
         status,
         dashboard,
+        initScheduleObj,
 
         setStatus,
         setDashboard,
-        useGetSchedules,
-        useGetScheduleCategories,
-
-        useUpdateSchedule,
-        useCreateSchedule,
-        useDeleteSchedule
-    } = useDashboardAPI()
+        
+        deleteSchedule,
+        createSchedule,
+        updateSchedule,
+    } = useMutationSchedules()
+    const {
+        getSchedules,
+        getScheduleCategories,
+    } = useQuerySchedules()
     const {
         filter: clientFilter,
         setFilter: clientSetFilter,
 
-        useGetClients
-    } = useClientAPI()
+        getClients
+    } = useQueryClients()
+    const {
+        getUser
+    } = useQueryUsers()
+    const { data: user } = getUser()
     const [mounted, setMounted] = useState(false)
     const [isEditMode, setIsEditMode] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -87,8 +110,8 @@ const useDashboard = () => {
             registered_name: '',
         },
     })
-    const { data: scheds } = useGetSchedules()
-    const { data, isLoading: isLoadingCategories, isFetching: isFetchingCategories } = useGetScheduleCategories()
+    const { data: scheds } = getSchedules()
+    const { data, isLoading: isLoadingCategories, isFetching: isFetchingCategories } = getScheduleCategories()
     const schedCategories = data?.schedCategories
     const events =
         scheds?.schedules?.map((schedule: ScheduleObj) => ({
@@ -113,7 +136,7 @@ const useDashboard = () => {
         schedule: { usename: 'Schedule', required: true },
         category: { usename: 'Category', required: true },
     }
-    const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = useGetClients(    
+    const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = getClients(    
         clientFilter.currentPage,
         clientFilter.recordsLimit,
         clientFilter.filter,
@@ -122,8 +145,17 @@ const useDashboard = () => {
     const clientArr = dataClients?.clients;
     const handleDeleteRecord = (id: number) => {
         setStatus({...status, loader: true})
-        useDeleteSchedule.mutate(id, {
+        deleteSchedule.mutate(id, {
             onSuccess: () => {
+                setDashboard({
+                    ...dashboard,
+                    scheduleObj: initScheduleObj
+                })
+                setStatus(prev => ({
+                    ...prev,
+                    loader: false,
+                    message: 'Your schedule record has been deleted.'
+                }))
                 setDoc({
                     clientSearch: '',
                     selectedCategory: {
@@ -140,6 +172,14 @@ const useDashboard = () => {
                     },
                 })
                 handleCloseModal()
+
+                // auto-clear after 5s
+                setTimeout(() => {
+                    setStatus(prev => ({
+                        ...prev,
+                        message: ''
+                    }))
+                }, 5000)
             }
         })
     }
@@ -345,8 +385,18 @@ const useDashboard = () => {
             return () => clearTimeout(timer)
         }
         if(dashboard.scheduleObj.id){
-            useUpdateSchedule.mutate(dashboard.scheduleObj, {
+            updateSchedule.mutate(dashboard.scheduleObj, {
                 onSuccess: () => {
+                    setStatus(prev => ({
+                        ...prev,
+                        loader: false,
+                        message: 'Schedule updated successfully.'
+                    }))
+
+                    setDashboard({
+                        ...dashboard,
+                        scheduleObj: initScheduleObj
+                    })
                     setDoc({
                         clientSearch: '',
                         selectedCategory: {
@@ -363,11 +413,26 @@ const useDashboard = () => {
                         },
                     })
                     handleCloseModal()
+                    setTimeout(() => {
+                        setStatus(prev => ({
+                            ...prev,
+                            message: ''
+                        }))
+                    }, 5000)
                 }
             })
         }else{
-            useCreateSchedule.mutate(dashboard.scheduleObj, {
+            createSchedule.mutate(dashboard.scheduleObj, {
                 onSuccess: () => {
+                    setStatus(prev => ({
+                        ...prev,
+                        loader: false,
+                        message: 'Schedule created successfully.'
+                    }))
+                    setDashboard({
+                        ...dashboard,
+                        scheduleObj: initScheduleObj
+                    })
                     setDoc({
                         clientSearch: '',
                         selectedCategory: {
@@ -384,6 +449,12 @@ const useDashboard = () => {
                         },
                     })
                     handleCloseModal()
+                    setTimeout(() => {
+                        setStatus(prev => ({
+                            ...prev,
+                            message: ''
+                        }))
+                    }, 5000)
                 }
             })
         }
@@ -405,6 +476,7 @@ const useDashboard = () => {
     return {
         // STATES
         doc,
+        user,
         events,
         status,
         mounted,

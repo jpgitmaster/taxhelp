@@ -1,22 +1,15 @@
-import useClientAPI from "./api";
 import { useRouter } from 'next/router';
+import useQueryClients from './api/queries';
 const useClient = () => {
     const {
-        client,
-        status,
-
-        useGetClient
-    } = useClientAPI()
+        getClient
+    } = useQueryClients()
     const router = useRouter()
     const { clientID } = router.query
-    const clientIdNumber = Number(clientID)
-    const { data } = useGetClient(clientIdNumber, {
-        enabled: typeof clientID === 'string',
-    })
+    const { data } = getClient(Number(clientID))
 
     return {
         // STATES
-        status,
         client:data,
         // SET STATES
         

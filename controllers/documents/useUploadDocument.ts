@@ -2,13 +2,13 @@ import dayjs from 'dayjs'
 import * as XLSX from 'xlsx'
 import useDocumentAPI from './api'
 import { ExcelRow } from './types'
-import useClientAPI from '../clients/api'
 import {
     useState,
     useEffect,
     ChangeEvent,
     SyntheticEvent,
 } from 'react'
+import useQueryClients from '../clients/api/queries'
 
 const useUploadDocuments = () => {
     const [deletedRowIds, setDeletedRowIds] = useState<number[]>([])
@@ -17,9 +17,8 @@ const useUploadDocuments = () => {
     const {
         filter: clientFilter,
         setFilter,
-        useGetClients,
-    } = useClientAPI()
-
+        getClients,
+    } = useQueryClients()
     /*
     |--------------------------------------------------------------------------
     | HELPERS
@@ -95,7 +94,7 @@ const useUploadDocuments = () => {
     |--------------------------------------------------------------------------
     */
 
-    const { data: dataClients, isLoading, isFetching } = useGetClients(
+    const { data: dataClients, isLoading, isFetching } = getClients(
         clientFilter.currentPage,
         clientFilter.recordsLimit,
         clientFilter.filter,

@@ -23,6 +23,7 @@ const Dashboard_V = () => {
   const {
     // STATES
     doc,
+    user,
     events,
     status,
     mounted,
@@ -68,6 +69,8 @@ const Dashboard_V = () => {
 
     const displayText = selectedText +
     (doc.client.trade_name ? ` - ${doc.client.trade_name}` : '');
+  console.log(user?.subscription?.plan)
+  const isPro = user?.subscription?.plan === 'pro'
   return (
       <div className={scss.dashboardWrapper}>
         {
@@ -272,24 +275,53 @@ const Dashboard_V = () => {
                   err={dashboard.scheduleErr.schedule as string}
                 >
                   {
-                    (dashboard.scheduleObj.id && !isEditMode) ?
-                    <input
-                      type='text'
-                      id='schedule'
-                      name='schedule'
-                      value={dashboard.scheduleObj.schedule?.[0]?.format('MM/DD/YYYY')+'  -  '+dashboard.scheduleObj.schedule?.[1]?.format('MM/DD/YYYY')}
-                      readOnly={dashboard.scheduleObj.id ? true : false}
-                      className={dashboard.scheduleObj.id ? scss.lblContent : ''}
-                    />
-                    :
-                    <RangePicker suffixIcon={''}
-                      onChange={handleDate}
-                      value={dashboard.scheduleObj.schedule}
-                      disabledDate={(current) => {
-                        return current && current < dayjs().startOf('day');
-                      }}
-                      style={{ border: dashboard.scheduleErr.schedule ? '1px solid #F00' : '1px solid #D9D9D9', margin: 0 }}
-                    />
+                    (dashboard.scheduleObj.id && !isEditMode) ? (
+                      <input
+                        type='text'
+                        id='schedule'
+                        name='schedule'
+                        value={
+                          dashboard.scheduleObj.schedule?.[0]?.format('MM/DD/YYYY') +
+                          ' - ' +
+                          dashboard.scheduleObj.schedule?.[1]?.format('MM/DD/YYYY')
+                        }
+                        readOnly={true}
+                        className={scss.lblContent}
+                      />
+                    ) : isPro ? (
+                      <RangePicker
+                        suffixIcon={''}
+                        onChange={handleDate}
+                        value={dashboard.scheduleObj.schedule}
+                        disabledDate={(current) => {
+                          return current && current < dayjs().startOf('day');
+                        }}
+                        style={{
+                          border: dashboard.scheduleErr.schedule
+                            ? '1px solid #F00'
+                            : '1px solid #D9D9D9',
+                          margin: 0
+                        }}
+                      />
+                    ) : (
+                      <DatePicker
+                        suffixIcon={''}
+                        onChange={(date) => {
+                          handleDate([date, date])
+                        }}
+                        value={dashboard.scheduleObj.schedule?.[0]}
+                        disabledDate={(current) => {
+                          return current && current < dayjs().startOf('day');
+                        }}
+                        style={{
+                          width: '100%',
+                          border: dashboard.scheduleErr.schedule
+                            ? '1px solid #F00'
+                            : '1px solid #D9D9D9',
+                          margin: 0
+                        }}
+                      />
+                    )
                   }
                 </CustomContainer>
                 <CustomContainer

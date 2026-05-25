@@ -1,37 +1,54 @@
 import { Dayjs } from 'dayjs';
 import { Record_Obj } from './types';
-import useFileGeneratorAPI from './api';
-import useClientAPI from '../clients/api';
+import useQueryFileGenerates from './api/queries';
+import useQueryClients from '../clients/api/queries';
+import useMutationFileGenerates from './api/mutations';
 import { useState, useEffect, ChangeEvent } from "react";
-
+import useQueryUsers from '@/controllers/users/api/queries';
+const fileConfig: Record<string, { mime: string; ext: string }> = {
+    journal: {
+        mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ext: 'xlsx',
+    },
+    dat: {
+        mime: 'text/plain',
+        ext: 'dat',
+    },
+}
 const useFileGenerator = () => {
     const {
         filter: clientFilter,
         setFilter: clientSetFilter,
 
-        useGetClients
-    } = useClientAPI()
-
+        getClients
+    } = useQueryClients()
+    
     const {
         filter,
-        record,
         status,
+        record,
 
         setFilter,
-        setRecord,
         setStatus,
+        setRecord,
 
-        useGetSales,
-        useGetPurchases,
-        useGetSalesTaxes,
+        getSales,
+        getPurchases,
+        getSalesTaxes,
+    } = useQueryFileGenerates()
 
-        useDeleteSalesRecord,
+    const {
+        deleteSalesRecord,
+        deletePurchasesRecord,
         downloadSalesMutation,
-        useDeletePurchasesRecord,
         downloadPurchasesMutation,
         downloadSalesTaxesMutation,
         downloadPurchasesTaxesMutation
-    } = useFileGeneratorAPI()
+    } = useMutationFileGenerates()
+    const {
+        getUser
+    } = useQueryUsers()
+    const { data: user } = getUser()
     const [tableWidth, setTableWidth] = useState(0)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayDocsTbl, setDisplayDocsTbl] = useState(false)
@@ -215,14 +232,14 @@ const useFileGenerator = () => {
     })
     
     
-    const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = useGetClients(    
+    const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = getClients(    
         clientFilter.currentPage,
         clientFilter.recordsLimit,
         clientFilter.filter,
         clientFilter.search
     )
     const clientArr = dataClients?.clients;
-    const { data: sales, isLoading: isLoadingSales, isFetching: isFetchingSales } = useGetSales(
+    const { data: sales, isLoading: isLoadingSales, isFetching: isFetchingSales } = getSales(
         filter.currentPage,
         filter.recordsLimit,
         filter.filter,
@@ -230,7 +247,7 @@ const useFileGenerator = () => {
         doc,
     )
 
-    const { data: purchases, isLoading: isLoadingPurchases, isFetching: isFetchingPurchases } = useGetPurchases(
+    const { data: purchases, isLoading: isLoadingPurchases, isFetching: isFetchingPurchases } = getPurchases(
         filter.currentPage,
         filter.recordsLimit,
         filter.filter,
@@ -238,13 +255,47 @@ const useFileGenerator = () => {
         doc,
     )
 
-    const { data: salesTaxes, isLoading: isLoadingSalesTaxes, isFetching: isFetchingSalesTaxes } = useGetSalesTaxes(
+    const { data: salesTaxes, isLoading: isLoadingSalesTaxes, isFetching: isFetchingSalesTaxes } = getSalesTaxes(
         filter.currentPage,
         filter.recordsLimit,
         filter.filter,
         filter.search,
         doc,
     )
+
+    const handleFileDownload = ({
+        data,
+        type,
+        filename,
+    }: {
+        data: BlobPart
+        type: string
+        filename: string
+    }) => {
+        const config = fileConfig[type] || {
+            mime: 'application/octet-stream',
+            ext: 'dat',
+        }
+
+        const blob = new Blob([data], { type: config.mime })
+        const url = window.URL.createObjectURL(blob)
+
+        const link = document.createElement('a')
+        link.href = url
+        link.download = filename
+
+        document.body.appendChild(link)
+        link.click()
+
+        link.remove()
+        window.URL.revokeObjectURL(url)
+
+        setStatus(prev => ({
+            ...prev,
+            loader: false,
+        }))
+    }
+    
     const handleDownload = (
         type: string,
         selectedTable: string,
@@ -255,32 +306,42 @@ const useFileGenerator = () => {
             loader: true,
         }))
 
+        const commonOptions = {
+            onSuccess: handleFileDownload,
+        }
+
         const mutationMap: Record<string, () => void> = {
             SALES: () =>
-                downloadSalesMutation.mutate({
-                    doc,
-                    type,
-                }),
+                downloadSalesMutation.mutate(
+                    { doc, type },
+                    commonOptions
+                ),
 
             PURCHASES: () =>
-                downloadPurchasesMutation.mutate({
-                    doc,
-                    type,
-                }),
+                downloadPurchasesMutation.mutate(
+                    { doc, type },
+                    commonOptions
+                ),
 
             SAWT: () =>
-                downloadSalesTaxesMutation.mutate({
-                    doc,
-                    type,
-                    form_type: selectedTable,
-                }),
+                downloadSalesTaxesMutation.mutate(
+                    {
+                        doc,
+                        type,
+                        form_type: selectedTable,
+                    },
+                    commonOptions
+                ),
 
             QAP: () =>
-                downloadPurchasesTaxesMutation.mutate({
-                    doc,
-                    type,
-                    form_type: selectedTable,
-                }),
+                downloadPurchasesTaxesMutation.mutate(
+                    {
+                        doc,
+                        type,
+                        form_type: selectedTable,
+                    },
+                    commonOptions
+                ),
         }
 
         const key = parentTable || selectedTable
@@ -301,7 +362,7 @@ const useFileGenerator = () => {
             loader: true
         }))
         if(doc.selectedTable.value === 'SALES'){
-            useDeleteSalesRecord.mutate(id, {
+            deleteSalesRecord.mutate(id, {
                 onSuccess: () => {
                         setStatus(prev => ({
                     ...prev,
@@ -319,7 +380,7 @@ const useFileGenerator = () => {
             })
         }
         if(doc.selectedTable.value === 'PURCHASES'){
-            useDeletePurchasesRecord.mutate(id, {
+            deletePurchasesRecord.mutate(id, {
                 onSuccess: () => {
                         setStatus(prev => ({
                     ...prev,
@@ -483,6 +544,7 @@ const useFileGenerator = () => {
     return {
         // STATES
         doc,
+        user,
         status,
         filter,
         record,

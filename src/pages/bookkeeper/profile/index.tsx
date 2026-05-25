@@ -17,7 +17,6 @@ const Profile_V = () => {
         status,
         handleBlur,
         handleChange,
-        handleEditProfile
     } = useProfile()
     const profile = user.userObj
     const dateFormat = 'MM/DD/YYYY'

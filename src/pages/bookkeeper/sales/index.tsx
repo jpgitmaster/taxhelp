@@ -7,6 +7,7 @@ import useSales from '@/controllers/sales/useSales'
 import { signOut, getSession } from 'next-auth/react'
 import { SalesTableRow } from '@/controllers/sales/types'
 import Loader from '@/components/reusables/RotatingLoader'
+import ProComponent from '@/components/reusables/ProComponent'
 import { Table, Pagination, DatePicker, Popconfirm } from 'antd'
 import SuccessMessage from '@/components/reusables/SuccessMessage'
 import CustomContainer from '@/components/reusables/CustomContainer'
@@ -15,9 +16,11 @@ import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 import ClientsDropdown from '@/components/pages/bookkeeper/documents/ClientsDropdown'
 import DocumentsDropdown from '@/components/pages/bookkeeper/documents/DocumentsDropdown'
 
+
 const Sales_V = () => {
   const {
     doc,
+    user,
     sales,
     status,
     clientArr,
@@ -51,7 +54,6 @@ const Sales_V = () => {
   } = useSales()
   const { message } = status
   const { salesArr } = sales
-  // console.log(salesArr)
   const dataSource = salesArr?.length ? salesArr.map(sales => (
       {
         id: sales.id,
@@ -241,7 +243,7 @@ const Sales_V = () => {
       maximumFractionDigits: 2,
     })
   return (
-      <div>
+      <ProComponent loading={user} hasPermission={user?.subscription?.plan === 'pro'}>
         {
           message &&
           <SuccessMessage message={message} />
@@ -442,7 +444,7 @@ const Sales_V = () => {
             </div>
         </div>
         <br />
-      </div>
+      </ProComponent>
   )
 }
 export const getServerSideProps: GetServerSideProps<PageProps> = async (context: GetServerSidePropsContext) => {

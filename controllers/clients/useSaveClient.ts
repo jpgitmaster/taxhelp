@@ -1,9 +1,12 @@
-import useClientAPI from './api'
 import { ClientErr } from './types'
 import { useRouter } from 'next/router';
+import useQueryClients from './api/queries';
+import useMutationClients from './api/mutations';
 import useGlobal from '@/controllers/global/useGlobal'
-import { ChangeEvent, SyntheticEvent, useEffect} from 'react'
+import { useEffect, ChangeEvent, SyntheticEvent } from 'react'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
+
+
 
 const useSaveClient = () => {
     const {
@@ -12,19 +15,19 @@ const useSaveClient = () => {
         handleRemoveErr
     } = useGlobal()
     const {
-        status,
+        getClient
+    } = useQueryClients()
+    const {
         client,
-        
-        setStatus,
-        setClient,
+        status,
 
-        useGetClient,
+        setClient,
+        setStatus,
         useUpdateClient,
         useCreateClient
-    } = useClientAPI()
+    } = useMutationClients()
     const router = useRouter()
     const { clientID } = router.query
-    const clientIdNumber = Number(clientID)
     
     const fieldValidations = {
         tin: { usename: 'TIN No.', required: true },
@@ -53,9 +56,7 @@ const useSaveClient = () => {
         
     }
     
-    const { data, isLoading } = useGetClient(clientIdNumber, {
-        enabled: !!clientID && !isNaN(clientIdNumber)
-    })
+    const { data, isLoading } = getClient(Number(clientID))
 
     const formatPhoneNumber = (value: string) => {
         // remove all non-digits
@@ -205,7 +206,20 @@ const useSaveClient = () => {
         }
 
         // CLIENT CREATION
-        useCreateClient.mutate(client.clientObj)
+        useCreateClient.mutate(client.clientObj, {
+            onSuccess: () => {
+                sessionStorage.setItem(
+                    'successMessage',
+                    'Your client has been created.'
+                )
+                setStatus({...status, loader: false})
+                router.push('/bookkeeper/users/clients')
+            },
+            onError: (error) => {
+                console.log(error);
+                setStatus(prev => ({ ...prev, loader: false }));
+            },
+        })
     }
 
     const handleUpdateSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
@@ -228,22 +242,44 @@ const useSaveClient = () => {
         }
 
         // CLIENT UPDATE
-        useUpdateClient.mutate(client.clientObj)
+        useUpdateClient.mutate(client.clientObj, {
+            onSuccess: (res) => {
+                const { client } = res;
+                if (client?.id) {
+                    sessionStorage.setItem(
+                        'successMessage',
+                        'Your client has been updated.'
+                    );
+                    setStatus({...status, loader: false})
+                    router.push(`/bookkeeper/users/clients/${client.id}`);
+                }
+            },
+            onError: (error) => {
+                console.log(error);
+                setStatus(prev => ({ ...prev, loader: false }));
+            },
+        })
     }
 
     useEffect(() => {
         if (data && clientID) {
             const fetchedClient = data
+
             setClient(prev => ({
                 ...prev,
                 clientObj: {
                     ...prev.clientObj,
                     ...fetchedClient,
-                    representative_email: fetchedClient.representative?.email || '',
-                    representative_phone: fetchedClient.representative?.phone_number || '',
-                    representative_last_name: fetchedClient.representative?.last_name || '',
-                    representative_first_name: fetchedClient.representative?.first_name || '',
-                    representative_middle_name: fetchedClient.representative?.middle_name || '',
+                    representative_email:
+                        fetchedClient.representative?.email || '',
+                    representative_phone:
+                        fetchedClient.representative?.phone_number || '',
+                    representative_last_name:
+                        fetchedClient.representative?.last_name || '',
+                    representative_first_name:
+                        fetchedClient.representative?.first_name || '',
+                    representative_middle_name:
+                        fetchedClient.representative?.middle_name || '',
                 }
             }))
         }

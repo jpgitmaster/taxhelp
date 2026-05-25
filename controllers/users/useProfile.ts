@@ -1,10 +1,12 @@
-
-import useUserAPI from './api';
 import dayjs, { Dayjs } from 'dayjs';
+import { useRouter } from 'next/router';
+import useQueryUsers from './api/queries';
+import useMutationUsers from './api/mutations';
 import { useQuery } from '@tanstack/react-query';
 import useGlobal from '@/controllers/global/useGlobal';
 import { ChangeEvent, SyntheticEvent, useEffect } from 'react';
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3';
+
 const useProfile = () => {
     const {
         handleBlur,
@@ -12,28 +14,25 @@ const useProfile = () => {
         handleRemoveErr
     } = useGlobal()
     const {
+        getUser
+    } = useQueryUsers()
+    const {
         user,
         status,
         initUser,
-        
+
         setUser,
         setStatus,
 
-        useGetUser,
         editProfileMutation,
-    } = useUserAPI()
+    } = useMutationUsers()
+    const router = useRouter()
     const fieldValidations = {
         lastName: { usename: 'Last Name', required: true },
         firstName: { usename: 'First Name', required: true },
     }
+    const { data: fetchUser } = getUser()
     
-    const { data:fetchUser } = useQuery({
-        queryKey: ['user'],
-        queryFn: useGetUser,
-        retry: 1,
-        staleTime: 1000 * 60 * 5, // 5 minutes
-    });
-
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
         setUser({
@@ -93,7 +92,16 @@ const useProfile = () => {
             return () => clearTimeout(timer)
         }
 
-        editProfileMutation.mutate(user.userObj)
+        editProfileMutation.mutate(user.userObj, {
+            onSuccess: () => {
+                sessionStorage.setItem(
+                    'successMessage',
+                    'Your profile has been updated.'
+                );
+
+                router.push(`/bookkeeper/profile`);
+            }
+        })
     }
 
     useEffect(() => {

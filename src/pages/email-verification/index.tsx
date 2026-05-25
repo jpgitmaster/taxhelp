@@ -2,25 +2,53 @@ import Image from 'next/image';
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import scss from './styles/Email.module.scss';
-import useUserAPI from "@/controllers/users/api";
+import { signIn, getSession } from 'next-auth/react';
 import Loader from '@/components/reusables/RotatingLoader'
+import useMutationUsers from '@/controllers/users/api/mutations';
 const EmailVerification = () => {
     const router = useRouter();
     const { token } = router.query;
-
-    const { verifyUserMutation } = useUserAPI();
+    const {
+      verifyUserMutation
+    } = useMutationUsers()
 
     useEffect(() => {
       if (typeof token !== 'string') return;
-
+      
       router.prefetch('/bookkeeper/profile/edit');
 
       verifyUserMutation.mutate(token, {
-        onSuccess: () => {
-          // mark first verified visit
-          localStorage.setItem('showPlanModal', 'true');
+        onSuccess: async (res) => {
+          const { id, email, token_type, access_token, expires_in, refresh_token } = res.user;
+          
+          try {
+              // Step 1: Sign in via NextAuth credentials provider
+              const result = await signIn('credentials', {
+                  id,
+                  email,
+                  tokenType: token_type,
+                  accessToken: access_token,
+                  refreshToken: refresh_token,
+                  accessTokenExpires: Number(expires_in),
+                  redirect: false,
+              });
 
-          router.push('/bookkeeper/profile/edit');
+              if (!result?.ok) {
+                  console.error('Sign-in failed', result);
+                  return;
+              }
+
+              // Step 2: Wait for session to be available
+              await getSession(); // ensures session is synced
+
+              // Step 3: Redirect AFTER session is ready
+              // mark first verified visit
+              localStorage.setItem('showPlanModal', 'true');
+
+              router.push('/bookkeeper/profile/edit');
+          } catch (err) {
+              console.error('Email verification flow error:', err);
+          }
         },
       });
     }, [token]);

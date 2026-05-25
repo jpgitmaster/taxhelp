@@ -1,5 +1,6 @@
-
-import UserAPIcalls from './api'
+import { useRouter } from 'next/router'
+import { signIn } from 'next-auth/react'
+import useMutationUsers from './api/mutations'
 import useGlobal from '@/controllers/global/useGlobal'
 import { useState, ChangeEvent, SyntheticEvent } from 'react'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
@@ -20,7 +21,8 @@ const useLogin = () => {
 
         loginUserMutation,
         forgotPasswordMutation
-    } = UserAPIcalls()
+    } = useMutationUsers()
+    const router = useRouter()
     const [displayPassword, setDisplayPassword] = useState(false)
     const fieldValidations = {
         email: { usename: 'Email', required: true, email: true },
@@ -55,7 +57,19 @@ const useLogin = () => {
             }, 500)
             return () => clearTimeout(timer)
         }
-        forgotPasswordMutation.mutate(user.userObj)
+        forgotPasswordMutation.mutate(user.userObj, {
+            onSuccess: () => {
+                setTimeout(() => {
+                    setStatus(prev => ({
+                        ...prev,
+                        loader: false,
+                        message: 'Password Reset Email Sent!',
+                        submessage:
+                            "Check your email for instructions to reset your password. Follow the link provided to create a new one."
+                    }));
+                }, 500)
+            },
+        })
     }
 
     const handleUserLogin = async (e: SyntheticEvent<HTMLFormElement>) => {
@@ -81,7 +95,35 @@ const useLogin = () => {
         }
 
         // LOGIN
-        loginUserMutation.mutate(user.userObj)
+        loginUserMutation.mutate(user.userObj,{
+            onSuccess: async (res) => {
+                const { id, email, token_type, access_token, expires_in, refresh_token } = res.user
+                await signIn('credentials', {
+                    id: id,
+                    email: email,
+                    redirect: false,
+                    refreshToken: refresh_token,
+                    accessTokenExpires: Number(expires_in),
+                    tokenType: token_type,
+                    accessToken: access_token,
+                });
+
+                // optionally refetch user after login
+                router.push('/bookkeeper/dashboard');
+            },
+            onError: (error) => {
+                console.log(error)
+                setUser(prev => ({
+                    ...prev,
+                    userErr: {
+                        ...(prev.userErr || {}),
+                        email: 'Invalid email or password',
+                        password: 'Please contact TaxHelp Administrator'
+                    }
+                }));
+                setStatus({...status, loader: false})
+            }
+        })
     }
       
     return {

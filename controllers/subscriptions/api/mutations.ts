@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import { AxiosError } from 'axios'
 import api from '@/components/reusables/axios'
+import { Status } from '@/controllers/global/types'
+import { initStatus } from '@/controllers/global/states'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 interface ErrorItem{
     field: string
@@ -14,7 +17,8 @@ type SuccessResponse = {
 }
 const useMutationSubscriptions = () => {
     const queryClient = useQueryClient()
-
+    const apiVersion = process.env?.NEXT_PUBLIC_API_VERSION
+    const [status, setStatus] = useState<Status>(initStatus)
     const paymentSubscription = useMutation<
             SuccessResponse,
             AxiosError<ErrorResponse>,
@@ -22,8 +26,8 @@ const useMutationSubscriptions = () => {
         >({
         mutationFn: async (plan: string) => {
             const res = await api({
-                method: 'POST',
-                url: '/users',
+                method: 'PUT',
+                url: `/api/${apiVersion}/subscriptions/me`,
                 data: {
                     plan: plan,
                 }
@@ -41,10 +45,13 @@ const useMutationSubscriptions = () => {
     })
     return {
         // STATES
+        status,
 
         // SET STATES
+        setStatus,
 
-        // REQUESTS
+        // MUTATIONS
+        paymentSubscription,
     }
 }
 

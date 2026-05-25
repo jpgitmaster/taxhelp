@@ -74,11 +74,11 @@ export default NextAuth({
         token.accessTokenExpires = Date.now() + Number(user.accessTokenExpires) * 1000;
         token.refreshToken = user.refreshToken;
       }
-      console.log('JWT CHECK', {
-        now: Date.now(),
-        expires: token.accessTokenExpires,
-        expired: Date.now() > Number(token.accessTokenExpires),
-      });
+      // console.log('JWT CHECK', {
+      //   now: Date.now(),
+      //   expires: token.accessTokenExpires,
+      //   expired: Date.now() > Number(token.accessTokenExpires),
+      // });
       // Token still valid
             /**
        * No access token at all

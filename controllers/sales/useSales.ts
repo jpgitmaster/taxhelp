@@ -1,10 +1,11 @@
 import { Dayjs } from 'dayjs';
 import useSalesAPI from "./api";
 import { useRouter } from 'next/router';
-import useClientAPI from '../clients/api';
 import useDocumentAPI from '../documents/api';
-import useGlobal from '@/controllers/global/useGlobal'
+import useQueryClients from '../clients/api/queries';
+import useGlobal from '@/controllers/global/useGlobal';
 import { AppliedDoc, DocState, SalesObj } from './types';
+import useQueryUsers from '@/controllers/users/api/queries';
 import { useState, useEffect, Key, ChangeEvent, SyntheticEvent } from "react";
 
 const useSales = () => {
@@ -30,8 +31,8 @@ const useSales = () => {
         filter: clientFilter,
         setFilter: clientSetFilter,
 
-        useGetClients
-    } = useClientAPI()
+        getClients
+    } = useQueryClients()
 
     const {
         filter: documentFilter,
@@ -40,6 +41,10 @@ const useSales = () => {
         useGetDocument,
         useGetDocuments
     } = useDocumentAPI()
+    const {
+        getUser
+    } = useQueryUsers()
+    const { data: user } = getUser()
     const { documentID } = router.query
     const [tableWidth, setTableWidth] = useState(0)
     const [displayClients, setDisplayClients] = useState(false)
@@ -104,7 +109,7 @@ const useSales = () => {
         appliedDoc
     )
 
-    const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = useGetClients(    
+    const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = getClients(    
         clientFilter.currentPage,
         clientFilter.recordsLimit,
         clientFilter.filter,
@@ -431,6 +436,7 @@ const useSales = () => {
     return {
         // STATES
         doc,
+        user,
         sales,
         status,
         clientArr,

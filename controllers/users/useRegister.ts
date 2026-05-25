@@ -1,23 +1,25 @@
-import useUserAPI from './api'
+import useMutationUsers from './api/mutations'
 import useGlobal from '@/controllers/global/useGlobal'
 import { useState, ChangeEvent, SyntheticEvent } from 'react'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
+
 const useRegister = () => {
     const {
         handleBlur,
         handleResubmit,
         handleRemoveErr
     } = useGlobal()
+    
     const {
         user,
         status,
         initUser,
-        
+
         setUser,
         setStatus,
 
-        createUserMutation,
-    } = useUserAPI()
+        createUserMutation
+    } = useMutationUsers()
     const [displayPassword, setDisplayPassword] = useState(false)
     const [passwordChecker, setPasswordChecker] = useState(false)
     const [checkedRoles, setCheckedRoles] = useState<string[]>([]);
@@ -101,6 +103,18 @@ const useRegister = () => {
         createUserMutation.mutate({
             user: user.userObj,
             checkedRoles: checkedRoles
+        }, {
+            onSuccess: () => {
+                setTimeout(() => {
+                    setStatus(prev => ({
+                        ...prev,
+                        loader: false,
+                        message: 'Account Created Successfully!',
+                        submessage:
+                            "Check your email to activate your account and get started. Once verified, you're ready to explore."
+                    }))
+                }, 500)
+            },
         })
     }
     return {

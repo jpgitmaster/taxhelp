@@ -2,76 +2,16 @@ import { useState } from 'react'
 import api from '@/components/reusables/axios'
 import { Dashboard, ScheduleObj } from '../types'
 import { Status } from '@/controllers/global/types'
+import { initStatus } from '@/controllers/global/states'
 import { initDashboard, initScheduleObj } from '../states'
-import { initStatus, initFilter } from '@/controllers/global/states'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-const useDashboardAPI = () => {
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+
+const useMutationSchedules = () => {
     const queryClient = useQueryClient()
-    const [filter, setFilter] = useState(initFilter)
     const apiVersion = process.env?.NEXT_PUBLIC_API_VERSION
     const [status, setStatus] = useState<Status>(initStatus)
-    
     const [dashboard, setDashboard] = useState<Dashboard>(initDashboard)
-
-    const useGetScheduleCategories = () => {
-        return useQuery({
-            queryKey: [
-                'schedule_categories'
-            ],
-
-            queryFn: async () => {
-
-                const res = await api({
-                    method: 'GET',
-                    url: `/api/${apiVersion}/schedule-categories`
-                })
-                return {
-                    schedCategories: res.data?.categories ?? [],
-                    totalCategories: res.data?.total ?? 0
-                }
-            },
-
-            // ✅ prevents UI flicker (React Query v5)
-            placeholderData: (prev) => prev ?? { schedCategories: [], totalCategories: 0 },
-
-            // ✅ smoother UX (no "dead" state when picking dates)
-            enabled: true,
-
-            // ✅ optional but highly recommended
-            staleTime: 1000 * 30 // 30 seconds cache
-        })
-    }
-
-    const useGetSchedules = () => {
-        return useQuery({
-            queryKey: [
-                'schedules'
-            ],
-
-            queryFn: async () => {
-
-                const res = await api({
-                    method: 'GET',
-                    url: `/api/${apiVersion}/schedules`
-                })
-                return {
-                    schedules: res.data?.schedules ?? [],
-                    totalSchedules: res.data?.total ?? 0
-                }
-            },
-
-            // ✅ prevents UI flicker (React Query v5)
-            placeholderData: (prev) => prev ?? { schedules: [], totalSchedules: 0 },
-
-            // ✅ smoother UX (no "dead" state when picking dates)
-            enabled: true,
-
-            // ✅ optional but highly recommended
-            staleTime: 1000 * 30 // 30 seconds cache
-        })
-    }
-
-    const useCreateCategory = useMutation({
+    const createCategory = useMutation({
         mutationFn: async (category: { name: string, color: string }) => {
             const res = await api.post(`/api/${apiVersion}/schedule-categories`, {
                 name: category.name,
@@ -82,12 +22,11 @@ const useDashboardAPI = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['schedule_categories'] })
         },
-        onError: (error: any) => {
+        onError: (error) => {
             console.log(error)
         }
     })
-
-    const useUpdateCategory = useMutation({
+    const updateCategory = useMutation({
         mutationFn: async (category: { id: number, name: string, color: string }) => {
             const res = await api.put(`/api/${apiVersion}/schedule-categories/${category.id}`, {
                 name: category.name,
@@ -103,7 +42,7 @@ const useDashboardAPI = () => {
         }
     })
 
-    const useCreateSchedule = useMutation({
+    const createSchedule = useMutation({
         mutationFn: async (schedule: ScheduleObj) => {
             const startDate = schedule.schedule?.[0]?.format('YYYY-MM-DD');
             const endDate = schedule.schedule?.[1]?.format('YYYY-MM-DD');
@@ -140,12 +79,12 @@ const useDashboardAPI = () => {
 
             queryClient.invalidateQueries({ queryKey: ['schedules'] })
         },
-        onError: (error: any) => {
+        onError: (error) => {
             console.log(error)
         }
     })
 
-    const useUpdateSchedule = useMutation({
+    const updateSchedule = useMutation({
         mutationFn: async (schedule: ScheduleObj) => {
             const startDate = schedule.schedule?.[0]?.format('YYYY-MM-DD');
             const endDate = schedule.schedule?.[1]?.format('YYYY-MM-DD');
@@ -162,86 +101,43 @@ const useDashboardAPI = () => {
             return res.data
         },
         onSuccess: () => {
-            setStatus(prev => ({
-                ...prev,
-                loader: false,
-                message: 'Schedule updated successfully.'
-            }))
-
-            setTimeout(() => {
-                setStatus(prev => ({
-                    ...prev,
-                    message: ''
-                }))
-            }, 5000)
-
-            setDashboard({
-                ...dashboard,
-                scheduleObj: initScheduleObj
-            })
-
             queryClient.invalidateQueries({ queryKey: ['schedules'] })
         },
-        onError: (error: any) => {
+        onError: (error) => {
             console.log(error)
         }
     })
 
-    const useDeleteSchedule = useMutation({
+    const deleteSchedule = useMutation({
         mutationFn: async (id: number) => {
             const res = await api.delete(`/api/${apiVersion}/schedules/${id}`)
             return res.data
         },
 
         onSuccess: () => {
-            setDashboard({
-                ...dashboard,
-                scheduleObj: initScheduleObj
-            })
-            setStatus(prev => ({
-                ...prev,
-                loader: false,
-                message: 'Your schedule record has been deleted.'
-            }))
-            // auto-clear after 5s
-            setTimeout(() => {
-                setStatus(prev => ({
-                    ...prev,
-                    message: ''
-                }))
-            }, 5000)
-            
             queryClient.invalidateQueries({ queryKey: ['schedules'] })
         },
 
-        onError: (error: any) => {
+        onError: (error) => {
             console.log(error)
         }
     })
-
     return {
         //STATES
-        filter,
         status,
         dashboard,
-        
+        initScheduleObj,
+
         // SET STATES
-        setFilter,
         setStatus,
         setDashboard,
 
-        // QUERIES
-        useGetSchedules,
-        useGetScheduleCategories,
-
-        // MUTATION
-        useUpdateSchedule,
-        useCreateSchedule,
-        useCreateCategory,
-        useDeleteSchedule,
-        useUpdateCategory,
-
-        //HANDLES
+        // MUTATIONS
+        createCategory,
+        updateCategory,
+        deleteSchedule,
+        updateSchedule,
+        createSchedule,
     }
 }
-export default useDashboardAPI;
+export default useMutationSchedules;

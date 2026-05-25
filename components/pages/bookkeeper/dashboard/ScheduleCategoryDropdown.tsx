@@ -2,10 +2,10 @@ import Image from 'next/image'
 import { CirclePicker } from 'react-color'
 import { CloseOutlined } from '@ant-design/icons';
 import useGlobal from '@/controllers/global/useGlobal';
-import useDashboardAPI from '@/controllers/dashboard/api';
 import Loader from '@/components/reusables/RotatingLoader';
 import scss from './../documents/styles/CustomDropdown.module.scss'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
+import useMutationSchedules from '@/controllers/dashboard/api/mutations';
 import { useRef, useEffect, MouseEvent, Dispatch, SetStateAction, useState, ChangeEvent } from 'react'
 export default function ScheduleCategoryDropdown(props: {
     err: boolean
@@ -46,9 +46,9 @@ export default function ScheduleCategoryDropdown(props: {
         handleBlur,
     } = useGlobal()
     const {
-        useUpdateCategory,
-        useCreateCategory,
-    } = useDashboardAPI()
+        updateCategory,
+        createCategory,
+    } = useMutationSchedules()
     const [catErr, setCatErr] = useState<any>({
         name: '',
         color: ''
@@ -125,7 +125,7 @@ export default function ScheduleCategoryDropdown(props: {
             return () => clearTimeout(timer)
         }
 
-        useCreateCategory.mutate(cat, {
+        createCategory.mutate(cat, {
             onSuccess: () => {
                 setCat({ name: '', color: '' })
                 setCatErr({ name: '', color: '' })
@@ -153,7 +153,7 @@ export default function ScheduleCategoryDropdown(props: {
             return () => clearTimeout(timer)
         }
 
-        useUpdateCategory.mutate(
+        updateCategory.mutate(
             { id: editCat.id, name: cat.name, color: cat.color },
             {
                 onSuccess: () => {

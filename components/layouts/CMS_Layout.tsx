@@ -6,9 +6,9 @@ import { Dropdown, type MenuProps } from 'antd'
 import useMaster from '@/controllers/layouts/useMaster'
 import Breadcrumbs from '@/components/reusables/BreadCrumbs'
 import Avatar from '@/components/reusables/AvatarPlaceholder'
-import { MastertProps } from '@/controllers/layouts/types/cms_types'
+import { MasterProps } from '@/controllers/layouts/types/cms_types'
 
-const CMS_Layout: FC<MastertProps> = ({ children }) => {
+const CMS_Layout: FC<MasterProps> = ({ children }) => {
   const {
     ref,
     user,
@@ -16,8 +16,8 @@ const CMS_Layout: FC<MastertProps> = ({ children }) => {
     isMobile,
     isPageLoad,
     activeLink,
+    userLogout,
     handleExpand,
-    handleUserLogout,
     handleHeaderClick,
     handleShowSublinks
   } = useMaster()
@@ -55,6 +55,7 @@ const CMS_Layout: FC<MastertProps> = ({ children }) => {
       ),
     },
 	];
+  console.log(user)
   return (
     isPageLoad &&
     <div className={scss.app}>
@@ -168,7 +169,7 @@ const CMS_Layout: FC<MastertProps> = ({ children }) => {
                     </Dropdown>
                   </div>
                   <div className={scss.headerIcon}>
-                    <button type='button' className={scss.icon} onClick={handleUserLogout}>
+                    <button type='button' className={scss.icon} onClick={userLogout}>
                       <Image src={'/svgs/header/logout.svg'} alt='Profile' priority width={20} height={20} unoptimized={true} />
                     </button>
                   </div>

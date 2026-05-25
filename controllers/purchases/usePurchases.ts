@@ -2,11 +2,13 @@ import { Dayjs } from 'dayjs';
 import usePurchasesAPI from "./api";
 import { PurchasesObj } from './types';
 import { useRouter } from 'next/router';
-import useClientAPI from '../clients/api';
 import useDocumentAPI from '../documents/api';
+import useQueryClients from '../clients/api/queries';
 import { AppliedDoc, DocState } from '../sales/types';
 import useGlobal from '@/controllers/global/useGlobal';
+import useQueryUsers from '@/controllers/users/api/queries';
 import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
+
 const usePurchases = () => {
     const {
         handleBlur,
@@ -30,8 +32,8 @@ const usePurchases = () => {
         filter: clientFilter,
         setFilter: clientSetFilter,
 
-        useGetClients
-    } = useClientAPI()
+        getClients
+    } = useQueryClients()
 
     const {
         filter: documentFilter,
@@ -103,8 +105,11 @@ const usePurchases = () => {
     const { data: dataDocument } = useGetDocument(
         Number(documentID)
     )
-
-    const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = useGetClients(    
+    const {
+        getUser
+    } = useQueryUsers()
+    const { data: user } = getUser()
+    const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = getClients(    
         clientFilter.currentPage,
         clientFilter.recordsLimit,
         clientFilter.filter,
@@ -436,6 +441,7 @@ const usePurchases = () => {
     },[])
     return {
         doc,
+        user,
         status,
         purchases,
         clientArr,

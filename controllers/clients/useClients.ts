@@ -1,19 +1,22 @@
-import useClientAPI from "./api";
+import useQueryClients from './api/queries';
 import { useState, useEffect } from "react";
+import useMutationClients from './api/mutations';
 const useClients = () => {
     const {
-        client,
         filter,
         status,
 
-        setClient,
         setFilter,
         setStatus,
 
-        useGetClients
-    } = useClientAPI()
+        getClients
+    } = useQueryClients()
+    const {
+        client,
+        setClient
+    } = useMutationClients()
     const [tableWidth, setTableWidth] = useState(0)
-    const { data, isLoading, isFetching } = useGetClients(
+    const { data, isLoading, isFetching } = getClients(
         filter.currentPage,
         filter.recordsLimit,
         filter.filter,

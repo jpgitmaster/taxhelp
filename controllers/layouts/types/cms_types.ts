@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
-interface MastertProps {
-    children: ReactNode
+interface MasterProps {
+  children: ReactNode
 }
 interface SessionUser{
   id: string
@@ -35,5 +35,5 @@ export type {
     Session,
     PageProps,
     SessionUser,
-    MastertProps
+    MasterProps
 }
