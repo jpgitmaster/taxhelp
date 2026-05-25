@@ -1,6 +1,8 @@
 import { signOut, getSession } from 'next-auth/react'
 import scss from './../styles/Subscription.module.scss'
+import Loader from '@/components/reusables/RotatingLoader'
 import usePayment from '@/controllers/subscriptions/usePayment'
+import SuccessMessage from '@/components/reusables/SuccessMessage'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 
@@ -8,13 +10,19 @@ const GCashPaymentPage = () => {
   const {
     plan,
     price,
-    loader,
+    status,
     billing,
     handlePayment,
     handleResubmit
   } = usePayment()
+  const { loader, message } = status
   return (
-    <form onSubmit={handlePayment}>
+    <form onSubmit={handlePayment} className={scss.paymentForm}>
+      { loader && <Loader scss={scss} position='absolute' />}
+      {
+        message &&
+        <SuccessMessage message={message} />
+      }
       <div className={scss.box}>
         <div className={scss.boxTitle}>
             <h2>

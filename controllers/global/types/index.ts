@@ -1,6 +1,8 @@
+import { ReactNode } from "react"
+
 interface Status {
     loader: boolean
-    message: string
+    message: string | ReactNode
     submessage: string
 }
 interface ErrorItem{

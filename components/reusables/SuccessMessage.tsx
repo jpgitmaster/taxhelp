@@ -1,6 +1,7 @@
+import { ReactNode } from 'react';
 import scss from './styles/SuccessMessage.module.scss';
 interface PropsDefinition {
-    message: string
+    message: string | ReactNode
 }
 const SuccessMessage = (props: PropsDefinition) => {
     const { message } = props

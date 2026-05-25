@@ -36,11 +36,13 @@ const useMutationSubscriptions = () => {
             return res.data
         },
 
-        onSuccess: () => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({
                 queryKey: ['subscriptions']
             })
-            
+            queryClient.invalidateQueries({
+                queryKey: ['user']
+            })
         }
     })
     return {

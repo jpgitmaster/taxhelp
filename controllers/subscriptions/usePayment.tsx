@@ -12,7 +12,6 @@ const usePayment = () => {
         setStatus,
         paymentSubscription
     } = useMutationSubscriptions()
-    const loader = ''
     const router = useRouter()
     const { plan, price, billing } = router.query
 
@@ -21,7 +20,24 @@ const usePayment = () => {
         setStatus({...status, loader: true})
         paymentSubscription.mutate(String(plan), {
             onSuccess: () => {
-                setStatus({...status, loader: false})
+                setStatus(prev => ({
+                    ...prev,
+                    loader: false,
+                    message: (
+                        <>
+                            Payment successful! Your TaxHelp{' '}
+                            <span style={{textTransform: 'capitalize'}}>{plan?.toString().toLowerCase()}</span>{' '}<br />
+                            subscription has been activated.
+                        </>
+                    )
+                }))
+                setTimeout(() => {
+                    setStatus(prev => ({
+                        ...prev,
+                        message: '',
+                        submessage: ''
+                    }))
+                }, 5000)
             }
         })
     }
@@ -30,7 +46,7 @@ const usePayment = () => {
         // STATES
         plan,
         price,
-        loader,
+        status,
         billing,
         // SET STATES
         
