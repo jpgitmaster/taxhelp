@@ -14,6 +14,7 @@ import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 
 const Clients_V = () => {
     const {
+        user,
         loader,
         filter,
         status,
@@ -133,7 +134,10 @@ const Clients_V = () => {
     return (
         <>
             <div className={scss.header}>
-                <Link href='/bookkeeper/users/clients/add_client' className={scss.button+' '+scss.btnblue}>
+                <Link
+                    href='/bookkeeper/users/clients/add_client'
+                    className={scss.button + ' ' + scss.btnblue}
+                >
                     Add Client
                 </Link>
                 {/* <Link href='/bookkeeper/users/clients' className={scss.button+' '+scss.btnorange}>

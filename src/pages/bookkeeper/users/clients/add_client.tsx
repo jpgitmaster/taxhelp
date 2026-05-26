@@ -3,6 +3,7 @@ import scss from './styles/Clients.module.scss'
 import { signOut, getSession } from 'next-auth/react'
 import Loader from '@/components/reusables/RotatingLoader'
 import Avatar from '@/components/reusables/AvatarPlaceholder'
+import ProComponent from '@/components/reusables/ProComponent'
 import useSaveClient from '@/controllers/clients/useSaveClient'
 import CustomContainer from '@/components/reusables/CustomContainer'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
@@ -10,8 +11,10 @@ import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 
 const AddCustomer_V = () => {
   const {
+    user,
     client,
     status,
+    clients,
 
     handleBlur,
     handleChange,
@@ -19,7 +22,9 @@ const AddCustomer_V = () => {
     handleResubmit,
   } = useSaveClient()
   const { loader } = status
+  console.log(client)
   return (
+    <ProComponent loading={user} hasPermission={user?.subscription?.plan === 'basic' && clients?.length < 3 }>
       <form onSubmit={handleSubmit} className={scss.addClient}>
         { loader && <Loader scss={scss} position='absolute' />}
         <div className={scss.cards}>
@@ -526,6 +531,7 @@ const AddCustomer_V = () => {
           Add Client
         </button>
       </form>
+    </ProComponent>
   )
 }
 export const getServerSideProps: GetServerSideProps<PageProps> = async (context: GetServerSidePropsContext) => {

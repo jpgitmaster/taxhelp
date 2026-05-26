@@ -1,6 +1,7 @@
 import useQueryClients from './api/queries';
 import { useState, useEffect } from "react";
 import useMutationClients from './api/mutations';
+import useQueryUsers from '@/controllers/users/api/queries';
 const useClients = () => {
     const {
         filter,
@@ -15,6 +16,10 @@ const useClients = () => {
         client,
         setClient
     } = useMutationClients()
+    const {
+        getUser
+    } = useQueryUsers()
+    const { data: user } = getUser()
     const [tableWidth, setTableWidth] = useState(0)
     const { data, isLoading, isFetching } = getClients(
         filter.currentPage,
@@ -65,6 +70,7 @@ const useClients = () => {
     },[])
     return {
         // STATES
+        user,
         client,
         status,
         filter,

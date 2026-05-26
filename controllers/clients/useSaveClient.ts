@@ -3,10 +3,9 @@ import { useRouter } from 'next/router';
 import useQueryClients from './api/queries';
 import useMutationClients from './api/mutations';
 import useGlobal from '@/controllers/global/useGlobal'
+import useQueryUsers from '@/controllers/users/api/queries'
 import { useEffect, ChangeEvent, SyntheticEvent } from 'react'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
-
-
 
 const useSaveClient = () => {
     const {
@@ -15,7 +14,9 @@ const useSaveClient = () => {
         handleRemoveErr
     } = useGlobal()
     const {
-        getClient
+        filter,
+        getClient,
+        getClients
     } = useQueryClients()
     const {
         client,
@@ -28,7 +29,16 @@ const useSaveClient = () => {
     } = useMutationClients()
     const router = useRouter()
     const { clientID } = router.query
-    
+    const {
+        getUser
+    } = useQueryUsers()
+    const { data: user } = getUser()
+    const { data: dataClient } = getClients(
+        filter.currentPage,
+        filter.recordsLimit,
+        filter.filter,
+        filter.search
+    )
     const fieldValidations = {
         tin: { usename: 'TIN No.', required: true },
         last_name: { usename: 'Last Name', ifCondition: {
@@ -304,10 +314,12 @@ const useSaveClient = () => {
     },[])
     return {
         // STATES
+        user,
         client,
         status,
         isLoading,
-
+        clients: dataClient?.clients,
+        
         // SET STATES
         setClient,
         
