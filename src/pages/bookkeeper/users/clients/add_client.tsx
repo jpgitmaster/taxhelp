@@ -22,7 +22,6 @@ const AddCustomer_V = () => {
     handleResubmit,
   } = useSaveClient()
   const { loader } = status
-  console.log(client)
   return (
     <ProComponent loading={user} hasPermission={user?.subscription?.plan === 'basic' && clients?.length < 3 }>
       <form onSubmit={handleSubmit} className={scss.addClient}>

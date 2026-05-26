@@ -9,6 +9,7 @@ import {
     SyntheticEvent,
 } from 'react'
 import useQueryClients from '../clients/api/queries'
+import useQueryUsers from '@/controllers/users/api/queries'
 
 const useUploadDocuments = () => {
     const [deletedRowIds, setDeletedRowIds] = useState<number[]>([])
@@ -19,6 +20,10 @@ const useUploadDocuments = () => {
         setFilter,
         getClients,
     } = useQueryClients()
+    const {
+        getUser
+    } = useQueryUsers()
+    const { data: user } = getUser()
     /*
     |--------------------------------------------------------------------------
     | HELPERS
@@ -569,7 +574,12 @@ const useUploadDocuments = () => {
                 )
             })
 
-        setRows(tableRows)
+        const limitedRows =
+            user?.subscription?.plan === 'basic'
+                ? tableRows.slice(0, 20)
+                : tableRows
+
+        setRows(limitedRows)
     }
 
     /*
