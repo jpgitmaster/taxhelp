@@ -5,7 +5,6 @@ import type { ColumnsType } from 'antd/es/table'
 import scss from './styles/Purchases.module.scss'
 import { signOut, getSession } from 'next-auth/react'
 import Loader from '@/components/reusables/RotatingLoader'
-import ProComponent from '@/components/reusables/ProComponent'
 import usePurchases from '@/controllers/purchases/usePurchases'
 import { Table, Pagination, DatePicker, Popconfirm } from 'antd'
 import { PurchasesTableRow } from '@/controllers/purchases/types'
@@ -19,7 +18,6 @@ import DocumentsDropdown from '@/components/pages/bookkeeper/documents/Documents
 const Purchases_V = () => {
   const {
     doc,
-    user,
     status,
     purchases,
     clientArr,
@@ -241,7 +239,7 @@ const Purchases_V = () => {
       maximumFractionDigits: 2,
     })
   return (
-      <ProComponent loading={user} hasPermission={user?.subscription?.plan === 'pro'}>
+      <div>
         {
           message &&
           <SuccessMessage message={message} />
@@ -432,7 +430,7 @@ const Purchases_V = () => {
             </div>
         </div>
         <br />
-      </ProComponent>
+      </div>
   )
 }
 export const getServerSideProps: GetServerSideProps<PageProps> = async (context: GetServerSidePropsContext) => {

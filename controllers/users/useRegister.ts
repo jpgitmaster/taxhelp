@@ -115,6 +115,23 @@ const useRegister = () => {
                     }))
                 }, 500)
             },
+            onError: (err) => {
+                const backendErrors = err?.response?.data?.errors
+
+                setUser(prev => ({
+                    ...prev,
+                    userErr: {
+                        email: backendErrors?.email || '',
+                        password: backendErrors?.password || '',
+                        confirmPassword: backendErrors?.confirm_password || '',
+                    }
+                }))
+
+                setStatus(prev => ({
+                    ...prev,
+                    loader: false
+                }))
+            }
         })
     }
     return {

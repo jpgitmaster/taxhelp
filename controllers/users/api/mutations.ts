@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import { useState } from 'react'
+import { AxiosError } from 'axios'
 import { User, UserObj } from '../types'
 import { signOut } from 'next-auth/react'
 import api from '@/components/reusables/axios'
@@ -7,7 +8,20 @@ import { initUser } from '../states/initUsers'
 import { Status } from '@/controllers/global/types'
 import { initStatus } from '@/controllers/global/states'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+type RegisterErrorResponse = {
+    success: boolean
+    message: string
+    errors: {
+        email?: string
+        password?: string
+        confirm_password?: string
+    }
+}
 
+type RegisterPayload = {
+    user: UserObj
+    checkedRoles: string[]
+}
 const useMutationUsers = () => {
     const queryClient = useQueryClient()
     const [user, setUser] = useState<User>(initUser)
@@ -15,7 +29,11 @@ const useMutationUsers = () => {
     const [status, setStatus] = useState<Status>(initStatus)
     
     // ✅ CREATE USER (useMutation)
-    const createUserMutation = useMutation({
+    const createUserMutation = useMutation<
+        unknown,
+        AxiosError<RegisterErrorResponse>,
+        RegisterPayload
+    >({
         mutationFn: async ({
             user,
             checkedRoles

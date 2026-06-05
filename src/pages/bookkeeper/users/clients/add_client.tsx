@@ -22,8 +22,12 @@ const AddCustomer_V = () => {
     handleResubmit,
   } = useSaveClient()
   const { loader } = status
+  const hasPermission =
+    user?.subscription?.plan !== 'basic' || (
+      user?.subscription?.plan === 'basic' && clients?.length > 3
+    )
   return (
-    <ProComponent loading={user} hasPermission={user?.subscription?.plan === 'basic' && clients?.length < 3 }>
+    <ProComponent loading={user} hasPermission={hasPermission}>
       <form onSubmit={handleSubmit} className={scss.addClient}>
         { loader && <Loader scss={scss} position='absolute' />}
         <div className={scss.cards}>

@@ -7,7 +7,6 @@ import useSales from '@/controllers/sales/useSales'
 import { signOut, getSession } from 'next-auth/react'
 import { SalesTableRow } from '@/controllers/sales/types'
 import Loader from '@/components/reusables/RotatingLoader'
-import ProComponent from '@/components/reusables/ProComponent'
 import { Table, Pagination, DatePicker, Popconfirm } from 'antd'
 import SuccessMessage from '@/components/reusables/SuccessMessage'
 import CustomContainer from '@/components/reusables/CustomContainer'
@@ -19,7 +18,6 @@ import DocumentsDropdown from '@/components/pages/bookkeeper/documents/Documents
 const Sales_V = () => {
   const {
     doc,
-    user,
     sales,
     status,
     clientArr,
@@ -242,7 +240,7 @@ const Sales_V = () => {
       maximumFractionDigits: 2,
     })
   return (
-      <ProComponent loading={user} hasPermission={user?.subscription?.plan === 'pro'}>
+      <div>
         {
           message &&
           <SuccessMessage message={message} />
@@ -443,7 +441,7 @@ const Sales_V = () => {
             </div>
         </div>
         <br />
-      </ProComponent>
+      </div>
   )
 }
 export const getServerSideProps: GetServerSideProps<PageProps> = async (context: GetServerSidePropsContext) => {

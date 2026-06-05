@@ -6,7 +6,6 @@ import type { ColumnsType } from 'antd/es/table'
 import scss from './../styles/DatFile.module.scss'
 import { signOut, getSession } from 'next-auth/react'
 import Loader from '@/components/reusables/RotatingLoader'
-import ProComponent from '@/components/reusables/ProComponent'
 import { Record_Obj } from '@/controllers/file_generator/types'
 import { Table, DatePicker, Pagination, Popconfirm } from 'antd'
 import SuccessMessage from '@/components/reusables/SuccessMessage'
@@ -20,7 +19,6 @@ import DocumentsTableDropdown from '@/components/pages/bookkeeper/documents/Docu
 const DAT_File_V = () => {
     const {
       doc,
-      user,
       status,
       filter,
       record,
@@ -307,7 +305,7 @@ const DAT_File_V = () => {
         maximumFractionDigits: 2,
       })
     return (
-        <ProComponent loading={user} hasPermission={user?.subscription?.plan === 'pro'}>
+        <div>
             {
               message &&
               <SuccessMessage message={message} />
@@ -502,7 +500,7 @@ const DAT_File_V = () => {
             </div>
           </div>
           <br /><br />
-        </ProComponent>
+        </div>
     )
 }
 export const getServerSideProps: GetServerSideProps<PageProps> = async (context: GetServerSidePropsContext) => {
