@@ -257,6 +257,10 @@ body, html{
                             border-bottom: .5px solid;
                             @apply text-[15px] mt-1.5;
                         }
+                        .subscriptionStatus{
+                            color: $orange;
+                            @apply text-[11px] block font-bold capitalize;
+                        }
                         strong{
                             @apply text-[12px] block;
                         }
