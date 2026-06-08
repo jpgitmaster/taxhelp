@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { FC, ReactNode } from 'react'
 import scss from './styles/NoPermission.module.scss'
 interface MastertProps {
@@ -14,12 +15,16 @@ const ProComponent: FC<MastertProps> = ({ loading, hasPermission, children }) =>
             <div className={scss.box}>
                 <div className={scss.card}>
                     <h3>
-                    Upgrade Required...
+                    Unlock This Feature
                     </h3>
                     
                     <p className={scss.caption}>
-                        This feature is available exclusively for <strong>Tax<span>Help</span> Pro</strong> subscribers. Upgrade your plan to access premium tools and advanced features.
+                        You're currently using a plan that doesn't include this feature. Upgrade to <strong>Tax<span>Help</span> Pro</strong> to access advanced tools designed to help you work faster and more efficiently.
                     </p>
+                    <br />
+                    <Link href='/bookkeeper/subscription/plans' className={scss.button+' '+scss.btnorange}>
+                        Compare Plans & Upgrade
+                    </Link>
                 </div>
             </div>
         )
