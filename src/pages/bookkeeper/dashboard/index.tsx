@@ -69,7 +69,6 @@ const Dashboard_V = () => {
 
     const displayText = selectedText +
     (doc.client.trade_name ? ` - ${doc.client.trade_name}` : '');
-  console.log(user?.subscription?.plan)
   const isPro = user?.subscription?.plan === 'pro'
   return (
       <div className={scss.dashboardWrapper}>

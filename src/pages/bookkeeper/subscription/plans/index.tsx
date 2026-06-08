@@ -23,6 +23,8 @@ const SubscriptionPlans_V = () => {
                     children: [
                         '60 total rows',
                         '3 clients maximum',
+                        '3 customers maximum',
+                        '3 suppliers maximum',
                         '20 rows per client',
                     ],
                 },
@@ -36,9 +38,12 @@ const SubscriptionPlans_V = () => {
                 {
                     title: 'Calendar',
                     children: [
-                        '10 schedules per day',
-                        '1 event per schedule',
-                        '1 category only',
+                        '10 schedules per week',
+                        '1 day per schedule',
+                        '2 categories only',
+                        'total of 60 records and 20 records per client in sales table',
+                        'total of 60 records and 20 records per client in purchase table',
+                        '20 records per client in DAT file generation',
                     ],
                 },
                 {
@@ -51,7 +56,7 @@ const SubscriptionPlans_V = () => {
                 {
                     title: 'Limitations',
                     children: [
-                        'No file generation',
+                        '20 records per client in file generation',
                         'No receipts & disbursements',
                         'Limited calendar functionality',
                     ],
@@ -70,7 +75,13 @@ const SubscriptionPlans_V = () => {
                 {
                     title: 'Usage Limits',
                     children: [
-                        '1000 rows per client',
+                        'Unlimited schedules',
+                        'Multiple days per schedule',
+                        '10 categories',
+                        '10 clients',
+                        'total of 1000 records and 100 records per client in sales table',
+                        'total of 1000 records and 100 records per client in purchase table',
+                        '100 records per client in DAT file generation',
                     ],
                 },
                 {

@@ -3,6 +3,7 @@ import { CirclePicker } from 'react-color'
 import { CloseOutlined } from '@ant-design/icons';
 import useGlobal from '@/controllers/global/useGlobal';
 import Loader from '@/components/reusables/RotatingLoader';
+import useQueryUsers from '@/controllers/users/api/queries';
 import scss from './../documents/styles/CustomDropdown.module.scss'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
 import useMutationSchedules from '@/controllers/dashboard/api/mutations';
@@ -49,6 +50,10 @@ export default function ScheduleCategoryDropdown(props: {
         updateCategory,
         createCategory,
     } = useMutationSchedules()
+    const {
+        getUser
+    } = useQueryUsers()
+    const { data: user } = getUser()
     const [catErr, setCatErr] = useState<any>({
         name: '',
         color: ''
@@ -172,6 +177,7 @@ export default function ScheduleCategoryDropdown(props: {
         )
     }
     const isEditing = !!editCat;
+    const canCreateCategory = user?.subscription?.plan !== 'basic' || schedCategories?.length < 2;
     return (
         <div className={scss.customDropdown} onClick={handleHeaderClick}>
             <div className={scss.dropdownInput + (err ? ' '+scss.err : '')} onClick={() => handleToggle('categories')} ref={ref}
@@ -286,21 +292,26 @@ export default function ScheduleCategoryDropdown(props: {
                             />
                         </div>
                     }
-                    <div className={scss.createNewCategory}>
-                        {
-                            !displayAddCat ?
-                            <button type='button' onClick={() => setDisplayAddCat(true)}>
-                                Create New Category
-                            </button>
-                            :
-                            <button type='button' onClick={() => {
-                                isEditing ? handleUpdateCategory() : handleCreateCategory();
-                            }}>
-                                {isEditing ? 'Update Category' : 'Save New Category'}
-                            </button>
-                        }
-                        
-                    </div>
+                    {canCreateCategory && (
+                        <div className={scss.createNewCategory}>
+                            {!displayAddCat ? (
+                                <button type='button' onClick={() => setDisplayAddCat(true)}>
+                                    Create New Category
+                                </button>
+                            ) : (
+                                <button
+                                    type='button'
+                                    onClick={() => {
+                                        isEditing
+                                            ? handleUpdateCategory()
+                                            : handleCreateCategory();
+                                    }}
+                                >
+                                    {isEditing ? 'Update Category' : 'Save New Category'}
+                                </button>
+                            )}
+                        </div>
+                    )}
                 </div>
             }
         </div>
