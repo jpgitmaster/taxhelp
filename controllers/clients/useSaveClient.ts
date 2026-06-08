@@ -60,6 +60,8 @@ const useSaveClient = () => {
             condition: client.clientObj.classification === 'NON-INDIVIDUAL',
             required: true
         }},
+        first_address: { usename: 'First Address', required: true },
+        second_address: { usename: 'Second Address', required: true },
         representative_last_name: { usename: 'Last Name', required: true },
         representative_first_name: { usename: 'First Name', required: true },
         representative_email: { usename: 'Email', required: true, email: true },

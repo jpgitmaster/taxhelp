@@ -416,111 +416,43 @@ const Client_V = () => {
                       />
                     </CustomContainer>
                     <CustomContainer
+                      required
+                      width={50}
                       scss={scss}
-                      width={40}
-                      label='Substreet'
-                      labelFor='sub_street'
-                      err={client.clientErr.sub_street as string}
+                      label='First Address'
+                      labelFor='first_address'
+                      err={client.clientErr.first_address as string}
                     >
                       <input
-                        id='sub_street'
                         type='text'
-                        name='sub_street'
+                        maxLength={50}
+                        autoComplete='off'
+                        id='first_address'
+                        name='first_address'
+                        onKeyUp={handleBlur}
+                        onChange={handleChange}
+                        placeholder='Substreet, Street, Barangay'
+                        value={client.clientObj.first_address}
+                      />
+                    </CustomContainer>
+                    <CustomContainer
+                      required
+                      width={50}
+                      scss={scss}
+                      label='Second Address'
+                      labelFor='second_address'
+                      err={client.clientErr.second_address as string}
+                    >
+                      <input
+                        id='second_address'
+                        type='text'
+                        name='second_address'
                         maxLength={50}
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={client.clientObj.sub_street}
-                      />
-                    </CustomContainer>
-                    <CustomContainer
-                      scss={scss}
-                      width={40}
-                      label='Street'
-                      labelFor='street'
-                      err={client.clientErr.street as string}
-                    >
-                      <input
-                        id='street'
-                        type='text'
-                        name='street'
-                        maxLength={50}
-                        autoComplete='off'
-                        onKeyUp={handleBlur}
-                        onChange={handleChange}
-                        value={client.clientObj.street}
-                      />
-                    </CustomContainer>
-                    <CustomContainer
-                      scss={scss}
-                      width={20}
-                      label='Barangay'
-                      labelFor='barangay'
-                      err={client.clientErr.barangay as string}
-                    >
-                      <input
-                        id='barangay'
-                        type='text'
-                        name='barangay'
-                        maxLength={30}
-                        autoComplete='off'
-                        onKeyUp={handleBlur}
-                        onChange={handleChange}
-                        value={client.clientObj.barangay}
-                      />
-                    </CustomContainer>
-                    <CustomContainer
-                      scss={scss}
-                      width={40}
-                      label='District / Municipality'
-                      labelFor='district'
-                      err={client.clientErr.district as string}
-                    >
-                      <input
-                        id='district'
-                        type='text'
-                        name='district'
-                        maxLength={30}
-                        autoComplete='off'
-                        onKeyUp={handleBlur}
-                        onChange={handleChange}
-                        value={client.clientObj.district}
-                      />
-                    </CustomContainer>
-                    <CustomContainer
-                      scss={scss}
-                      width={40}
-                      label='City / Province'
-                      labelFor='city'
-                      err={client.clientErr.city as string}
-                    >
-                      <input
-                        id='city'
-                        type='text'
-                        name='city'
-                        maxLength={30}
-                        autoComplete='off'
-                        onKeyUp={handleBlur}
-                        onChange={handleChange}
-                        value={client.clientObj.city}
-                      />
-                    </CustomContainer>
-                    <CustomContainer
-                      scss={scss}
-                      width={20}
-                      label='Zip Code'
-                      labelFor='zip_code'
-                      err={client.clientErr.zip_code as string}
-                    >
-                      <input
-                        id='zip_code'
-                        type='text'
-                        name='zip_code'
-                        maxLength={10}
-                        autoComplete='off'
-                        onKeyUp={handleBlur}
-                        onChange={handleChange}
-                        value={client.clientObj.zip_code}
+                        placeholder='District / Municipality, City / Province, Zip Code'
+                        value={client.clientObj.second_address}
                       />
                     </CustomContainer>
                   </div>

@@ -98,6 +98,7 @@ const DAT_File_V = () => {
           branch_code: doc.customer?.branch_code,
           registered_name: doc.customer?.registered_name,
           first_address: doc.customer?.first_address,
+          second_address: doc.customer?.second_address,
           name:
             (doc.customer?.first_name || '') + ' ' +
             (doc.customer?.middle_name || '') + ' ' +

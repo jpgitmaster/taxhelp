@@ -371,100 +371,44 @@ const Client_V = () => {
                       />
                     </CustomContainer>
                     <CustomContainer
+                      required
+                      width={50}
                       scss={scss}
-                      width={40}
-                      label='Substreet'
-                      labelFor='sub_street'
+                      label='First Address'
+                      labelFor='first_address'
+                      err={client.clientErr.first_address as string}
                     >
                       <input
                         readOnly
                         type='text'
-                        id='sub_street'
-                        name='sub_street'
-                        onChange={handleChange}
-                        className={scss.lblContent}
-                        value={client.clientObj.sub_street}
-                      />
-                    </CustomContainer>
-                    <CustomContainer
-                      scss={scss}
-                      width={40}
-                      label='Street'
-                      labelFor='street'
-                    >
-                      <input
-                        readOnly
-                        id='street'
-                        type='text'
-                        name='street'
-                        onChange={handleChange}
-                        className={scss.lblContent}
-                        value={client.clientObj.street}
-                      />
-                    </CustomContainer>
-                    <CustomContainer
-                      scss={scss}
-                      width={20}
-                      label='Barangay'
-                      labelFor='barangay'
-                    >
-                      <input
-                        readOnly
-                        id='barangay'
-                        type='text'
-                        name='barangay'
-                        maxLength={30}
+                        maxLength={50}
                         autoComplete='off'
+                        id='first_address'
+                        name='first_address'
                         onChange={handleChange}
                         className={scss.lblContent}
-                        value={client.clientObj.barangay}
+                        placeholder='Substreet, Street, Barangay'
+                        value={client.clientObj.first_address}
                       />
                     </CustomContainer>
                     <CustomContainer
+                      required
+                      width={50}
                       scss={scss}
-                      width={40}
-                      labelFor='district'
-                      label='District / Municipality'
+                      label='Second Address'
+                      labelFor='second_address'
+                      err={client.clientErr.second_address as string}
                     >
                       <input
                         readOnly
                         type='text'
-                        id='district'
-                        name='district'
+                        maxLength={50}
+                        autoComplete='off'
+                        id='second_address'
+                        name='second_address'
                         onChange={handleChange}
-                        className={scss.lblContent}
-                        value={client.clientObj.district}
-                      />
-                    </CustomContainer>
-                    <CustomContainer
-                      scss={scss}
-                      width={40}
-                      labelFor='city'
-                      label='City / Province'
-                    >
-                      <input
-                        id='city'
-                        type='text'
-                        name='city'
-                        onChange={handleChange}
-                        className={scss.lblContent}
-                        value={client.clientObj.city}
-                      />
-                    </CustomContainer>
-                    <CustomContainer
-                      scss={scss}
-                      width={20}
-                      label='Zip Code'
-                      labelFor='zip_code'
-                    >
-                      <input
-                        readOnly
-                        type='text'
-                        id='zip_code'
-                        name='zip_code'
-                        onChange={handleChange}
-                        className={scss.lblContent}
-                        value={client.clientObj.zip_code}
+                        placeholder='District / Municipality, City / Province, Zip Code'
+                        value={client.clientObj.second_address}
                       />
                     </CustomContainer>
                   </div>

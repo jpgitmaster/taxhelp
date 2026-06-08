@@ -82,6 +82,8 @@ const useSupplierAPI = () => {
                 first_name: supplier.first_name,
                 trade_name: supplier.trade_name,
                 middle_name: supplier.middle_name,
+                first_address: supplier.first_address,
+                second_address: supplier.second_address,
                 classification: supplier.classification,
                 registered_name: supplier.registered_name,
             })
@@ -108,6 +110,8 @@ const useSupplierAPI = () => {
                 first_name: supplier.first_name,
                 trade_name: supplier.trade_name,
                 middle_name: supplier.middle_name,
+                first_address: supplier.first_address,
+                second_address: supplier.second_address,
                 classification: supplier.classification,
                 registered_name: supplier.registered_name,
             })

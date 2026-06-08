@@ -33,12 +33,13 @@ const Clients_V = () => {
             rdo_code: client.rdo_code,
             month_end: client.month_end,
             trade_name: client.trade_name,
+            first_address: client.first_address,
+            second_address: client.second_address,
             classification: client.classification,
             registered_name: client.registered_name,
             taxpayer_name: client.first_name+' '+client.last_name,
             created_at: client.created_at ? dayjs(client.created_at).format('MM/DD/YYYY h:mm A') : '',
-            representative_name: client.representative?.first_name+' '+client.representative?.last_name,
-            address: client.street+', '+client.sub_street+', '+client.barangay+', '+client.district+', '+client.city+', '+client.zip_code
+            representative_name: client.representative?.first_name+' '+client.representative?.last_name,  
         }
     )) : []
 
@@ -93,9 +94,14 @@ const Clients_V = () => {
             width: 300
         },
         {
-            title: 'Registered Address',
-            key: 'address',
-            dataIndex: 'address',
+            title: 'First Address',
+            key: 'first_address',
+            dataIndex: 'first_address',
+        },
+        {
+            title: 'Second Address',
+            key: 'second_address',
+            dataIndex: 'second_address',
         },
         {
             title: 'Date & Time Created',

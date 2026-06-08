@@ -28,15 +28,11 @@ const Customers_V = () => {
         {
             id: customer.id,
             tin: customer.tin,
-            city: customer.city,
             email: customer.email,
             phone: customer.phone,
-            street: customer.street,
-            zip_code: customer.zip_code,
-            district: customer.district,
-            barangay: customer.barangay,
-            sub_street: customer.sub_street,
             trade_name: customer.trade_name,
+            first_address: customer.first_address,
+            second_address: customer.second_address,
             classification: customer.classification,
             registered_name: customer.registered_name,
             customer_name: (customer.first_name || '')+' '+(customer.last_name || ''),
@@ -70,6 +66,16 @@ const Customers_V = () => {
             dataIndex: 'customer_name',
             key: 'customer_name',
             width: 300
+        },
+        {
+            title: 'First Address',
+            dataIndex: 'first_address',
+            key: 'first_address',
+        },
+        {
+            title: 'Second Address',
+            dataIndex: 'second_address',
+            key: 'second_address',
         },
         {
             title: 'Date & Time Created',

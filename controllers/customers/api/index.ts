@@ -82,6 +82,8 @@ const useCustomerAPI = () => {
                 first_name: customer.first_name,
                 trade_name: customer.trade_name,
                 middle_name: customer.middle_name,
+                first_address: customer.first_address,
+                second_address: customer.second_address,
                 classification: customer.classification,
                 registered_name: customer.registered_name,
             })
@@ -108,6 +110,8 @@ const useCustomerAPI = () => {
                 first_name: customer.first_name,
                 trade_name: customer.trade_name,
                 middle_name: customer.middle_name,
+                first_address: customer.first_address,
+                second_address: customer.second_address,
                 classification: customer.classification,
                 registered_name: customer.registered_name,
             })

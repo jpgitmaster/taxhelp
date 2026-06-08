@@ -28,15 +28,11 @@ const Suppliers_V = () => {
         {
             id: supplier.id,
             tin: supplier.tin,
-            city: supplier.city,
             email: supplier.email,
             phone: supplier.phone,
-            street: supplier.street,
-            zip_code: supplier.zip_code,
-            district: supplier.district,
-            barangay: supplier.barangay,
-            sub_street: supplier.sub_street,
             trade_name: supplier.trade_name,
+            first_address: supplier.first_address,
+            second_address: supplier.second_address,
             classification: supplier.classification,
             registered_name: supplier.registered_name,
             supplier_name: (supplier.first_name || '')+' '+(supplier.last_name || ''),
@@ -70,6 +66,16 @@ const Suppliers_V = () => {
             dataIndex: 'supplier_name',
             key: 'supplier_name',
             width: 300
+        },
+        {
+            title: 'First Address',
+            dataIndex: 'first_address',
+            key: 'first_address',
+        },
+        {
+            title: 'Second Address',
+            dataIndex: 'second_address',
+            key: 'second_address',
         },
         {
             title: 'Date & Time Created',

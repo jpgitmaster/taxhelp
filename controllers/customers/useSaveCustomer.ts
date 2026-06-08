@@ -38,6 +38,8 @@ const useSaveCustomer = () => {
         }},
         email: { usename: 'Email', email: true },
         representative_phone: { usename: 'Phone', required: true },
+        first_address: { usename: 'First Address', required: true },
+        second_address: { usename: 'Second Address', required: true },
         registered_name: { usename: 'Registered Name', ifCondition: {
             condition: customer.customerObj.classification === 'NON-INDIVIDUAL',
             required: true

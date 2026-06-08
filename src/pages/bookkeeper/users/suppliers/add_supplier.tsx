@@ -216,111 +216,43 @@ const AddSupplier_V = () => {
                       />
                     </CustomContainer>
                     <CustomContainer
+                      required
+                      width={50}
                       scss={scss}
-                      width={40}
-                      label='Substreet'
-                      labelFor='sub_street'
-                      err={supplier.supplierErr.sub_street as string}
+                      label='First Address'
+                      labelFor='first_address'
+                      err={supplier.supplierErr.first_address as string}
                     >
                       <input
-                        id='sub_street'
                         type='text'
-                        name='sub_street'
+                        maxLength={50}
+                        autoComplete='off'
+                        id='first_address'
+                        name='first_address'
+                        onKeyUp={handleBlur}
+                        onChange={handleChange}
+                        placeholder='Substreet, Street, Barangay'
+                        value={supplier.supplierObj.first_address}
+                      />
+                    </CustomContainer>
+                    <CustomContainer
+                      required
+                      width={50}
+                      scss={scss}
+                      label='Second Address'
+                      labelFor='second_address'
+                      err={supplier.supplierErr.second_address as string}
+                    >
+                      <input
+                        id='second_address'
+                        type='text'
+                        name='second_address'
                         maxLength={50}
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={supplier.supplierObj.sub_street}
-                      />
-                    </CustomContainer>
-                    <CustomContainer
-                      scss={scss}
-                      width={40}
-                      label='Street'
-                      labelFor='street'
-                      err={supplier.supplierErr.street as string}
-                    >
-                      <input
-                        id='street'
-                        type='text'
-                        name='street'
-                        maxLength={50}
-                        autoComplete='off'
-                        onKeyUp={handleBlur}
-                        onChange={handleChange}
-                        value={supplier.supplierObj.street}
-                      />
-                    </CustomContainer>
-                    <CustomContainer
-                      scss={scss}
-                      width={20}
-                      label='Barangay'
-                      labelFor='barangay'
-                      err={supplier.supplierErr.barangay as string}
-                    >
-                      <input
-                        id='barangay'
-                        type='text'
-                        name='barangay'
-                        maxLength={30}
-                        autoComplete='off'
-                        onKeyUp={handleBlur}
-                        onChange={handleChange}
-                        value={supplier.supplierObj.barangay}
-                      />
-                    </CustomContainer>
-                    <CustomContainer
-                      scss={scss}
-                      width={40}
-                      label='District / Municipality'
-                      labelFor='district'
-                      err={supplier.supplierErr.district as string}
-                    >
-                      <input
-                        id='district'
-                        type='text'
-                        name='district'
-                        maxLength={30}
-                        autoComplete='off'
-                        onKeyUp={handleBlur}
-                        onChange={handleChange}
-                        value={supplier.supplierObj.district}
-                      />
-                    </CustomContainer>
-                    <CustomContainer
-                      scss={scss}
-                      width={40}
-                      label='City / Province'
-                      labelFor='city'
-                      err={supplier.supplierErr.city as string}
-                    >
-                      <input
-                        id='city'
-                        type='text'
-                        name='city'
-                        maxLength={30}
-                        autoComplete='off'
-                        onKeyUp={handleBlur}
-                        onChange={handleChange}
-                        value={supplier.supplierObj.city}
-                      />
-                    </CustomContainer>
-                    <CustomContainer
-                      scss={scss}
-                      width={20}
-                      label='Zip Code'
-                      labelFor='zip_code'
-                      err={supplier.supplierErr.zip_code as string}
-                    >
-                      <input
-                        id='zip_code'
-                        type='text'
-                        name='zip_code'
-                        maxLength={10}
-                        autoComplete='off'
-                        onKeyUp={handleBlur}
-                        onChange={handleChange}
-                        value={supplier.supplierObj.zip_code}
+                        placeholder='District / Municipality, City / Province, Zip Code'
+                        value={supplier.supplierObj.second_address}
                       />
                     </CustomContainer>
                   </div>

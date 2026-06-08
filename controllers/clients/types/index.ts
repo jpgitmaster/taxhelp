@@ -1,24 +1,20 @@
 interface ClientObj{
   tin: string
-  city: string
   email: string
-  street: string
   period: string
   rdo_code: string
-  zip_code: string
-  district: string
-  barangay: string
   month_end: string
   created_at?: Date
   id: number | null
   last_name: string
   trade_name: string
-  sub_street: string
   first_name: string
   middle_name: string
   branch_code: string
   description: string
   phone_number: string
+  first_address: string
+  second_address: string
   classification: string
   registered_name: string
   business_nature: string
@@ -38,19 +34,15 @@ interface ClientObj{
 
 type ClientErr = {
   tin: string;
-  city: string;
   email: string;
   phone: string;
-  street: string;
   fiscal: string;
-  zip_code: string;
-  district: string;
-  barangay: string;
   last_name: string;
-  sub_street: string;
   first_name: string;
   branch_code: string;
   middle_name: string;
+  first_address: string
+  second_address: string
   registered_name: string;
   corporate_email: string;
 };
@@ -73,12 +65,13 @@ interface ClientTableRow {
   id: number | null;
   tin: string
   period: string
-  address: string
   rdo_code: string
   month_end: string
   trade_name: string
   created_at: string
   taxpayer_name: string
+  first_address: string
+  second_address: string
   classification: string
   registered_name: string
   representative_name: string

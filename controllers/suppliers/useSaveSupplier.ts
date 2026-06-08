@@ -38,6 +38,8 @@ const useSaveSupplier = () => {
         }},
         email: { usename: 'Email', required: true, email: true },
         representative_phone: { usename: 'Phone', required: true },
+        first_address: { usename: 'First Address', required: true },
+        second_address: { usename: 'Second Address', required: true },
         registered_name: { usename: 'Registered Name', ifCondition: {
             condition: supplier.supplierObj.classification === 'NON-INDIVIDUAL',
             required: true
