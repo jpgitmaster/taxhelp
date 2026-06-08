@@ -148,7 +148,7 @@ const Documents_V = () => {
 	];
   const columns: ColumnsType<TableRow> = [
     {
-      width: 280,
+      width: 350,
       title: 'Client',
       render: (_, record) => (
         <div className={scss.client}>

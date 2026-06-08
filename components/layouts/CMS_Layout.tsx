@@ -146,14 +146,19 @@ const CMS_Layout: FC<MasterProps> = ({ children }) => {
                 <h2>
                   {(user?.first_name && user?.last_name) ? user?.first_name+' '+user?.last_name: user?.email} &nbsp;
                 </h2>
-                {
+                {/* {
                   user?.subscription?.plan &&
                   <p className={scss.subscriptionStatus}>
                     {user?.subscription?.plan} Subscriber
                   </p>
-                }
+                } */}
                 <div className={scss.headerIcons}>
-                  <div className={scss.headerIcon} style={{marginLeft: '-15px'}}>
+                  <div className={scss.headerIcon}>
+                    <div className={scss.icon+' '+scss.subscriptionStatus +' '+ (user?.subscription?.plan === 'pro' ? scss.pro : user?.subscription?.plan === 'basic' ? scss.basic :'')}>
+                      {user?.subscription?.plan}
+                    </div>
+                  </div>
+                  {/* <div className={scss.headerIcon}>
                     <div className={scss.icon}>
                       <Image src={'/svgs/header/chat.svg'} alt='Chat' priority width={20} height={20} unoptimized={true} />
                     </div>
@@ -162,7 +167,7 @@ const CMS_Layout: FC<MasterProps> = ({ children }) => {
                     <div className={scss.icon}>
                       <Image src={'/svgs/header/notification.svg'} alt='Notification' priority width={20} height={20} unoptimized={true} />
                     </div>
-                  </div>
+                  </div> */}
                   <div className={scss.headerIcon+' '+scss.active}>
                     <Dropdown 
                       menu={{ items: linkItems() }}

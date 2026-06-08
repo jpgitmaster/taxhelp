@@ -265,7 +265,8 @@ body, html{
                             @apply text-[12px] block;
                         }
                         .headerIcons{
-                            @apply flex flex-row w-50 mt-2;
+                            // use w-55 if chat and notification are enabled
+                            @apply flex flex-row w-35 mt-2;
                             .headerIcon{
                                 @apply flex-1 flex justify-center items-center;
                                 &:first-child::before{
@@ -279,7 +280,7 @@ body, html{
                                 &::before{
                                     content: "";
                                     border-left: 1px dashed $lightBlue;
-                                    @apply relative -left-4.5 h-3.5;
+                                    @apply relative -left-2 h-3.5;
                                 }
                                 &:last-child .icon{
                                     filter: invert(14%) sepia(68%) saturate(6951%) hue-rotate(358deg) brightness(101%) contrast(113%);
@@ -287,8 +288,19 @@ body, html{
                                 .icon{
                                     @apply w-4.5 cursor-pointer;
                                     filter: invert(64%) sepia(1%) saturate(0%) hue-rotate(28deg) brightness(98%) contrast(95%);
+                                    &.subscriptionStatus{
+                                        filter: inherit;
+                                        color: $white;
+                                        @apply text-[10px] min-w-10 text-center px-1.25 py-0.5 rounded-[10px];
+                                        &.basic{
+                                            background-color: $blue;
+                                        }
+                                        &.pro{
+                                            background-color: $orange;
+                                        }
+                                    }
                                     img{
-                                        @apply w-full;
+                                        @apply w-full ml-1.25;
                                     }
                                 }
                             }
