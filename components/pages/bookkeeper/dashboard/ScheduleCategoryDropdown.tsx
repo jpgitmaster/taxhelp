@@ -177,7 +177,16 @@ export default function ScheduleCategoryDropdown(props: {
         )
     }
     const isEditing = !!editCat;
-    const canCreateCategory = user?.subscription?.plan !== 'basic' || schedCategories?.length < 2;
+    const categoryLimits = {
+        basic: 2,
+        pro: 10,
+    } as const;
+
+    type Plan = keyof typeof categoryLimits;
+    const categoryCount = schedCategories?.length || 0;
+    const plan = user?.subscription?.plan as Plan | undefined;
+    const limit = plan ? categoryLimits[plan] : 0;
+    const canCreateCategory = categoryCount < limit;
     return (
         <div className={scss.customDropdown} onClick={handleHeaderClick}>
             <div className={scss.dropdownInput + (err ? ' '+scss.err : '')} onClick={() => handleToggle('categories')} ref={ref}
