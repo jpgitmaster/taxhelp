@@ -36,7 +36,7 @@
   .dropwdownList {
     border: 1px solid $gray;
     background-color: $white;
-    @apply left-0 top-12 z-1 w-full min-h-32 max-h-55 overflow-y-hidden absolute rounded-[10px] py-5 px-2.5;
+    @apply left-0 top-12 z-12 w-full min-h-32 max-h-55 overflow-y-hidden absolute rounded-[10px] py-5 px-2.5;
     .dropwdownSearch {
       @apply relative w-full inline-block;
       .searchIcon {
