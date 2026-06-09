@@ -185,7 +185,7 @@ const Clients_V = () => {
                 }
                 <div className={scss.paginationComponent}>
                     {
-                    client.totalClients ? <Pagination defaultPageSize={filter.recordsLimit} total={client.totalClients} onChange={handlePageChange} />
+                    client.totalClients ? <Pagination defaultPageSize={filter.recordsLimit} total={client.totalClients} onChange={handlePageChange} showSizeChanger={false} />
                     : ''
                     }
                 </div>
