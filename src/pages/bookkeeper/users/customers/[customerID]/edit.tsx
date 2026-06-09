@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import Image from 'next/image'
 import scss from './../styles/Customers.module.scss'
 import { signOut, getSession } from 'next-auth/react'
@@ -14,13 +15,17 @@ const EditCustomer_V = () => {
 
     handleBlur,
     handleChange,
-    handleSubmit,
     handleResubmit,
+    handleUpdateSubmit
   } = useSaveCustomer()
   const { loader } = status
   return (
-      <div className={scss.viewClient}>
+      <form onSubmit={handleUpdateSubmit} className={scss.addClient}>
         { loader && <Loader scss={scss} position='absolute' />}
+        <Link href={`/bookkeeper/users/customers/${customer.customerObj.id}`} className={scss.editLink}>
+          <Image src='/svgs/eyecon_check.svg' alt='View Details' priority width={20} height={20} unoptimized={true} />
+          View Details
+        </Link>
         <div className={scss.cards}>
           <div className={scss.card+' '+scss.w100}>
             <div className={scss.box}>
@@ -264,7 +269,7 @@ const EditCustomer_V = () => {
         <button type='submit' className={scss.button+' '+scss.btnblue} style={{display: 'block', maxWidth: '300px', margin: '30px auto'}} onKeyDown={handleResubmit}>
           Update Customer
         </button>
-      </div>
+      </form>
   )
 }
 export const getServerSideProps: GetServerSideProps<PageProps> = async (context: GetServerSidePropsContext) => {

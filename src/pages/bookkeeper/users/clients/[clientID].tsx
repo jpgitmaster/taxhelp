@@ -381,8 +381,6 @@ const Client_V = () => {
                       <input
                         readOnly
                         type='text'
-                        maxLength={50}
-                        autoComplete='off'
                         id='first_address'
                         name='first_address'
                         onChange={handleChange}
@@ -402,13 +400,12 @@ const Client_V = () => {
                       <input
                         readOnly
                         type='text'
-                        maxLength={50}
-                        autoComplete='off'
                         id='second_address'
                         name='second_address'
                         onChange={handleChange}
-                        placeholder='District / Municipality, City / Province, Zip Code'
+                        className={scss.lblContent}
                         value={client.clientObj.second_address}
+                        placeholder='District / Municipality, City / Province, Zip Code'
                       />
                     </CustomContainer>
                   </div>

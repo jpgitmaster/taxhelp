@@ -15,12 +15,12 @@ const EditSupplier_V = () => {
 
     handleBlur,
     handleChange,
-    handleSubmit,
     handleResubmit,
+    handleUpdateSubmit
   } = useSaveSupplier()
   const { loader } = status
   return (
-      <form onSubmit={handleSubmit} className={scss.addClient}>
+      <form onSubmit={handleUpdateSubmit} className={scss.addClient}>
         { loader && <Loader scss={scss} position='absolute' />}
         <Link href={`/bookkeeper/users/suppliers/${supplier.supplierObj.id}`} className={scss.editLink}>
           <Image src='/svgs/eyecon_check.svg' alt='View Details' priority width={20} height={20} unoptimized={true} />

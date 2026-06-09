@@ -1,17 +1,21 @@
-import useSupplierAPI from "./api";
 import { useState, useEffect } from "react";
+import useQuerySuppliers from "./api/queries";
+import useMutationSuppliers from './api/mutations';
 const useSuppliers = () => {
+    const {
+        supplier,
+        setSupplier
+    } = useMutationSuppliers()
+
     const {
         filter,
         status,
-        supplier,
 
-        setSupplier,
         setFilter,
         setStatus,
 
         useGetSuppliers
-    } = useSupplierAPI()
+    } = useQuerySuppliers()
     const [tableWidth, setTableWidth] = useState(0)
     const { data, isLoading, isFetching } = useGetSuppliers(
         filter.currentPage,

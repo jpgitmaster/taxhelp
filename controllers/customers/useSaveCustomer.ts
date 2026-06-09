@@ -1,6 +1,7 @@
-import useCustomerAPI from './api'
 import { CustomerErr } from './types'
 import { useRouter } from 'next/router';
+import useQueryCustomers from './api/queries'
+import useMutationCustomers from './api/mutations'
 import useGlobal from '@/controllers/global/useGlobal'
 import { ChangeEvent, SyntheticEvent, useEffect} from 'react'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
@@ -12,16 +13,17 @@ const useSaveCustomer = () => {
         handleRemoveErr
     } = useGlobal()
     const {
+        useGetCustomer,
+    } = useQueryCustomers()
+    const {
         status,
         customer,
-        
         setStatus,
         setCustomer,
 
-        useGetCustomer,
+        useCreateCustomer,
         useUpdateCustomer,
-        useCreateCustomer
-    } = useCustomerAPI()
+    } = useMutationCustomers()
     const router = useRouter()
     const { customerID } = router.query
     const customerIdNumber = Number(customerID)
@@ -159,7 +161,18 @@ const useSaveCustomer = () => {
         }
 
         // CLIENT CREATION
-        useCreateCustomer.mutate(customer.customerObj)
+        useCreateCustomer.mutate(customer.customerObj, {
+            onSuccess: () => {
+                sessionStorage.setItem(
+                    'successMessage',
+                    'Your customer has been created.'
+                )
+                router.push('/bookkeeper/users/customers')
+            },
+            onError: (error) => {
+                console.log(error)
+            }
+        })
     }
 
     const handleUpdateSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
@@ -192,7 +205,16 @@ const useSaveCustomer = () => {
                 ...prev,
                 customerObj: {
                     ...prev.customerObj,
-                    ...fetchedCustomer,
+                    id: fetchedCustomer.id || null,
+                    tin: fetchedCustomer.tin || '',
+                    trade_name: fetchedCustomer.trade_name || '',
+                    last_name: fetchedCustomer.last_name || '',
+                    first_name: fetchedCustomer.first_name || '',
+                    middle_name: fetchedCustomer.middle_name || '',
+                    first_address: fetchedCustomer.first_address || '',
+                    second_address: fetchedCustomer.second_address || '',
+                    classification: fetchedCustomer.classification || '',
+                    registered_name: fetchedCustomer.registered_name || '',
                 }
             }))
         }
@@ -230,7 +252,6 @@ const useSaveCustomer = () => {
         handleChange,
         handleResubmit,
         handleUpdateSubmit
-        
     }
 }
 

@@ -1,8 +1,8 @@
 import { Dayjs } from 'dayjs';
 import useSalesAPI from "./api"
-import useCustomerAPI from '../customers/api';
 import useQueryClients from '../clients/api/queries';
 import useGlobal from '@/controllers/global/useGlobal';
+import useQueryCustomers from '../customers/api/queries';
 import { useState, ChangeEvent, SyntheticEvent } from "react";
 const useSaveSales = () => {
     const {
@@ -29,7 +29,7 @@ const useSaveSales = () => {
         filter: customerFilter,
         setFilter: customerSetFilter,
         useGetCustomers
-    } = useCustomerAPI()
+    } = useQueryCustomers()
 
     const [displayTerms, setDisplayTerms] = useState(false)
     const [displayClients, setDisplayClients] = useState(false)

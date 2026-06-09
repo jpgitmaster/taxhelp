@@ -1,6 +1,7 @@
-import useSupplierAPI from './api'
 import { SupplierErr } from './types'
 import { useRouter } from 'next/router';
+import useQuerySuppliers from './api/queries'
+import useMutationSuppliers from './api/mutations'
 import useGlobal from '@/controllers/global/useGlobal'
 import { ChangeEvent, SyntheticEvent, useEffect} from 'react'
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3'
@@ -12,16 +13,17 @@ const useSaveSupplier = () => {
         handleRemoveErr
     } = useGlobal()
     const {
+        useGetSupplier,
+    } = useQuerySuppliers()
+    const {
         status,
         supplier,
-        
         setStatus,
         setSupplier,
 
-        useGetSupplier,
+        useCreateSupplier,
         useUpdateSupplier,
-        useCreateSupplier
-    } = useSupplierAPI()
+    } = useMutationSuppliers()
     const router = useRouter()
     const { supplierID } = router.query
     const supplierIdNumber = Number(supplierID)
@@ -161,7 +163,18 @@ const useSaveSupplier = () => {
         }
 
         // CLIENT CREATION
-        useCreateSupplier.mutate(supplier.supplierObj)
+        useCreateSupplier.mutate(supplier.supplierObj, {
+            onSuccess: () => {
+                sessionStorage.setItem(
+                    'successMessage',
+                    'Your supplier has been created.'
+                )
+                router.push('/bookkeeper/users/suppliers')
+            },
+            onError: (error) => {
+                console.log(error)
+            }
+        })
     }
 
     const handleUpdateSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
@@ -194,7 +207,16 @@ const useSaveSupplier = () => {
                 ...prev,
                 supplierObj: {
                     ...prev.supplierObj,
-                    ...fetchedSupplier,
+                    id: fetchedSupplier.id || null,
+                    tin: fetchedSupplier.tin || '',
+                    trade_name: fetchedSupplier.trade_name || '',
+                    last_name: fetchedSupplier.last_name || '',
+                    first_name: fetchedSupplier.first_name || '',
+                    middle_name: fetchedSupplier.middle_name || '',
+                    first_address: fetchedSupplier.first_address || '',
+                    second_address: fetchedSupplier.second_address || '',
+                    classification: fetchedSupplier.classification || '',
+                    registered_name: fetchedSupplier.registered_name || '',
                 }
             }))
         }
@@ -232,7 +254,6 @@ const useSaveSupplier = () => {
         handleChange,
         handleResubmit,
         handleUpdateSubmit
-        
     }
 }
 

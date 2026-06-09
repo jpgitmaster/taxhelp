@@ -1,17 +1,22 @@
-import useCustomerAPI from "./api";
+
 import { useState, useEffect } from "react";
+import useQueryCustomers from "./api/queries";
+import useMutationCustomers from './api/mutations';
 const useCustomers = () => {
+    const {
+        customer,
+        setCustomer
+    } = useMutationCustomers()
+
     const {
         filter,
         status,
-        customer,
 
-        setCustomer,
         setFilter,
         setStatus,
 
         useGetCustomers
-    } = useCustomerAPI()
+    } = useQueryCustomers()
     const [tableWidth, setTableWidth] = useState(0)
     const { data, isLoading, isFetching } = useGetCustomers(
         filter.currentPage,
