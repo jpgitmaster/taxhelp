@@ -39,8 +39,9 @@ type ExcelRow = {
   businessOwner: string
   address1: string
   address2: string
-  gross_amount: number
-  
+
+  gross_amount?: number
+
   exempt_sales?: number
   zero_rated_sales?: number
   vatable_sales?: number
@@ -52,14 +53,18 @@ type ExcelRow = {
   vatable_purchase_of_capital_goods?: number
   vatable_purchase_of_other_goods?: number
 
-  vatRate: number
-  vat_amount: number
-  gross_taxable: number
+  vat_rate?: number
+  vat_amount?: number
+  gross_taxable?: number
 
-  // Optional purchase fields
   vatableServices?: number
   vatableCapital?: number
   vatableGoods?: number
+
+  atc_code?: string
+  tax_rate?: number
+  amount_of_tax_withheld?: number
+  amount_of_income_payment?: number
 }
 export type {
     Doc,

@@ -61,6 +61,14 @@ const useUploadDocuments = () => {
             label: 'SUMMARY LIST OF PURCHASES (SLP)',
             value: 'PURCHASES',
         },
+        {
+            label: 'QUARTERLY ALPHALIST OF PAYEES (QAP)',
+            value: 'QAP',
+        },
+        {
+            label: 'SUMMARY ALPHALIST OF WITHHOLDING TAXES (SAWT)',
+            value: 'SAWT',
+        },
     ])
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([])
@@ -173,13 +181,13 @@ const useUploadDocuments = () => {
 
         {
             key: 'address1',
-            title: 'Address 1',
+            title: 'First Address',
             dataIndex: 'address1',
         },
 
         {
             key: 'address2',
-            title: 'Address 2',
+            title: 'Second Address',
             dataIndex: 'address2',
         },
     ]
@@ -220,9 +228,9 @@ const useUploadDocuments = () => {
         },
 
         {
-            key: 'vatRate',
+            key: 'vat_rate',
             title: 'VAT Rate',
-            dataIndex: 'vatRate',
+            dataIndex: 'vat_rate',
             render: formatNumber,
         },
 
@@ -302,9 +310,9 @@ const useUploadDocuments = () => {
         },
 
         {
-            key: 'vatRate',
+            key: 'vat_rate',
             title: 'VAT Rate',
-            dataIndex: 'vatRate',
+            dataIndex: 'vat_rate',
             render: formatNumber,
         },
 
@@ -325,18 +333,91 @@ const useUploadDocuments = () => {
 
     /*
     |--------------------------------------------------------------------------
+    | SAWT COLUMNS
+    |--------------------------------------------------------------------------
+    */
+
+    const sawtColumns = [
+        {
+            key: 'atc_code',
+            title: 'ATC Code',
+            dataIndex: 'atc_code',
+        },
+        {
+            key: 'amount_of_income_payment',
+            title: 'Amount of Income Payment',
+            dataIndex: 'amount_of_income_payment',
+            render: formatNumber,
+        },
+        {
+            key: 'tax_rate',
+            title: 'Tax Rate',
+            dataIndex: 'tax_rate',
+            render: formatNumber,
+        },
+        {
+            key: 'amount_of_tax_withheld',
+            title: 'Amount of Tax Withheld',
+            dataIndex: 'amount_of_tax_withheld',
+            render: formatNumber,
+        },
+    ]
+
+    /*
+    |--------------------------------------------------------------------------
+    | QAP COLUMNS
+    |--------------------------------------------------------------------------
+    */
+
+    const qapColumns = [
+        {
+            key: 'atc_code',
+            title: 'ATC Code',
+            dataIndex: 'atc_code',
+        },
+        {
+            key: 'amount_of_income_payment',
+            title: 'Amount of Income Payment',
+            dataIndex: 'amount_of_income_payment',
+            render: formatNumber,
+        },
+        {
+            key: 'tax_rate',
+            title: 'Tax Rate',
+            dataIndex: 'tax_rate',
+            render: formatNumber,
+        },
+        {
+            key: 'amount_of_tax_withheld',
+            title: 'Amount of Tax Withheld',
+            dataIndex: 'amount_of_tax_withheld',
+            render: formatNumber,
+        },
+    ]
+
+    /*
+    |--------------------------------------------------------------------------
     | GET COLUMNS
     |--------------------------------------------------------------------------
     */
 
     const getColumns = () => {
-        return [
-            ...baseColumns,
+        switch (doc.selectedTable.value) {
+            case 'SALES':
+                return [...baseColumns, ...salesColumns]
 
-            ...(doc.selectedTable.value === 'SALES'
-                ? salesColumns
-                : purchaseColumns),
-        ]
+            case 'PURCHASES':
+                return [...baseColumns, ...purchaseColumns]
+
+            case 'QAP':
+                return [...baseColumns, ...qapColumns]
+
+            case 'SAWT':
+                return [...baseColumns, ...sawtColumns]
+
+            default:
+                return baseColumns
+        }
     }
 
     /*
@@ -348,26 +429,44 @@ const useUploadDocuments = () => {
     const detectSheet = (workbook: XLSX.WorkBook) => {
         let salesSheet = null
         let purchaseSheet = null
+        let qapSheet = null
+        let sawtSheet = null
 
         workbook.SheetNames.forEach(name => {
             const upper = name.toUpperCase()
 
-            if (
-                upper.includes('SALE') ||
-                upper.includes('SLS')
-            ) {
+            if (upper.includes('SALE') || upper === 'SLS') {
                 salesSheet = name
             }
 
             if (
                 upper.includes('PURCHASE') ||
-                upper.includes('SLP')
+                upper === 'SLP'
             ) {
                 purchaseSheet = name
             }
+
+            if (
+                upper.includes('QAP') &&
+                !upper.includes('PIVOT')
+            ) {
+                qapSheet = name
+            }
+
+            if (
+                upper.includes('SAWT') &&
+                !upper.includes('PIVOT')
+            ) {
+                sawtSheet = name
+            }
         })
 
-        return { salesSheet, purchaseSheet }
+        return {
+            salesSheet,
+            purchaseSheet,
+            qapSheet,
+            sawtSheet,
+        }
     }
 
     /*
@@ -422,80 +521,90 @@ const useUploadDocuments = () => {
     ): ExcelRow & { id: number } => {
         const base = mapBaseRow(row, index)
 
-        if (doc.selectedTable.value === 'SALES') {
-            return {
-                ...base,
+        switch (doc.selectedTable.value) {
+            case 'SALES':
+                return {
+                    ...base,
+                    exempt_sales: Number(
+                        row['EXEMPT SALES'] || 0
+                    ),
+                    zero_rated_sales: Number(
+                        row['ZERO-RATED SALES'] || 0
+                    ),
+                    vatable_sales: Number(
+                        row['VATABLE SALES'] || 0
+                    ),
+                    gross_amount: Number(
+                        row['GROSS AMOUNT'] || 0
+                    ),
+                    vat_rate: Number(
+                        row['VAT RATE'] || 0
+                    ),
+                    vat_amount: Number(
+                        row['VAT AMOUNT'] || 0
+                    ),
+                    gross_taxable: Number(
+                        row['GROSS TAXABLE'] || 0
+                    ),
+                }
 
-                exempt_sales: Number(
-                    row[' EXEMPT SALES'] || 0
-                ),
+            case 'PURCHASES':
+                return {
+                    ...base,
+                    exempt_purchases: Number(
+                        row['EXEMPT PURCHASES'] || 0
+                    ),
+                    zero_rated_purchases: Number(
+                        row['ZERO-RATED PURCHASES'] || 0
+                    ),
+                    vatable_purchases: Number(
+                        row['VATABLE PURCHASES'] || 0
+                    ),
+                    vatable_purchase_of_services: Number(
+                        row['VATABLE PURCHASE OF SERVICES'] || 0
+                    ),
+                    vatable_purchase_of_capital_goods: Number(
+                        row['VATABLE PURCHASE OF CAPITAL GOODS'] || 0
+                    ),
+                    vatable_purchase_of_other_goods: Number(
+                        row[
+                            'VATABLE PURCHASE OF GOODS OTHER THAN CAPITAL GOODS'
+                        ] || 0
+                    ),
+                    gross_amount: Number(
+                        row['GROSS AMOUNT'] || 0
+                    ),
+                    vat_rate: Number(
+                        row['VAT RATE'] || 0
+                    ),
+                    vat_amount: Number(
+                        row['VAT AMOUNT'] || 0
+                    ),
+                    gross_taxable: Number(
+                        row['GROSS TAXABLE'] || 0
+                    ),
+                }
 
-                zero_rated_sales: Number(
-                    row['ZERO-RATED SALES'] || 0
-                ),
+            case 'QAP':
+            case 'SAWT':
+                return {
+                    ...base,
+                    atc_code: row['ATC CODE'],
+                    amount_of_income_payment: Number(
+                        row['AMOUNT OF INCOME PAYMENT'] || 0
+                    ),
+                    tax_rate: Number(
+                        row['TAX RATE'] || 0
+                    ),
+                    amount_of_tax_withheld: Number(
+                        row['AMOUNT OF TAX WITHHELD'] || 0
+                    ),
+                }
 
-                vatable_sales: Number(
-                    row['VATABLE SALES'] || 0
-                ),
-
-                gross_amount: Number(
-                    row['GROSS AMOUNT'] || 0
-                ),
-
-                vatRate: Number(row['VAT RATE'] || 0),
-
-                vat_amount: Number(
-                    row['VAT AMOUNT'] || 0
-                ),
-
-                gross_taxable: Number(
-                    row['GROSS TAXABLE'] || 0
-                ),
-            }
-        }
-
-        return {
-            ...base,
-
-            exempt_purchases: Number(
-                row['EXEMPT PURCHASES'] || 0
-            ),
-
-            zero_rated_purchases: Number(
-                row['ZERO-RATED PURCHASES'] || 0
-            ),
-
-            vatable_purchases: Number(
-                row['VATABLE PURCHASES'] || 0
-            ),
-
-            vatable_purchase_of_services: Number(
-                row['VATABLE PURCHASE OF SERVICES'] || 0
-            ),
-
-            vatable_purchase_of_capital_goods: Number(
-                row['VATABLE PURCHASE OF CAPITAL GOODS'] || 0
-            ),
-
-            vatable_purchase_of_other_goods: Number(
-                row[
-                    'VATABLE PURCHASE OF GOODS OTHER THAN CAPITAL GOODS'
-                ] || 0
-            ),
-
-            gross_amount: Number(
-                row['GROSS AMOUNT'] || 0
-            ),
-
-            vatRate: Number(row['VAT RATE'] || 0),
-
-            vat_amount: Number(
-                row['VAT AMOUNT'] || 0
-            ),
-
-            gross_taxable: Number(
-                row['GROSS TAXABLE'] || 0
-            ),
+            default:
+                throw new Error(
+                    `Unsupported document type: ${doc.selectedTable.value}`
+                )
         }
     }
 
@@ -506,53 +615,48 @@ const useUploadDocuments = () => {
     */
 
     const parseWorkbook = (workbook: XLSX.WorkBook) => {
-        const { salesSheet, purchaseSheet } =
-            detectSheet(workbook)
+        const {
+            salesSheet,
+            purchaseSheet,
+            qapSheet,
+            sawtSheet,
+        } = detectSheet(workbook)
 
-        let sheetName = null
+        // console.log('Sheet Names:', workbook.SheetNames)
+        // console.log({
+        //     salesSheet,
+        //     purchaseSheet,
+        //     qapSheet,
+        //     sawtSheet,
+        // })
 
-        if (salesSheet && purchaseSheet) {
-            setOptions([
-                {
-                    label: 'SUMMARY LIST OF SALES (SLS)',
-                    value: 'SALES',
-                },
+        let sheetName: string | null = null
 
-                {
-                    label: 'SUMMARY LIST OF PURCHASES (SLP)',
-                    value: 'PURCHASES',
-                },
-            ])
+        switch (doc.selectedTable.value) {
+            case 'SALES':
+                sheetName = salesSheet
+                break
 
-            sheetName =
-                doc.selectedTable.value === 'SALES'
-                    ? salesSheet
-                    : purchaseSheet
-        } else if (salesSheet) {
-            sheetName = salesSheet
+            case 'PURCHASES':
+                sheetName = purchaseSheet
+                break
 
-            setOptions([
-                {
-                    label: 'SUMMARY LIST OF SALES (SLS)',
-                    value: 'SALES',
-                },
-            ])
-        } else if (purchaseSheet) {
-            sheetName = purchaseSheet
+            case 'QAP':
+                sheetName = qapSheet
+                break
 
-            setOptions([
-                {
-                    label: 'SUMMARY LIST OF PURCHASES (SLP)',
-                    value: 'PURCHASES',
-                },
-            ])
+            case 'SAWT':
+                sheetName = sawtSheet
+                break
         }
+
+        // console.log('Selected Table:', doc.selectedTable.value)
+        // console.log('Detected Sheet:', sheetName)
 
         if (!sheetName) {
             alert(
-                'No SALES or PURCHASES sheet found in Excel file'
+                `No worksheet found for ${doc.selectedTable.value}`
             )
-
             return
         }
 
@@ -562,24 +666,33 @@ const useUploadDocuments = () => {
             defval: '',
         })
 
-        const tableRows = json
-            .map((row, index) => mapRow(row, index))
-            .filter(row => {
-                const tin = String(row.tin ?? '')
-                    .replace(/\D/g, '') // remove dashes/spaces/etc
+        // console.log('Raw Rows:', json.length)
+        // console.log('First Raw Row:', json[0])
 
-                return (
-                    tin.length > 0 &&
-                    !deletedRowIds.includes(row.id)
-                )
-            })
+        const mappedRows = json.map((row, index) =>
+            mapRow(row, index)
+        )
 
-        const limitedRows =
+        // console.log('Mapped Rows:', mappedRows.length)
+        // console.log('First Mapped Row:', mappedRows[0])
+
+        const tableRows = mappedRows.filter(row => {
+            const tin = String(row.tin ?? '')
+                .replace(/\D/g, '')
+
+            return (
+                tin.length > 0 &&
+                !deletedRowIds.includes(row.id)
+            )
+        })
+
+        // console.log('Filtered Rows:', tableRows.length)
+
+        setRows(
             user?.subscription?.plan === 'basic'
                 ? tableRows.slice(0, 20)
                 : tableRows
-
-        setRows(limitedRows)
+        )
     }
 
     /*
@@ -641,6 +754,8 @@ const useUploadDocuments = () => {
         value: string
         label: string
     }) => {
+        // console.log('Selected Dropdown:', selectedTable)
+
         setDoc(prev => ({
             ...prev,
             selectedTable,
