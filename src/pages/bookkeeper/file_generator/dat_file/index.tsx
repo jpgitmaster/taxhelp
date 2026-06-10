@@ -204,11 +204,11 @@ const DAT_File_V = () => {
                 dataIndex: 'name',
             },
             {
-                title: 'Address 1',
+                title: 'First Address',
                 dataIndex: 'first_address',
             },
             {
-                title: 'Address 2',
+                title: 'Second Address',
                 dataIndex: 'second_address',
             },
         ]

@@ -107,12 +107,12 @@ const Purchases_V = () => {
       dataIndex: 'business_owner',
     },
     {
-      title: 'Address 1',
+      title: 'First Address',
       key: 'first_address',
       dataIndex: 'first_address',
     },
     {
-      title: 'Address 2',
+      title: 'Second Address',
       key: 'second_address',
       dataIndex: 'second_address',
     },
