@@ -203,7 +203,6 @@ const AddSalesRecord_V = () => {
                   label='Middle Name'
                   labelFor='middle_name'
                   err={sales.salesErr.middle_name as string}
-                  required={sales.salesObj.customer?.classification === 'INDIVIDUAL' ? true : false}
                 >
                   <input
                     readOnly

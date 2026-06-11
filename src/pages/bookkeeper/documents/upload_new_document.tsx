@@ -41,18 +41,20 @@ const UploadNewDocument_V = () => {
     } = useUploadDocuments()
     const { loader } = status
     type NumericFields =
-    | 'exempt_sales'
-    | 'zero_rated_sales'
-    | 'vatable_sales'
-    | 'gross_amount'
-    | 'vat_amount'
-    | 'gross_taxable'
-    | 'exempt_purchases'
-    | 'zero_rated_purchases'
-    | 'vatable_purchases'
-    | 'vatable_purchase_of_services'
-    | 'vatable_purchase_of_other_goods'
-    | 'vatable_purchase_of_capital_goods'
+        | 'exempt_sales'
+        | 'zero_rated_sales'
+        | 'vatable_sales'
+        | 'gross_amount'
+        | 'vat_amount'
+        | 'gross_taxable'
+        | 'exempt_purchases'
+        | 'zero_rated_purchases'
+        | 'vatable_purchases'
+        | 'vatable_purchase_of_services'
+        | 'vatable_purchase_of_other_goods'
+        | 'vatable_purchase_of_capital_goods'
+        | 'amount_of_income_payment'
+        | 'amount_of_tax_withheld'
     const total = (field: NumericFields) =>
       rows.reduce(
         (sum, row) => sum + Number(row[field] || 0),
@@ -150,69 +152,88 @@ const UploadNewDocument_V = () => {
                                             ))}
                                             {doc.selectedTable.value === 'SALES' ? (
                                                 <>
-                                                    {/* Exempt Sales */}
-                                                    <Table.Summary.Cell index={8} align="left">
-                                                    {formatNumber(total('exempt_sales'))}
+                                                    <Table.Summary.Cell index={8}>
+                                                        {formatNumber(total('exempt_sales'))}
                                                     </Table.Summary.Cell>
 
-                                                    {/* Zero Rated Sales */}
-                                                    <Table.Summary.Cell index={9} align="left">
-                                                    {formatNumber(total('zero_rated_sales'))}
+                                                    <Table.Summary.Cell index={9}>
+                                                        {formatNumber(total('zero_rated_sales'))}
                                                     </Table.Summary.Cell>
 
-                                                    {/* Vatable Sales */}
-                                                    <Table.Summary.Cell index={10} align="left">
-                                                    {formatNumber(total('vatable_sales'))}
+                                                    <Table.Summary.Cell index={10}>
+                                                        {formatNumber(total('vatable_sales'))}
                                                     </Table.Summary.Cell>
 
-                                                    {/* Gross Amount */}
-                                                    <Table.Summary.Cell index={11} align="left">
-                                                    {formatNumber(total('gross_amount'))}
+                                                    <Table.Summary.Cell index={11}>
+                                                        {formatNumber(total('gross_amount'))}
                                                     </Table.Summary.Cell>
 
-                                                    {/* VAT Rate */}
                                                     <Table.Summary.Cell index={12} />
 
-                                                    {/* VAT Amount */}
-                                                    <Table.Summary.Cell index={13} align="left">
-                                                    {formatNumber(total('vat_amount'))}
+                                                    <Table.Summary.Cell index={13}>
+                                                        {formatNumber(total('vat_amount'))}
                                                     </Table.Summary.Cell>
 
-                                                    {/* Gross Taxable */}
-                                                    <Table.Summary.Cell index={14} align="left">
-                                                    {formatNumber(total('gross_taxable'))}
+                                                    <Table.Summary.Cell index={14}>
+                                                        {formatNumber(total('gross_taxable'))}
+                                                    </Table.Summary.Cell>
+                                                </>
+                                            ) : doc.selectedTable.value === 'PURCHASES' ? (
+                                                <>
+                                                    <Table.Summary.Cell index={8}>
+                                                        {formatNumber(total('exempt_purchases'))}
+                                                    </Table.Summary.Cell>
+
+                                                    <Table.Summary.Cell index={9}>
+                                                        {formatNumber(total('zero_rated_purchases'))}
+                                                    </Table.Summary.Cell>
+
+                                                    <Table.Summary.Cell index={10}>
+                                                        {formatNumber(total('vatable_purchases'))}
+                                                    </Table.Summary.Cell>
+
+                                                    <Table.Summary.Cell index={11}>
+                                                        {formatNumber(total('vatable_purchase_of_services'))}
+                                                    </Table.Summary.Cell>
+
+                                                    <Table.Summary.Cell index={12}>
+                                                        {formatNumber(total('vatable_purchase_of_capital_goods'))}
+                                                    </Table.Summary.Cell>
+
+                                                    <Table.Summary.Cell index={13}>
+                                                        {formatNumber(total('vatable_purchase_of_other_goods'))}
+                                                    </Table.Summary.Cell>
+
+                                                    <Table.Summary.Cell index={14}>
+                                                        {formatNumber(total('gross_amount'))}
+                                                    </Table.Summary.Cell>
+
+                                                    <Table.Summary.Cell index={15} />
+
+                                                    <Table.Summary.Cell index={16}>
+                                                        {formatNumber(total('vat_amount'))}
+                                                    </Table.Summary.Cell>
+
+                                                    <Table.Summary.Cell index={17}>
+                                                        {formatNumber(total('gross_taxable'))}
                                                     </Table.Summary.Cell>
                                                 </>
                                             ) : (
                                                 <>
-                                                    {/* Exempt Purchases */}
-                                                    <Table.Summary.Cell index={8}>
-                                                    {formatNumber(total('exempt_purchases'))}
-                                                    </Table.Summary.Cell>
+                                                    {/* ATC Code */}
+                                                    <Table.Summary.Cell index={8} />
+
+                                                    {/* Amount of Income Payment */}
                                                     <Table.Summary.Cell index={9}>
-                                                    {formatNumber(total('zero_rated_purchases'))}
+                                                        {formatNumber(total('amount_of_income_payment'))}
                                                     </Table.Summary.Cell>
-                                                    <Table.Summary.Cell index={10}>
-                                                    {formatNumber(total('vatable_purchases'))}
-                                                    </Table.Summary.Cell>
+
+                                                    {/* Tax Rate */}
+                                                    <Table.Summary.Cell index={10} />
+
+                                                    {/* Amount of Tax Withheld */}
                                                     <Table.Summary.Cell index={11}>
-                                                    {formatNumber(total('vatable_purchase_of_services'))}
-                                                    </Table.Summary.Cell>
-                                                    <Table.Summary.Cell index={12}>
-                                                    {formatNumber(total('vatable_purchase_of_capital_goods'))}
-                                                    </Table.Summary.Cell>
-                                                    <Table.Summary.Cell index={13}>
-                                                    {formatNumber(total('vatable_purchase_of_other_goods'))}
-                                                    </Table.Summary.Cell>
-                                                    <Table.Summary.Cell index={14}>
-                                                    {formatNumber(total('gross_amount'))}
-                                                    </Table.Summary.Cell>
-                                                    <Table.Summary.Cell index={15}/>
-                                                    <Table.Summary.Cell index={16}>
-                                                    {formatNumber(total('vat_amount'))}
-                                                    </Table.Summary.Cell>
-                                                    <Table.Summary.Cell index={17}>
-                                                    {formatNumber(total('gross_taxable'))}
+                                                        {formatNumber(total('amount_of_tax_withheld'))}
                                                     </Table.Summary.Cell>
                                                 </>
                                             )}
