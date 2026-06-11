@@ -34,7 +34,7 @@ const useSaveSales = () => {
         // setFilter: customerSetFilter,
         useGetCustomers
     } = useQueryCustomers()
-
+    const [editCustomer, setEditCustomer] = useState(false)
     const [displayTerms, setDisplayTerms] = useState(false)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayCustomers, setDisplayCustomers] = useState(false)
@@ -192,6 +192,10 @@ const useSaveSales = () => {
                     : ''
         }
     }
+    const handleEditCustomer = (edit: boolean) => {
+        setEditCustomer(edit)
+    }
+
     const handleToggle = (dropdown: string) => {
         if(dropdown === 'clients'){
             setDisplayClients(prevState => !prevState)
@@ -516,6 +520,7 @@ const useSaveSales = () => {
         options,
         clientArr,
         customerArr,
+        editCustomer,
         displayTerms,
         displayClients,
         displayCustomers,
@@ -536,6 +541,7 @@ const useSaveSales = () => {
         handleToggle,
         handleResubmit,
         handleSelectTerms,
+        handleEditCustomer,
         handleSelectClient,
         handleSelectCustomer
         

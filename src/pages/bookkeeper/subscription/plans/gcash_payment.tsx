@@ -49,10 +49,25 @@ const GCashPaymentPage = () => {
             <span>Total</span>
             <span>₱{price}</span>
           </div>
+          {
+            plan === 'basic' &&
+            <>
+              <br />
+              <button
+                  type='submit'
+                  onKeyDown={handleResubmit}
+                  className={scss.button+' '+scss.btnblue}
+                >
+                {loader ? 'Loading...' : 'Activate Basic Plan'}
+              </button>
+            </>
+          }
         </div>
-        <div className={scss.selectedPlan}>
-          {/* GCash Info */}
-          <h3>Pay with GCash</h3>
+        {
+          plan !== 'basic' &&
+          <div className={scss.selectedPlan}>
+            {/* GCash Info */}
+            <h3>Pay with GCash</h3>
 
             <ol>
               <li>Click "Pay with GCash"</li>
@@ -78,7 +93,8 @@ const GCashPaymentPage = () => {
               Secure payment powered by your payment provider
             </p>
           </div>
-          <br /><br />
+        }
+        <br /><br />
       </div>
     </form>
   )

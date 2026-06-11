@@ -21,6 +21,7 @@ const AddSalesRecord_V = () => {
     customerArr,
     clientLoader,
     displayTerms,
+    editCustomer,
     displayClients,
     customerLoader,
     displayCustomers,
@@ -38,6 +39,7 @@ const AddSalesRecord_V = () => {
     handleResubmit,
     handleSelectTerms,
     handleSelectClient,
+    handleEditCustomer,
     handleSelectCustomer
   } = useSaveSales()
   const { loader } = status
@@ -75,12 +77,20 @@ const AddSalesRecord_V = () => {
             Customer Details
           </div>
           {
-            doc.customer?.id &&
-            <button type='button' className={scss.editForm}>
+            (doc.customer?.id && !editCustomer) &&
+            <button type='button' className={scss.editForm} onClick={() => handleEditCustomer(true)}>
               <Image src='/svgs/edit.svg' alt='Edit Details' priority width={20} height={20} unoptimized={true} />
               Edit Details
             </button>
           }
+          {
+            (editCustomer) &&
+            <button type='button' className={scss.editForm} onClick={() => handleEditCustomer(true)}>
+              <Image src='/svgs/eyecon_check.svg' alt='View Details' priority width={20} height={20} unoptimized={true} />
+              View Details
+            </button>
+          }
+          
           <div className={scss.cards}>
             <CustomContainer
               scss={scss}
