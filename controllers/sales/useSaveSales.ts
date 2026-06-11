@@ -3,6 +3,7 @@ import useSalesAPI from "./api"
 import useQueryClients from '../clients/api/queries';
 import useGlobal from '@/controllers/global/useGlobal';
 import useQueryCustomers from '../customers/api/queries';
+import { CustomerObj } from '@/controllers/customers/types'
 import { useState, ChangeEvent, SyntheticEvent } from "react";
 const useSaveSales = () => {
     const {
@@ -27,7 +28,7 @@ const useSaveSales = () => {
 
     const {
         filter: customerFilter,
-        setFilter: customerSetFilter,
+        // setFilter: customerSetFilter,
         useGetCustomers
     } = useQueryCustomers()
 
@@ -49,7 +50,20 @@ const useSaveSales = () => {
             }
         })
     }
-    
+    const options = [
+        {
+            value: 'INCLUSIVE',
+            label: 'VAT Inclusive',
+            icon: 'inclusive.svg',
+            description: 'Amounts entered are already inclusive of VAT.'
+        },
+        {
+            value: 'EXCLUSIVE',
+            label: 'VAT Exclusive',
+            icon: 'exclusive.svg',
+            description: 'Amounts entered do not include VAT and will be subject to VAT computation.'
+        },
+    ];
     // CLIENT
     const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = getClients(    
         clientFilter.currentPage,
@@ -231,16 +245,7 @@ const useSaveSales = () => {
         }))
     }
 
-    const handleSelectCustomer = (customer: {
-        id: number | null,
-        tin: string
-        last_name: string
-        first_name: string
-        trade_name: string
-        middle_name: string
-        classification: string
-        registered_name: string
-    }) => {
+    const handleSelectCustomer = (customer: CustomerObj) => {
         setDoc({
             ...doc,
             customer: customer
@@ -250,14 +255,17 @@ const useSaveSales = () => {
             salesObj: {
                 ...prev.salesObj,
                 customer: {
+                    id: customer.id,
                     tin: customer.tin,
+                    phone: customer.phone,
+                    email: customer.email,
                     last_name: customer.last_name,
                     trade_name: customer.trade_name,
                     first_name: customer.first_name,
                     middle_name: customer.middle_name,
-                    branch_code: '',
-                    first_address: '',
-                    second_address: '',
+                    postal_code: customer.postal_code,
+                    first_address: customer.first_address,
+                    second_address: customer.second_address,
                     classification: customer.classification,
                     registered_name: customer.registered_name
                 }
@@ -422,6 +430,7 @@ const useSaveSales = () => {
         doc,
         sales,
         status,
+        options,
         clientArr,
         customerArr,
         displayTerms,

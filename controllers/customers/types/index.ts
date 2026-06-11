@@ -8,6 +8,7 @@ interface CustomerObj{
   trade_name: string
   first_name: string
   middle_name: string
+  postal_code: string
   first_address: string
   second_address: string
   classification: string

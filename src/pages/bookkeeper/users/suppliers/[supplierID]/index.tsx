@@ -13,7 +13,6 @@ const Supplier_V = () => {
     status,
     supplier,
 
-    handleBlur,
     handleChange,
   } = useSaveSupplier()
   const { loader } = status

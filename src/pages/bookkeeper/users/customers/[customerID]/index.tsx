@@ -15,8 +15,6 @@ const Customer_V = () => {
 
     handleBlur,
     handleChange,
-    handleSubmit,
-    handleResubmit,
   } = useSaveCustomer()
   const { loader } = status
   return (

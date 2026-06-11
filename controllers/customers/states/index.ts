@@ -7,6 +7,7 @@ const initCustomerObj = {
     trade_name: '',
     first_name: '',
     middle_name: '',
+    postal_code: '',
     first_address: '',
     second_address: '',
     registered_name: '',
@@ -22,6 +23,7 @@ const initCustomer = {
         trade_name: '',
         first_name: '',
         middle_name: '',
+        postal_code: '',
         first_address: '',
         second_address: '',
         registered_name: '',
@@ -32,5 +34,6 @@ const initCustomer = {
 }
 
 export {
-    initCustomer
+    initCustomer,
+    initCustomerObj
 };

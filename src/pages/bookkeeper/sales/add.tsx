@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import Image from 'next/image'
 import { DatePicker } from 'antd'
 import scss from './styles/Sales.module.scss'
 import { signOut, getSession } from 'next-auth/react'
@@ -15,6 +16,7 @@ const AddSalesRecord_V = () => {
     doc,
     sales,
     status,
+    options,
     clientArr,
     customerArr,
     clientLoader,
@@ -43,10 +45,7 @@ const AddSalesRecord_V = () => {
   return (
       <form onSubmit={handleSubmit} className={scss.addClient}>
         { loader && <Loader scss={scss} position='absolute' />}
-        <div className={scss.box}>
-          <div className={scss.boxTitle}>
-            Client Details
-          </div>
+        <div className={scss.box+' '+scss.view}>
           <div className={scss.cards} style={{marginBottom: 0}}>
             <CustomContainer
               scss={scss}
@@ -75,6 +74,13 @@ const AddSalesRecord_V = () => {
           <div className={scss.boxTitle}>
             Customer Details
           </div>
+          {
+            doc.customer?.id &&
+            <button type='button' className={scss.editForm}>
+              <Image src='/svgs/edit.svg' alt='Edit Details' priority width={20} height={20} unoptimized={true} />
+              Edit Details
+            </button>
+          }
           <div className={scss.cards}>
             <CustomContainer
               scss={scss}
@@ -134,7 +140,6 @@ const AddSalesRecord_V = () => {
                     type='text'
                     maxLength={20}
                     autoComplete='off'
-                    placeholder='000-000-000'
                     className={scss.lblContent}
                     value={sales.salesObj.customer?.tin}
                     onKeyUp={handleBlur}
@@ -143,89 +148,98 @@ const AddSalesRecord_V = () => {
                 </CustomContainer>
               </div>
             </div>
+            {
+              sales.salesObj.customer?.classification === 'NON-INDIVIDUAL' &&
+              <CustomContainer
+                scss={scss}
+                width={100}
+                label='Registered Name'
+                labelFor='registered_name'
+                err={sales.salesErr.registered_name as string}
+              >
+                <input
+                  readOnly
+                  type='text'
+                  maxLength={20}
+                  autoComplete='off'
+                  id='registered_name'
+                  name='registered_name'
+                  className={scss.lblContent}
+                  value={sales.salesObj.customer?.registered_name}
+                  onKeyUp={handleBlur}
+                  onChange={handleChange}
+                />
+              </CustomContainer>
+            }
+            {
+              sales.salesObj.customer?.classification === 'INDIVIDUAL' &&
+              <>
+                <CustomContainer
+                  scss={scss}
+                  width={33}
+                  label='First Name'
+                  labelFor='first_name'
+                  err={sales.salesErr.first_name as string}
+                >
+                  <input
+                    readOnly
+                    type='text'
+                    maxLength={20}
+                    id='first_name'
+                    name='first_name'
+                    autoComplete='off'
+                    className={scss.lblContent}
+                    value={sales.salesObj.customer?.first_name}
+                    onKeyUp={handleBlur}
+                    onChange={handleChange}
+                  />
+                </CustomContainer>
+                <CustomContainer
+                  scss={scss}
+                  width={33}
+                  label='Middle Name'
+                  labelFor='middle_name'
+                  err={sales.salesErr.middle_name as string}
+                >
+                  <input
+                    readOnly
+                    type='text'
+                    maxLength={20}
+                    id='middle_name'
+                    name='middle_name'
+                    autoComplete='off'
+                    className={scss.lblContent}
+                    value={sales.salesObj.customer?.middle_name}
+                    onKeyUp={handleBlur}
+                    onChange={handleChange}
+                  />
+                </CustomContainer>
+                <CustomContainer
+                  scss={scss}
+                  width={33}
+                  label='Last Name'
+                  labelFor='last_name'
+                  err={sales.salesErr.last_name as string}
+                >
+                  <input
+                    readOnly
+                    type='text'
+                    maxLength={20}
+                    id='last_name'
+                    name='last_name'
+                    autoComplete='off'
+                    className={scss.lblContent}
+                    value={sales.salesObj.customer?.last_name}
+                    onKeyUp={handleBlur}
+                    onChange={handleChange}
+                  />
+                </CustomContainer>
+              </>
+            }
+            
             <CustomContainer
               scss={scss}
-              width={33}
-              label='First Name'
-              labelFor='first_name'
-              err={sales.salesErr.first_name as string}
-            >
-              <input
-                readOnly
-                type='text'
-                maxLength={20}
-                id='first_name'
-                name='first_name'
-                autoComplete='off'
-                className={scss.lblContent}
-                value={sales.salesObj.customer?.first_name}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={33}
-              label='Middle Name'
-              labelFor='middle_name'
-              err={sales.salesErr.middle_name as string}
-            >
-              <input
-                readOnly
-                type='text'
-                maxLength={20}
-                id='middle_name'
-                name='middle_name'
-                autoComplete='off'
-                className={scss.lblContent}
-                value={sales.salesObj.customer?.middle_name}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={33}
-              label='Last Name'
-              labelFor='last_name'
-              err={sales.salesErr.last_name as string}
-            >
-              <input
-                readOnly
-                type='text'
-                maxLength={20}
-                id='last_name'
-                name='last_name'
-                autoComplete='off'
-                className={scss.lblContent}
-                value={sales.salesObj.customer?.last_name}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={50}
-              label='Registered Name'
-              labelFor='registered_name'
-              err={sales.salesErr.registered_name as string}
-            >
-              <input
-                readOnly
-                type='text'
-                maxLength={20}
-                autoComplete='off'
-                id='registered_name'
-                name='registered_name'
-                className={scss.lblContent}
-                value={sales.salesObj.customer?.registered_name}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={50}
+              width={100}
               label='Trade Name'
               labelFor='trade_name'
               err={sales.salesErr.trade_name as string}
@@ -241,6 +255,108 @@ const AddSalesRecord_V = () => {
                 value={sales.salesObj.customer?.trade_name}
                 onKeyUp={handleBlur}
                 onChange={handleChange}
+              />
+            </CustomContainer>
+            <CustomContainer
+              scss={scss}
+              width={50}
+              label='Phone Number'
+              labelFor='phone'
+              err={sales.salesErr.phone as string}
+            >
+              <input
+                readOnly
+                type='text'
+                maxLength={20}
+                id='phone'
+                name='phone'
+                autoComplete='off'
+                className={scss.lblContent}
+                value={sales.salesObj.customer?.phone}
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+              />
+            </CustomContainer>
+            <CustomContainer
+              scss={scss}
+              width={50}
+              label='Email'
+              labelFor='email'
+              err={sales.salesErr.email as string}
+            >
+              <input
+                readOnly
+                type='text'
+                maxLength={20}
+                id='email'
+                name='email'
+                autoComplete='off'
+                className={scss.lblContent}
+                value={sales.salesObj.customer?.email}
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+              />
+            </CustomContainer>
+            <CustomContainer
+              required
+              width={40}
+              scss={scss}
+              label='First Address'
+              labelFor='first_address'
+              err={sales.salesErr.first_address as string}
+            >
+              <input
+                readOnly
+                type='text'
+                maxLength={20}
+                autoComplete='off'
+                id='first_address'
+                name='first_address'
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+                className={scss.lblContent}
+                value={sales.salesObj.customer?.first_address}
+              />
+            </CustomContainer>
+            <CustomContainer
+              required
+              width={40}
+              scss={scss}
+              label='Second Address'
+              labelFor='second_address'
+              err={sales.salesErr.second_address as string}
+            >
+              <input
+                readOnly
+                type='text'
+                maxLength={20}
+                autoComplete='off'
+                id='second_address'
+                name='second_address'
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+                className={scss.lblContent}
+                value={sales.salesObj.customer?.second_address}
+              />
+            </CustomContainer>
+            <CustomContainer
+              width={20}
+              scss={scss}
+              label='Postal Code'
+              labelFor='second_address'
+              err={sales.salesErr.second_address as string}
+            >
+              <input
+                readOnly
+                type='text'
+                maxLength={20}
+                autoComplete='off'
+                id='second_address'
+                name='second_address'
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+                className={scss.lblContent}
+                value={sales.salesObj.customer?.second_address}
               />
             </CustomContainer>
           </div>
@@ -378,35 +494,6 @@ const AddSalesRecord_V = () => {
                 onChange={handleChange}
               />
             </CustomContainer>
-            {/* <div className={scss.w100+' '+scss.card}>
-              Customer Details
-            </div>
-            <CustomContainer
-              scss={scss}
-              width={50}
-              required={true}
-              label='Customer'
-              labelFor='customer'
-              err={sales.salesErr.customer as string}
-            >
-              <CustomersDropdown
-                doc={doc}
-                customers={clientArr}
-                loader={clientLoader}
-                displayCustomers={displayCustomers}
-
-                setDisplayCustomers={setDisplayCustomers}
-
-                handleChange={handleChange}
-                handleToggle={handleToggle}
-                handleSelectClient={handleSelectClient}
-              />
-            </CustomContainer>
-            <div className={scss.w100+' '+scss.card}>
-              Tax Details
-            </div>
-             */}
-            
           </div>
         </div>
         <div className={scss.box}>
@@ -416,13 +503,42 @@ const AddSalesRecord_V = () => {
           <div className={scss.cards}>
             <CustomContainer
               scss={scss}
-              width={50}
+              width={100}
               required={true}
               label='VAT Type'
               labelFor='vat_type'
               err={sales.salesErr.vat_type as string}
             >
-              <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+              <ul className={scss.typeOptions}>
+                  {
+                      options.map((option, index) => (
+                          <li key={index}>
+                              <label className={scss.option
+                                  + (sales.salesObj.vat_type === option.value ? ' '+scss.checked : '')
+                              }>
+                                  <Image src={'/svgs/'+option.icon} alt="Business Owner" width={20} height={20} unoptimized={true} />
+                                  <div>
+                                      <strong>
+                                      {option.label}
+                                      </strong>
+                                      <p>
+                                      {option.description}
+                                      </p>
+                                  </div>
+                                  <input type='checkbox'
+                                      name='vat_type'
+                                      onKeyUp={handleBlur}
+                                      value={option.value}
+                                      checked={sales.salesObj.vat_type === option.value}
+                                      onChange={handleChange}
+                                  />
+                                  <span className={scss.checkmark}></span>
+                              </label>
+                          </li>
+                      ))
+                  }
+              </ul>
+              {/* <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                   <input
                     type="radio"
@@ -442,9 +558,8 @@ const AddSalesRecord_V = () => {
 
                   Exclusive
                 </label>
-              </div>
+              </div> */}
             </CustomContainer>
-            <div className={scss.w50+' '+scss.card}></div>
             <CustomContainer
               scss={scss}
               width={25}

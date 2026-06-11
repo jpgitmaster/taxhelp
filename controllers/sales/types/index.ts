@@ -1,4 +1,5 @@
 import { Dayjs } from 'dayjs';
+import { CustomerObj } from '@/controllers/customers/types'
 interface SalesObj{
     atc: string
     terms: string
@@ -16,23 +17,12 @@ interface SalesObj{
     invoice_date: string
     gross_taxable: string
     vatable_sales: string
+    customer: CustomerObj
     invoice_number: string
     zero_rated_sales: string
     total_gross_amount: string
     created_at?: Dayjs | null
     taxable_month: Dayjs | null
-    customer: {
-        tin: string
-        trade_name: string
-        last_name: string
-        first_name: string
-        middle_name: string
-        branch_code: string
-        first_address: string
-        second_address: string
-        registered_name: string
-        classification: string
-    }
 }
 
 interface Sales{

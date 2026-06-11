@@ -72,7 +72,7 @@ const Sales_V = () => {
         vatable_sales: Number(sales.vatable_sales || 0),
         invoice_number: sales.invoice_number,
         zero_rated_sales: Number(sales.zero_rated_sales || 0),
-        branch_code: sales.customer?.branch_code,
+        // branch_code: sales.customer?.branch_code,
         first_address: sales.customer?.first_address,
         second_address: sales.customer?.second_address,
         registered_name: sales.customer?.registered_name,

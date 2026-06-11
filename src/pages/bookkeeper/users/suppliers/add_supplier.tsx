@@ -217,7 +217,7 @@ const AddSupplier_V = () => {
                     </CustomContainer>
                     <CustomContainer
                       required
-                      width={50}
+                      width={40}
                       scss={scss}
                       label='First Address'
                       labelFor='first_address'
@@ -237,7 +237,7 @@ const AddSupplier_V = () => {
                     </CustomContainer>
                     <CustomContainer
                       required
-                      width={50}
+                      width={40}
                       scss={scss}
                       label='Second Address'
                       labelFor='second_address'
@@ -251,8 +251,26 @@ const AddSupplier_V = () => {
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        placeholder='District / Municipality, City / Province, Zip Code'
+                        placeholder='District / Municipality, City / Province'
                         value={supplier.supplierObj.second_address}
+                      />
+                    </CustomContainer>
+                    <CustomContainer
+                      width={20}
+                      scss={scss}
+                      label='Postal Code'
+                      labelFor='postal_code'
+                      err={supplier.supplierErr.postal_code as string}
+                    >
+                      <input
+                        type='text'
+                        maxLength={50}
+                        id='postal_code'
+                        autoComplete='off'
+                        name='postal_code'
+                        onKeyUp={handleBlur}
+                        onChange={handleChange}
+                        value={supplier.supplierObj.postal_code}
                       />
                     </CustomContainer>
                   </div>

@@ -111,7 +111,7 @@ export default function CustomersDropdown(props: {
                         <div className={scss.searchIcon}>
                             <Image src='/svgs/search.svg' alt='Search' priority width={12} height={12} unoptimized={true} />
                         </div>
-                        <input name='customerSearch' placeholder='Search by Customer Name or TIN' type='text' value={doc.customerSearch} onChange={handleChange} />
+                        <input name='customerSearch' placeholder='Search by Customer Name or TIN' type='text' value={doc.customerSearch || ''} onChange={handleChange} />
                     </div>
                     {
                         customers?.length ?

@@ -1,3 +1,4 @@
+import { initCustomerObj } from '@/controllers/customers/states'
 const initSalesObj = {
     id: null,
     atc: '',
@@ -20,16 +21,8 @@ const initSalesObj = {
     zero_rated_sales: '',
     total_gross_amount: '',
     customer: {
-        tin: '',
-        last_name: '',
-        first_name: '',
-        trade_name: '',
-        middle_name: '',
-        branch_code: '',
-        first_address: '',
-        classification: '',
-        second_address: '',
-        registered_name: '',
+        ...initCustomerObj,
+        classification: ''
     }
 }
 const initSales = {

@@ -7,6 +7,7 @@ interface SupplierObj{
   last_name: string
   trade_name: string
   first_name: string
+  postal_code: string
   middle_name: string
   first_address: string
   second_address: string
