@@ -134,8 +134,16 @@ const useSaveSales = () => {
         zero_rated_sales: { usename: 'Zero Rated Sales', required: true },
         tax_amount: { usename: 'Withholding Tax Amount', required: true },
         total_gross_amount: { usename: 'Total Gross Amount', required: true },
+        first_name: { usename: 'First Name', ifCondition: {
+            condition: sales.salesObj.customer?.classification === 'INDIVIDUAL',
+            required: true
+        }},
+        last_name: { usename: 'Last Name', ifCondition: {
+            condition: sales.salesObj.customer?.classification === 'INDIVIDUAL',
+            required: true
+        }},
         registered_name: { usename: 'Registered Name', ifCondition: {
-            condition: doc.customer?.classification === 'NON-INDIVIDUAL',
+            condition: sales.salesObj.customer?.classification === 'NON-INDIVIDUAL',
             required: true
         }},
     }
@@ -312,6 +320,34 @@ const useSaveSales = () => {
         }
 
         switch (name) {
+            case 'tin':
+            case 'email':
+            case 'phone':
+            case 'last_name':
+            case 'first_name':
+            case 'middle_name':
+            case 'trade_name':
+            case 'classification':
+            case 'registered_name':
+            case 'postal_code':
+            case 'first_address':
+            case 'second_address':
+                if(name === 'classification'){
+                    handleRemoveErr(sales.salesErr, 'last_name')
+                    handleRemoveErr(sales.salesErr, 'first_name')
+                    handleRemoveErr(sales.salesErr, 'registered_name')
+                }
+                setSales(prev => ({
+                    ...prev,
+                    salesObj: {
+                        ...prev.salesObj,
+                        customer: {
+                            ...prev.salesObj.customer,
+                            [name]: value
+                        }
+                    }
+                }))
+                break;
             case 'atc':
                 if (value === '' || alphaNumeric.test(value)) {
                     setSales(prev => ({
@@ -476,11 +512,24 @@ const useSaveSales = () => {
             validation_errors,
             validation_has_error,
         } = ValidatorV3(fieldValidations, {
-            tin: doc.customer?.tin || '',
             atc: sales.salesObj.atc || '',
             ewt_rate: sales.salesObj.ewt_rate || '',
             client: doc.client?.id ? String(doc.client?.id) : '',
-            customer: doc.customer?.id ? String(doc.customer?.id) : '',
+            customer: sales.salesObj.customer?.id ? String(sales.salesObj.customer?.id) : '',
+            
+            tin: sales.salesObj.customer?.tin || '',
+            email: sales.salesObj.customer?.email || '',
+            phone: sales.salesObj.customer?.phone || '',
+            last_name: sales.salesObj.customer?.last_name || '',
+            first_name: sales.salesObj.customer?.first_name || '',
+            middle_name: sales.salesObj.customer?.middle_name || '',
+            trade_name: sales.salesObj.customer?.trade_name || '',
+            postal_code: sales.salesObj.customer?.postal_code || '',
+            first_address: sales.salesObj.customer?.first_address || '',
+            second_address: sales.salesObj.customer?.second_address || '',
+            classification: sales.salesObj.customer?.classification || '',
+            registered_name: sales.salesObj.customer?.registered_name || '',
+
             terms: sales.salesObj.terms || '',
             tax_amount: sales.salesObj.tax_amount || '',
             vat_amount: sales.salesObj.vat_amount || '',
@@ -489,11 +538,8 @@ const useSaveSales = () => {
             exempt_sales: sales.salesObj.exempt_sales || '',
             account_name: sales.salesObj.account_name || '',
             invoice_date: sales.salesObj.invoice_date || '',
-            first_address: doc.customer?.first_address || '',
             gross_taxable: sales.salesObj.gross_taxable || '',
             vatable_sales: sales.salesObj.vatable_sales || '',
-            second_address: doc.customer?.second_address || '',
-            classification: doc.customer?.classification || '',
             taxable_month: sales.salesObj.taxable_month || '',
             invoice_number: sales.salesObj.invoice_number || '',
             zero_rated_sales: sales.salesObj.zero_rated_sales || '',
@@ -528,7 +574,6 @@ const useSaveSales = () => {
         customerLoader: isLoadingCustomers || isFetchingCustomers,
 
         // SET STATES
-        setSales,
         setDisplayTerms,
         setDisplayClients,
         setDisplayCustomers,

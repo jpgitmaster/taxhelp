@@ -12,6 +12,7 @@ const initClientObj = {
     middle_name: '',
     branch_code: '',
     description: '',
+    postal_code: '',
     month_end: '12',
     phone_number: '',
     first_address: '',

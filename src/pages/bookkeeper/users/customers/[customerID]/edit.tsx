@@ -89,14 +89,14 @@ const EditCustomer_V = () => {
                         required={customer.customerObj.classification === 'NON-INDIVIDUAL' ? true : false}
                       >
                         <input
-                          id='registered_name'
                           type='text'
-                          name='registered_name'
                           maxLength={100}
                           autoComplete='off'
-                          value={customer.customerObj.registered_name}
+                          id='registered_name'
+                          name='registered_name'
                           onKeyUp={handleBlur}
                           onChange={handleChange}
+                          value={customer.customerObj.registered_name}
                         />
                       </CustomContainer>
                     }
@@ -112,15 +112,15 @@ const EditCustomer_V = () => {
                           required={customer.customerObj.classification === 'INDIVIDUAL' ? true : false}
                         >
                           <input
-                            id='first_name'
                             type='text'
-                            name='first_name'
                             maxLength={20}
+                            id='first_name'
+                            name='first_name'
                             autoComplete='off'
                             placeholder='Andres'
-                            value={customer.customerObj.first_name}
                             onKeyUp={handleBlur}
                             onChange={handleChange}
+                            value={customer.customerObj.first_name}
                           />
                         </CustomContainer>
                         <CustomContainer
@@ -172,14 +172,14 @@ const EditCustomer_V = () => {
                       err={customer.customerErr.trade_name as string}
                     >
                       <input
-                        id='trade_name'
                         type='text'
-                        name='trade_name'
                         maxLength={100}
+                        id='trade_name'
+                        name='trade_name'
                         autoComplete='off'
-                        value={customer.customerObj.trade_name}
                         onKeyUp={handleBlur}
                         onChange={handleChange}
+                        value={customer.customerObj.trade_name}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -209,11 +209,11 @@ const EditCustomer_V = () => {
                       err={customer.customerErr.email as string}
                     >
                       <input
+                        id='email'
+                        name='email'
                         type='text'
                         maxLength={50}
                         autoComplete='off'
-                        id='email'
-                        name='email'
                         placeholder='yourname@yourcompany.com'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
@@ -222,7 +222,7 @@ const EditCustomer_V = () => {
                     </CustomContainer>
                     <CustomContainer
                       required
-                      width={50}
+                      width={40}
                       scss={scss}
                       label='First Address'
                       labelFor='first_address'
@@ -242,7 +242,7 @@ const EditCustomer_V = () => {
                     </CustomContainer>
                     <CustomContainer
                       required
-                      width={50}
+                      width={40}
                       scss={scss}
                       label='Second Address'
                       labelFor='second_address'
@@ -256,8 +256,26 @@ const EditCustomer_V = () => {
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        placeholder='District / Municipality, City / Province, Zip Code'
+                        placeholder='District / Municipality, City / Province'
                         value={customer.customerObj.second_address}
+                      />
+                    </CustomContainer>
+                    <CustomContainer
+                      width={20}
+                      scss={scss}
+                      label='Postal Code'
+                      labelFor='postal_code'
+                      err={customer.customerErr.postal_code as string}
+                    >
+                      <input
+                        type='text'
+                        maxLength={10}
+                        id='postal_code'
+                        autoComplete='off'
+                        name='postal_code'
+                        onKeyUp={handleBlur}
+                        onChange={handleChange}
+                        value={customer.customerObj.postal_code}
                       />
                     </CustomContainer>
                   </div>

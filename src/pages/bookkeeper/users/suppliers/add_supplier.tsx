@@ -264,7 +264,7 @@ const AddSupplier_V = () => {
                     >
                       <input
                         type='text'
-                        maxLength={50}
+                        maxLength={10}
                         id='postal_code'
                         autoComplete='off'
                         name='postal_code'

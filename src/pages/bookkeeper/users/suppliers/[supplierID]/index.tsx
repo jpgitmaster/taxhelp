@@ -209,7 +209,7 @@ const Supplier_V = () => {
                     </CustomContainer>
                     <CustomContainer
                       required
-                      width={50}
+                      width={40}
                       scss={scss}
                       label='First Address'
                       labelFor='first_address'
@@ -228,7 +228,7 @@ const Supplier_V = () => {
                     </CustomContainer>
                     <CustomContainer
                       required
-                      width={50}
+                      width={40}
                       scss={scss}
                       label='Second Address'
                       labelFor='second_address'
@@ -242,7 +242,25 @@ const Supplier_V = () => {
                         onChange={handleChange}
                         className={scss.lblContent}
                         value={supplier.supplierObj.second_address}
-                        placeholder='District / Municipality, City / Province, Zip Code'
+                        placeholder='District / Municipality, City / Province'
+                      />
+                    </CustomContainer>
+                    <CustomContainer
+                      required
+                      width={20}
+                      scss={scss}
+                      label='Postal Code'
+                      labelFor='postal_code'
+                      err={supplier.supplierErr.postal_code as string}
+                    >
+                      <input
+                        readOnly
+                        type='text'
+                        id='postal_code'
+                        name='postal_code'
+                        onChange={handleChange}
+                        className={scss.lblContent}
+                        value={supplier.supplierObj.postal_code}
                       />
                     </CustomContainer>
                   </div>

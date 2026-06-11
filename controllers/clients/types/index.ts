@@ -12,6 +12,7 @@ interface ClientObj{
   middle_name: string
   branch_code: string
   description: string
+  postal_code: string
   phone_number: string
   first_address: string
   second_address: string

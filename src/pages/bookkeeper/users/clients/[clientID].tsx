@@ -372,7 +372,7 @@ const Client_V = () => {
                     </CustomContainer>
                     <CustomContainer
                       required
-                      width={50}
+                      width={40}
                       scss={scss}
                       label='First Address'
                       labelFor='first_address'
@@ -391,7 +391,7 @@ const Client_V = () => {
                     </CustomContainer>
                     <CustomContainer
                       required
-                      width={50}
+                      width={40}
                       scss={scss}
                       label='Second Address'
                       labelFor='second_address'
@@ -405,7 +405,24 @@ const Client_V = () => {
                         onChange={handleChange}
                         className={scss.lblContent}
                         value={client.clientObj.second_address}
-                        placeholder='District / Municipality, City / Province, Zip Code'
+                        placeholder='District / Municipality, City / Province'
+                      />
+                    </CustomContainer>
+                    <CustomContainer
+                      width={20}
+                      scss={scss}
+                      label='Postal Code'
+                      labelFor='postal_code'
+                      err={client.clientErr.postal_code as string}
+                    >
+                      <input
+                        readOnly
+                        type='text'
+                        id='postal_code'
+                        name='postal_code'
+                        onChange={handleChange}
+                        className={scss.lblContent}
+                        value={client.clientObj.postal_code}
                       />
                     </CustomContainer>
                   </div>
