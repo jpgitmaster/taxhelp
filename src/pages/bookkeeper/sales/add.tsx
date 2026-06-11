@@ -25,7 +25,7 @@ const AddSalesRecord_V = () => {
     customerLoader,
     displayCustomers,
 
-    setVatType,
+    setSales,
     setDisplayTerms,
     setDisplayClients,
     setDisplayCustomers,
@@ -60,7 +60,7 @@ const AddSalesRecord_V = () => {
                 clients={clientArr}
                 loader={clientLoader}
                 displayClients={displayClients}
-
+                err={sales.salesErr.client as string}
                 setDisplayClients={setDisplayClients}
 
                 handleChange={handleChange}
@@ -95,6 +95,7 @@ const AddSalesRecord_V = () => {
                 loader={customerLoader}
                 customers={customerArr}
                 displayCustomers={displayCustomers}
+                err={sales.salesErr.customer as string}
 
                 setDisplayCustomers={setDisplayCustomers}
 
@@ -156,6 +157,7 @@ const AddSalesRecord_V = () => {
                 label='Registered Name'
                 labelFor='registered_name'
                 err={sales.salesErr.registered_name as string}
+                required={sales.salesObj.customer?.classification === 'NON-INDIVIDUAL' ? true : false}
               >
                 <input
                   readOnly
@@ -180,6 +182,7 @@ const AddSalesRecord_V = () => {
                   label='First Name'
                   labelFor='first_name'
                   err={sales.salesErr.first_name as string}
+                  required={sales.salesObj.customer?.classification === 'INDIVIDUAL' ? true : false}
                 >
                   <input
                     readOnly
@@ -200,6 +203,7 @@ const AddSalesRecord_V = () => {
                   label='Middle Name'
                   labelFor='middle_name'
                   err={sales.salesErr.middle_name as string}
+                  required={sales.salesObj.customer?.classification === 'INDIVIDUAL' ? true : false}
                 >
                   <input
                     readOnly
@@ -220,6 +224,7 @@ const AddSalesRecord_V = () => {
                   label='Last Name'
                   labelFor='last_name'
                   err={sales.salesErr.last_name as string}
+                  required={sales.salesObj.customer?.classification === 'INDIVIDUAL' ? true : false}
                 >
                   <input
                     readOnly
@@ -343,20 +348,20 @@ const AddSalesRecord_V = () => {
               width={20}
               scss={scss}
               label='Postal Code'
-              labelFor='second_address'
-              err={sales.salesErr.second_address as string}
+              labelFor='postal_code'
+              err={sales.salesErr.postal_code as string}
             >
               <input
                 readOnly
                 type='text'
                 maxLength={20}
                 autoComplete='off'
-                id='second_address'
-                name='second_address'
+                id='postal_code'
+                name='postal_code'
                 onKeyUp={handleBlur}
                 onChange={handleChange}
                 className={scss.lblContent}
-                value={sales.salesObj.customer?.second_address}
+                value={sales.salesObj.customer?.postal_code}
               />
             </CustomContainer>
           </div>
@@ -404,7 +409,7 @@ const AddSalesRecord_V = () => {
                   value={sales.salesObj.invoice_date ? dayjs(sales.salesObj.invoice_date, dateFormat) : null}
                   onChange={(_, dateString) => handleDate(_, String(dateString), 'invoice_date',)}
                   defaultPickerValue={sales.salesObj.invoice_date ? dayjs(sales.salesObj.invoice_date) : dayjs()}
-                  style={{ border: sales.salesErr.taxable_month ? '1px solid #F00' : '1px solid #D9D9D9' }}
+                  style={{ border: sales.salesErr.invoice_date ? '1px solid #F00' : '1px solid #D9D9D9' }}
                   // disabledDate={(current) => {
                   //     const customDate = dayjs().format(dateFormat);
                   //     return current && current < dayjs(customDate, dateFormat);

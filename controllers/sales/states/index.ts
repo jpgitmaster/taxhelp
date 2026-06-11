@@ -5,7 +5,7 @@ const initSalesObj = {
     terms: '',
     vat_type: 'INCLUSIVE',
     ewt_rate: '',
-    vat_rate: '',
+    vat_rate: '12%',
     tax_amount: '',
     vat_amount: '',
     toDelete: false,

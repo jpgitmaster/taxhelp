@@ -45,6 +45,7 @@
   border: 1px solid $gray;
   background-color: $lightGray;
   @apply w-220 mx-auto relative h-full rounded-[20px] p-5 pb-0 flex flex-col mb-2.5;
+  
   .boxTitle{
     color: rgba($lightBlack, .7);
     font-weight: 600;

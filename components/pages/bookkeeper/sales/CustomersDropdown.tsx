@@ -19,6 +19,7 @@ export default function CustomersDropdown(props: {
             registered_name: string
         }
     }
+    err?: string
     loader: boolean
     customers: CustomersObj[]
     displayCustomers: boolean
@@ -33,6 +34,7 @@ export default function CustomersDropdown(props: {
 }) {
     const {
         doc,
+        err,
         loader,
         customers,
         displayCustomers,
@@ -80,7 +82,7 @@ export default function CustomersDropdown(props: {
     (doc.customer.trade_name ? ` - ${doc.customer.trade_name}` : '');
     return (
         <div className={scss.customDropdown} onClick={handleHeaderClick}>
-            <div className={scss.dropdownInput} onClick={() => handleToggle('customers')} ref={ref}>
+            <div className={scss.dropdownInput + (err ? ' '+scss.err : '')} onClick={() => handleToggle('customers')} ref={ref}>
                 {
                     doc.hasSelectedCustomer ?
                     <div className={scss.erase} onClick={(e) => {

@@ -19,10 +19,11 @@ export default function ClientsDropdown(props: {
             registered_name: string
         }
     }
+    err?: string
     loader: boolean
     clients: ClientObj[]
     displayClients: boolean
-
+    
     setDisplayClients: Dispatch<SetStateAction<boolean>>
 
     handleToggle(dropdown: string): void
@@ -33,6 +34,7 @@ export default function ClientsDropdown(props: {
 }) {
     const {
         doc,
+        err,
         loader,
         clients,
         displayClients,
@@ -80,7 +82,7 @@ export default function ClientsDropdown(props: {
     (doc.client.trade_name ? ` - ${doc.client.trade_name}` : '');
     return (
         <div className={scss.customDropdown} onClick={handleHeaderClick}>
-            <div className={scss.dropdownInput} onClick={() => handleToggle('clients')} ref={ref}>
+            <div className={scss.dropdownInput + (err ? ' '+scss.err : '')} onClick={() => handleToggle('clients')} ref={ref}>
                 {
                     doc.hasSelectedClient ?
                     <div className={scss.erase} onClick={(e) => {

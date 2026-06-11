@@ -1,10 +1,13 @@
 import { Dayjs } from 'dayjs';
 import useSalesAPI from "./api"
+import { SalesErr } from './types'
 import useQueryClients from '../clients/api/queries';
 import useGlobal from '@/controllers/global/useGlobal';
 import useQueryCustomers from '../customers/api/queries';
 import { CustomerObj } from '@/controllers/customers/types'
 import { useState, ChangeEvent, SyntheticEvent } from "react";
+import { initCustomerObj } from '@/controllers/customers/states';
+import ValidatorV3 from '@/components/reusables/validation/ValidatorV3';
 const useSaveSales = () => {
     const {
         handleBlur,
@@ -35,21 +38,7 @@ const useSaveSales = () => {
     const [displayTerms, setDisplayTerms] = useState(false)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayCustomers, setDisplayCustomers] = useState(false)
-    const setVatTypeHandler = (type: 'EXCLUSIVE' | 'INCLUSIVE') => {
-    setSales(prev => {
-        const updatedSalesObj = {
-            ...prev.salesObj,
-            vat_type: type,
-            vatable_sales: '',
-            gross_taxable: ''
-        }
-
-            return {
-                ...prev,
-                salesObj: recalcSales(updatedSalesObj)
-            }
-        })
-    }
+    
     const options = [
         {
             value: 'INCLUSIVE',
@@ -64,6 +53,7 @@ const useSaveSales = () => {
             description: 'Amounts entered do not include VAT and will be subject to VAT computation.'
         },
     ];
+    
     // CLIENT
     const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = getClients(    
         clientFilter.currentPage,
@@ -100,13 +90,7 @@ const useSaveSales = () => {
             trade_name: string
             registered_name: string
         },
-        customer: {
-            id: number | null,
-            last_name: string
-            first_name: string
-            trade_name: string
-            registered_name: string
-        },
+        customer: CustomerObj,
         period: Dayjs | null
     }>({
         clientSearch: '',
@@ -119,11 +103,8 @@ const useSaveSales = () => {
             registered_name: '',
         },
         customer: {
-            id: null,
-            last_name: '',
-            first_name: '',
-            trade_name: '',
-            registered_name: '',
+            ...initCustomerObj,
+            classification: ''
         },
         selectedTerms: {
             value: 'CASH',
@@ -131,7 +112,33 @@ const useSaveSales = () => {
         },
         period: null,
     })
-
+    const fieldValidations = {
+        atc: { usename: 'ATC', required: true },
+        tin: { usename: 'TIN No.', required: true },
+        client: { usename: 'Client', required: true },
+        customer: { usename: 'Customer', required: true },
+        vat_amount: { usename: 'VAT Amount', required: true },
+        particulars: { usename: 'Particulars', required: true },
+        exempt_sales: { usename: 'Exempt Sales', required: true },
+        account_name: { usename: 'Account Name', required: true },
+        invoice_date: { usename: 'Invoice Date', required: true },
+        gross_amount: { usename: 'Gross Amount', required: true },
+        gross_taxable: { usename: 'Gross Taxable', required: true },
+        first_address: { usename: 'First Address', required: true },
+        taxable_month: { usename: 'Taxable Month', required: true },
+        vatable_sales: { usename: 'Vatable Sales', required: true },
+        invoice_number: { usename: 'Invoice Number', required: true },
+        second_address: { usename: 'Second Address', required: true },
+        classification: { usename: 'Classification', required: true },
+        ewt_rate: { usename: 'Withholding Tax Rate', required: true },
+        zero_rated_sales: { usename: 'Zero Rated Sales', required: true },
+        tax_amount: { usename: 'Withholding Tax Amount', required: true },
+        total_gross_amount: { usename: 'Total Gross Amount', required: true },
+        registered_name: { usename: 'Registered Name', ifCondition: {
+            condition: doc.customer?.classification === 'NON-INDIVIDUAL',
+            required: true
+        }},
+    }
     const recalcSales = (salesObj: any) => {
         const VAT_RATE = 0.12
         const toNumber = (val: any) => parseFloat(val) || 0
@@ -243,6 +250,7 @@ const useSaveSales = () => {
                 }
             }
         }))
+        handleRemoveErr(sales.salesErr, 'client')
     }
 
     const handleSelectCustomer = (customer: CustomerObj) => {
@@ -271,6 +279,11 @@ const useSaveSales = () => {
                 }
             }
         }))
+        handleRemoveErr(sales.salesErr, 'tin')
+        handleRemoveErr(sales.salesErr, 'customer')
+        handleRemoveErr(sales.salesErr, 'first_address')
+        handleRemoveErr(sales.salesErr, 'second_address')
+        handleRemoveErr(sales.salesErr, 'classification')
     }
 
     const handleChange = (
@@ -307,7 +320,23 @@ const useSaveSales = () => {
                 }
                 break
             case 'vat_type':
-                setVatTypeHandler(value as 'EXCLUSIVE' | 'INCLUSIVE')
+                setSales(prev => ({
+                    ...prev,
+                    salesObj: {
+                        ...prev.salesObj,
+                        [name]: value
+                    }
+                }))
+                handleRemoveErr(sales.salesErr, 'atc')
+                handleRemoveErr(sales.salesErr, 'ewt_rate')
+                handleRemoveErr(sales.salesErr, 'vat_amount')
+                handleRemoveErr(sales.salesErr, 'tax_amount')
+                handleRemoveErr(sales.salesErr, 'gross_amount')
+                handleRemoveErr(sales.salesErr, 'exempt_sales')
+                handleRemoveErr(sales.salesErr, 'gross_taxable')
+                handleRemoveErr(sales.salesErr, 'vatable_sales')
+                handleRemoveErr(sales.salesErr, 'zero_rated_sales')
+                handleRemoveErr(sales.salesErr, 'total_gross_amount')
                 break;
             case 'gross_taxable':
                 if (value === '' || regexNumericDecimalOnly.test(value)) {
@@ -347,6 +376,15 @@ const useSaveSales = () => {
                         })
                     }, 0)
                 }
+                handleRemoveErr(sales.salesErr, 'ewt_rate')
+                handleRemoveErr(sales.salesErr, 'vat_amount')
+                handleRemoveErr(sales.salesErr, 'tax_amount')
+                handleRemoveErr(sales.salesErr, 'gross_amount')
+                handleRemoveErr(sales.salesErr, 'exempt_sales')
+                handleRemoveErr(sales.salesErr, 'gross_taxable')
+                handleRemoveErr(sales.salesErr, 'vatable_sales')
+                handleRemoveErr(sales.salesErr, 'zero_rated_sales')
+                handleRemoveErr(sales.salesErr, 'total_gross_amount')
                 break
             case 'vatable_sales':
             case 'exempt_sales':
@@ -384,6 +422,15 @@ const useSaveSales = () => {
                             salesObj: recalcSales(updatedSalesObj)
                         }
                     })
+                    handleRemoveErr(sales.salesErr, 'ewt_rate')
+                    handleRemoveErr(sales.salesErr, 'vat_amount')
+                    handleRemoveErr(sales.salesErr, 'tax_amount')
+                    handleRemoveErr(sales.salesErr, 'gross_amount')
+                    handleRemoveErr(sales.salesErr, 'exempt_sales')
+                    handleRemoveErr(sales.salesErr, 'gross_taxable')
+                    handleRemoveErr(sales.salesErr, 'vatable_sales')
+                    handleRemoveErr(sales.salesErr, 'zero_rated_sales')
+                    handleRemoveErr(sales.salesErr, 'total_gross_amount')
                 }
                 break
             default:
@@ -396,7 +443,6 @@ const useSaveSales = () => {
                 }))
                 break;
         }
-
         handleRemoveErr(sales.salesErr, name)
     }
     
@@ -416,13 +462,50 @@ const useSaveSales = () => {
                 salesObj: updatedSalesObj
             }
         })
-
         handleRemoveErr(sales.salesErr, name)
     }
 
     const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         setStatus({...status, loader: true})
+        const {
+            validation_errors,
+            validation_has_error,
+        } = ValidatorV3(fieldValidations, {
+            tin: doc.customer?.tin || '',
+            atc: sales.salesObj.atc || '',
+            ewt_rate: sales.salesObj.ewt_rate || '',
+            client: doc.client?.id ? String(doc.client?.id) : '',
+            customer: doc.customer?.id ? String(doc.customer?.id) : '',
+            terms: sales.salesObj.terms || '',
+            tax_amount: sales.salesObj.tax_amount || '',
+            vat_amount: sales.salesObj.vat_amount || '',
+            particulars: sales.salesObj.particulars || '',
+            gross_amount: sales.salesObj.gross_amount || '',
+            exempt_sales: sales.salesObj.exempt_sales || '',
+            account_name: sales.salesObj.account_name || '',
+            invoice_date: sales.salesObj.invoice_date || '',
+            first_address: doc.customer?.first_address || '',
+            gross_taxable: sales.salesObj.gross_taxable || '',
+            vatable_sales: sales.salesObj.vatable_sales || '',
+            second_address: doc.customer?.second_address || '',
+            classification: doc.customer?.classification || '',
+            taxable_month: sales.salesObj.taxable_month || '',
+            invoice_number: sales.salesObj.invoice_number || '',
+            zero_rated_sales: sales.salesObj.zero_rated_sales || '',
+            total_gross_amount: sales.salesObj.total_gross_amount || '',
+        })
+        if (validation_has_error) {
+            const timer = setTimeout(() => {
+                setSales({
+                    ...sales,
+                    salesErr: validation_errors as SalesErr
+                })
+                setStatus({...status, loader: false})
+                return false
+            }, 500)
+            return () => clearTimeout(timer)
+        }
     }
     
     return {
@@ -440,10 +523,10 @@ const useSaveSales = () => {
         customerLoader: isLoadingCustomers || isFetchingCustomers,
 
         // SET STATES
+        setSales,
         setDisplayTerms,
         setDisplayClients,
         setDisplayCustomers,
-        setVatType: setVatTypeHandler,
 
         // HANDLES
         handleBlur,

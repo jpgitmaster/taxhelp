@@ -24,7 +24,10 @@ interface SalesObj{
     created_at?: Dayjs | null
     taxable_month: Dayjs | null
 }
-
+type SalesErr = {
+    client: string
+    customer: string
+}
 interface Sales{
     salesObj: SalesObj
     salesArr: SalesObj[]
@@ -84,6 +87,7 @@ export type {
     Sales,
     SalesObj,
     DocState,
+    SalesErr,
     AppliedDoc,
     SalesTableRow,
 }
