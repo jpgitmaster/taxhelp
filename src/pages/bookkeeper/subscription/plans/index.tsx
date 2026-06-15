@@ -21,48 +21,50 @@ const SubscriptionPlans_V = () => {
                 {
                     title: 'Usage Limits',
                     children: [
-                        '60 total rows',
-                        '3 clients maximum',
-                        '3 customers maximum',
-                        '3 suppliers maximum',
-                        '20 rows per client',
+                    'Up to 3 clients',
+                    'Maximum of 20 records per client',
+                    'Maximum of 60 records total',
                     ],
                 },
                 {
-                    title: 'Modules',
+                    title: 'Modules Included',
                     children: [
-                        'Sales tracking',
-                        'Purchases tracking',
+                    'Sales Tracking',
+                    'Purchase Tracking',
                     ],
                 },
                 {
                     title: 'Calendar',
                     children: [
-                        '10 schedules per week',
-                        '1 day per schedule',
-                        '2 categories only',
-                        'total of 60 records and 20 records per client in sales table',
-                        'total of 60 records and 20 records per client in purchase table',
-                        '20 records per client in DAT file generation',
+                    'Up to 10 schedules per week',
+                    'Single-day schedules only',
+                    'Up to 2 calendar categories',
+                    ],
+                },
+                {
+                    title: 'File Generation',
+                    children: [
+                    'Up to 20 records per client',
+                    'DAT file generation included',
                     ],
                 },
                 {
                     title: 'Included',
                     children: [
-                        'Basic reporting view',
-                        'Simple data tracking',
+                    'Basic reports',
+                    'Simple business tracking',
                     ],
                 },
                 {
                     title: 'Limitations',
                     children: [
-                        '20 records per client in file generation',
-                        'No receipts & disbursements',
-                        'Limited calendar functionality',
+                    'No Receipts module',
+                    'No Disbursements module',
+                    'Limited calendar functionality',
                     ],
                 },
             ],
-            note: 'Best for freelancers or small startups testing the system',
+            note: 'Perfect for freelancers, startups, and small businesses exploring the platform.',
             cta: 'Get Started',
         },
         {
@@ -75,49 +77,47 @@ const SubscriptionPlans_V = () => {
                 {
                     title: 'Usage Limits',
                     children: [
-                        'Unlimited schedules',
-                        'Multiple days per schedule',
-                        '10 categories',
-                        '10 clients',
-                        'total of 1000 records and 100 records per client in sales table',
-                        'total of 1000 records and 100 records per client in purchase table',
-                        '100 records per client in DAT file generation',
+                    'Up to 10 clients',
+                    'Maximum of 100 records per client',
+                    'Maximum of 1,000 records total',
                     ],
                 },
                 {
-                    title: 'Modules',
+                    title: 'Modules Included',
                     children: [
-                        'Sales',
-                        'Purchases',
-                        'Receipts',
-                        'Disbursements',
+                    'Sales',
+                    'Purchases',
+                    'Receipts',
+                    'Disbursements',
                     ],
                 },
                 {
-                    title: 'File Generation',
+                    title: 'DAT File Generation',
                     children: [
-                        'DAT Files:',
-                        '   SLS, SLP, QAP, SAWT',
+                    'SLS',
+                    'SLP',
+                    'QAP',
+                    'SAWT',
                     ],
                 },
                 {
                     title: 'Calendar',
                     children: [
-                        '100 events (multi-day supported)',
-                        '3 categories:',
-                        '   Green: Owner Schedule',
-                        '   Blue: Holidays / Birthdays',
-                        '   Red: Tax Deadlines',
+                    'Up to 100 events',
+                    'Multi-day events supported',
+                    'Up to 10 categories',
+                    'Predefined categories for schedules, holidays, and tax deadlines',
                     ],
                 },
-                // {
-                //     title: 'Support',
-                //     children: [
-                //         'Priority support',
-                //     ],
-                // },
+                {
+                    title: 'Reports & Compliance',
+                    children: [
+                    'Enhanced reporting tools',
+                    'BIR compliance support',
+                    ],
+                },
             ],
-            note: 'Ideal for SMEs managing multiple clients and compliance',
+            note: 'Ideal for growing businesses and accounting professionals managing multiple clients.',
             cta: 'Upgrade to Pro',
         },
         {
@@ -127,42 +127,55 @@ const SubscriptionPlans_V = () => {
             description: 'Advanced tools for large operations',
             highlight: false,
             features: [
-                { title: 'Unlimited rows' },
-                { title: 'Unlimited clients' },
+                {
+                    title: 'Usage Limits',
+                    children: [
+                    'Unlimited clients',
+                    'Unlimited records',
+                    ],
+                },
                 {
                     title: 'Full Accounting Suite',
                     children: [
-                        'General Journal',
-                        'General Ledger',
-                        'Trial Balance',
+                    'General Journal',
+                    'General Ledger',
+                    'Trial Balance',
                     ],
                 },
                 {
                     title: 'Books of Accounts',
                     children: [
-                        'Sales Journal',
-                        'Purchase Journal',
-                        'Cash Disbursement',
-                        'Cash Receipts',
+                    'Sales Journal',
+                    'Purchase Journal',
+                    'Cash Receipts Journal',
+                    'Cash Disbursements Journal',
                     ],
                 },
                 {
                     title: 'File Generation',
                     children: [
-                        'DAT Files (SLS, SLP, QAP, SAWT)',
-                        'Standard invoice PDF'
+                    'DAT Files (SLS, SLP, QAP, SAWT)',
+                    'Standard Invoice PDF Generation',
                     ],
                 },
                 {
                     title: 'Calendar',
                     children: [
-                        'Unlimited events',
-                        'Unlimited categories',
+                    'Unlimited events',
+                    'Unlimited categories',
+                    ],
+                },
+                {
+                    title: 'Advanced Features',
+                    children: [
+                    'Comprehensive accounting reports',
+                    'Business-wide financial tracking',
+                    'Enterprise-level scalability',
                     ],
                 },
             ],
             cta: 'Get Started',
-            note: 'Ideal for large-scale operations with advanced accounting needs.',
+            note: 'Designed for established businesses and firms that require complete accounting and compliance management.',
         },
     ]
 
@@ -172,10 +185,10 @@ const SubscriptionPlans_V = () => {
                 {/* Header */}
                 <div className={scss.boxTitle}>
                     <h2>
-                        Choose Your Plan
+                        Choose the Right Plan for Your Business
                     </h2>
                     <p>
-                        Flexible pricing for businesses of all sizes. Upgrade anytime.
+                        Flexible and affordable pricing designed for freelancers, bookkeepers, and growing businesses.
                     </p>
                 </div>
 
@@ -289,12 +302,11 @@ const SubscriptionPlans_V = () => {
                     <div className={scss.customSolution}>
 
                         <h3>
-                            Need Something Beyond Enterprise?
+                            Need a Custom Solution?
                         </h3>
 
                         <p>
-                            If your business requires specific workflows, custom reports, or system integrations,
-                            we offer tailored solutions designed exactly for your operations.
+                            If your business requires custom workflows, specialized reports, unique document formats, or third-party integrations, we can build a solution tailored to your operations.
                         </p>
 
                         <div className={scss.customFeatures}>
@@ -316,7 +328,7 @@ const SubscriptionPlans_V = () => {
                             onClick={() => setShowModal(true)}
                             className={scss.button+' '+scss.btnblue}
                         >
-                            Let&rsquo;s Talk Business
+                            Request a Consultation
                         </button>
 
                         <p className={scss.note}>

@@ -39,7 +39,7 @@ const useSaveCustomer = () => {
             required: true
         }},
         email: { usename: 'Email', email: true },
-        representative_phone: { usename: 'Phone', required: true },
+        phone_number: { usename: 'Phone', required: true },
         first_address: { usename: 'First Address', required: true },
         second_address: { usename: 'Second Address', required: true },
         registered_name: { usename: 'Registered Name', ifCondition: {
@@ -119,12 +119,12 @@ const useSaveCustomer = () => {
                     }
                 })
                 break;
-            case 'phone':
+            case 'phone_number':
                 setCustomer({
                     ...customer,
                     customerObj: {
                         ...customer.customerObj,
-                        phone: formatPhoneNumber(value)
+                        phone_number: formatPhoneNumber(value)
                     }
                 })
                 break;
@@ -195,7 +195,22 @@ const useSaveCustomer = () => {
         }
 
         // CLIENT UPDATE
-        useUpdateCustomer.mutate(customer.customerObj)
+        useUpdateCustomer.mutate(customer.customerObj, {
+            onSuccess: () => {
+                sessionStorage.setItem(
+                    'successMessage',
+                    'Your customer has been updated.'
+                )
+                if(customerID){
+                    router.push('/bookkeeper/users/customers/'+customerID)
+                }else{
+                    router.push('/bookkeeper/users/customers')
+                }
+            },
+            onError: (error) => {
+                console.log(error)
+            }
+        })
     }
 
     useEffect(() => {
@@ -207,10 +222,13 @@ const useSaveCustomer = () => {
                     ...prev.customerObj,
                     id: fetchedCustomer.id || null,
                     tin: fetchedCustomer.tin || '',
-                    trade_name: fetchedCustomer.trade_name || '',
+                    email: fetchedCustomer.email || '',
                     last_name: fetchedCustomer.last_name || '',
                     first_name: fetchedCustomer.first_name || '',
+                    trade_name: fetchedCustomer.trade_name || '',
                     middle_name: fetchedCustomer.middle_name || '',
+                    postal_code: fetchedCustomer.postal_code || '',
+                    phone_number: fetchedCustomer.phone_number || '',
                     first_address: fetchedCustomer.first_address || '',
                     second_address: fetchedCustomer.second_address || '',
                     classification: fetchedCustomer.classification || '',

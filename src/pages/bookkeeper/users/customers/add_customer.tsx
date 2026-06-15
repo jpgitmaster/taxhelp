@@ -181,19 +181,19 @@ const AddCustomer_V = () => {
                       scss={scss}
                       width={50}
                       label='Phone Number'
-                      labelFor='phone'
-                      err={customer.customerErr.phone as string}
+                      labelFor='phone_number'
+                      err={customer.customerErr.phone_number as string}
                     >
                       <input
-                        id='phone'
+                        id='phone_number'
                         type='text'
-                        name='phone'
+                        name='phone_number'
                         maxLength={30}
                         autoComplete='off'
                         placeholder='(+63)926-123-4567'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={customer.customerObj.phone}
+                        value={customer.customerObj.phone_number}
                       />
                     </CustomContainer>
                     <CustomContainer

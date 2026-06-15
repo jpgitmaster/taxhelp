@@ -177,18 +177,18 @@ const Customer_V = () => {
                       scss={scss}
                       width={50}
                       label='Phone Number'
-                      labelFor='phone'
-                      err={customer.customerErr.phone as string}
+                      labelFor='phone_number'
+                      err={customer.customerErr.phone_number as string}
                     >
                       <input
                         readOnly
-                        id='phone'
                         type='text'
-                        name='phone'
+                        id='phone_number'
+                        name='phone_number'
                         onChange={handleChange}
                         className={scss.lblContent}
                         placeholder='(+63)926-123-4567'
-                        value={customer.customerObj.phone}
+                        value={customer.customerObj.phone_number}
                       />
                     </CustomContainer>
                     <CustomContainer

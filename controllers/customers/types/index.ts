@@ -1,7 +1,6 @@
 interface CustomerObj{
   tin: string
   email: string
-  phone: string
   created_at?: Date
   id: number | null
   last_name: string
@@ -9,6 +8,7 @@ interface CustomerObj{
   first_name: string
   middle_name: string
   postal_code: string
+  phone_number: string
   first_address: string
   second_address: string
   classification: string
@@ -18,11 +18,11 @@ interface CustomerObj{
 type CustomerErr = {
   tin: string
   email: string
-  phone: string
   last_name: string
   trade_name: string
   first_name: string
   middle_name: string
+  phone_number: string
   first_address: string
   second_address: string
   classification: string
@@ -40,9 +40,9 @@ type CustomerRow = {
   id: number | null
   tin: string
   email: string
-  phone: string
   trade_name: string
   created_at: string
+  phone_number: string
   customer_name: string
   first_address: string
   second_address: string

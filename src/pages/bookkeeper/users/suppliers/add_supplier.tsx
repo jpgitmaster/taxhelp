@@ -181,19 +181,19 @@ const AddSupplier_V = () => {
                       scss={scss}
                       width={50}
                       label='Phone Number'
-                      labelFor='phone'
-                      err={supplier.supplierErr.phone as string}
+                      labelFor='phone_number'
+                      err={supplier.supplierErr.phone_number as string}
                     >
                       <input
-                        id='phone'
                         type='text'
-                        name='phone'
                         maxLength={30}
+                        id='phone_number'
                         autoComplete='off'
+                        name='phone_number'
                         placeholder='(+63)926-123-4567'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
-                        value={supplier.supplierObj.phone}
+                        value={supplier.supplierObj.phone_number}
                       />
                     </CustomContainer>
                     <CustomContainer

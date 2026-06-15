@@ -14,7 +14,6 @@ import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 
 const Clients_V = () => {
     const {
-        user,
         loader,
         filter,
         status,

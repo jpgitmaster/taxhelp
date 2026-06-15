@@ -39,7 +39,7 @@ const useSaveSupplier = () => {
             required: true
         }},
         email: { usename: 'Email', required: true, email: true },
-        representative_phone: { usename: 'Phone', required: true },
+        phone_number: { usename: 'Phone', required: true },
         first_address: { usename: 'First Address', required: true },
         second_address: { usename: 'Second Address', required: true },
         registered_name: { usename: 'Registered Name', ifCondition: {
@@ -121,12 +121,12 @@ const useSaveSupplier = () => {
                     }
                 })
                 break;
-            case 'phone':
+            case 'phone_number':
                 setSupplier({
                     ...supplier,
                     supplierObj: {
                         ...supplier.supplierObj,
-                        phone: formatPhoneNumber(value)
+                        phone_number: formatPhoneNumber(value)
                     }
                 })
                 break;
@@ -197,7 +197,22 @@ const useSaveSupplier = () => {
         }
 
         // CLIENT UPDATE
-        useUpdateSupplier.mutate(supplier.supplierObj)
+        useUpdateSupplier.mutate(supplier.supplierObj, {
+            onSuccess: () => {
+                sessionStorage.setItem(
+                    'successMessage',
+                    'Your supplier has been updated.'
+                )
+                if(supplierID){
+                    router.push('/bookkeeper/users/suppliers/'+supplierID)
+                }else{
+                    router.push('/bookkeeper/users/suppliers')
+                }
+            },
+            onError: (error) => {
+                console.log(error)
+            }
+        })
     }
 
     useEffect(() => {
@@ -209,10 +224,13 @@ const useSaveSupplier = () => {
                     ...prev.supplierObj,
                     id: fetchedSupplier.id || null,
                     tin: fetchedSupplier.tin || '',
+                    email: fetchedSupplier.email || '',
                     trade_name: fetchedSupplier.trade_name || '',
                     last_name: fetchedSupplier.last_name || '',
                     first_name: fetchedSupplier.first_name || '',
                     middle_name: fetchedSupplier.middle_name || '',
+                    postal_code: fetchedSupplier.postal_code || '',
+                    phone_number: fetchedSupplier.phone_number || '',
                     first_address: fetchedSupplier.first_address || '',
                     second_address: fetchedSupplier.second_address || '',
                     classification: fetchedSupplier.classification || '',
