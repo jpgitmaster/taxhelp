@@ -503,9 +503,9 @@ const useUploadDocuments = () => {
                 `${firstName} ${lastName}`.trim() +
                 (middleName ? `, ${middleName}` : ''),
 
-            address1: row['ADDRESS ONE'],
+            address1: row['FIRST ADDRESS'],
 
-            address2: row['ADDRESS TWO'],
+            address2: row['SECOND ADDRESS'],
         }
     }
 
@@ -665,9 +665,8 @@ const useUploadDocuments = () => {
         const json = XLSX.utils.sheet_to_json(sheet, {
             defval: '',
         })
-
-        // console.log('Raw Rows:', json.length)
-        // console.log('First Raw Row:', json[0])
+        console.log(json[0])
+        console.log(Object.keys(json[0] || {}))
 
         const mappedRows = json.map((row, index) =>
             mapRow(row, index)
