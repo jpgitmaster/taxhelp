@@ -371,17 +371,17 @@ const AddSalesRecord_V = () => {
                   placeholder='(+63)926-123-4567'
                   onKeyUp={handleBlur}
                   onChange={handleChange}
-                  value={sales.salesObj.customer?.phone}
+                  value={sales.salesObj.customer?.phone_number}
                 />
                 :
                 <input
                   readOnly
-                  id='phone'
+                  id='phone_number'
                   type='text'
-                  name='phone'
+                  name='phone_number'
                   onChange={handleChange}
                   className={scss.lblContent}
-                  value={sales.salesObj.customer?.phone}
+                  value={sales.salesObj.customer?.phone_number}
                 />
               }
             </CustomContainer>

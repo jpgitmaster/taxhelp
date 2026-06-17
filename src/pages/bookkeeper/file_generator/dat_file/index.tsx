@@ -99,7 +99,7 @@ const DAT_File_V = () => {
           registered_name: doc.customer?.registered_name,
           first_address: doc.customer?.first_address,
           second_address: doc.customer?.second_address,
-          name:
+          individual_name:
             (doc.customer?.first_name || '') + ' ' +
             (doc.customer?.middle_name || '') + ' ' +
             (doc.customer?.last_name || ''),
@@ -200,8 +200,8 @@ const DAT_File_V = () => {
                 dataIndex: 'registered_name',
             },
             {
-                title: 'Business Owner',
-                dataIndex: 'name',
+                title: 'Individual Name',
+                dataIndex: 'individual_name',
             },
             {
                 title: 'First Address',

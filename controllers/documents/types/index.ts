@@ -36,7 +36,7 @@ type ExcelRow = {
   tin: string
   branchCode: string
   registeredName: string
-  businessOwner: string
+  individualName: string
   address1: string
   address2: string
 

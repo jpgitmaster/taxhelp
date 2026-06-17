@@ -79,7 +79,7 @@ const Sales_V = () => {
         created_date: sales.created_at ? dayjs(sales.created_at)?.format('MM/DD/YYYY') : '',
         invoice_date: sales.invoice_date ? dayjs(sales.invoice_date)?.format('MM/DD/YYYY') : '',
         taxable_month: sales.taxable_month ? dayjs(sales.taxable_month)?.format('MM/DD/YYYY') : '',
-        business_owner: 
+        indivicdual_name: 
           (sales.customer?.first_name ? sales.customer.first_name+' ' : '')+
           (sales.customer?.middle_name ? sales.customer.middle_name+' ' : '')+
           (sales.customer?.last_name ? sales.customer.last_name : ''),
@@ -118,9 +118,9 @@ const Sales_V = () => {
       dataIndex: 'registered_name',
     },
     {
-      title: 'Business Owner',
-      key: 'business_owner',
-      dataIndex: 'business_owner',
+      title: 'Individual Name',
+      key: 'indivicdual_name',
+      dataIndex: 'indivicdual_name',
     },
     {
       title: 'First Address',

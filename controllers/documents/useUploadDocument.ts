@@ -168,9 +168,9 @@ const useUploadDocuments = () => {
         },
 
         {
-            key: 'businessOwner',
-            title: 'Business Owner',
-            dataIndex: 'businessOwner',
+            key: 'individualName',
+            title: 'Individual Name',
+            dataIndex: 'individualName',
         },
 
         {
@@ -499,7 +499,7 @@ const useUploadDocuments = () => {
 
             registeredName: row['REGISTERED NAME'],
 
-            businessOwner:
+            individualName:
                 `${firstName} ${lastName}`.trim() +
                 (middleName ? `, ${middleName}` : ''),
 

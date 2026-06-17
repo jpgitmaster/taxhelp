@@ -73,7 +73,7 @@ const Purchases_V = () => {
         vatable_purchase_of_capital_goods: Number(purchases.vatable_purchase_of_capital_goods || 0),
         invoice_date: purchases.invoice_date ? dayjs(purchases.invoice_date)?.format('MM/DD/YYYY') : '',
         taxable_month: purchases.taxable_month ? dayjs(purchases.taxable_month)?.format('MM/DD/YYYY') : '',
-        business_owner: 
+        individual_name: 
           (purchases.supplier?.first_name ? purchases.supplier.first_name+' ' : '')+
           (purchases.supplier?.middle_name ? purchases.supplier.middle_name+' ' : '')+
           (purchases.supplier?.last_name ? purchases.supplier.last_name : ''),
@@ -102,9 +102,9 @@ const Purchases_V = () => {
       dataIndex: 'registered_name',
     },
     {
-      title: 'Business Owner',
-      key: 'business_owner',
-      dataIndex: 'business_owner',
+      title: 'Individual Name',
+      key: 'individual_name',
+      dataIndex: 'individual_name',
     },
     {
       title: 'First Address',
