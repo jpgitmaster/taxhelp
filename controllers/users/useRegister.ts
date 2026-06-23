@@ -22,7 +22,7 @@ const useRegister = () => {
     } = useMutationUsers()
     const [displayPassword, setDisplayPassword] = useState(false)
     const [passwordChecker, setPasswordChecker] = useState(false)
-    const [checkedRoles, setCheckedRoles] = useState<string[]>([]);
+    const [checkedFeatures, setCheckedFeatures] = useState<string[]>([]);
     const fieldValidations = {
         password: { usename: 'Password', required: true, regex: {
             message: '8 chars with uppercase, lowercase, numbers & symbols',
@@ -31,18 +31,20 @@ const useRegister = () => {
         email: { usename: 'Email', required: true, email: true },
         confirmPassword: { usename: 'Confirm Password', required: true, confirm: user.userObj.password },
     }
-    const roles = [
+    const features = [
         {
-            value: 'business_owner',
-            label: 'Business Owner',
-            icon: 'business_owner.svg',
-            description: 'Manage your business taxes and track your filings.'
+            disabled: false,
+            value: 'dat',
+            label: 'DAT File',
+            icon: 'dat_file.svg',
+            description: 'Manage tax filing data and related records.'
         },
         {
-            value: 'bookkeeper',
-            label: 'Bookkeeper',
-            icon: 'bookkeeper.svg',
-            description: 'Manage financial records and prepare tax-ready reports.'
+            disabled: false,
+            value: 'journal',
+            label: 'Books of Accounts',
+            icon: 'books_of_accounts.svg',
+            description: 'Maintain financial records and accounting books.'
         },
     ];
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -56,9 +58,9 @@ const useRegister = () => {
         })
         handleRemoveErr(user.userErr, name)
     }
-    const handleCheckedRoles = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleCheckedFeatures = (event: ChangeEvent<HTMLInputElement>) => {
         const { value, checked } = event.target;
-        setCheckedRoles(prev => {
+        setCheckedFeatures(prev => {
             if (checked) {
                 // ✅ add to array
                 return [...prev, value];
@@ -102,7 +104,7 @@ const useRegister = () => {
         // REGISTER
         createUserMutation.mutate({
             user: user.userObj,
-            checkedRoles: checkedRoles
+            checkedFeatures: checkedFeatures
         }, {
             onSuccess: () => {
                 setTimeout(() => {
@@ -137,17 +139,17 @@ const useRegister = () => {
     return {
         // STATES
         user,
-        roles,
         status,
         initUser,
-        checkedRoles,
+        features,
+        checkedFeatures,
         displayPassword,
         passwordChecker,
 
         // SET STATES
         setUser,
         setStatus,
-        setCheckedRoles,
+        setCheckedFeatures,
         setDisplayPassword,
         setPasswordChecker,
 
@@ -156,7 +158,7 @@ const useRegister = () => {
         handleChange,
         handleResubmit,
         handleRegisterUser,
-        handleCheckedRoles
+        handleCheckedFeatures
     }
 }
 

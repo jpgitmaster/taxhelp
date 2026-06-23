@@ -20,7 +20,7 @@ type RegisterErrorResponse = {
 
 type RegisterPayload = {
     user: UserObj
-    checkedRoles: string[]
+    checkedFeatures: string[]
 }
 const useMutationUsers = () => {
     const queryClient = useQueryClient()
@@ -36,18 +36,28 @@ const useMutationUsers = () => {
     >({
         mutationFn: async ({
             user,
-            checkedRoles
-        }: {
-            user: UserObj
-            checkedRoles: string[]
-        }) => {
+            checkedFeatures
+        }: RegisterPayload) => {
+            let appType: 'dat' | 'journal' | 'custom' = 'dat';
+
+            if (
+                checkedFeatures.includes('dat') &&
+                checkedFeatures.includes('journal')
+            ) {
+                appType = 'custom';
+            } else if (checkedFeatures.includes('journal')) {
+                appType = 'journal';
+            }
+
             const res = await api.post(`/api/${apiVersion}/auth/register`, {
                 email: user.email,
-                roles: checkedRoles,
                 password: user.password,
                 confirm_password: user.confirmPassword,
-            })
-            return res.data
+                roles: ['bookkeeper'],
+                app_type: appType,
+            });
+
+            return res.data;
         },
         onError: (error) => {
             console.log(error)

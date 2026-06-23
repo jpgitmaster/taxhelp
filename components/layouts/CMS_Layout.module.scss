@@ -393,6 +393,13 @@ body, html{
         @apply px-2;
         &.slideLeft{
             @apply w-12.5 px-1.5;
+            :global(.ant-skeleton) {
+                width: 100% !important;
+            }
+            :global(.ant-skeleton-input) {
+                width: 100% !important;
+                min-width: inherit !important;
+            }
             .links{
                 li{
                     .mainLink{

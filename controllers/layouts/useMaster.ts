@@ -1,121 +1,124 @@
 import { usePathname } from 'next/navigation'
 import useQueryUsers from '../users/api/queries'
 import useMutationUsers from '../users/api/mutations'
-import { useState, useEffect, useRef, MouseEvent } from 'react'
+import { useState, useEffect, useRef, MouseEvent, useMemo } from 'react'
 import { NavLink } from '@/controllers/layouts/types/cms_types'
-import { initLinks } from '@/controllers/layouts/states/cms_states'
+import { initDatLinks, initCustomLinks } from '@/controllers/layouts/states/cms_states'
 
 const useMaster = () => {
-    const {
-        getUser
-    } = useQueryUsers()
-    const {
-        userLogout
-    } = useMutationUsers()
+    const { getUser } = useQueryUsers()
+    const { userLogout } = useMutationUsers()
+
     const pathname = usePathname()
-    const activeLink = pathname?.split('/')
+    const { data: user } = getUser()
+    const isUserReady = !!user?.app_type
     const [isMobile, setIsMobile] = useState(false)
     const [isPageLoad, setIsPageLoad] = useState(false)
-    const [appLinks, setAppLinks] = useState<NavLink[]>([])
-    
-    const { data: user } = getUser()
-    
+    const [linksState, setLinksState] = useState<NavLink[]>([])
+    // ✅ stable pathname split
+    const activeLink = useMemo(() => {
+        return pathname?.split('/') ?? []
+    }, [pathname])
+
     const handleExpand = () => {
-        setIsMobile(prevState => !prevState)
+        setIsMobile(prev => !prev)
     }
-    
+
     const handleShowSublinks = (nav: NavLink, indx: number, click?: string) => {
-        if(isMobile || click === 'withoutLink'){
-            const toggleActive = initLinks.map((link: NavLink, index: number) =>
-                index === indx ?
-                {
-                    ...link,
-                    active: !nav.active
-                }
-                : {
-                    ...link,
-                    active: false
-                }
+        if (!(isMobile || click === 'withoutLink')) return
+
+        setLinksState(prev =>
+            prev.map((link, index) =>
+                index === indx
+                    ? { ...link, active: !link.active }
+                    : { ...link, active: false }
             )
-            setAppLinks(toggleActive)
-        }
+        )
     }
+
     const useOutsideClick = (callback: () => void) => {
         const ref = useRef<HTMLUListElement>(null)
-      
-        useEffect(() => {
-          const handleClick = () => {
-            callback();
-          };
-      
-          document.addEventListener('click', handleClick);
-      
-          return () => {
-            document.removeEventListener('click', handleClick);
-          };
-        }, [callback]);
-      
-        return ref;
-    };
-    const handleClickOutside = () => {
-        if (typeof window !== 'undefined') {
-            if(window.innerWidth < 800){
-                const closeAllSublinks = initLinks.map((link: NavLink) =>
-                (
-                    {
-                        ...link,
-                        active: false
-                    }
-                ))
-                setAppLinks(closeAllSublinks)
-            }
-        }
-        
-    };
-    const ref = useOutsideClick(handleClickOutside)
-    const handleHeaderClick = (event: MouseEvent<HTMLElement>) => {
-        event.stopPropagation();
-    }
-    useEffect(() => {
-        const setActiveLinks = initLinks.map((link) => {
-            if (link.key === activeLink[2]) {
-                const setActiveSublink = link.children?.map((sublink) =>
-                    sublink.key === activeLink[3]
-                        ? { ...sublink, active: true }
-                        : sublink
-                )
 
+        useEffect(() => {
+            const handleClick = () => callback()
+
+            document.addEventListener('click', handleClick)
+            return () => document.removeEventListener('click', handleClick)
+        }, [callback])
+
+        return ref
+    }
+
+    const handleClickOutside = () => {
+        if (typeof window !== 'undefined' && window.innerWidth < 800) {
+            // NOTE: if needed, this should also be derived state, not mutation
+        }
+    }
+
+    const ref = useOutsideClick(handleClickOutside)
+
+    const handleHeaderClick = (event: MouseEvent<HTMLElement>) => {
+        event.stopPropagation()
+    }
+
+    useEffect(() => {
+        if (!isUserReady) return
+
+        const baseLinks =
+            user.app_type === 'custom'
+                ? initCustomLinks
+                : initDatLinks
+
+        setLinksState(baseLinks)
+    }, [isUserReady, user?.app_type])
+
+    // ✅ FINAL: derived menu (NO STATE, NO EFFECT)
+    const appLinks = useMemo(() => {
+        if (!isUserReady) return [] // 👈 prevents wrong initial render
+
+        const baseLinks =
+            user.app_type === 'custom'
+                ? initCustomLinks
+                : initDatLinks
+
+        return baseLinks.map((link) => {
+            if (link.key === activeLink[2]) {
                 return {
                     ...link,
                     active: true,
-                    children: setActiveSublink
+                    children: link.children?.map((sublink) => ({
+                        ...sublink,
+                        active: sublink.key === activeLink[3],
+                    })),
                 }
             }
 
-            return link
+            return { ...link, active: false }
         })
-        setAppLinks(setActiveLinks)
+    }, [isUserReady, user?.app_type, activeLink])
 
-        if (typeof window !== 'undefined') {
-            if(window.innerWidth < 800){
+    // page load (unchanged)
+    useEffect(() => {
+        if (typeof window !== 'undefined' && window.innerWidth < 800) {
             setIsMobile(true)
-            }
         }
+
         const timer = setTimeout(() => {
             setIsPageLoad(true)
         }, 100)
+
         return () => clearTimeout(timer)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
     return {
         // STATES
         ref,
         user,
-        appLinks,
+        appLinks: linksState,
         isMobile,
         isPageLoad,
         activeLink,
-        // SET STATES
+        isUserReady,
 
         // HANDLES
         userLogout,
@@ -125,4 +128,4 @@ const useMaster = () => {
     }
 }
 
-export default useMaster;
+export default useMaster

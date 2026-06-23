@@ -22,47 +22,47 @@ const SubscriptionPlans_V = () => {
                     title: 'Usage Limits',
                     children: [
                     'Up to 3 clients',
-                    'Maximum of 20 records per client',
-                    'Maximum of 60 records total',
+                    'Maximum of 20 records per transaction',
+                    // 'Maximum of 60 records total',
                     ],
                 },
-                {
-                    title: 'Modules Included',
-                    children: [
-                    'Sales Tracking',
-                    'Purchase Tracking',
-                    ],
-                },
+                // {
+                //     title: 'Modules Included',
+                //     children: [
+                //     'Sales Tracking',
+                //     'Purchase Tracking',
+                //     ],
+                // },
                 {
                     title: 'Calendar',
                     children: [
-                    'Up to 10 schedules per week',
-                    'Single-day schedules only',
+                    'Up to 5 schedules per week',
                     'Up to 2 calendar categories',
+                    'Single-day schedules only',
                     ],
                 },
-                {
-                    title: 'File Generation',
-                    children: [
-                    'Up to 20 records per client',
-                    'DAT file generation included',
-                    ],
-                },
-                {
-                    title: 'Included',
-                    children: [
-                    'Basic reports',
-                    'Simple business tracking',
-                    ],
-                },
-                {
-                    title: 'Limitations',
-                    children: [
-                    'No Receipts module',
-                    'No Disbursements module',
-                    'Limited calendar functionality',
-                    ],
-                },
+                // {
+                //     title: 'File Generation',
+                //     children: [
+                //     'Up to 20 records per client',
+                //     'DAT file generation included',
+                //     ],
+                // },
+                // {
+                //     title: 'Included',
+                //     children: [
+                //     'Basic reports',
+                //     'Simple business tracking',
+                //     ],
+                // },
+                // {
+                //     title: 'Limitations',
+                //     children: [
+                //     'No Receipts module',
+                //     'No Disbursements module',
+                //     'Limited calendar functionality',
+                //     ],
+                // },
             ],
             note: 'Perfect for freelancers, startups, and small businesses exploring the platform.',
             cta: 'Get Started',
@@ -70,7 +70,7 @@ const SubscriptionPlans_V = () => {
         {
             name: 'Pro',
             key: 'pro',
-            price: billing === 'monthly' ? 79 : 599,
+            price: billing === 'monthly' ? 129 : 1299,
             description: 'Best for growing businesses',
             highlight: true,
             features: [
@@ -78,44 +78,44 @@ const SubscriptionPlans_V = () => {
                     title: 'Usage Limits',
                     children: [
                     'Up to 10 clients',
-                    'Maximum of 100 records per client',
-                    'Maximum of 1,000 records total',
+                    'Maximum of 100 records per transaction',
+                    // 'Maximum of 1,000 records total',
                     ],
                 },
-                {
-                    title: 'Modules Included',
-                    children: [
-                    'Sales',
-                    'Purchases',
-                    'Receipts',
-                    'Disbursements',
-                    ],
-                },
-                {
-                    title: 'DAT File Generation',
-                    children: [
-                    'SLS',
-                    'SLP',
-                    'QAP',
-                    'SAWT',
-                    ],
-                },
+                // {
+                //     title: 'Modules Included',
+                //     children: [
+                //     'Sales',
+                //     'Purchases',
+                //     'Receipts',
+                //     'Disbursements',
+                //     ],
+                // },
+                // {
+                //     title: 'DAT File Generation',
+                //     children: [
+                //     'SLS',
+                //     'SLP',
+                //     'QAP',
+                //     'SAWT',
+                //     ],
+                // },
                 {
                     title: 'Calendar',
                     children: [
-                    'Up to 100 events',
-                    'Multi-day events supported',
-                    'Up to 10 categories',
-                    'Predefined categories for schedules, holidays, and tax deadlines',
+                        'Up to 10 schedules per week',
+                        'Up to 5 calendar categories',
+                        'Multi-day schedules supported',
+                        // 'Predefined categories for schedules, holidays, and tax deadlines',
                     ],
                 },
-                {
-                    title: 'Reports & Compliance',
-                    children: [
-                    'Enhanced reporting tools',
-                    'BIR compliance support',
-                    ],
-                },
+                // {
+                //     title: 'Reports & Compliance',
+                //     children: [
+                //     'Enhanced reporting tools',
+                //     'BIR compliance support',
+                //     ],
+                // },
             ],
             note: 'Ideal for growing businesses and accounting professionals managing multiple clients.',
             cta: 'Upgrade to Pro',
@@ -123,7 +123,7 @@ const SubscriptionPlans_V = () => {
         {
             name: 'Enterprise',
             key: 'enterprise',
-            price: billing === 'monthly' ? 129 : 1299,
+            price: billing === 'monthly' ? 179 : 1999,
             description: 'Advanced tools for large operations',
             highlight: false,
             features: [
@@ -134,45 +134,46 @@ const SubscriptionPlans_V = () => {
                     'Unlimited records',
                     ],
                 },
-                {
-                    title: 'Full Accounting Suite',
-                    children: [
-                    'General Journal',
-                    'General Ledger',
-                    'Trial Balance',
-                    ],
-                },
-                {
-                    title: 'Books of Accounts',
-                    children: [
-                    'Sales Journal',
-                    'Purchase Journal',
-                    'Cash Receipts Journal',
-                    'Cash Disbursements Journal',
-                    ],
-                },
-                {
-                    title: 'File Generation',
-                    children: [
-                    'DAT Files (SLS, SLP, QAP, SAWT)',
-                    'Standard Invoice PDF Generation',
-                    ],
-                },
+                // {
+                //     title: 'Full Accounting Suite',
+                //     children: [
+                //     'General Journal',
+                //     'General Ledger',
+                //     'Trial Balance',
+                //     ],
+                // },
+                // {
+                //     title: 'Books of Accounts',
+                //     children: [
+                //     'Sales Journal',
+                //     'Purchase Journal',
+                //     'Cash Receipts Journal',
+                //     'Cash Disbursements Journal',
+                //     ],
+                // },
+                // {
+                //     title: 'File Generation',
+                //     children: [
+                //     'DAT Files (SLS, SLP, QAP, SAWT)',
+                //     'Standard Invoice PDF Generation',
+                //     ],
+                // },
                 {
                     title: 'Calendar',
                     children: [
-                    'Unlimited events',
+                    'Unlimited schedules',
                     'Unlimited categories',
+                    'Multi-day schedules supported',
                     ],
                 },
-                {
-                    title: 'Advanced Features',
-                    children: [
-                    'Comprehensive accounting reports',
-                    'Business-wide financial tracking',
-                    'Enterprise-level scalability',
-                    ],
-                },
+                // {
+                //     title: 'Advanced Features',
+                //     children: [
+                //     'Comprehensive accounting reports',
+                //     'Business-wide financial tracking',
+                //     'Enterprise-level scalability',
+                //     ],
+                // },
             ],
             cta: 'Get Started',
             note: 'Designed for established businesses and firms that require complete accounting and compliance management.',

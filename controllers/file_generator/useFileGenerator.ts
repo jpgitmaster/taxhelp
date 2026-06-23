@@ -52,7 +52,7 @@ const useFileGenerator = () => {
     const [tableWidth, setTableWidth] = useState(0)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayDocsTbl, setDisplayDocsTbl] = useState(false)
-    
+    const [displayChildDocsTbl, setDisplayChildDocsTbl] = useState(false)
     const datFileOptions =[
         {
             label: 'SUMMARY LIST OF SALES (SLS)',
@@ -62,10 +62,10 @@ const useFileGenerator = () => {
             label: 'SUMMARY LIST OF PURCHASES (SLP)',
             value: 'PURCHASES'
         },
-        {
-            label: 'IMPORTS TRANSACTION',
-            value: 'IMPORTATION'
-        },
+        // {
+        //     label: 'IMPORTS TRANSACTION',
+        //     value: 'IMPORTATION'
+        // },
         // PURCHASES
         {
             label: 'QUARTERLY ALPHALIST OF PAYEES (QAP)',
@@ -133,20 +133,20 @@ const useFileGenerator = () => {
             ]
         },
         // COMING SOON
-        {
-            label: 'MONTHLY ALPHALIST OF PAYEES',
-            value: 'MAP',
-            children: [
-                {
-                    label: '1600VT',
-                    value: '1600VT',
-                },
-                {
-                    label: '1600PT',
-                    value: '1600PT',
-                },
-            ]
-        },
+        // {
+        //     label: 'MONTHLY ALPHALIST OF PAYEES',
+        //     value: 'MAP',
+        //     children: [
+        //         {
+        //             label: '1600VT',
+        //             value: '1600VT',
+        //         },
+        //         {
+        //             label: '1600PT',
+        //             value: '1600PT',
+        //         },
+        //     ]
+        // },
     ]
     const booksOfAccountsOptions =[
         {
@@ -190,6 +190,11 @@ const useFileGenerator = () => {
             parentValue?: string
 
         }
+        selectedChildTable: {
+            value: string
+            label: string
+            parentValue: string
+        }
         document: {
             id: number | null
             file_name: string
@@ -226,11 +231,19 @@ const useFileGenerator = () => {
             label: '',
             parentValue: ''
         },
+        selectedChildTable: {
+            value: '',
+            label: '',
+            parentValue: ''
+        },
         period: null,
         tax_month_end: null,
         tax_month_start: null,
     })
-    
+    const selectedParent = datFileOptions.find(
+        option => option.value === doc.selectedTable.value
+    )
+    const childOptions = selectedParent?.children || []
     
     const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = getClients(    
         clientFilter.currentPage,
@@ -316,13 +329,11 @@ const useFileGenerator = () => {
                     { doc, type },
                     commonOptions
                 ),
-
             PURCHASES: () =>
                 downloadPurchasesMutation.mutate(
                     { doc, type },
                     commonOptions
                 ),
-
             SAWT: () =>
                 downloadSalesTaxesMutation.mutate(
                     {
@@ -332,7 +343,6 @@ const useFileGenerator = () => {
                     },
                     commonOptions
                 ),
-
             QAP: () =>
                 downloadPurchasesTaxesMutation.mutate(
                     {
@@ -462,13 +472,32 @@ const useFileGenerator = () => {
     ) => {
         setDoc({
             ...doc,
-            selectedTable: selectedTable
+            selectedTable: selectedTable,
+            selectedChildTable: {
+                value: '',
+                label: '',
+                parentValue: ''
+            }
         })
         setFilter(prev => ({
             ...prev,
             currentPage: 1
         }))
+        setDisplayDocsTbl(false)
+        setDisplayChildDocsTbl(false)
     }
+
+    const handleSelectChildTable = (selectedChildTable: {
+        value: string
+        label: string
+        parentValue: string
+    }) => {
+        setDoc(prev => ({
+            ...prev,
+            selectedChildTable
+        }))
+    }
+
     const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target
          if(name === 'search'){
@@ -499,6 +528,10 @@ const useFileGenerator = () => {
         }
         if(dropdown === 'docs_table'){
             setDisplayDocsTbl(prevState => !prevState)
+        }
+        if (dropdown === 'child_docs_table') {
+            setDisplayChildDocsTbl(prev => !prev)
+            setDisplayDocsTbl(false)
         }
     }
 
@@ -538,7 +571,7 @@ const useFileGenerator = () => {
     
     useEffect(() => {
         if(typeof window !== 'undefined'){
-            setTableWidth(window.innerWidth - 240)
+            setTableWidth(window.innerWidth - 220)
         }
     },[])
     return {
@@ -550,9 +583,11 @@ const useFileGenerator = () => {
         record,
         clientArr,
         tableWidth,
+        childOptions,
         datFileOptions,
         displayClients,
         displayDocsTbl,
+        displayChildDocsTbl,
         booksOfAccountsOptions,
         clientLoader: isLoadingClients || isFetchingClients,
         loader: isLoadingSales || isFetchingSales || isLoadingPurchases || isFetchingPurchases || isFetchingSalesTaxes || isLoadingSalesTaxes,
@@ -560,6 +595,7 @@ const useFileGenerator = () => {
         // SET STATES
         setDisplayClients,
         setDisplayDocsTbl,
+        setDisplayChildDocsTbl,
 
         // HANDLES
         handleToggle,
@@ -572,6 +608,7 @@ const useFileGenerator = () => {
         handleSelectClient,
         handleToggleDelete,
         handleClearSelected,
+        handleSelectChildTable,
     }
 }
 

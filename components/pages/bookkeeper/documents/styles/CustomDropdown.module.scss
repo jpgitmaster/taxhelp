@@ -1,9 +1,18 @@
+@use '@/styles/forms';
 @use '@/styles/helpers';
 @use '@/styles/colors' as *;
 
 @reference 'tailwindcss';
 .customDropdown{
   @apply w-full relative;
+  &.disabled{
+    @apply pointer-events-none;
+    .dropdownInput{
+      border: 1px solid $lightGray2;
+      background-color: $lightGray;
+      @apply opacity-[.5] cursor-not-allowed;
+    }
+  }
   .dropdownInput {
     border: 1px solid $gray;
     background-color: $white;
@@ -36,9 +45,9 @@
   .dropwdownList {
     border: 1px solid $gray;
     background-color: $white;
-    @apply left-0 top-12 z-12 w-full min-h-32 max-h-55 overflow-y-hidden absolute rounded-[10px] py-5 px-2.5;
+    @apply left-0 top-12 z-12 w-full min-h-35 max-h-55 overflow-y-hidden absolute rounded-[10px] py-5 px-2.5;
     .dropwdownSearch {
-      @apply relative w-full inline-block;
+      @apply relative w-full inline-block pb-0;
       .searchIcon {
         @apply absolute top-2.5 right-2.5 w-5;
         img{
@@ -51,18 +60,18 @@
       }
     }
     ul {
-      @apply h-55 mt-3 overflow-y-auto pb-20;
+      @apply h-35 mt-3 overflow-y-auto pb-5;
       li {
         @apply px-3 py-1.5 text-[11px] cursor-pointer rounded-[10px] relative;
 
-        &:not(.hasChildren):hover {
-          color: $darkBlue;
-          background-color: rgba($lightBlue, .1);
-        }
+        // &:not(.hasChildren):hover {
+        //   color: $darkBlue;
+        //   background-color: rgba($lightBlue, .1);
+        // }
 
-        &.hasChildren {
-          cursor: default;
-        }
+        // &.hasChildren {
+        //   cursor: default;
+        // }
 
         .edit{
           @apply absolute right-1 w-4 cursor-pointer;

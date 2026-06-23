@@ -6,19 +6,20 @@ import type { ColumnsType } from 'antd/es/table'
 import scss from './../styles/DatFile.module.scss'
 import { signOut, getSession } from 'next-auth/react'
 import Loader from '@/components/reusables/RotatingLoader'
+import ProComponent from '@/components/reusables/ProComponent'
 import { Record_Obj } from '@/controllers/file_generator/types'
 import { Table, DatePicker, Pagination, Popconfirm } from 'antd'
 import SuccessMessage from '@/components/reusables/SuccessMessage'
-import CustomContainer from '@/components/reusables/CustomContainer'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 import useFileGenerator from '@/controllers/file_generator/useFileGenerator'
 import ClientsDropdown from '@/components/pages/bookkeeper/documents/ClientsDropdown'
 import DocumentsTableDropdown from '@/components/pages/bookkeeper/documents/DocumentsTableDropdown'
-
+import DocumentsChildTableDropdown from '@/components/pages/bookkeeper/documents/DocumentsChildTableDropdown'
 const DAT_File_V = () => {
     const {
       doc,
+      user,
       status,
       filter,
       record,
@@ -26,12 +27,15 @@ const DAT_File_V = () => {
       clientArr,
       tableWidth,
       clientLoader,
+      childOptions,
       displayClients,
       displayDocsTbl,
       datFileOptions,
+      displayChildDocsTbl,
 
       setDisplayClients,
       setDisplayDocsTbl,
+      setDisplayChildDocsTbl,
 
       handleToggle,
       handleChange,
@@ -43,6 +47,7 @@ const DAT_File_V = () => {
       handleDeleteRecord,
       handleSelectClient,
       handleClearSelected,
+      handleSelectChildTable
     } = useFileGenerator()
     const { loader: statLoader, message } = status
     const docType = doc.selectedTable.parentValue || doc.selectedTable.value
@@ -305,34 +310,20 @@ const DAT_File_V = () => {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       })
+    const isReady = !!user
+    const hasPermission =
+    user?.app_type !== 'dat'
     return (
-        <div>
+        <ProComponent loading={isReady} hasPermission={hasPermission} featureType='Custom Solution'>
             {
               message &&
               <SuccessMessage message={message} />
             }
-            <div className={scss.cards+' '+scss.filters}>
-              <CustomContainer
-                  scss={scss}
-                  width={20}
-                  required={true}
-                  label='Select Reporting Type'
-              >
-                <DocumentsTableDropdown
-                  doc={doc}
-                  options={datFileOptions}
-                  displayDocsTbl={displayDocsTbl}
-                  setDisplayDocsTbl={setDisplayDocsTbl}
-                  handleToggle={handleToggle}
-                  handleSelectTable={handleSelectTable}
-                />
-              </CustomContainer>
-              <CustomContainer
-                  scss={scss}
-                  width={40}
-                  required={true}
-                  label='Select Client'
-              >
+            <div className={scss.cards+' '+scss.customFilters}>
+              <div className={scss.selectedClient}>
+                <label className={scss.lbl}>
+                    Selected Client
+                </label>
                 <ClientsDropdown
                     doc={doc}
                     clients={clientArr}
@@ -346,31 +337,55 @@ const DAT_File_V = () => {
                     handleSelectClient={handleSelectClient}
                     handleClearSelected={handleClearSelected}
                 />
-              </CustomContainer>
-              <CustomContainer
-                  scss={scss}
-                  width={20}
-                  required={true}
-                  label='Taxable Month & Year'
-              >
-                  <DatePicker picker="month" value={doc.period} onChange={handleDateChange} />
-              </CustomContainer>
-              <div className={scss.card+' '+scss.w20}>
-                <button
-                    type='button'
-                    disabled={!record.recordArr?.length}
-                    className={`${scss.button} ${scss.btnblue}`}
-                    onClick={() =>
-                        handleDownload(
-                            'dat',
-                            doc.selectedTable.value,
-                            doc.selectedTable.parentValue
-                        )
-                    }
-                >
-                    Download DAT File
-                </button>
               </div>
+              <div className={scss.monthYear}>
+                <label className={scss.lbl}>
+                    Taxable Month & Year
+                </label>
+                <DatePicker picker="month" value={doc.period} onChange={handleDateChange} style={{ border: "1px solid #c4c3c3" }} />
+              </div>
+              <div className={scss.selectParentDat}>
+                <label className={scss.lbl}>
+                    Select Table
+                </label>
+                <DocumentsTableDropdown
+                  doc={doc}
+                  options={datFileOptions}
+                  displayDocsTbl={displayDocsTbl}
+                  setDisplayDocsTbl={setDisplayDocsTbl}
+                  handleToggle={handleToggle}
+                  handleSelectTable={handleSelectTable}
+                />
+              </div>
+              <div className={scss.selectedChildDat}>
+                  <label className={scss.lbl}>
+                      {childOptions?.length ? doc.selectedTable.label : <>&nbsp;</>}
+                  </label>
+                  <DocumentsChildTableDropdown
+                      doc={doc}
+                      options={childOptions}
+                      displayDocsTbl={displayChildDocsTbl}
+                      handleToggle={handleToggle}
+                      handleSelectTable={handleSelectChildTable}
+                      setDisplayDocsTbl={setDisplayChildDocsTbl}
+                  />
+              </div>
+          </div>
+          <div className={scss.tblBtns}>
+            <button
+              type='button'
+              disabled={!record.recordArr?.length}
+              className={`${scss.button} ${scss.btnblue}`}
+              onClick={() =>
+                  handleDownload(
+                      'dat',
+                      doc.selectedTable.value,
+                      doc.selectedTable.parentValue
+                  )
+              }
+            >
+              Download as DAT File
+            </button>
           </div>
           <div className={scss.tableRecords} style={{width:tableWidth+'px'}}>
             { (loader || statLoader) && <Loader scss={scss} position='absolute' />}
@@ -501,7 +516,7 @@ const DAT_File_V = () => {
             </div>
           </div>
           <br /><br />
-        </div>
+        </ProComponent>
     )
 }
 export const getServerSideProps: GetServerSideProps<PageProps> = async (context: GetServerSidePropsContext) => {

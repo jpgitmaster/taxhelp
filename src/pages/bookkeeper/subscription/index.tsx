@@ -11,7 +11,7 @@ const ManageSubscription_V = ({ session }: PageProps) => {
   const subscription = {
     plan: 'Pro', // 'Basic FREE' | 'Pro' | 'Enterprise'
     billing: 'monthly',
-    price: 79,
+    price: 129,
     nextBilling: 'May 15, 2026',
   }
 

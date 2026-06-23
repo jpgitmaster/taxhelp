@@ -109,7 +109,7 @@ export default function ClientsDropdown(props: {
             {
                 displayClients &&
                 <div className={scss.dropwdownList}>
-                    <div className={scss.dropwdownSearch}>
+                    <div className={scss.dropwdownSearch+' '+scss.npt}>
                         <div className={scss.searchIcon}>
                             <Image src='/svgs/search.svg' alt='Search' priority width={12} height={12} unoptimized={true} />
                         </div>

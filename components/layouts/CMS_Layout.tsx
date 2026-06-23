@@ -1,13 +1,33 @@
 import { FC } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Skeleton } from 'antd'
 import scss from './CMS_Layout.module.scss'
 import { Dropdown, type MenuProps } from 'antd'
 import useMaster from '@/controllers/layouts/useMaster'
 import Breadcrumbs from '@/components/reusables/BreadCrumbs'
 import Avatar from '@/components/reusables/AvatarPlaceholder'
 import { MasterProps } from '@/controllers/layouts/types/cms_types'
-
+const SidebarSkeleton = () => {
+  return (
+    <>
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} style={{ padding: '5px 0' }}>
+          <Skeleton.Input
+            active
+            style={{
+              height: 32,
+              borderRadius: 6,
+              width: '100% !important',
+              display: 'inline-block',
+              minWidth: 'inherit !important'
+            }}
+          />
+        </div>
+      ))}
+    </>
+  )
+}
 const CMS_Layout: FC<MasterProps> = ({ children }) => {
   const {
     ref,
@@ -16,6 +36,7 @@ const CMS_Layout: FC<MasterProps> = ({ children }) => {
     isMobile,
     isPageLoad,
     activeLink,
+    isUserReady,
     userLogout,
     handleExpand,
     handleHeaderClick,
@@ -66,6 +87,13 @@ const CMS_Layout: FC<MasterProps> = ({ children }) => {
         <nav className={scss.appSidebarLinks}>
           <ul className={scss.links} ref={ref}>
             {
+              !isUserReady
+              ? (
+                <div style={{width: '100%', overflow: 'hidden'}}>
+                  <SidebarSkeleton />
+                </div>
+              )
+              :
               appLinks.map((appLink, index) =>
                 <li key={index}>
                   <div className={scss.mainLink+' '+((appLink.key === activeLink[2]) ? scss.isActive : '')}>

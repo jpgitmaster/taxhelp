@@ -1,10 +1,10 @@
 import Image from 'next/image'
 import scss from './styles/CustomDropdown.module.scss'
 import { useRef, useEffect, MouseEvent, Dispatch, SetStateAction } from 'react'
-export default function DocumentsTableDropdown(props: {
+export default function DocumentsChildTableDropdown(props: {
     doc: {
         docSearch: string
-        selectedTable: {
+        selectedChildTable?: {
             value: string,
             label: string,
             parentValue?: string
@@ -71,8 +71,8 @@ export default function DocumentsTableDropdown(props: {
     };
     const ref = useOutsideClick(handleClickOutside)
     return (
-        <div className={scss.customDropdown} onClick={handleHeaderClick}>
-            <div className={scss.dropdownInput} onClick={() => handleToggle('docs_table')} ref={ref}
+        <div className={scss.customDropdown + (!options?.length ? ' '+scss.disabled : '')} onClick={handleHeaderClick}>
+            <div className={scss.dropdownInput} onClick={() => handleToggle('child_docs_table')} ref={ref}
                 role="combobox"
                 aria-labelledby="selectedTable"
                 aria-expanded="false"
@@ -82,7 +82,7 @@ export default function DocumentsTableDropdown(props: {
                     <Image src='/svgs/arrowDown.svg' alt='Arrow Down Icon' priority width={12} height={12} unoptimized={true} />
                 </div>
                 <div className={scss.selected} style={{fontSize: '11px', marginTop: '3.5px'}}>
-                    {doc.selectedTable.label} &nbsp;
+                    {doc.selectedChildTable?.label} &nbsp;
                 </div>
             </div>
             {
@@ -102,33 +102,6 @@ export default function DocumentsTableDropdown(props: {
                                         className={option.children?.length ? scss.hasChildren : ''}
                                     >
                                         {option.label}
-                                        {/* {
-                                            option.children?.length ?
-                                            <ul>
-                                                {
-                                                    option?.children.map((opt, indx) =>
-                                                        <li
-                                                            key={indx}
-                                                            onClick={(e) => {
-                                                                e.stopPropagation()
-
-                                                                setDisplayDocsTbl(false)
-
-                                                                handleSelectTable({
-                                                                    value: opt.value,
-                                                                    label: opt.label,
-                                                                    parentValue: option.value
-                                                                })
-                                                            }}
-                                                        >
-                                                            {opt.label}
-                                                        </li>
-                                                    )
-                                                }
-                                            </ul>
-                                            :
-                                            null
-                                        } */}
                                     </li>
                                 )
                                 : ''

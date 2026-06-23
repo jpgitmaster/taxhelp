@@ -52,24 +52,100 @@ const useUploadDocuments = () => {
     |--------------------------------------------------------------------------
     */
 
-    const [options, setOptions] = useState([
+    const options = [
         {
             label: 'SUMMARY LIST OF SALES (SLS)',
-            value: 'SALES',
+            value: 'SALES'
         },
         {
             label: 'SUMMARY LIST OF PURCHASES (SLP)',
-            value: 'PURCHASES',
+            value: 'PURCHASES'
         },
+        // {
+        //     label: 'IMPORTS TRANSACTION',
+        //     value: 'IMPORTATION'
+        // },
+        // PURCHASES
         {
             label: 'QUARTERLY ALPHALIST OF PAYEES (QAP)',
             value: 'QAP',
+            children: [
+                {
+                    label: '1601EQ  Schedule 1',
+                    value: '1601EQ',
+                },
+                {
+                    label: '1601FQ Schedule 1',
+                    value: '1601FQ',
+                },
+                {
+                    label: '1604E Schedule 3',
+                    value: '1604E',
+                },
+                {
+                    label: '1604F Schedule 3',
+                    value: '1604F',
+                }
+            ]
         },
+        // SALES
         {
             label: 'SUMMARY ALPHALIST OF WITHHOLDING TAXES (SAWT)',
             value: 'SAWT',
+            children: [
+                {
+                    label: '1700',
+                    value: '1700',
+                },
+                {
+                    label: '1701Q',
+                    value: '1701Q',
+                },
+                {
+                    label: '1701',
+                    value: '1701',
+                },
+                {
+                    label: '1702Q',
+                    value: '1702Q',
+                },
+                {
+                    label: '1702',
+                    value: '1702',
+                },
+                {
+                    label: '2550M',
+                    value: '2550M',
+                },
+                {
+                    label: '2550Q',
+                    value: '2550Q',
+                },
+                {
+                    label: '2551Q',
+                    value: '2551Q',
+                },
+                {
+                    label: '2553',
+                    value: '2553',
+                }
+            ]
         },
-    ])
+        // {
+        //     label: 'MONTHLY ALPHALIST OF PAYEES',
+        //     value: 'MAP',
+        //     children: [
+        //         {
+        //             label: '1600VT',
+        //             value: '1600VT',
+        //         },
+        //         {
+        //             label: '1600PT',
+        //             value: '1600PT',
+        //         },
+        //     ]
+        // },
+    ]
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([])
 
@@ -80,18 +156,21 @@ const useUploadDocuments = () => {
     const [displayClients, setDisplayClients] = useState(false)
 
     const [displayDocsTbl, setDisplayDocsTbl] = useState(false)
-
     const [rows, setRows] = useState<(ExcelRow & { id: number })[]>([])
+    const [displayChildDocsTbl, setDisplayChildDocsTbl] = useState(false)
 
     const [doc, setDoc] = useState({
         docSearch: '',
         clientSearch: '',
-
         selectedTable: {
             value: 'SALES',
             label: 'SUMMARY LIST OF SALES (SLS)',
         },
-
+        selectedChildTable: {
+            value: '',
+            label: '',
+            parentValue: ''
+        },
         client: {
             id: null,
             last_name: '',
@@ -100,7 +179,11 @@ const useUploadDocuments = () => {
             registered_name: '',
         },
     })
+    const selectedParent = options.find(
+        option => option.value === doc.selectedTable.value
+    )
 
+    const childOptions = selectedParent?.children || []
     /*
     |--------------------------------------------------------------------------
     | CLIENTS
@@ -178,7 +261,15 @@ const useUploadDocuments = () => {
             title: 'Registered Name',
             dataIndex: 'registeredName',
         },
+    ]
 
+    /*
+    |--------------------------------------------------------------------------
+    | SALES COLUMNS
+    |--------------------------------------------------------------------------
+    */
+
+    const salesColumns = [
         {
             key: 'address1',
             title: 'First Address',
@@ -190,15 +281,6 @@ const useUploadDocuments = () => {
             title: 'Second Address',
             dataIndex: 'address2',
         },
-    ]
-
-    /*
-    |--------------------------------------------------------------------------
-    | SALES COLUMNS
-    |--------------------------------------------------------------------------
-    */
-
-    const salesColumns = [
         {
             key: 'exempt_sales',
             title: 'Exempt Sales',
@@ -256,6 +338,17 @@ const useUploadDocuments = () => {
     */
 
     const purchaseColumns = [
+        {
+            key: 'address1',
+            title: 'First Address',
+            dataIndex: 'address1',
+        },
+
+        {
+            key: 'address2',
+            title: 'Second Address',
+            dataIndex: 'address2',
+        },
         {
             key: 'exempt_purchases',
             title: 'Exempt Purchases',
@@ -476,36 +569,26 @@ const useUploadDocuments = () => {
     */
 
     const mapBaseRow = (row: any, index: number) => {
-        const firstName = String(
-            row['FIRST_NAME'] ?? ''
-        ).trim()
+        const firstName = String(row['FIRST_NAME'] ?? '').trim()
+        const lastName = String(row['LAST_NAME'] ?? '').trim()
+        const middleName = String(row['MIDDLE_NAME'] ?? '').trim()
 
-        const lastName = String(
-            row['LAST_NAME'] ?? ''
-        ).trim()
-
-        const middleName = String(
-            row['MIDDLE_NAME'] ?? ''
-        ).trim()
+        const address1 = String(row['FIRST ADDRESS'] ?? '').trim()
+        const address2 = String(row['SECOND ADDRESS'] ?? '').trim()
 
         return {
             id: index,
-
             taxableMonth: row['TAXABLE MONTH'],
-
             tin: row['TAXPAYER IDENTIFICATION NUMBER'],
-
             branchCode: row['BRANCH CODE'],
-
             registeredName: row['REGISTERED NAME'],
 
             individualName:
                 `${firstName} ${lastName}`.trim() +
                 (middleName ? `, ${middleName}` : ''),
 
-            address1: row['FIRST ADDRESS'],
-
-            address2: row['SECOND ADDRESS'],
+            address1: address1 || '-',
+            address2: address2 || '-',
         }
     }
 
@@ -748,18 +831,34 @@ const useUploadDocuments = () => {
 
         setSelectedRowKeys([])
     }
-
+    const handleSelectChildTable = (selectedChildTable: {
+        value: string
+        label: string
+        parentValue: string
+    }) => {
+        setDoc(prev => ({
+            ...prev,
+            selectedChildTable
+        }))
+    }
     const handleSelectTable = (selectedTable: {
         value: string
         label: string
     }) => {
-        // console.log('Selected Dropdown:', selectedTable)
-
         setDoc(prev => ({
             ...prev,
             selectedTable,
+            selectedChildTable: {
+                value: '',
+                label: '',
+                parentValue: ''
+            }
         }))
+
+        setDisplayDocsTbl(false)
+        setDisplayChildDocsTbl(false)
     }
+    
 
     const handleSelectClient = (client: any) => {
         setDoc(prev => ({
@@ -796,6 +895,11 @@ const useUploadDocuments = () => {
 
         if (dropdown === 'docs_table') {
             setDisplayDocsTbl(prev => !prev)
+        }
+        
+        if (dropdown === 'child_docs_table') {
+            setDisplayChildDocsTbl(prev => !prev)
+            setDisplayDocsTbl(false)
         }
     }
 
@@ -848,7 +952,7 @@ const useUploadDocuments = () => {
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            setWidth(window.innerWidth - 240)
+            setWidth(window.innerWidth - 210)
         }
     }, [])
 
@@ -865,16 +969,18 @@ const useUploadDocuments = () => {
         width_,
         options,
         clientArr,
+        childOptions,
         rowSelection,
         displayDocsTbl,
         displayClients,
         selectedRowKeys,
-
+        displayChildDocsTbl,
         clientLoader: isLoading || isFetching,
 
         setRows,
         setDisplayClients,
         setDisplayDocsTbl,
+        setDisplayChildDocsTbl,
 
         getColumns,
 
@@ -885,6 +991,7 @@ const useUploadDocuments = () => {
         handleSelectTable,
         handleSelectClient,
         handleDeleteSelected,
+        handleSelectChildTable,
     }
 }
 

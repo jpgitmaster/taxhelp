@@ -1,0 +1,101 @@
+@use '@/styles/forms';
+@use '@/styles/helpers';
+@use '@/styles/reuseable';
+@use '@/styles/colors' as *;
+
+@reference 'tailwindcss';
+
+.header{
+  @apply inline-block w-full mb-0;
+  .button{
+      @apply mr-2.5;
+  }
+  .searchComponent{
+    @apply float-right -mt-0.5;
+    input[type=text]{
+      @apply h-9.5;
+    }
+    .button{
+        @apply mr-0;
+    }
+  }
+}
+.addClient, .viewClient{
+    @apply w-220 mx-auto relative pt-2 -mt-2.5;
+    .editLink{
+      color: $orange;
+      @apply absolute flex flex-row right-5 top-0 uppercase text-[11px] font-semibold;
+      img{
+        @apply relative -left-2 -top-0.5;
+        filter: invert(34%) sepia(86%) saturate(5128%) hue-rotate(186deg) brightness(93%) contrast(101%);
+      }
+    }
+    .box{
+        border: 1px solid $gray;
+        background-color: $lightGray;
+        @apply h-full rounded-[20px] p-5 pb-0 flex flex-col;
+        &.view{
+          background-color: $white;
+          border: 1px solid $transparent;
+          .boxTitle{
+            color: $blue;
+          }
+        }
+        .boxTitle{
+            color: rgba($lightBlack, .7);
+            font-weight: 600;
+            @apply text-[18px];
+        }
+        .boxDetails{
+            @apply flex h-full;
+            .avatar{
+                border: 1px solid $gray;
+                background-color: $white;
+                @apply w-35 h-35 relative top-4.5 rounded-[50%] flex items-center justify-center;
+                svg{
+                    @apply w-[70%];
+                }
+                img{
+                    @apply w-[60%];
+                    filter: invert(96%) sepia(0%) saturate(0%) hue-rotate(148deg) brightness(88%) contrast(88%);
+                }
+            }
+            .representativeDetails, .companyDetails{
+                @apply flex-1 mt-2.5 pl-5;
+
+                input{
+                    background-color: $white;
+                }
+            }
+        }
+    }
+}
+.tableRecords{
+  @apply relative;
+  .actions{
+    @apply flex items-center justify-center;
+    .action{
+      @apply mx-1.5 cursor-pointer;
+      span{
+        @apply relative text-[7px];
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    .button{
+      @apply mr-2;
+      &.btnorange{
+        @apply mr-0;
+      }
+    }
+    .searchComponent{
+        @apply w-full mt-5;
+    }
+  }
+  .tableRecords{
+    @apply w-full!;
+  }
+}

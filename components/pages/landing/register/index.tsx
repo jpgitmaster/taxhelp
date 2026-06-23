@@ -19,16 +19,16 @@ const Register_V = ({
 }: PropsDefinition) => {
     const {
         user,
-        roles,
         status,
+        features,
         initUser,
-        checkedRoles,
+        checkedFeatures,
         displayPassword,
         passwordChecker,
 
         setUser,
         setStatus,
-        setCheckedRoles,
+        setCheckedFeatures,
         setDisplayPassword,
         setPasswordChecker,
 
@@ -36,7 +36,7 @@ const Register_V = ({
         handleChange,
         handleResubmit,
         handleRegisterUser,
-        handleCheckedRoles,
+        handleCheckedFeatures,
     } = useRegister()
     const { loader, message, submessage } = status
     return (
@@ -45,7 +45,7 @@ const Register_V = ({
             open={displayModal.registration}
             onCancel={() => {
                 setUser(initUser)
-                setCheckedRoles([])
+                setCheckedFeatures([])
                 toggleModal(false, 'registration')
             }}
         >
@@ -63,7 +63,7 @@ const Register_V = ({
                         <p>{submessage}</p>
                         <button className={`${scss.button} ${scss.btnblue}`} type='button' onClick={() => {
                             setUser(initUser)
-                            setCheckedRoles([])
+                            setCheckedFeatures([])
                             setStatus(initStatus)
                             toggleModal(false, 'registration')
                         }}>
@@ -75,38 +75,56 @@ const Register_V = ({
                 <>
                     <div className={scss.modelTitle}>
                         <strong>
-                            Tell us who you are
+                            Select what you'll work on
                         </strong>
                         <p>
-                            Choose your role to get the right tools and experience.
+                            Select the records you'll be handling for your clients.
                         </p>
                     </div>
-                    <ul className={scss.userTypes}>
-                        {
-                            roles.map((role, index) => (
-                                <li key={index}>
-                                    <label className={scss.userType + (checkedRoles.includes(role.value) ? ' '+scss.checked : '')}>
-                                        <Image src={'/svgs/'+role.icon} alt="Business Owner" width={20} height={20} unoptimized={true} />
-                                        <div>
-                                            <strong>
-                                            {role.label}
-                                            </strong>
-                                            <p>
-                                            {role.description}
-                                            </p>
-                                        </div>
-                                        <input type='checkbox'
-                                            name='user_account'
-                                            onKeyUp={handleBlur}
-                                            value={role.value}
-                                            checked={checkedRoles.includes(role.value)}
-                                            onChange={handleCheckedRoles}
-                                        />
+                    <ul className={scss.features}>
+                        {features.map((feature, index) => (
+                            <li key={index}>
+                                {feature.disabled && (
+                                    <span className={scss.comingSoon}>
+                                        Coming Soon
+                                    </span>
+                                )}
+                                <label
+                                    className={
+                                        scss.feature
+                                        + (checkedFeatures.includes(feature.value) ? ' ' + scss.checked : '')
+                                        + (feature.disabled ? ' ' + scss.disabled : '')
+                                    }
+                                >
+                                    <Image
+                                        src={'/svgs/' + feature.icon}
+                                        alt={feature.label}
+                                        width={20}
+                                        height={20}
+                                        unoptimized={true}
+                                    />
+
+                                    <div>
+                                        <strong>{feature.label}</strong>
+                                        <p>{feature.description}</p>
+                                    </div>
+
+                                    <input
+                                        type="checkbox"
+                                        name="user_account"
+                                        value={feature.value}
+                                        checked={checkedFeatures.includes(feature.value)}
+                                        onChange={!feature.disabled ? handleCheckedFeatures : undefined}
+                                        disabled={feature.disabled}
+                                        onKeyUp={handleBlur}
+                                    />
+
+                                    {!feature.disabled && (
                                         <span className={scss.checkmark}></span>
-                                    </label>
-                                </li>
-                            ))
-                        }
+                                    )}
+                                </label>
+                            </li>
+                        ))}
                     </ul>
                     <form className={scss.registerUser} onSubmit={handleRegisterUser}>
                         { loader && <Loader scss={scss} position='absolute' />}
@@ -117,7 +135,7 @@ const Register_V = ({
                                 required={true}
                                 label='Email'
                                 labelFor='registerEmail'
-                                disabled={!checkedRoles?.length}
+                                disabled={!checkedFeatures?.length}
                                 err={user.userErr.email as string}
                             >
                                 <input
@@ -138,7 +156,7 @@ const Register_V = ({
                                 required={true}
                                 label='Password'
                                 labelFor='registerPassword'
-                                disabled={!checkedRoles?.length}
+                                disabled={!checkedFeatures?.length}
                                 err={user.userErr.password as string}
                                 className={
                                     typeof user.userErr.password === 'string' && user.userErr.password.length > 50
@@ -175,7 +193,7 @@ const Register_V = ({
                                 required={true}
                                 label='Confirm Password'
                                 labelFor='confirmPassword'
-                                disabled={!checkedRoles?.length}
+                                disabled={!checkedFeatures?.length}
                                 err={user.userErr.confirmPassword as string}
                             >
                                 <input
@@ -191,7 +209,7 @@ const Register_V = ({
                                 />
                             </CustomContainer>
                             <div className={scss.card+' '+scss.w100}>
-                                <button type='submit' className={`${scss.button} ${scss.btnblue}`} disabled={!checkedRoles?.length} onKeyDown={handleResubmit}>
+                                <button type='submit' className={`${scss.button} ${scss.btnblue}`} disabled={!checkedFeatures?.length} onKeyDown={handleResubmit}>
                                     Sign up
                                 </button>
                             </div>

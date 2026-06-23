@@ -1,6 +1,6 @@
 import { NavLink } from "../types/cms_types";
 
-const initLinks: NavLink[] = [
+const initCustomLinks: NavLink[] = [
     {
         active: false,
         key: 'dashboard',
@@ -132,6 +132,41 @@ const initLinks: NavLink[] = [
         ]
     },
 ]
+const initDatLinks: NavLink[] = [
+    {
+        active: false,
+        key: 'calendar',
+        name: 'Calendar',
+        icon: 'calendar.svg',
+        iconWidth: 20,
+        url: '/bookkeeper/calendar',
+    },
+    {
+        active: false,
+        key: 'clients',
+        name: 'Clients',
+        icon: 'users.svg',
+        iconWidth: 20,
+        url: '/bookkeeper/clients',
+    },
+    {
+        active: false,
+        key: 'dat_file',
+        name: 'DAT File',
+        icon: 'dat_file.svg',
+        iconWidth: 20,
+        url: '/bookkeeper/dat_file',
+    },
+    {
+        active: false,
+        key: 'audit_trail',
+        name: 'Audit Trail',
+        icon: 'audit_trail.svg',
+        iconWidth: 20,
+        url: '/bookkeeper/audit_trail',
+    },
+]
 export {
-    initLinks
+    initDatLinks,
+    initCustomLinks
 };

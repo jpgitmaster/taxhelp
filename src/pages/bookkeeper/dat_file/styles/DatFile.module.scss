@@ -1,0 +1,118 @@
+@use '@/styles/forms';
+@use '@/styles/helpers';
+@use '@/styles/reuseable';
+@use '@/styles/colors' as *;
+
+@reference 'tailwindcss';
+
+.uploader{
+  @apply w-125 mx-auto;
+  .npt{
+    @apply p-0;
+  }
+}
+.customFilters{
+  @apply mb-0 -mt-4;
+    .lbl{
+        color: $lightBlack;
+        @apply text-[10px] uppercase;
+        span{
+            color: $red;
+            @apply text-[13px] float-right ml-1.25 -mt-0.75;
+        }
+    }
+    .npt{
+        @apply p-0;
+    }
+    .selectedClient{
+        @apply flex-1;
+    }
+    .monthYear{
+        @apply w-40;
+    }
+     .selectParentDat, .selectedChildDat{
+        @apply w-75;
+    }
+}
+.tableRecords{
+    @apply relative;
+    .check{
+        @apply inline;
+        filter: invert(62%) sepia(45%) saturate(6153%) hue-rotate(87deg) brightness(96%) contrast(89%);
+    }
+    .activeRow, .activeRow td, .activeRow:hover td{
+      background-color: $lightGray !important;
+    }
+    .client{
+      p{
+        @apply text-[11px] -mt-0.5;
+      }
+    }
+    .summaryRow{
+      color: $lightBlue;
+      @apply font-bold;
+      td{
+        @apply px-2.5!;
+      }
+    }
+    .actions{
+        .action{
+            @apply mx-1 cursor-pointer;
+            span{
+              @apply relative text-[7px];
+            }
+        }
+    }
+}
+.tblBtns{
+    @apply flex flex-row mt-5 w-130;
+    .button{
+        @apply ml-2;
+    }
+}
+.customFileUpload{
+    border: 1px solid $gray;
+    background-color: $lightGray;
+    @apply w-125 relative overflow-hidden cursor-pointer h-42.5 rounded-[20px] mx-auto my-5;
+    
+    &.hasImage{
+        border: 0;
+    }
+    &.err{
+        border-color: $red;
+    }
+    &.disabled{
+        background-color: $gray;
+        @apply cursor-not-allowed pointer-events-none opacity-[.3];
+    }
+    .customFile{
+        @apply h-full flex cursor-pointer items-center flex-col justify-center;
+        input[type='file'] {
+            @apply hidden
+        }
+        .empty_image{
+            @apply w-12.5;
+            img{
+                @apply w-7.5 h-7.5;
+            }
+        }
+        img{
+            @apply mb-0;
+            &.browse_image{
+                @apply object-cover m-0 w-[full];
+            }
+        }
+        p{
+            @apply mb-1.25;
+        }
+        span{
+            @apply text-center text-[12px];
+        }
+    }
+    .remove_featured{
+        @apply absolute top-2.5 z-1 right-2.5 w-7 p-2 flex rounded-[50%] overflow-hidden items-center justify-center;
+        img{
+            @apply w-full;
+        }
+    }
+}
