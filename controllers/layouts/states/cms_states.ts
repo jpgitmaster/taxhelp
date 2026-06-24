@@ -135,11 +135,11 @@ const initCustomLinks: NavLink[] = [
 const initDatLinks: NavLink[] = [
     {
         active: false,
-        key: 'calendar',
-        name: 'Calendar',
-        icon: 'calendar.svg',
+        key: 'dashboard',
+        name: 'Dashboard',
+        icon: 'dashboard.svg',
         iconWidth: 20,
-        url: '/bookkeeper/calendar',
+        url: '/bookkeeper/dashboard',
     },
     {
         active: false,

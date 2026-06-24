@@ -311,8 +311,7 @@ const DAT_File_V = () => {
         maximumFractionDigits: 2,
       })
     const isReady = !!user
-    const hasPermission =
-    user?.app_type !== 'dat'
+    const hasPermission = user?.app_type !== 'dat'
     return (
         <ProComponent loading={isReady} hasPermission={hasPermission} featureType='Custom Solution'>
             {

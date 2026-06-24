@@ -965,6 +965,7 @@ const useUploadDocuments = () => {
     return {
         doc,
         rows,
+        user,
         status,
         width_,
         options,

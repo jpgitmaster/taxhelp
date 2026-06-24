@@ -3,6 +3,7 @@ import { DatePicker, Table } from 'antd'
 import scss from './styles/DatFile.module.scss'
 import { signOut, getSession } from 'next-auth/react'
 import Loader from '@/components/reusables/RotatingLoader'
+import ProComponent from '@/components/reusables/ProComponent'
 import CustomContainer from '@/components/reusables/CustomContainer'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
@@ -14,6 +15,7 @@ const DAT_File_V = () => {
     const {
         doc,
         rows,
+        user,
         status,
         width_,
         options,
@@ -42,7 +44,9 @@ const DAT_File_V = () => {
         handleDeleteSelected,
         handleSelectChildTable
     } = useUploadDocuments()
+    const isReady = !!user
     const { loader } = status
+    const hasPermission = user?.app_type === 'dat'
     type NumericFields =
         | 'exempt_sales'
         | 'zero_rated_sales'
@@ -69,7 +73,7 @@ const DAT_File_V = () => {
         maximumFractionDigits: 2,
         })
     return (
-        <div>
+        <ProComponent loading={isReady} hasPermission={hasPermission} err='404'>
             {
                 rows?.length ?
                 <form onSubmit={handleUpload}>
@@ -320,7 +324,7 @@ const DAT_File_V = () => {
             {/* <button onClick={handleUpload} disabled={loading}>
                 {loading ? 'Converting...' : 'Convert to DAT'}
             </button> */}
-        </div>
+        </ProComponent>
     )
 }
 export const getServerSideProps: GetServerSideProps<PageProps> = async (context: GetServerSidePropsContext) => {
