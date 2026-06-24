@@ -12,9 +12,6 @@ import useQueryClients from '../clients/api/queries'
 import useQueryUsers from '@/controllers/users/api/queries'
 
 const useUploadDocuments = () => {
-    const [deletedRowIds, setDeletedRowIds] = useState<number[]>([])
-    const { status, setStatus, uploadDocumentMutation } = useDocumentAPI()
-
     const {
         filter: clientFilter,
         setFilter,
@@ -146,18 +143,17 @@ const useUploadDocuments = () => {
         //     ]
         // },
     ]
-
-    const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([])
-
     const [width_, setWidth] = useState(0)
-
     const [file, setFile] = useState<File | null>(null)
-
     const [displayClients, setDisplayClients] = useState(false)
-
     const [displayDocsTbl, setDisplayDocsTbl] = useState(false)
+    const [deletedRowIds, setDeletedRowIds] = useState<number[]>([])
     const [rows, setRows] = useState<(ExcelRow & { id: number })[]>([])
     const [displayChildDocsTbl, setDisplayChildDocsTbl] = useState(false)
+    const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([])
+    const { status, setStatus, uploadDocumentMutation } = useDocumentAPI()
+    const [allRows, setAllRows] = useState<(ExcelRow & { id: number })[]>([])
+    const [selectedMonth, setSelectedMonth] = useState<dayjs.Dayjs | null>(null)
 
     const [doc, setDoc] = useState({
         docSearch: '',
@@ -182,7 +178,7 @@ const useUploadDocuments = () => {
     const selectedParent = options.find(
         option => option.value === doc.selectedTable.value
     )
-
+    
     const childOptions = selectedParent?.children || []
     /*
     |--------------------------------------------------------------------------
@@ -748,8 +744,8 @@ const useUploadDocuments = () => {
         const json = XLSX.utils.sheet_to_json(sheet, {
             defval: '',
         })
-        console.log(json[0])
-        console.log(Object.keys(json[0] || {}))
+        // console.log(json[0])
+        // console.log(Object.keys(json[0] || {}))
 
         const mappedRows = json.map((row, index) =>
             mapRow(row, index)
@@ -770,11 +766,13 @@ const useUploadDocuments = () => {
 
         // console.log('Filtered Rows:', tableRows.length)
 
-        setRows(
+        const finalRows =
             user?.subscription?.plan === 'basic'
                 ? tableRows.slice(0, 20)
                 : tableRows
-        )
+
+        setAllRows(finalRows)
+        setRows(finalRows)
     }
 
     /*
@@ -931,6 +929,31 @@ const useUploadDocuments = () => {
     */
 
     useEffect(() => {
+        if (!selectedMonth) {
+            setRows(allRows)
+            return
+        }
+
+        const filtered = allRows.filter(row => {
+            if (!row.taxableMonth) return false
+
+            const rowDate = dayjs(
+                typeof row.taxableMonth === 'number'
+                    ? XLSX.SSF.format('m/d/yyyy', row.taxableMonth)
+                    : row.taxableMonth
+            )
+
+            return (
+                rowDate.month() === selectedMonth.month() &&
+                rowDate.year() === selectedMonth.year()
+            )
+        })
+
+        setRows(filtered)
+    }, [selectedMonth, allRows])
+
+
+    useEffect(() => {
         if (!file) return
 
         const reader = new FileReader()
@@ -956,11 +979,6 @@ const useUploadDocuments = () => {
         }
     }, [])
 
-    /*
-    |--------------------------------------------------------------------------
-    | RETURN
-    |--------------------------------------------------------------------------
-    */
 
     return {
         doc,
@@ -972,6 +990,7 @@ const useUploadDocuments = () => {
         clientArr,
         childOptions,
         rowSelection,
+        selectedMonth,
         displayDocsTbl,
         displayClients,
         selectedRowKeys,
@@ -979,6 +998,7 @@ const useUploadDocuments = () => {
         clientLoader: isLoading || isFetching,
 
         setRows,
+        setSelectedMonth,
         setDisplayClients,
         setDisplayDocsTbl,
         setDisplayChildDocsTbl,

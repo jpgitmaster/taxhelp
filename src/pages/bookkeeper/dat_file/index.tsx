@@ -23,12 +23,14 @@ const DAT_File_V = () => {
         childOptions,
         rowSelection,
         clientLoader,
+        selectedMonth,
         displayDocsTbl,
         displayClients,
         selectedRowKeys,
         displayChildDocsTbl,
 
         setRows,
+        setSelectedMonth,
         setDisplayClients,
         setDisplayDocsTbl,
         setDisplayChildDocsTbl,
@@ -101,6 +103,8 @@ const DAT_File_V = () => {
                             </label>
                             <DatePicker
                                 picker="month"
+                                value={selectedMonth}
+                                onChange={(date) => setSelectedMonth(date)}
                                 style={{ border: "1px solid #c4c3c3" }}
                             />
                         </div>
