@@ -74,6 +74,12 @@ const DAT_File_V = () => {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
         })
+    const isDownloadDisabled =
+        !doc.client.id ||
+        !selectedMonth ||
+        !doc.selectedTable.value ||
+        (childOptions.length > 0 && !doc.selectedChildTable.value) ||
+        rows.length === 0
     return (
         <ProComponent loading={isReady} hasPermission={hasPermission} err='404'>
             {
@@ -136,7 +142,7 @@ const DAT_File_V = () => {
                         </div>
                     </div>
                     <div className={scss.tblBtns}>
-                        <button type='submit' className={scss.button+' '+scss.btnblue} disabled={!doc.selectedTable.value}>
+                        <button type='submit' className={scss.button+' '+scss.btnblue} disabled={isDownloadDisabled}>
                             Download as DAT File
                         </button>
                         <button
