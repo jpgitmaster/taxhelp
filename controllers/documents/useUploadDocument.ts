@@ -922,11 +922,27 @@ const useUploadDocuments = () => {
         })
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | EFFECTS
-    |--------------------------------------------------------------------------
-    */
+    const handleCancel = () => {
+        setFile(null)
+        setRows([])
+        setAllRows([])
+        setDeletedRowIds([])
+        setSelectedRowKeys([])
+        setSelectedMonth(null)
+
+        setDoc(prev => ({
+            ...prev,
+            selectedTable: {
+                value: 'SALES',
+                label: 'SUMMARY LIST OF SALES (SLS)',
+            },
+            selectedChildTable: {
+                value: '',
+                label: '',
+                parentValue: ''
+            }
+        }))
+    }
 
     useEffect(() => {
         if (!selectedMonth) {
@@ -984,6 +1000,7 @@ const useUploadDocuments = () => {
         doc,
         rows,
         user,
+        file,
         status,
         width_,
         options,
@@ -1008,6 +1025,7 @@ const useUploadDocuments = () => {
         handleUpload,
         handleChange,
         handleToggle,
+        handleCancel,
         handleFileChange,
         handleSelectTable,
         handleSelectClient,

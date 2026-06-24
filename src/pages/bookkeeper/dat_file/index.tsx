@@ -16,6 +16,7 @@ const DAT_File_V = () => {
         doc,
         rows,
         user,
+        file,
         status,
         width_,
         options,
@@ -40,6 +41,7 @@ const DAT_File_V = () => {
         handleUpload,
         handleChange,
         handleToggle,
+        handleCancel,
         handleFileChange,
         handleSelectTable,
         handleSelectClient,
@@ -79,11 +81,11 @@ const DAT_File_V = () => {
         !selectedMonth ||
         !doc.selectedTable.value ||
         (childOptions.length > 0 && !doc.selectedChildTable.value) ||
-        rows.length === 0
+        rows.length === 0 || selectedRowKeys.length > 0
     return (
         <ProComponent loading={isReady} hasPermission={hasPermission} err='404'>
             {
-                rows?.length ?
+                file ?
                 <form onSubmit={handleUpload}>
                     <div className={scss.cards+' '+scss.customFilters}>
                         <div className={scss.selectedClient}>
@@ -153,7 +155,7 @@ const DAT_File_V = () => {
                         >
                             Delete Selected
                         </button>
-                        <button type='button' className={scss.button+' '+scss.btnorange} onClick={() => setRows([])}>
+                        <button type='button' className={scss.button+' '+scss.btnorange} onClick={handleCancel}>
                             Cancel
                         </button>
                     </div>
