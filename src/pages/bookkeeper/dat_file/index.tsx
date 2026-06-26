@@ -24,13 +24,13 @@ const DAT_File_V = () => {
         childOptions,
         rowSelection,
         clientLoader,
+        isDownloading,
         selectedMonth,
         displayDocsTbl,
         displayClients,
         selectedRowKeys,
         displayChildDocsTbl,
 
-        setRows,
         setSelectedMonth,
         setDisplayClients,
         setDisplayDocsTbl,
@@ -46,7 +46,8 @@ const DAT_File_V = () => {
         handleSelectTable,
         handleSelectClient,
         handleDeleteSelected,
-        handleSelectChildTable
+        handleSelectChildTable,
+        handleDownloadTemplate
     } = useUploadDocuments()
     const isReady = !!user
     const { loader } = status
@@ -84,9 +85,12 @@ const DAT_File_V = () => {
         rows.length === 0 || selectedRowKeys.length > 0
     return (
         <ProComponent loading={isReady} hasPermission={hasPermission} err='404'>
+            <button type='button' className={scss.button+' '+scss.btnblue+' '+scss.btnTemplate} onClick={handleDownloadTemplate}>
+              Download Template
+            </button>
             {
                 file ?
-                <form onSubmit={handleUpload}>
+                <form onSubmit={handleUpload} className={scss.formFilters}>
                     <div className={scss.cards+' '+scss.customFilters}>
                         <div className={scss.selectedClient}>
                             <label className={scss.lbl}>
@@ -160,7 +164,7 @@ const DAT_File_V = () => {
                         </button>
                     </div>
                     <div className={scss.tableRecords} style={{width:width_+'px', marginTop: '15px'}}>
-                        { loader && <Loader scss={scss} position='absolute' />}
+                        { (loader || isDownloading) && <Loader scss={scss} position='absolute' />}
                         <Table
                             rowKey='id'
                             dataSource={rows}
@@ -279,8 +283,8 @@ const DAT_File_V = () => {
                 </form>
                 :
                 <>
-                    <br />
                     <div className={scss.cards+' '+scss.uploader}>
+                        { isDownloading && <Loader scss={scss} position='absolute' />}
                         <CustomContainer
                             scss={scss}
                             width={100}

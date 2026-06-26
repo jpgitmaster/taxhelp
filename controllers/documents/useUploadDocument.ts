@@ -21,6 +21,7 @@ const useUploadDocuments = () => {
         getUser
     } = useQueryUsers()
     const { data: user } = getUser()
+    
     /*
     |--------------------------------------------------------------------------
     | HELPERS
@@ -151,10 +152,10 @@ const useUploadDocuments = () => {
     const [rows, setRows] = useState<(ExcelRow & { id: number })[]>([])
     const [displayChildDocsTbl, setDisplayChildDocsTbl] = useState(false)
     const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([])
-    const { status, setStatus, uploadDocumentMutation } = useDocumentAPI()
+    const { status, setStatus, uploadDocumentMutation, useGetTemplate } = useDocumentAPI()
     const [allRows, setAllRows] = useState<(ExcelRow & { id: number })[]>([])
     const [selectedMonth, setSelectedMonth] = useState<dayjs.Dayjs | null>(null)
-
+    const { refetch: downloadTemplate, isFetching: isDownloading } = useGetTemplate()
     const [doc, setDoc] = useState({
         docSearch: '',
         clientSearch: '',
@@ -565,9 +566,9 @@ const useUploadDocuments = () => {
     */
 
     const mapBaseRow = (row: any, index: number) => {
-        const firstName = String(row['FIRST_NAME'] ?? '').trim()
-        const lastName = String(row['LAST_NAME'] ?? '').trim()
-        const middleName = String(row['MIDDLE_NAME'] ?? '').trim()
+        const firstName = String(row['FIRST NAME'] ?? '').trim()
+        const lastName = String(row['LAST NAME'] ?? '').trim()
+        const middleName = String(row['MIDDLE NAME'] ?? '').trim()
 
         const address1 = String(row['FIRST ADDRESS'] ?? '').trim()
         const address2 = String(row['SECOND ADDRESS'] ?? '').trim()
@@ -886,6 +887,30 @@ const useUploadDocuments = () => {
         }))
     }
 
+    const handleDownloadTemplate = async () => {
+        try {
+            const res = await downloadTemplate()
+
+            if (res?.data) {
+                const blob = new Blob([res.data], {
+                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                })
+
+                const url = window.URL.createObjectURL(blob)
+                const link = document.createElement('a')
+                link.href = url
+                link.download = 'template.xlsx'
+                document.body.appendChild(link)
+                link.click()
+
+                link.remove()
+                window.URL.revokeObjectURL(url)
+            }
+        } catch (error) {
+            console.error('Download failed:', error)
+        }
+    }
+
     const handleToggle = (dropdown: string) => {
         if (dropdown === 'clients') {
             setDisplayClients(prev => !prev)
@@ -1007,6 +1032,7 @@ const useUploadDocuments = () => {
         clientArr,
         childOptions,
         rowSelection,
+        isDownloading,
         selectedMonth,
         displayDocsTbl,
         displayClients,
@@ -1031,6 +1057,7 @@ const useUploadDocuments = () => {
         handleSelectClient,
         handleDeleteSelected,
         handleSelectChildTable,
+        handleDownloadTemplate,
     }
 }
 

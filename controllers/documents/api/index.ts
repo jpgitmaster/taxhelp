@@ -119,7 +119,7 @@ const useDocumentAPI = () => {
             router.push('/bookkeeper/documents')
         },
 
-        onError: (error: any) => {
+        onError: (error) => {
             console.error(error)
             alert('Error uploading file')
         },

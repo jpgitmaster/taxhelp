@@ -6,34 +6,41 @@
 @reference 'tailwindcss';
 
 .uploader{
-  @apply w-125 mx-auto;
+  @apply w-125 mx-auto clear-both relative;
   .npt{
     @apply p-0;
   }
 }
-.customFilters{
-  @apply mb-0 -mt-4;
-    .lbl{
-        color: $lightBlack;
-        @apply text-[10px] uppercase;
-        span{
-            color: $red;
-            @apply text-[13px] float-right ml-1.25 -mt-0.75;
-        }
-    }
-    .npt{
-        @apply p-0;
-    }
-    .selectedClient{
-        @apply flex-1;
-    }
-    .monthYear{
-        @apply w-40;
-    }
-     .selectParentDat, .selectedChildDat{
-        @apply w-75;
-    }
+.btnTemplate{
+    @apply w-45 float-right -mt-5;
 }
+.formFilters{
+    @apply inline-block mt-2.5;
+    .customFilters{
+        @apply mb-0 -mt-4;
+            .lbl{
+                color: $lightBlack;
+                @apply text-[10px] uppercase;
+                span{
+                    color: $red;
+                    @apply text-[13px] float-right ml-1.25 -mt-0.75;
+                }
+            }
+            .npt{
+                @apply p-0;
+            }
+            .selectedClient{
+                @apply flex-1;
+            }
+            .monthYear{
+                @apply w-40;
+            }
+            .selectParentDat, .selectedChildDat{
+                @apply w-75;
+            }
+        }
+}
+
 .tableRecords{
     @apply relative;
     .check{

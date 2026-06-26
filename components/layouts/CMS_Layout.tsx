@@ -182,9 +182,9 @@ const CMS_Layout: FC<MasterProps> = ({ children }) => {
                 } */}
                 <div className={scss.headerIcons}>
                   <div className={scss.headerIcon}>
-                    <div className={scss.icon+' '+scss.subscriptionStatus +' '+ (user?.subscription?.plan === 'pro' ? scss.pro : user?.subscription?.plan === 'basic' ? scss.basic :'')}>
+                    <Link href='/bookkeeper/subscription' className={scss.icon+' '+scss.subscriptionStatus +' '+ (user?.subscription?.plan === 'pro' ? scss.pro : user?.subscription?.plan === 'basic' ? scss.basic :'')}>
                       {user?.subscription?.plan}
-                    </div>
+                    </Link>
                   </div>
                   {/* <div className={scss.headerIcon}>
                     <div className={scss.icon}>
