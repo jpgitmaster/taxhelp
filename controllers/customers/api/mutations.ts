@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { initCustomer } from '../states'
-import { Customer, CustomerObj } from '../types'
 import api from '@/components/reusables/axios'
+import { Customer, CustomerObj } from '../types'
 import { Status } from '@/controllers/global/types'
 import { initStatus } from '@/controllers/global/states'
 import { useMutation, useQueryClient } from '@tanstack/react-query'

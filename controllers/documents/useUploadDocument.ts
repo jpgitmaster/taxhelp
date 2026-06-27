@@ -10,6 +10,7 @@ import {
 } from 'react'
 import useQueryClients from '../clients/api/queries'
 import useQueryUsers from '@/controllers/users/api/queries'
+import useMutationDocuments from './api/mutation'
 
 const useUploadDocuments = () => {
     const {
@@ -21,7 +22,7 @@ const useUploadDocuments = () => {
         getUser
     } = useQueryUsers()
     const { data: user } = getUser()
-    
+    const { useDownloadDatFile } = useMutationDocuments()
     /*
     |--------------------------------------------------------------------------
     | HELPERS
@@ -580,6 +581,10 @@ const useUploadDocuments = () => {
             branchCode: row['BRANCH CODE'],
             registeredName: row['REGISTERED NAME'],
 
+            firstName,
+            lastName,
+            middleName,
+
             individualName:
                 `${firstName} ${lastName}`.trim() +
                 (middleName ? `, ${middleName}` : ''),
@@ -947,6 +952,115 @@ const useUploadDocuments = () => {
         })
     }
 
+    const handleDAT_Upload = (
+        e: SyntheticEvent<HTMLFormElement>
+    ) => {
+        e.preventDefault()
+
+        if (!doc.client.id) {
+            alert('Please select a client.')
+            return
+        }
+
+        if (!selectedMonth) {
+            alert('Please select a taxable month.')
+            return
+        }
+
+        const formType =
+            doc.selectedTable.value === 'SALES'
+                ? 'SLS'
+                : doc.selectedTable.value === 'PURCHASES'
+                ? 'SLP'
+                : doc.selectedTable.value
+
+        const payload = {
+            client_id: Number(doc.client.id),
+            month: selectedMonth.month() + 1,
+            year: selectedMonth.year(),
+            form_type: formType,
+            sub_form_type: doc.selectedChildTable.value,
+            records: rows.map((row: any) => ({
+                taxable_month: dayjs(
+                    typeof row.taxableMonth === 'number'
+                        ? XLSX.SSF.format('yyyy-mm-dd', row.taxableMonth)
+                        : row.taxableMonth
+                ).format('YYYY-MM-DD'),
+
+                tin: row.tin,
+                registered_name: row.registeredName,
+
+                first_name: row.firstName ?? '',
+                last_name: row.lastName ?? '',
+                middle_name: row.middleName ?? '',
+
+                first_address: row.address1,
+                second_address: row.address2,
+
+                branch_code: row.branchCode,
+
+                ...(formType === 'SLS' && {
+                    exempt_sales: row.exempt_sales ?? 0,
+                    zero_rated_sales: row.zero_rated_sales ?? 0,
+                    vatable_sales: row.vatable_sales ?? 0,
+                    vat_rate: row.vat_rate ?? 0,
+                }),
+
+                ...(formType === 'SLP' && {
+                    exempt_purchases: row.exempt_purchases ?? 0,
+                    zero_rated_purchases: row.zero_rated_purchases ?? 0,
+                    vatable_purchases: row.vatable_purchases ?? 0,
+                    vatable_purchase_of_services:
+                        row.vatable_purchase_of_services ?? 0,
+                    vatable_purchase_of_capital_goods:
+                        row.vatable_purchase_of_capital_goods ?? 0,
+                    vatable_purchase_of_other_goods:
+                        row.vatable_purchase_of_other_goods ?? 0,
+                    vat_rate: row.vat_rate ?? 0,
+                }),
+
+                ...(formType === 'SAWT' && {
+                    atc_code: row.atc_code,
+                    amount_of_income_payment:
+                        row.amount_of_income_payment ?? 0,
+                    tax_rate: row.tax_rate ?? 0,
+                    amount_of_tax_withheld:
+                        row.amount_of_tax_withheld ?? 0,
+                }),
+
+                ...(formType === 'QAP' && {
+                    atc_code: row.atc_code,
+                    amount_of_income_payment:
+                        row.amount_of_income_payment ?? 0,
+                    tax_rate: row.tax_rate ?? 0,
+                    amount_of_tax_withheld:
+                        row.amount_of_tax_withheld ?? 0,
+                }),
+            })),
+        }
+
+        useDownloadDatFile.mutate(payload, {
+            onSuccess: (blob) => {
+                const url = URL.createObjectURL(blob)
+
+                const link = document.createElement('a')
+                link.href = url
+                link.download = `${formType}_${selectedMonth.format(
+                    'YYYYMM'
+                )}.dat`
+
+                document.body.appendChild(link)
+                link.click()
+                document.body.removeChild(link)
+
+                URL.revokeObjectURL(url)
+            },
+            onError: (error) => {
+                console.error(error)
+            },
+        })
+    }
+
     const handleCancel = () => {
         setFile(null)
         setRows([])
@@ -1052,6 +1166,7 @@ const useUploadDocuments = () => {
         handleChange,
         handleToggle,
         handleCancel,
+        handleDAT_Upload,
         handleFileChange,
         handleSelectTable,
         handleSelectClient,

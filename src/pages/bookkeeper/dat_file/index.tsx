@@ -38,10 +38,10 @@ const DAT_File_V = () => {
 
         getColumns,
         
-        handleUpload,
         handleChange,
         handleToggle,
         handleCancel,
+        handleDAT_Upload,
         handleFileChange,
         handleSelectTable,
         handleSelectClient,
@@ -90,7 +90,7 @@ const DAT_File_V = () => {
             </button>
             {
                 file ?
-                <form onSubmit={handleUpload} className={scss.formFilters}>
+                <form onSubmit={handleDAT_Upload} className={scss.formFilters}>
                     <div className={scss.cards+' '+scss.customFilters}>
                         <div className={scss.selectedClient}>
                             <label className={scss.lbl}>
@@ -337,9 +337,6 @@ const DAT_File_V = () => {
                 </>
             }
             <br />
-            {/* <button onClick={handleUpload} disabled={loading}>
-                {loading ? 'Converting...' : 'Convert to DAT'}
-            </button> */}
         </ProComponent>
     )
 }
