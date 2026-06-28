@@ -21,6 +21,7 @@ const DAT_File_V = () => {
         width_,
         options,
         clientArr,
+        datLoader,
         childOptions,
         rowSelection,
         clientLoader,
@@ -85,12 +86,10 @@ const DAT_File_V = () => {
         rows.length === 0 || selectedRowKeys.length > 0
     return (
         <ProComponent loading={isReady} hasPermission={hasPermission} err='404'>
-            <button type='button' className={scss.button+' '+scss.btnblue+' '+scss.btnTemplate} onClick={handleDownloadTemplate}>
-              Download Template
-            </button>
             {
                 file ?
                 <form onSubmit={handleDAT_Upload} className={scss.formFilters}>
+                    { (datLoader) && <Loader scss={scss} position='absolute' />}
                     <div className={scss.cards+' '+scss.customFilters}>
                         <div className={scss.selectedClient}>
                             <label className={scss.lbl}>
@@ -283,6 +282,9 @@ const DAT_File_V = () => {
                 </form>
                 :
                 <>
+                    <button type='button' className={scss.button+' '+scss.btnblue+' '+scss.btnTemplate} onClick={handleDownloadTemplate}>
+                        Download Template
+                    </button>
                     <div className={scss.cards+' '+scss.uploader}>
                         { isDownloading && <Loader scss={scss} position='absolute' />}
                         <CustomContainer

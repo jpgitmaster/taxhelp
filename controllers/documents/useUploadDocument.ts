@@ -23,11 +23,7 @@ const useUploadDocuments = () => {
     } = useQueryUsers()
     const { data: user } = getUser()
     const { useDownloadDatFile } = useMutationDocuments()
-    /*
-    |--------------------------------------------------------------------------
-    | HELPERS
-    |--------------------------------------------------------------------------
-    */
+    const datLoader = useDownloadDatFile.isPending;
 
     const formatTIN = (value: unknown) => {
         const digits = String(value ?? '')
@@ -1144,6 +1140,7 @@ const useUploadDocuments = () => {
         width_,
         options,
         clientArr,
+        datLoader,
         childOptions,
         rowSelection,
         isDownloading,

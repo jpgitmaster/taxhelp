@@ -15,7 +15,7 @@
     @apply w-45 float-right -mt-5;
 }
 .formFilters{
-    @apply inline-block mt-2.5;
+    @apply inline-block mt-2.5 relative;
     .customFilters{
         @apply mb-0 -mt-4;
             .lbl{
