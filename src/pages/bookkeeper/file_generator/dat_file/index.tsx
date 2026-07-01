@@ -94,7 +94,7 @@ const DAT_File_V = () => {
         toDelete: doc.toDelete,
         taxable_month: doc.taxable_month,
       }
-
+      
       if (docType === 'SALES') {
         return {
           ...base,
@@ -119,6 +119,7 @@ const DAT_File_V = () => {
       }
 
       if (docType === 'PURCHASES') {
+        console.log(doc)
         return {
           ...base,
           supplier: doc.supplier,
@@ -126,7 +127,7 @@ const DAT_File_V = () => {
           branch_code: doc.supplier?.branch_code,
           registered_name: doc.supplier?.registered_name,
           first_address: doc.supplier?.first_address,
-          name:
+          individual_name:
             (doc.supplier?.first_name || '') + ' ' +
             (doc.supplier?.middle_name || '') + ' ' +
             (doc.supplier?.last_name || ''),
@@ -157,7 +158,7 @@ const DAT_File_V = () => {
           first_address: doc.customer?.first_address,
           second_address: doc.customer?.second_address,
           registered_name: doc.customer?.registered_name,
-          name:
+          individual_name:
             (doc.customer?.first_name || '') + ' ' +
             (doc.customer?.middle_name || '') + ' ' +
             (doc.customer?.last_name || ''),
