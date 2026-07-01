@@ -24,7 +24,7 @@
 }
 
 .left h1{
-    @apply text-5xl font-bold mt-5;
+    @apply text-4xl font-bold mt-5;
 }
 
 .left p{
@@ -48,20 +48,4 @@
         background-color: $border_green;
         @apply clear-both inline-block text-center w-full mt-4 cursor-pointer py-2.5 px-5 rounded-[10px] text-[13px] font-semibold;
     }
-}
-.stats{
-    @apply grid grid-cols-4 gap-6 my-10;
-}
-
-.statCard{
-    @apply bg-white rounded-3xl shadow-lg p-6 text-center mb-4;
-}
-
-.statCard h2{
-    color: $orange;
-    @apply text-4xl font-bold;
-}
-
-.statCard span{
-    @apply text-gray-500;
 }
