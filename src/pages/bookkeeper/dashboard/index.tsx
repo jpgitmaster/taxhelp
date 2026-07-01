@@ -72,6 +72,69 @@ const Dashboard_V = () => {
   const isPro = user?.subscription?.plan === 'pro'
   return (
       <div className={scss.dashboardWrapper}>
+        <div className={scss.heroBanner}>
+          <div className={scss.left}>
+              <span className={scss.badge}>
+                  📊 System Dashboard
+              </span>
+
+              <h1>Manage Schedules, Reports & User Feedback in One Place</h1>
+
+              <p>
+                  Your central control panel for monitoring activities, managing
+                  calendar schedules, tracking system issues, and reviewing user
+                  feedback in real time.
+              </p>
+
+              <div className={scss.features}>
+                  <span>
+                      <Image
+                          src="/svgs/check.svg"
+                          alt="Check"
+                          width={22}
+                          height={22}
+                          unoptimized
+                          className={scss.check}
+                      />
+                      Smart Calendar Scheduling
+                  </span>
+
+                  <span>
+                      <Image
+                          src="/svgs/check.svg"
+                          alt="Check"
+                          width={22}
+                          height={22}
+                          unoptimized
+                          className={scss.check}
+                      />
+                      Bug & Issue Reporting
+                  </span>
+
+                  <span>
+                      <Image
+                          src="/svgs/check.svg"
+                          alt="Check"
+                          width={22}
+                          height={22}
+                          unoptimized
+                          className={scss.check}
+                      />
+                      User Feedback Monitoring
+                  </span>
+              </div>
+          </div>
+
+          <div className={scss.right}>
+              <Image
+                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop"
+                  width={430}
+                  height={300}
+                  alt="Dashboard Overview"
+              />
+          </div>
+      </div>
+      <br /><br />
         {
           message &&
           <SuccessMessage message={message} />

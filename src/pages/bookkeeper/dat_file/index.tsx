@@ -333,9 +333,11 @@ const DAT_File_V = () => {
                             }}
                         />
                     </div>
+                    <br /><br />
                 </form>
                 :
                 <>
+                    <br /><br />
                     <div className={scss.cards+' '+scss.uploader}>
                         { isDownloading && <Loader scss={scss} position='absolute' />}
                         <CustomContainer
@@ -387,6 +389,7 @@ const DAT_File_V = () => {
                             </label>
                         </div>
                     </div>
+                    <br /><br /><br /><br /><br /><br />
                 </>
             }
             <br />
