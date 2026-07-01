@@ -4,15 +4,77 @@
 @use '@/styles/colors' as *;
 
 @reference 'tailwindcss';
+.heroBanner{
+    @apply flex justify-between items-center rounded-3xl
+    p-10 text-white;
+
+    background: linear-gradient(
+        135deg,
+        #0F4C81,
+        #2F80ED,
+        #56CCF2
+    );
+}
+
+.badge{
+    @apply bg-white text-blue-700
+    px-4 py-2 rounded-full
+    text-sm font-semibold;
+}
+
+.left{
+    @apply w-3/5;
+}
+
+.left h1{
+    @apply text-5xl font-bold mt-5;
+}
+
+.left p{
+    @apply mt-5 text-lg opacity-90 leading-8;
+}
+
+.features{
+    @apply flex gap-6 mt-8 text-base font-semibold;
+    .check{
+        @apply float-left mr-1;
+        filter: invert(62%) sepia(45%) saturate(6153%) hue-rotate(87deg) brightness(96%) contrast(89%);
+    }
+}
+
+.right{
+    img{
+        @apply drop-shadow-2xl rounded-[20px];
+    }
+    .btngreen{
+        color: $white;
+        background-color: $border_green;
+        @apply mt-4 cursor-pointer py-2.5 px-5 rounded-[10px] text-[13px] font-semibold;
+    }
+}
+
+.stats{
+    @apply grid grid-cols-4 gap-6 my-10;
+}
+
+.statCard{
+    @apply bg-white rounded-3xl shadow-lg p-6 text-center mb-4;
+}
+
+.statCard h2{
+    color: $orange;
+    @apply text-4xl font-bold;
+}
+
+.statCard span{
+    @apply text-gray-500;
+}
 
 .uploader{
   @apply w-125 mx-auto clear-both relative;
   .npt{
     @apply p-0;
   }
-}
-.btnTemplate{
-    @apply w-45 float-right -mt-5;
 }
 .formFilters{
     @apply inline-block mt-2.5 relative;

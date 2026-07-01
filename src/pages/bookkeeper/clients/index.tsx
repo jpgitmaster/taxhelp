@@ -138,13 +138,97 @@ const Clients_V = () => {
     
     return (
         <>
+            <div className={scss.heroBanner}>
+                <div className={scss.left}>
+                    <span className={scss.badge}>
+                        👥 Client Management
+                    </span>
+
+                    <h1>Manage Your Business Clients Efficiently</h1>
+
+                    <p>
+                        Store taxpayer information, organize client records,
+                        update business details, and access everything in one
+                        secure workspace.
+                    </p>
+
+                    <div className={scss.features}>
+                        <span>
+                            <Image
+                                src="/svgs/check.svg"
+                                alt="Check"
+                                width={22}
+                                height={22}
+                                unoptimized
+                                className={scss.check}
+                            />
+                            Flexible Client Limits
+                        </span>
+
+                        <span>
+                            <Image
+                                src="/svgs/check.svg"
+                                alt="Check"
+                                width={22}
+                                height={22}
+                                unoptimized
+                                className={scss.check}
+                            />
+                            Subscription-Based Access
+                        </span>
+
+                        <span>
+                            <Image
+                                src="/svgs/check.svg"
+                                alt="Check"
+                                width={22}
+                                height={22}
+                                unoptimized
+                                className={scss.check}
+                            />
+                            Fast Search & Updates
+                        </span>
+                    </div>
+                </div>
+
+                <div className={scss.right}>
+                    <Image
+                        src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                        width={430}
+                        height={300}
+                        alt="Client Management"
+                    />
+                    <Link
+                        href='/bookkeeper/clients/add_client'
+                        className={scss.button + ' ' + scss.btngreen}
+                    >
+                        Add New Client
+                    </Link>
+                </div>
+            </div>
+
+            <div className={scss.stats}>
+                <div className={scss.statCard}>
+                    <h2>{client.totalClients}</h2>
+                    <span>Registered Clients</span>
+                </div>
+
+                <div className={scss.statCard}>
+                    <h2>100%</h2>
+                    <span>Secure Records</span>
+                </div>
+
+                <div className={scss.statCard}>
+                    <h2>24/7</h2>
+                    <span>Cloud Access</span>
+                </div>
+
+                <div className={scss.statCard}>
+                    <h2>Fast</h2>
+                    <span>Client Search</span>
+                </div>
+            </div>
             <div className={scss.header}>
-                <Link
-                    href='/bookkeeper/clients/add_client'
-                    className={scss.button + ' ' + scss.btnblue}
-                >
-                    Add Client
-                </Link>
                 {/* <Link href='/bookkeeper/clients' className={scss.button+' '+scss.btnorange}>
                     Export Clients
                 </Link> */}

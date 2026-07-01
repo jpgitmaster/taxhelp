@@ -86,6 +86,60 @@ const DAT_File_V = () => {
         rows.length === 0 || selectedRowKeys.length > 0
     return (
         <ProComponent loading={isReady} hasPermission={hasPermission} err='404'>
+            <div className={scss.heroBanner}>
+                <div className={scss.left}>
+                    <span className={scss.badge}>
+                        ⭐ Trusted by 5,000+ Businesses
+                    </span>
+
+                    <h1>Generate BIR DAT Files in Seconds</h1>
+
+                    <p>
+                        Upload your Excel file and instantly generate
+                        compliant DAT files for VAT Sales, Purchases,
+                        and Expanded Withholding Tax.
+                    </p>
+
+                    <div className={scss.features}>
+                        <span><Image src='/svgs/check.svg' alt='Check' unoptimized={true} priority height={25} width={25} className={scss.check} /> BIR Ready</span>
+                        <span><Image src='/svgs/check.svg' alt='Check' unoptimized={true} priority height={25} width={25} className={scss.check} /> No Installation</span>
+                        <span><Image src='/svgs/check.svg' alt='Check' unoptimized={true} priority height={25} width={25} className={scss.check} /> Secure Cloud Processing</span>
+                    </div>
+                </div>
+
+                <div className={scss.right}>
+                    <Image
+                        src="https://plus.unsplash.com/premium_photo-1679923906285-386991e8d862?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                        width={420}
+                        height={300}
+                        alt="DAT Generator"
+                    />
+                    <button type='button' className={scss.button+' '+scss.btngreen+' '+scss.btnTemplate} onClick={handleDownloadTemplate}>
+                        Download Template
+                    </button>
+                </div>
+            </div>
+            <div className={scss.stats}>
+                <div className={scss.statCard}>
+                    <h2>18,000+</h2>
+                    <span>DAT Files Generated</span>
+                </div>
+
+                <div className={scss.statCard}>
+                    <h2>2,300+</h2>
+                    <span>Businesses</span>
+                </div>
+
+                <div className={scss.statCard}>
+                    <h2>99.9%</h2>
+                    <span>Success Rate</span>
+                </div>
+
+                <div className={scss.statCard}>
+                    <h2>24/7</h2>
+                    <span>Cloud Processing</span>
+                </div>
+            </div>
             {
                 file ?
                 <form onSubmit={handleDAT_Upload} className={scss.formFilters}>
@@ -282,9 +336,6 @@ const DAT_File_V = () => {
                 </form>
                 :
                 <>
-                    <button type='button' className={scss.button+' '+scss.btnblue+' '+scss.btnTemplate} onClick={handleDownloadTemplate}>
-                        Download Template
-                    </button>
                     <div className={scss.cards+' '+scss.uploader}>
                         { isDownloading && <Loader scss={scss} position='absolute' />}
                         <CustomContainer

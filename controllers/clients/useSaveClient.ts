@@ -225,7 +225,12 @@ const useSaveClient = () => {
                     'Your client has been created.'
                 )
                 setStatus({...status, loader: false})
-                router.push('/bookkeeper/users/clients')
+                if(user?.subscription?.plan === 'basic'){
+                    router.push('/bookkeeper/clients')
+                }
+                if(user?.subscription?.plan === 'pro'){
+                    router.push('/bookkeeper/users/clients')
+                }
             },
             onError: (error) => {
                 console.log(error);
