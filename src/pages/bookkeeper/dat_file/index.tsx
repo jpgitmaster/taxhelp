@@ -115,7 +115,7 @@ const DAT_File_V = () => {
                         alt="DAT Generator"
                     />
                     <button type='button' className={scss.button+' '+scss.btngreen+' '+scss.btnTemplate} onClick={handleDownloadTemplate}>
-                        Download Template
+                        Download DAT Template
                     </button>
                 </div>
             </div>
