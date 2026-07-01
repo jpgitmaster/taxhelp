@@ -210,7 +210,7 @@ const Clients_V = () => {
             <div className={scss.stats}>
                 <div className={scss.statCard}>
                     <h2>{client.totalClients}</h2>
-                    <span>Registered Clients</span>
+                    <span>Registered Client{client.totalClients > 1 ? 's' : ''}</span>
                 </div>
 
                 <div className={scss.statCard}>
