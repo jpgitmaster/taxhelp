@@ -1,6 +1,5 @@
-
-import { Table } from 'antd'
 import Image from 'next/image'
+import { DatePicker, Table } from 'antd'
 import scss from './styles/Documents.module.scss'
 import { signOut, getSession } from 'next-auth/react'
 import Loader from '@/components/reusables/RotatingLoader'
@@ -10,27 +9,35 @@ import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 import useUploadDocuments from '@/controllers/documents/useUploadDocument'
 import ClientsDropdown from '@/components/pages/bookkeeper/documents/ClientsDropdown'
 import DocumentsTableDropdown from '@/components/pages/bookkeeper/documents/DocumentsTableDropdown'
+import DocumentsChildTableDropdown from '@/components/pages/bookkeeper/documents/DocumentsChildTableDropdown'
 
 const UploadNewDocument_V = () => {
     const {
         doc,
         rows,
+        file,
         status,
         width_,
         options,
         clientArr,
+        datLoader,
+        childOptions,
         rowSelection,
         clientLoader,
+        selectedMonth,
         displayDocsTbl,
         displayClients,
         selectedRowKeys,
+        displayChildDocsTbl,
 
-        setRows,
+        setSelectedMonth,
         setDisplayClients,
         setDisplayDocsTbl,
+        setDisplayChildDocsTbl,
 
         getColumns,
         
+        handleCancel,
         handleUpload,
         handleChange,
         handleToggle,
@@ -38,8 +45,15 @@ const UploadNewDocument_V = () => {
         handleSelectTable,
         handleSelectClient,
         handleDeleteSelected,
+        handleSelectChildTable,
     } = useUploadDocuments()
     const { loader } = status
+    const isDownloadDisabled =
+        !doc.client.id ||
+        !selectedMonth ||
+        !doc.selectedTable.value ||
+        (childOptions.length > 0 && !doc.selectedChildTable.value) ||
+        rows.length === 0 || selectedRowKeys.length > 0
     type NumericFields =
         | 'exempt_sales'
         | 'zero_rated_sales'
@@ -68,63 +82,80 @@ const UploadNewDocument_V = () => {
     return (
         <div>
             {
-                rows?.length ?
-                <form onSubmit={handleUpload}>
-                    <div className={scss.pageHeader+' '+scss.form} style={{marginTop: '10px'}}>
-                        {/* <button onClick={handleUpload} type='button' className={scss.button+' '+scss.btnorange}>
-                            Convert to DAT File
-                        </button> */}
-                        <div className={scss.cards+' '+scss.customCards}>
-                            <CustomContainer
-                                scss={scss}
-                                width={33}
-                                required={true}
-                                label='Select Table'
-                                className={scss.selectedTable}
-                            >
-                                <DocumentsTableDropdown
-                                    doc={doc}
-                                    options={options}
-                                    displayDocsTbl={displayDocsTbl}
-                                    setDisplayDocsTbl={setDisplayDocsTbl}
-                                    handleToggle={handleToggle}
-                                    handleSelectTable={handleSelectTable}
-                                />
-                            </CustomContainer>
-                            <CustomContainer
-                                scss={scss}
-                                width={33}
-                                required={true}
-                                label='Selected Client'
-                            >
-                                <ClientsDropdown
-                                    doc={doc}
-                                    clients={clientArr}
-                                    loader={clientLoader}
-                                    displayClients={displayClients}
+                file ?
+                <form onSubmit={handleUpload} className={scss.formFilters}>
+                    { (datLoader) && <Loader scss={scss} position='absolute' />}
+                    <div className={scss.cards+' '+scss.customFilters}>
+                        <div className={scss.selectedClient}>
+                            <label className={scss.lbl}>
+                                Selected Client
+                            </label>
+                            <ClientsDropdown
+                                doc={doc}
+                                clients={clientArr}
+                                loader={clientLoader}
+                                displayClients={displayClients}
 
-                                    setDisplayClients={setDisplayClients}
+                                setDisplayClients={setDisplayClients}
 
-                                    handleChange={handleChange}
-                                    handleToggle={handleToggle}
-                                    handleSelectClient={handleSelectClient}
-                                />
-                            </CustomContainer>
-                            <div className={scss.card+' '+scss.w33}>
-                                {/* <div className={scss.searchComponent}
-                                    // onSubmit={handleSubmitSearch}
-                                >
-                                    <input id='search' type='text' name='search' maxLength={50} autoComplete='search' placeholder='Enter keyword...'
-                                        // value={filter.search} onKeyUp={handleBlur} onChange={handleSearch}
-                                    />
-                                    <button type='submit' className={`${scss.button} ${scss.btnblue}`}
-                                        // onKeyDown={handleResubmit}
-                                    >
-                                    Search
-                                    </button>
-                                </div> */}
-                            </div>
+                                handleChange={handleChange}
+                                handleToggle={handleToggle}
+                                handleSelectClient={handleSelectClient}
+                            />
                         </div>
+                        <div className={scss.monthYear}>
+                            <label className={scss.lbl}>
+                                Taxable Month & Year
+                            </label>
+                            <DatePicker
+                                picker="month"
+                                value={selectedMonth}
+                                onChange={(date) => setSelectedMonth(date)}
+                                style={{ border: "1px solid #c4c3c3" }}
+                            />
+                        </div>
+                        <div className={scss.selectParentDat}>
+                            <label className={scss.lbl}>
+                                Select Table
+                            </label>
+                            <DocumentsTableDropdown
+                                doc={doc}
+                                options={options}
+                                displayDocsTbl={displayDocsTbl}
+                                handleToggle={handleToggle}
+                                setDisplayDocsTbl={setDisplayDocsTbl}
+                                handleSelectTable={handleSelectTable}
+                            />
+                        </div>
+                        <div className={scss.selectedChildDat}>
+                            <label className={scss.lbl}>
+                                {childOptions?.length ? doc.selectedTable.label : <>&nbsp;</>}
+                            </label>
+                            <DocumentsChildTableDropdown
+                                doc={doc}
+                                options={childOptions}
+                                displayDocsTbl={displayChildDocsTbl}
+                                handleToggle={handleToggle}
+                                handleSelectTable={handleSelectChildTable}
+                                setDisplayDocsTbl={setDisplayChildDocsTbl}
+                            />
+                        </div>
+                    </div>
+                    <div className={scss.tblBtns}>
+                        <button type='submit' className={scss.button+' '+scss.btnblue} disabled={isDownloadDisabled}>
+                            Save Document
+                        </button>
+                        <button
+                            type='button'
+                            className={scss.button + ' ' + scss.btnred}
+                            onClick={handleDeleteSelected}
+                            disabled={!selectedRowKeys.length}
+                        >
+                            Delete Selected
+                        </button>
+                        <button type='button' className={scss.button+' '+scss.btnorange} onClick={handleCancel}>
+                            Cancel
+                        </button>
                     </div>
                     <div className={scss.tableRecords} style={{width:width_+'px', marginTop: '15px'}}>
                         { loader && <Loader scss={scss} position='absolute' />}
@@ -242,22 +273,6 @@ const UploadNewDocument_V = () => {
                                 )
                             }}
                         />
-                        <div className={scss.tblBtns}>
-                            <button type='submit' className={scss.button+' '+scss.btnblue}>
-                                Save Document
-                            </button>
-                            <button type='button' className={scss.button+' '+scss.btnorange} onClick={() => setRows([])}>
-                                Cancel
-                            </button>
-                            <button
-                                type='button'
-                                className={scss.button + ' ' + scss.btnred}
-                                onClick={handleDeleteSelected}
-                                disabled={!selectedRowKeys.length}
-                            >
-                                Delete Selected
-                            </button>
-                        </div>
                     </div>
                 </form>
                 :

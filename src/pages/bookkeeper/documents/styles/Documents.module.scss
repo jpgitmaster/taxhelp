@@ -122,6 +122,32 @@
     @apply mt-2 mb-4;
   }
 }
+.formFilters{
+    @apply inline-block mt-2.5 relative;
+    .customFilters{
+        @apply mb-0 -mt-4;
+            .lbl{
+                color: $lightBlack;
+                @apply text-[10px] uppercase;
+                span{
+                    color: $red;
+                    @apply text-[13px] float-right ml-1.25 -mt-0.75;
+                }
+            }
+            .npt{
+                @apply p-0;
+            }
+            .selectedClient{
+                @apply flex-1;
+            }
+            .monthYear{
+                @apply w-40;
+            }
+            .selectParentDat, .selectedChildDat{
+                @apply w-75;
+            }
+        }
+}
 .tableRecords{
     @apply relative;
     .check{
@@ -153,7 +179,7 @@
     }
 }
 .tblBtns{
-    @apply flex flex-row mt-5 w-110 mx-auto;
+    @apply flex flex-row mt-5 w-130;
     .button{
         @apply ml-2;
     }
