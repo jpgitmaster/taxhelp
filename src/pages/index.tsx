@@ -91,7 +91,7 @@ const LandingPage = () => {
                   </Link>
                 </div>
                 <div className={scss.bannerRight}>
-                  <img src="https://plus.unsplash.com/premium_photo-1679923906285-386991e8d862?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Accounting Team" />
+                  <Image src='/images/taxhelp_image4.JPG' alt="Trusted Accounting & Tax Solutions" width={100} height={100} />
                 </div>
               </div>
               <div className={scss.banner}>
@@ -107,7 +107,7 @@ const LandingPage = () => {
                   </Link>
                 </div>
                 <div className={scss.bannerRight}>
-                  <img src="https://plus.unsplash.com/premium_photo-1679922389798-8b38c78b5670?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Accounting Team" />
+                  <Image src='/images/taxhelp_image.JPG' alt="BIR Compliance Made Simple" width={400} height={200} />
                 </div>
               </div>
               <div className={scss.banner}>
@@ -123,7 +123,7 @@ const LandingPage = () => {
                   </Link>
                 </div>
                 <div className={scss.bannerRight}>
-                  <img src="https://plus.unsplash.com/premium_photo-1679923813998-6603ee2466c5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Accounting Team" />
+                  <Image src='/images/taxhelp_image2.JPG' alt="Smart Tax Solutions for Every Business" width={400} height={200} />
                 </div>
               </div>
               <div className={scss.banner}>
@@ -139,7 +139,7 @@ const LandingPage = () => {
                   </Link>
                 </div>
                 <div className={scss.bannerRight}>
-                  <img src="https://images.unsplash.com/photo-1707902665498-a202981fb5ac?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Accounting Team" />
+                  <Image src='/images/taxhelp_image3.JPG' alt="Accurate Bookkeeping for Your Business" width={400} height={200} />
                 </div>
               </div>
             </Slider>
@@ -171,7 +171,7 @@ const LandingPage = () => {
         {/* About Section */}
         <section className={scss.about}>
             <div className={scss.about_box}>
-                <Image src="https://images.unsplash.com/photo-1642043175009-5997b3a078d8?q=80&w=1035&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="About Us" className={scss.about_img} width={20} height={20} unoptimized={true} />
+              <Image src='/images/taxhelp_image2.JPG' alt="About TaxHelp" width={400} height={200} />
                 <div>
                     <h2>About TaxHelp</h2>
                     <p>

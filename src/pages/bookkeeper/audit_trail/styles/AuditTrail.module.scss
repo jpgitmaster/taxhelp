@@ -40,8 +40,11 @@
 }
 
 .right{
-    img{
-        @apply drop-shadow-2xl rounded-[20px];
+    .imageContainer{
+        @apply relative drop-shadow-2xl rounded-[20px] w-90 h-70 overflow-hidden;
+        img{
+            @apply w-full h-full object-cover;
+        }
     }
     .btngreen{
         color: $white;

@@ -322,7 +322,7 @@ const useFileGenerator = () => {
         const commonOptions = {
             onSuccess: handleFileDownload,
         }
-
+        console.log(doc)
         const mutationMap: Record<string, () => void> = {
             SALES: () =>
                 downloadSalesMutation.mutate(
@@ -540,7 +540,6 @@ const useFileGenerator = () => {
             doc.selectedTable.value === 'SALES' &&
             sales
         ){
-            console.log(sales)
             setRecord(prev => ({
                 ...prev,
                 recordArr: sales?.records || [],

@@ -192,12 +192,9 @@ const Clients_V = () => {
                 </div>
 
                 <div className={scss.right}>
-                    <Image
-                        src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                        width={430}
-                        height={300}
-                        alt="Client Management"
-                    />
+                    <div className={scss.imageContainer}>
+                        <Image src='/images/client.JPG' alt="Manage Your Business Clients Efficiently" width={400} height={200} />
+                    </div>
                     <Link
                         href='/bookkeeper/clients/add_client'
                         className={scss.button + ' ' + scss.btngreen}
@@ -260,12 +257,12 @@ const Clients_V = () => {
                 />
             </div>
             <div className={scss.pagination}>
-                {
+                {/* {
                     client.totalClients != 0 &&
                     <div className={scss.total_records}>
-                    {'Total Document'+ (client.totalClients > 1 ? 's' : '')}: <strong>{client.totalClients}</strong>
+                    {'Total Client'+ (client.totalClients > 1 ? 's' : '')}: <strong>{client.totalClients}</strong>
                     </div>
-                }
+                } */}
                 <div className={scss.paginationComponent}>
                     {
                     client.totalClients ? <Pagination defaultPageSize={filter.recordsLimit} total={client.totalClients} onChange={handlePageChange} showSizeChanger={false} />

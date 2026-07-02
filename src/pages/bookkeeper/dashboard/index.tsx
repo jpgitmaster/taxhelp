@@ -126,12 +126,9 @@ const Dashboard_V = () => {
           </div>
 
           <div className={scss.right}>
-              <Image
-                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop"
-                  width={430}
-                  height={300}
-                  alt="Dashboard Overview"
-              />
+            <div className={scss.imageContainer}>
+              <Image src='/images/taxhelp_image.JPG' alt="Manage Schedules, Reports & User Feedback in One Place" width={400} height={200} />
+            </div>
           </div>
       </div>
       <br /><br />
