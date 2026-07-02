@@ -109,7 +109,7 @@ const DAT_File_V = () => {
 
                 <div className={scss.right}>
                     <div className={scss.imageContainer}>
-                        <Image src='/images/taxhelp_image4.JPG' alt="Generate BIR DAT Files in Seconds" width={400} height={200} />
+                        <Image src='/images/taxhelp_image4_.JPG' alt="Generate BIR DAT Files in Seconds" width={400} height={200} />
                     </div>
                     <button type='button' className={scss.button+' '+scss.btngreen+' '+scss.btnTemplate} onClick={handleDownloadTemplate}>
                         Download DAT Template

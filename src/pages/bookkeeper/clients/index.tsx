@@ -193,7 +193,7 @@ const Clients_V = () => {
 
                 <div className={scss.right}>
                     <div className={scss.imageContainer}>
-                        <Image src='/images/client.JPG' alt="Manage Your Business Clients Efficiently" width={400} height={200} />
+                        <Image src='/images/client_.JPG' alt="Manage Your Business Clients Efficiently" width={400} height={200} />
                     </div>
                     <Link
                         href='/bookkeeper/clients/add_client'

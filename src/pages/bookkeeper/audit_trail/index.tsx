@@ -63,7 +63,7 @@ const AuditTrail_V = () => {
 
         <div className={scss.right}>
           <div className={scss.imageContainer}>
-              <Image src='/images/taxhelp_image2.JPG' alt="Track Every System Action in Real Time" width={400} height={200} />
+              <Image src='/images/taxhelp_image2_.JPG' alt="Track Every System Action in Real Time" width={400} height={200} />
           </div>
         </div>
     </div>

@@ -91,7 +91,7 @@ const LandingPage = () => {
                   </Link>
                 </div>
                 <div className={scss.bannerRight}>
-                  <Image src='/images/taxhelp_image4.JPG' alt="Trusted Accounting & Tax Solutions" width={100} height={100} />
+                  <Image src='/images/taxhelp_image4_.JPG' alt="Trusted Accounting & Tax Solutions" width={100} height={100} />
                 </div>
               </div>
               <div className={scss.banner}>
@@ -107,7 +107,7 @@ const LandingPage = () => {
                   </Link>
                 </div>
                 <div className={scss.bannerRight}>
-                  <Image src='/images/taxhelp_image.JPG' alt="BIR Compliance Made Simple" width={400} height={200} />
+                  <Image src='/images/taxhelp_image_.JPG' alt="BIR Compliance Made Simple" width={400} height={200} />
                 </div>
               </div>
               <div className={scss.banner}>
@@ -123,7 +123,7 @@ const LandingPage = () => {
                   </Link>
                 </div>
                 <div className={scss.bannerRight}>
-                  <Image src='/images/taxhelp_image2.JPG' alt="Smart Tax Solutions for Every Business" width={400} height={200} />
+                  <Image src='/images/taxhelp_image2_.JPG' alt="Smart Tax Solutions for Every Business" width={400} height={200} />
                 </div>
               </div>
               <div className={scss.banner}>
@@ -139,7 +139,7 @@ const LandingPage = () => {
                   </Link>
                 </div>
                 <div className={scss.bannerRight}>
-                  <Image src='/images/taxhelp_image3.JPG' alt="Accurate Bookkeeping for Your Business" width={400} height={200} />
+                  <Image src='/images/taxhelp_image3_.JPG' alt="Accurate Bookkeeping for Your Business" width={400} height={200} />
                 </div>
               </div>
             </Slider>
@@ -171,7 +171,7 @@ const LandingPage = () => {
         {/* About Section */}
         <section className={scss.about}>
             <div className={scss.about_box}>
-              <Image src='/images/taxhelp_image2.JPG' alt="About TaxHelp" width={400} height={200} />
+              <Image src='/images/taxhelp_image2_.JPG' alt="About TaxHelp" width={400} height={200} />
                 <div>
                     <h2>About TaxHelp</h2>
                     <p>
