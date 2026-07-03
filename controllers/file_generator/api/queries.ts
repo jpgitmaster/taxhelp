@@ -19,13 +19,18 @@ const useQueryFileGenerates = () => {
         doc: {
             search: string
             selectedTable: {
-                value: string,
+                value: string
                 label: string
             }
+            selectedChildTable: {
+                value: string
+                label: string
+                parentValue: string
+            }
             client: {
-                id: number | null,
+                id: number | null
                 registered_name: string
-            },
+            }
             period: Dayjs | null
         }
     ) => {
@@ -41,7 +46,7 @@ const useQueryFileGenerates = () => {
                         page_size: limit,
                         // sortOrder: 'ASC',
                         // filter: JSON.stringify(filter),
-                        clientId: doc.client.id,
+                        client_id: doc.client.id,
                         taxable_month_from: doc.period?.format('MM/YYYY') ?? null,
                         taxable_month_to: doc.period?.format('MM/YYYY') ?? null,
                     }
@@ -65,19 +70,32 @@ const useQueryFileGenerates = () => {
         doc: {
             search: string
             selectedTable: {
-                value: string,
-                label: string,
-                parentValue?: string
+                value: string
+                label: string
+            }
+            selectedChildTable: {
+                value: string
+                label: string
+                parentValue: string
             }
             client: {
-                id: number | null,
+                id: number | null
                 registered_name: string
-            },
+            }
             period: Dayjs | null
         }
     ) => {
         return useQuery({
-            queryKey: ['sales_taxes_file', page, limit, filter, search, doc],
+            queryKey: [
+                'sales_taxes_file',
+                page,
+                limit,
+                search,
+                doc.client.id,
+                doc.period?.format('MM/YYYY'),
+                doc.selectedChildTable.value,
+                doc.selectedChildTable.parentValue
+            ],
             queryFn: async () => {
                 const res = await api({
                     method: 'GET',
@@ -88,7 +106,7 @@ const useQueryFileGenerates = () => {
                         page_size: limit,
                         // sortOrder: 'ASC',
                         // filter: JSON.stringify(filter),
-                        clientId: doc.client.id,
+                        client_id: doc.client.id,
                         taxable_month_from: doc.period?.format('MM/YYYY') ?? null,
                         taxable_month_to: doc.period?.format('MM/YYYY') ?? null,
                     }
@@ -103,9 +121,11 @@ const useQueryFileGenerates = () => {
                 !!doc.period &&
                 !!doc.client.id &&
                 (
-                    doc.selectedTable.parentValue === 'QAP' ||
-                    doc.selectedTable.parentValue === 'SAWT'
-                ),
+                    doc.selectedChildTable.parentValue === 'QAP' ||
+                    doc.selectedChildTable.parentValue === 'SAWT' ||
+                    doc.selectedTable.value === 'QAP' ||
+                    doc.selectedTable.value === 'SAWT'
+                )
         })
     }
 
@@ -139,7 +159,7 @@ const useQueryFileGenerates = () => {
                         page_size: limit,
                         sortOrder: 'ASC',
                         filter: JSON.stringify(filter),
-                        clientId: doc.client.id,
+                        client_id: doc.client.id,
                         taxable_month_from: doc.period?.format('MM/YYYY') ?? null,
                         taxable_month_to: doc.period?.format('MM/YYYY') ?? null,
                     }

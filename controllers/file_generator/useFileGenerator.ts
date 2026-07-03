@@ -559,14 +559,21 @@ const useFileGenerator = () => {
     }, [purchases, doc.selectedTable.value])
 
     useEffect(() => {
-        if (doc.selectedTable.parentValue === 'QAP' || doc.selectedTable.parentValue === 'SAWT') {
+        const docType =
+            doc.selectedChildTable.parentValue || doc.selectedTable.value
+
+        if (docType === 'QAP' || docType === 'SAWT') {
             setRecord(prev => ({
                 ...prev,
                 recordArr: salesTaxes?.records || [],
-                totalRecords: salesTaxes?.totalRecords || 0
+                totalRecords: salesTaxes?.totalRecords || 0,
             }))
         }
-    }, [salesTaxes, doc.selectedTable])
+    }, [
+        salesTaxes,
+        doc.selectedTable.value,
+        doc.selectedChildTable.parentValue,
+    ])
     
     useEffect(() => {
         if(typeof window !== 'undefined'){

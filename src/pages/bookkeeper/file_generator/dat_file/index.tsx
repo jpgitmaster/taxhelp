@@ -50,7 +50,7 @@ const DAT_File_V = () => {
       handleSelectChildTable
     } = useFileGenerator()
     const { loader: statLoader, message } = status
-    const docType = doc.selectedTable.parentValue || doc.selectedTable.value
+    const docType = doc.selectedChildTable.parentValue || doc.selectedTable.value
     const actionColumn: ColumnsType<Record_Obj>[number] = {
       width: 100,
       fixed: 'right',
@@ -163,23 +163,9 @@ const DAT_File_V = () => {
             (doc.customer?.middle_name || '') + ' ' +
             (doc.customer?.last_name || ''),
           atc_code: doc.atc_code,
-          income_payment: Number(doc.income_payment || 0)?.toLocaleString(
-                                              navigator.language,
-                                              {
-                                                minimumFractionDigits: 2,
-                                                maximumFractionDigits: 2,
-                                              }
-                                            ),
           tax_rate: doc.tax_rate,
-          // income_payment: doc.income_payment,
-          // tax_rate: doc.tax_rate,
-          tax_amount: Number(doc.tax_amount || 0)?.toLocaleString(
-                                              navigator.language,
-                                              {
-                                                minimumFractionDigits: 2,
-                                                maximumFractionDigits: 2,
-                                              }
-                                            ),
+          income_payment: Number(doc.income_payment || 0),
+          tax_amount: Number(doc.tax_amount || 0),
         }
       }
 
@@ -279,7 +265,7 @@ const DAT_File_V = () => {
                     { title: 'ATC Code', dataIndex: 'atc_code' },
                     { title: 'Amount of Income Payment', dataIndex: 'income_payment' },
                     { title: 'Tax Rate', dataIndex: 'tax_rate' },
-                    { title: 'Amount of Tax Withheld', dataIndex: 'tax_amount', width: 140, align: 'center' },
+                    { title: 'Amount of Tax Withheld', dataIndex: 'tax_amount', width: 140 },
                     actionColumn
                 ]
 
@@ -289,18 +275,20 @@ const DAT_File_V = () => {
     }
     const columns = useMemo(() => getColumns(), [doc.selectedTable.value])
     type NumericFields =
-    | 'exempt_sales'
-    | 'zero_rated_sales'
-    | 'vatable_sales'
-    | 'gross_amount'
-    | 'vat_amount'
-    | 'gross_taxable'
-    | 'exempt_purchases'
-    | 'zero_rated_purchases'
-    | 'vatable_purchases'
-    | 'vatable_purchase_of_services'
-    | 'vatable_purchase_of_other_goods'
-    | 'vatable_purchase_of_capital_goods'
+      | 'exempt_sales'
+      | 'zero_rated_sales'
+      | 'vatable_sales'
+      | 'gross_amount'
+      | 'vat_amount'
+      | 'gross_taxable'
+      | 'exempt_purchases'
+      | 'zero_rated_purchases'
+      | 'vatable_purchases'
+      | 'vatable_purchase_of_services'
+      | 'vatable_purchase_of_other_goods'
+      | 'vatable_purchase_of_capital_goods'
+      | 'income_payment'      // ✅ FIX
+      | 'tax_amount'          // ✅ FIX
     const total = (field: NumericFields) =>
       dataSource.reduce(
         (sum, row) => sum + Number(row[field] || 0),
@@ -379,8 +367,8 @@ const DAT_File_V = () => {
               onClick={() =>
                   handleDownload(
                       'dat',
-                      doc.selectedTable.value,
-                      doc.selectedTable.parentValue
+                      doc.selectedChildTable.value || doc.selectedTable.value,
+                      doc.selectedChildTable.parentValue
                   )
               }
             >
@@ -398,99 +386,118 @@ const DAT_File_V = () => {
                 record.toDelete ? scss.activeRow : ''
               }
               scroll={{ x: 'max-content', y: 90 * 5 }}
-
               summary={() => {
                 if (!record.recordArr?.length) return null
 
-                if (docType === 'SALES') {
-                  return (
-                    <Table.Summary fixed>
-                      <Table.Summary.Row className={scss.summaryRow}>
-                        <Table.Summary.Cell index={0}>TOTAL</Table.Summary.Cell>
+                return (
+                  <Table.Summary fixed>
+                    <Table.Summary.Row className={scss.summaryRow}>
 
-                        {/* empty base columns */}
-                        {[1,2,3,4,5,6].map(i => (
-                          <Table.Summary.Cell key={i} index={i} />
-                        ))}
-                        <Table.Summary.Cell index={9}>
-                          {formatNumber(total('exempt_sales'))}
-                        </Table.Summary.Cell>
-                        <Table.Summary.Cell index={9}>
-                          {formatNumber(total('zero_rated_sales'))}
-                        </Table.Summary.Cell>
-                        <Table.Summary.Cell index={9}>
-                          {formatNumber(total('vatable_sales'))}
-                        </Table.Summary.Cell>
+                      {/* BASE COLUMNS */}
+                      <Table.Summary.Cell index={0}>
+                        TOTAL
+                      </Table.Summary.Cell>
 
-                        <Table.Summary.Cell index={10}>
-                          {formatNumber(total('gross_amount'))}
-                        </Table.Summary.Cell>
+                      {[1, 2, 3, 4, 5, 6].map(i => (
+                        <Table.Summary.Cell key={i} index={i} />
+                      ))}
 
-                        <Table.Summary.Cell index={11} />
+                      {/* ================= SALES ================= */}
+                      {doc.selectedTable.value === 'SALES' && (
+                        <>
+                          <Table.Summary.Cell index={7}>
+                            {formatNumber(total('exempt_sales'))}
+                          </Table.Summary.Cell>
 
-                        <Table.Summary.Cell index={12}>
-                          {formatNumber(total('vat_amount'))}
-                        </Table.Summary.Cell>
+                          <Table.Summary.Cell index={8}>
+                            {formatNumber(total('zero_rated_sales'))}
+                          </Table.Summary.Cell>
 
-                        <Table.Summary.Cell index={13}>
-                          {formatNumber(total('gross_taxable'))}
-                        </Table.Summary.Cell>
+                          <Table.Summary.Cell index={9}>
+                            {formatNumber(total('vatable_sales'))}
+                          </Table.Summary.Cell>
 
-                        <Table.Summary.Cell index={14} />
-                      </Table.Summary.Row>
-                    </Table.Summary>
-                  )
-                }
+                          <Table.Summary.Cell index={10}>
+                            {formatNumber(total('gross_amount'))}
+                          </Table.Summary.Cell>
 
-                if (docType === 'PURCHASES') {
-                  return (
-                    <Table.Summary fixed>
-                      <Table.Summary.Row className={scss.summaryRow}>
-                        <Table.Summary.Cell index={0}>TOTAL</Table.Summary.Cell>
+                          <Table.Summary.Cell index={11} />
 
-                        {/* empty base columns */}
-                        {[1,2,3,4,5,6].map(i => (
-                          <Table.Summary.Cell key={i} index={i} />
-                        ))}
-                        <Table.Summary.Cell index={7}>
-                          {formatNumber(total('exempt_purchases'))}
-                        </Table.Summary.Cell>
-                        <Table.Summary.Cell index={8}>
-                          {formatNumber(total('zero_rated_purchases'))}
-                        </Table.Summary.Cell>
-                        <Table.Summary.Cell index={9}>
-                          {formatNumber(total('vatable_purchases'))}
-                        </Table.Summary.Cell>
-                        <Table.Summary.Cell index={10}>
-                          {formatNumber(total('vatable_purchase_of_services'))}
-                        </Table.Summary.Cell>
-                        <Table.Summary.Cell index={11}>
-                          {formatNumber(total('vatable_purchase_of_capital_goods'))}
-                        </Table.Summary.Cell>
-                        <Table.Summary.Cell index={12}>
-                          {formatNumber(total('vatable_purchase_of_other_goods'))}
-                        </Table.Summary.Cell>
-                        <Table.Summary.Cell index={13}>
-                          {formatNumber(total('gross_amount'))}
-                        </Table.Summary.Cell>
+                          <Table.Summary.Cell index={12}>
+                            {formatNumber(total('vat_amount'))}
+                          </Table.Summary.Cell>
 
-                        <Table.Summary.Cell index={13} />
+                          <Table.Summary.Cell index={13}>
+                            {formatNumber(total('gross_taxable'))}
+                          </Table.Summary.Cell>
+                        </>
+                      )}
 
-                        <Table.Summary.Cell index={14}>
-                          {formatNumber(total('vat_amount'))}
-                        </Table.Summary.Cell>
+                      {/* ================= PURCHASES ================= */}
+                      {doc.selectedTable.value === 'PURCHASES' && (
+                        <>
+                          <Table.Summary.Cell index={7}>
+                            {formatNumber(total('exempt_purchases'))}
+                          </Table.Summary.Cell>
 
-                        <Table.Summary.Cell index={15}>
-                          {formatNumber(total('gross_taxable'))}
-                        </Table.Summary.Cell>
+                          <Table.Summary.Cell index={8}>
+                            {formatNumber(total('zero_rated_purchases'))}
+                          </Table.Summary.Cell>
 
-                        <Table.Summary.Cell index={16} />
-                      </Table.Summary.Row>
-                    </Table.Summary>
-                  )
-                }
+                          <Table.Summary.Cell index={9}>
+                            {formatNumber(total('vatable_purchases'))}
+                          </Table.Summary.Cell>
 
-                return null
+                          <Table.Summary.Cell index={10}>
+                            {formatNumber(total('vatable_purchase_of_services'))}
+                          </Table.Summary.Cell>
+
+                          <Table.Summary.Cell index={11}>
+                            {formatNumber(total('vatable_purchase_of_capital_goods'))}
+                          </Table.Summary.Cell>
+
+                          <Table.Summary.Cell index={12}>
+                            {formatNumber(total('vatable_purchase_of_other_goods'))}
+                          </Table.Summary.Cell>
+
+                          <Table.Summary.Cell index={13}>
+                            {formatNumber(total('gross_amount'))}
+                          </Table.Summary.Cell>
+
+                          <Table.Summary.Cell index={14} />
+
+                          <Table.Summary.Cell index={15}>
+                            {formatNumber(total('vat_amount'))}
+                          </Table.Summary.Cell>
+
+                          <Table.Summary.Cell index={16}>
+                            {formatNumber(total('gross_taxable'))}
+                          </Table.Summary.Cell>
+                        </>
+                      )}
+
+                      {/* ================= SAWT / QAP ================= */}
+                      {(doc.selectedTable.value === 'SAWT' || doc.selectedTable.value === 'QAP') && (
+                        <>
+                          <Table.Summary.Cell index={7}>
+                            {/* ATC CODE (empty) */}
+                          </Table.Summary.Cell>
+
+                          <Table.Summary.Cell index={8}>
+                            {formatNumber(total('income_payment'))}
+                          </Table.Summary.Cell>
+
+                          <Table.Summary.Cell index={9} />
+
+                          <Table.Summary.Cell index={10}>
+                            {formatNumber(total('tax_amount'))}
+                          </Table.Summary.Cell>
+                        </>
+                      )}
+
+                    </Table.Summary.Row>
+                  </Table.Summary>
+                )
               }}
             />
           </div>

@@ -40,8 +40,8 @@ interface Record_Obj {
     // QAP / SAWT
     atc_code?: string
     tax_rate?: string
-    tax_amount?: string
-    income_payment?: string
+    tax_amount?: number
+    income_payment?: number
 
     // IMPORTATION
     import_entry_no?: string
@@ -76,6 +76,7 @@ interface Record_Obj {
 
     orNumber?: string
     vatPaymentDate?: string
+
 
     customer?: {
         tin?: string
