@@ -121,9 +121,7 @@ const useQueryFileGenerates = () => {
                 !!doc.period &&
                 !!doc.client.id &&
                 (
-                    doc.selectedChildTable.parentValue === 'QAP' ||
                     doc.selectedChildTable.parentValue === 'SAWT' ||
-                    doc.selectedTable.value === 'QAP' ||
                     doc.selectedTable.value === 'SAWT'
                 )
         })
@@ -173,6 +171,71 @@ const useQueryFileGenerates = () => {
             enabled: !!doc.period && !!doc.client.id && !!doc.selectedTable.value && doc.selectedTable.value === 'PURCHASES', // 👈 only runs when these conditions are met
         })
     }
+
+    const getPurchaseTaxes = (
+        page: number,
+        limit: number,
+        filter: { roleId: string[] | number[] },
+        search: string,
+        doc: {
+            search: string
+            selectedTable: {
+                value: string
+                label: string
+            }
+            selectedChildTable: {
+                value: string
+                label: string
+                parentValue: string
+            }
+            client: {
+                id: number | null
+                registered_name: string
+            }
+            period: Dayjs | null
+        }
+    ) => {
+        return useQuery({
+            queryKey: [
+                'purchase_taxes_file',
+                page,
+                limit,
+                search,
+                doc.client.id,
+                doc.period?.format('MM/YYYY'),
+                doc.selectedChildTable.value,
+                doc.selectedChildTable.parentValue
+            ],
+            queryFn: async () => {
+                const res = await api({
+                    method: 'GET',
+                    url: `/api/${apiVersion}/purchase-taxes/records`,
+                    params: {
+                        page,
+                        search,
+                        page_size: limit,
+                        // sortOrder: 'ASC',
+                        // filter: JSON.stringify(filter),
+                        client_id: doc.client.id,
+                        taxable_month_from: doc.period?.format('MM/YYYY') ?? null,
+                        taxable_month_to: doc.period?.format('MM/YYYY') ?? null,
+                    }
+                })
+                return {
+                    records: res.data?.purchase_taxes ?? [],
+                    totalRecords: res.data?.total ?? 0
+                }
+            },
+            // ✅ KEY PART
+            enabled:
+                !!doc.period &&
+                !!doc.client.id &&
+                (
+                    doc.selectedChildTable.parentValue === 'QAP' ||
+                    doc.selectedTable.value === 'QAP'
+                )
+        })
+    }
     return {
         // STATES
         filter,
@@ -187,7 +250,8 @@ const useQueryFileGenerates = () => {
         // QUERIES
         getSales,
         getPurchases,
-        getSalesTaxes
+        getSalesTaxes,
+        getPurchaseTaxes
     }
 }
 

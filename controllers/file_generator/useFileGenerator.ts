@@ -35,6 +35,7 @@ const useFileGenerator = () => {
         getSales,
         getPurchases,
         getSalesTaxes,
+        getPurchaseTaxes
     } = useQueryFileGenerates()
 
     const {
@@ -269,6 +270,18 @@ const useFileGenerator = () => {
     )
 
     const { data: salesTaxes, isLoading: isLoadingSalesTaxes, isFetching: isFetchingSalesTaxes } = getSalesTaxes(
+        filter.currentPage,
+        filter.recordsLimit,
+        filter.filter,
+        filter.search,
+        doc,
+    )
+
+    const {
+        data: purchaseTaxes,
+        isLoading: isLoadingPurchaseTaxes,
+        isFetching: isFetchingPurchaseTaxes,
+    } = getPurchaseTaxes(
         filter.currentPage,
         filter.recordsLimit,
         filter.filter,
@@ -562,18 +575,27 @@ const useFileGenerator = () => {
         const docType =
             doc.selectedChildTable.parentValue || doc.selectedTable.value
 
-        if (docType === 'QAP' || docType === 'SAWT') {
+        if (docType === 'SAWT') {
             setRecord(prev => ({
                 ...prev,
                 recordArr: salesTaxes?.records || [],
                 totalRecords: salesTaxes?.totalRecords || 0,
             }))
         }
-    }, [
-        salesTaxes,
-        doc.selectedTable.value,
-        doc.selectedChildTable.parentValue,
-    ])
+    }, [salesTaxes, doc.selectedTable.value, doc.selectedChildTable.parentValue])
+
+    useEffect(() => {
+        const docType =
+            doc.selectedChildTable.parentValue || doc.selectedTable.value
+
+        if (docType === 'QAP') {
+            setRecord(prev => ({
+                ...prev,
+                recordArr: purchaseTaxes?.records || [],
+                totalRecords: purchaseTaxes?.totalRecords || 0,
+            }))
+        }
+    }, [purchaseTaxes, doc.selectedTable.value, doc.selectedChildTable.parentValue])
     
     useEffect(() => {
         if(typeof window !== 'undefined'){
@@ -596,7 +618,15 @@ const useFileGenerator = () => {
         displayChildDocsTbl,
         booksOfAccountsOptions,
         clientLoader: isLoadingClients || isFetchingClients,
-        loader: isLoadingSales || isFetchingSales || isLoadingPurchases || isFetchingPurchases || isFetchingSalesTaxes || isLoadingSalesTaxes,
+        loader:
+            isLoadingSales ||
+            isFetchingSales ||
+            isLoadingPurchases ||
+            isFetchingPurchases ||
+            isLoadingSalesTaxes ||
+            isFetchingSalesTaxes ||
+            isLoadingPurchaseTaxes ||
+            isFetchingPurchaseTaxes,
 
         // SET STATES
         setDisplayClients,

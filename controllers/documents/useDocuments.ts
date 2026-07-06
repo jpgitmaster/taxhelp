@@ -27,7 +27,7 @@ const useDocuments = () => {
         filter.filter,
         filter.search
     )
-
+    console.log('data', data)
     const handleOpenModal = () => {
         setIsModalOpen(true);
         setCheckedTpl([])

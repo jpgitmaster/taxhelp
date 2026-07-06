@@ -149,7 +149,7 @@ const DAT_File_V = () => {
         }
       }
 
-      if (docType === 'SAWT' || docType === 'QAP') {
+      if (docType === 'SAWT') {
         return {
           ...base,
           customer: doc.customer,
@@ -167,6 +167,24 @@ const DAT_File_V = () => {
           income_payment: Number(doc.income_payment || 0),
           tax_amount: Number(doc.tax_amount || 0),
         }
+      }
+
+      if (docType === 'QAP') {
+          return {
+              ...base,
+              supplier: doc.supplier,
+              tin: doc.supplier?.tin,
+              branch_code: doc.supplier?.branch_code,
+              registered_name: doc.supplier?.registered_name,
+              first_address: doc.supplier?.first_address,
+              second_address: doc.supplier?.second_address,
+              individual_name:
+                  `${doc.supplier?.first_name ?? ''} ${doc.supplier?.middle_name ?? ''} ${doc.supplier?.last_name ?? ''}`.trim(),
+              atc_code: doc.atc_code,
+              tax_rate: doc.tax_rate,
+              income_payment: Number(doc.income_payment || 0),
+              tax_amount: Number(doc.tax_amount || 0),
+          }
       }
 
       return base
