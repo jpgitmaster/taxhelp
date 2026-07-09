@@ -25,7 +25,8 @@ const AddCustomer_V = () => {
   const isReady = !!user && !!clients
   const hasPermission =
     user?.subscription?.plan !== 'basic' ||
-    (user?.subscription?.plan === 'basic' && clients?.length < 3)
+    (user?.subscription?.plan === 'basic' && clients?.length < 3) ||
+    (user?.subscription?.plan === 'pro' && clients?.length < 10)
   return (
     <ProComponent loading={isReady} hasPermission={hasPermission}>
       <form onSubmit={handleSubmit} className={scss.addClient}>
