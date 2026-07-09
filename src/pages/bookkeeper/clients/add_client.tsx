@@ -8,7 +8,7 @@ import useSaveClient from '@/controllers/clients/useSaveClient'
 import CustomContainer from '@/components/reusables/CustomContainer'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
-
+type Plan = 'basic' | 'pro';
 const AddCustomer_V = () => {
   const {
     user,
@@ -23,10 +23,15 @@ const AddCustomer_V = () => {
   } = useSaveClient()
   const { loader } = status
   const isReady = !!user && !!clients
-  const hasPermission =
-    user?.subscription?.plan !== 'basic' ||
-    (user?.subscription?.plan === 'basic' && clients?.length < 3) ||
-    (user?.subscription?.plan === 'pro' && clients?.length < 10)
+  const plan = user?.subscription?.plan as Plan;
+  const clientCount = clients?.length ?? 0;
+
+  const limits: Record<Plan, number> = {
+    basic: 3,
+    pro: 10,
+  };
+
+  const hasPermission = clientCount < limits[plan];
   return (
     <ProComponent loading={isReady} hasPermission={hasPermission}>
       <form onSubmit={handleSubmit} className={scss.addClient}>
