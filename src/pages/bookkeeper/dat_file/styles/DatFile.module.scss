@@ -4,9 +4,13 @@
 @use '@/styles/colors' as *;
 
 @reference 'tailwindcss';
-.heroBanner{
-    @apply flex justify-between items-center rounded-3xl
-    p-10 text-white;
+.heroBanner {
+    @apply flex flex-col lg:flex-row
+    justify-between items-center
+    rounded-3xl
+    p-6 md:p-8 lg:p-10
+    gap-10
+    text-white;
 
     background: linear-gradient(
         135deg,
@@ -14,45 +18,85 @@
         #2F80ED,
         #56CCF2
     );
-}
 
-.badge{
-    @apply bg-white text-blue-700
-    px-4 py-2 rounded-full
-    text-sm font-semibold;
-}
+    .left {
+        @apply w-full lg:w-3/5
+        text-center lg:text-left;
 
-.left{
-    @apply w-3/5;
-}
+        .badge {
+            @apply bg-white text-blue-700
+            px-4 py-2 rounded-full
+            text-sm font-semibold
+            inline-block;
+        }
 
-.left h1{
-    @apply text-4xl font-bold mt-5;
-}
+        h1 {
+            @apply mt-5
+            text-3xl md:text-4xl lg:text-5xl
+            font-bold
+            leading-tight;
+        }
 
-.left p{
-    @apply mt-5 text-lg opacity-90 leading-8;
-}
+        p {
+            @apply mt-5
+            text-base md:text-lg
+            leading-7 md:leading-8
+            opacity-90;
+        }
 
-.features{
-    @apply flex gap-6 mt-8 text-base font-semibold;
-    .check{
-        @apply float-left mr-1;
-        filter: invert(62%) sepia(45%) saturate(6153%) hue-rotate(87deg) brightness(96%) contrast(89%);
-    }
-}
+        .features {
+            @apply flex flex-col sm:flex-row
+            gap-3 sm:gap-6
+            mt-8
+            text-sm md:text-base
+            font-semibold
+            justify-center lg:justify-start;
 
-.right{
-    .imageContainer{
-        @apply relative drop-shadow-2xl rounded-[20px] w-90 h-70 overflow-hidden;
-        img{
-            @apply w-full h-full object-cover;
+            > span {
+                @apply inline-flex items-start gap-2 text-[14.5px];
+            }
+
+            .check {
+                @apply shrink-0 -m-px;
+                filter: invert(62%) sepia(45%) saturate(6153%)
+                    hue-rotate(87deg) brightness(96%) contrast(89%);
+            }
         }
     }
-    .btngreen{
-        color: $white;
-        background-color: $border_green;
-        @apply mt-4 cursor-pointer py-2.5 px-5 rounded-[10px] text-[13px] font-semibold;
+
+    .right {
+        @apply w-full lg:w-auto;
+
+        .imageContainer {
+            @apply relative
+            w-full
+            max-w-md
+            mx-auto
+            h-64 md:h-80 lg:w-95 lg:h-70
+            rounded-[20px]
+            overflow-hidden
+            drop-shadow-2xl;
+
+            img {
+                @apply w-full h-full object-cover;
+            }
+        }
+
+        .btngreen {
+            color: $white;
+            background-color: $border_green;
+
+            @apply block
+            w-full
+            mt-4
+            text-center
+            cursor-pointer
+            py-3
+            px-5
+            rounded-[10px]
+            text-sm
+            font-semibold;
+        }
     }
 }
 

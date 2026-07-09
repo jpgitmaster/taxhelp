@@ -131,7 +131,7 @@ const Dashboard_V = () => {
             </div>
           </div>
       </div>
-      <br /><br />
+      
         {
           message &&
           <SuccessMessage message={message} />
@@ -229,11 +229,20 @@ const Dashboard_V = () => {
                   Report a bug
                 </button>
               </div>
-              <div className={scss.box}>
+              <div className={scss.boxWrapper}>
+                <div className={scss.box}>
 
+                </div>
               </div>
-              <div className={scss.box}>
+              <div className={scss.boxWrapper}>
+                <div className={scss.box}>
 
+                </div>
+              </div>
+              <div className={scss.boxWrapper}>
+                <div className={scss.box}>
+
+                </div>
               </div>
               <div className={scss.box}>
 
