@@ -30,10 +30,15 @@ const AddCustomer_V = () => {
     basic: 3,
     pro: 10,
   };
-
+  const featureType =
+    plan === 'basic'
+      ? 'Pro'
+      : plan === 'pro'
+      ? 'Enterprise'
+      : 'Pro';
   const hasPermission = clientCount < limits[plan];
   return (
-    <ProComponent loading={isReady} hasPermission={hasPermission}>
+    <ProComponent loading={isReady} hasPermission={hasPermission} featureType={featureType}>
       <form onSubmit={handleSubmit} className={scss.addClient}>
         { loader && <Loader scss={scss} position='absolute' />}
         <div className={scss.cards}>
