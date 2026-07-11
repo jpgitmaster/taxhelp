@@ -4,6 +4,8 @@ interface DocObj{
   created_at: Date | null
   has_sales: boolean | null
   has_purchases: boolean | null
+  has_sales_taxes: boolean | null
+  has_purchase_taxes: boolean | null
   client: {
     last_name: string
     first_name: string
@@ -15,13 +17,15 @@ interface DocObj{
 interface TableRow{
   id: number | null
   file_name: string
-  created_at: Date | null
-  has_sales: boolean | null
-  has_purchases: boolean | null
   last_name: string
   first_name: string
   trade_name: string
   registered_name: string
+  created_at: Date | null
+  has_sales: boolean | null
+  has_purchases: boolean | null
+  has_sales_taxes: boolean | null
+  has_purchase_taxes: boolean | null
 }
 
 interface Doc{

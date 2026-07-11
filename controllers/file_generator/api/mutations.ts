@@ -143,8 +143,9 @@ const useMutationFileGenerates = () => {
             },
             type: string
             form_type: string
+            sub_form_type: string
         }) => {
-            const { doc, type, form_type } = params
+            const { doc, type, form_type, sub_form_type } = params
 
             const res = await api.post(
                 `/api/${apiVersion}/files/download/sales_taxes`,
@@ -152,6 +153,7 @@ const useMutationFileGenerates = () => {
                     type: type,
                     form_type: form_type,
                     client_id: doc.client.id,
+                    sub_form_type: sub_form_type,
                     year: doc.period?.format('YYYY') ?? '',
                     month: doc.period?.format('MM') ?? '',
                 },
@@ -185,14 +187,16 @@ const useMutationFileGenerates = () => {
             },
             type: string
             form_type: string
+            sub_form_type: string
         }) => {
-            const { doc, type, form_type } = params
+            const { doc, type, form_type, sub_form_type } = params
 
             const res = await api.post(
                 `/api/${apiVersion}/files/download/purchase_taxes`,
                 {
-                    type: type,
-                    form_type: form_type,
+                    type,
+                    form_type,
+                    sub_form_type,
                     client_id: doc.client.id,
                     year: doc.period?.format('YYYY') ?? '',
                     month: doc.period?.format('MM') ?? '',
@@ -200,7 +204,7 @@ const useMutationFileGenerates = () => {
                 {
                     responseType: 'blob',
                 }
-            )
+            );
             const disposition = res.headers['content-disposition']
             const filename = disposition?.match(/filename="?([^"]+)"?/)?.[1] ?? `purchases-taxes-${type}`
 

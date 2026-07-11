@@ -51,6 +51,11 @@ const DAT_File_V = () => {
     } = useFileGenerator()
     const { loader: statLoader, message } = status
     const docType = doc.selectedChildTable.parentValue || doc.selectedTable.value
+    const requiresChildSelection =
+      ['QAP', 'SAWT'].includes(doc.selectedTable.value)
+
+    const canDownload =
+      !requiresChildSelection || !!doc.selectedChildTable.value
     const actionColumn: ColumnsType<Record_Obj>[number] = {
       width: 100,
       fixed: 'right',
@@ -379,16 +384,21 @@ const DAT_File_V = () => {
           </div>
           <div className={scss.tblBtns}>
             <button
-              type='button'
-              disabled={!record.recordArr?.length}
+              type="button"
+              disabled={!record.recordArr?.length || !canDownload}
               className={`${scss.button} ${scss.btnblue}`}
-              onClick={() =>
-                  handleDownload(
-                      'dat',
-                      doc.selectedChildTable.value || doc.selectedTable.value,
-                      doc.selectedChildTable.parentValue
-                  )
-              }
+              onClick={() => {
+                if (!canDownload) return;
+                console.log({
+                  parent: doc.selectedTable,
+                  child: doc.selectedChildTable,
+                });
+                handleDownload(
+                  'dat',
+                  doc.selectedChildTable.value || doc.selectedTable.value,
+                  doc.selectedTable.value
+                )
+              }}
             >
               Download as DAT File
             </button>

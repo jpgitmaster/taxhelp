@@ -335,7 +335,6 @@ const useFileGenerator = () => {
         const commonOptions = {
             onSuccess: handleFileDownload,
         }
-        console.log(doc)
         const mutationMap: Record<string, () => void> = {
             SALES: () =>
                 downloadSalesMutation.mutate(
@@ -347,21 +346,24 @@ const useFileGenerator = () => {
                     { doc, type },
                     commonOptions
                 ),
-            SAWT: () =>
-                downloadSalesTaxesMutation.mutate(
-                    {
-                        doc,
-                        type,
-                        form_type: selectedTable,
-                    },
-                    commonOptions
-                ),
             QAP: () =>
                 downloadPurchasesTaxesMutation.mutate(
                     {
                         doc,
                         type,
-                        form_type: selectedTable,
+                        form_type: parentTable!,
+                        sub_form_type: selectedTable,
+                    },
+                    commonOptions
+                ),
+
+                SAWT: () =>
+                downloadSalesTaxesMutation.mutate(
+                    {
+                    doc,
+                        type,
+                        form_type: parentTable!,
+                        sub_form_type: selectedTable,
                     },
                     commonOptions
                 ),

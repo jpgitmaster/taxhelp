@@ -41,9 +41,11 @@ const Documents_V = () => {
     has_sales: doc.has_sales,
     created_at: doc.created_at,
     has_purchases: doc.has_purchases,
-    trade_name: doc.client?.trade_name,
     last_name: doc.client?.last_name,
+    trade_name: doc.client?.trade_name,
     first_name: doc.client?.first_name,
+    has_sales_taxes: doc.has_sales_taxes,
+    has_purchase_taxes: doc.has_purchase_taxes,
     registered_name: doc.client?.registered_name,
   })) ?? []
   const linkItems = (id: number): MenuProps['items'] => [
@@ -178,17 +180,23 @@ const Documents_V = () => {
       dataIndex: 'has_purchases',
       render: (has_purchases: boolean) => has_purchases && <Image src='/svgs/check.svg' alt='Check' unoptimized={true} priority height={20} width={20} className={scss.check} />
     },
+    // {
+    //   align: 'center',
+    //   title: 'Imports Transaction',
+    // },
     {
-      align: 'center',
-      title: 'Imports Transaction',
-    },
-    {
-      align: 'center',
       title: 'QAP',
+      align: 'center',
+      key: 'has_purchase_taxes',
+      dataIndex: 'has_purchase_taxes',
+      render: (has_purchase_taxes: boolean) => has_purchase_taxes && <Image src='/svgs/check.svg' alt='Check' unoptimized={true} priority height={20} width={20} className={scss.check} />
     },
     {
-      align: 'center',
       title: 'SAWT',
+      align: 'center',
+      key: 'has_sales_taxes',
+      dataIndex: 'has_sales_taxes',
+      render: (has_sales_taxes: boolean) => has_sales_taxes && <Image src='/svgs/check.svg' alt='Check' unoptimized={true} priority height={20} width={20} className={scss.check} />
     },
     {
       title: 'Uploaded Time & Date',

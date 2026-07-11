@@ -9,7 +9,6 @@ import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 import useUploadDocuments from '@/controllers/documents/useUploadDocument'
 import ClientsDropdown from '@/components/pages/bookkeeper/documents/ClientsDropdown'
 import DocumentsTableDropdown from '@/components/pages/bookkeeper/documents/DocumentsTableDropdown'
-import DocumentsChildTableDropdown from '@/components/pages/bookkeeper/documents/DocumentsChildTableDropdown'
 
 const UploadNewDocument_V = () => {
     const {
@@ -24,16 +23,12 @@ const UploadNewDocument_V = () => {
         childOptions,
         rowSelection,
         clientLoader,
-        selectedMonth,
         displayDocsTbl,
         displayClients,
         selectedRowKeys,
-        displayChildDocsTbl,
 
-        setSelectedMonth,
         setDisplayClients,
         setDisplayDocsTbl,
-        setDisplayChildDocsTbl,
 
         getColumns,
         
@@ -45,14 +40,11 @@ const UploadNewDocument_V = () => {
         handleSelectTable,
         handleSelectClient,
         handleDeleteSelected,
-        handleSelectChildTable,
     } = useUploadDocuments()
     const { loader } = status
     const isDownloadDisabled =
         !doc.client.id ||
-        !selectedMonth ||
         !doc.selectedTable.value ||
-        (childOptions.length > 0 && !doc.selectedChildTable.value) ||
         rows.length === 0 || selectedRowKeys.length > 0
     type NumericFields =
         | 'exempt_sales'
@@ -103,17 +95,6 @@ const UploadNewDocument_V = () => {
                                 handleSelectClient={handleSelectClient}
                             />
                         </div>
-                        <div className={scss.monthYear}>
-                            <label className={scss.lbl}>
-                                Taxable Month & Year
-                            </label>
-                            <DatePicker
-                                picker="month"
-                                value={selectedMonth}
-                                onChange={(date) => setSelectedMonth(date)}
-                                style={{ border: "1px solid #c4c3c3" }}
-                            />
-                        </div>
                         <div className={scss.selectParentDat}>
                             <label className={scss.lbl}>
                                 Select Table
@@ -125,19 +106,6 @@ const UploadNewDocument_V = () => {
                                 handleToggle={handleToggle}
                                 setDisplayDocsTbl={setDisplayDocsTbl}
                                 handleSelectTable={handleSelectTable}
-                            />
-                        </div>
-                        <div className={scss.selectedChildDat}>
-                            <label className={scss.lbl}>
-                                {childOptions?.length ? doc.selectedTable.label : <>&nbsp;</>}
-                            </label>
-                            <DocumentsChildTableDropdown
-                                doc={doc}
-                                options={childOptions}
-                                displayDocsTbl={displayChildDocsTbl}
-                                handleToggle={handleToggle}
-                                handleSelectTable={handleSelectChildTable}
-                                setDisplayDocsTbl={setDisplayChildDocsTbl}
                             />
                         </div>
                     </div>
