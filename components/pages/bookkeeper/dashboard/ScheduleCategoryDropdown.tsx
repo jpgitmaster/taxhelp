@@ -179,7 +179,7 @@ export default function ScheduleCategoryDropdown(props: {
     const isEditing = !!editCat;
     const categoryLimits = {
         basic: 2,
-        pro: 10,
+        pro: 5,
     } as const;
 
     type Plan = keyof typeof categoryLimits;
