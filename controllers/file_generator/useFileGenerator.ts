@@ -333,6 +333,15 @@ const useFileGenerator = () => {
         }))
         const commonOptions = {
             onSuccess: handleFileDownload,
+            onError: (err: any) => {
+                console.error(err);
+
+                setStatus(prev => ({
+                ...prev,
+                loader: false,
+                }));
+            },
+
         }
         const mutationMap: Record<string, () => void> = {
             SALES: () =>
