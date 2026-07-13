@@ -331,7 +331,6 @@ const useFileGenerator = () => {
             ...prev,
             loader: true,
         }))
-
         const commonOptions = {
             onSuccess: handleFileDownload,
         }
