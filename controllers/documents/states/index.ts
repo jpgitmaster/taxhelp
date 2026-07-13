@@ -4,6 +4,8 @@ const initDocObj = {
     created_at: null,
     has_sales: null,
     has_purchases: null,
+    has_sales_taxes: null,
+    has_purchase_taxes: null,
     client: {
         last_name: '',
         first_name: '',
