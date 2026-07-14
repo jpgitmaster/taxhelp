@@ -301,22 +301,25 @@ export default function ScheduleCategoryDropdown(props: {
                             />
                         </div>
                     }
-                    {canCreateCategory && (
+                    {(canCreateCategory || isEditing) && (
                         <div className={scss.createNewCategory}>
                             {!displayAddCat ? (
-                                <button type='button' onClick={() => setDisplayAddCat(true)}>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setEditCat(null);
+                                        setCat({ name: "", color: "" });
+                                        setDisplayAddCat(true);
+                                    }}
+                                >
                                     Create New Category
                                 </button>
                             ) : (
                                 <button
-                                    type='button'
-                                    onClick={() => {
-                                        isEditing
-                                            ? handleUpdateCategory()
-                                            : handleCreateCategory();
-                                    }}
+                                    type="button"
+                                    onClick={isEditing ? handleUpdateCategory : handleCreateCategory}
                                 >
-                                    {isEditing ? 'Update Category' : 'Save New Category'}
+                                    {isEditing ? "Update Category" : "Save New Category"}
                                 </button>
                             )}
                         </div>

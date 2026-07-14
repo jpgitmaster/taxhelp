@@ -7,6 +7,9 @@
 :global(.ant-modal), :global(.ant-modal .ant-modal-close) {
     @apply outline-none!;
 }
+:global(.ant-modal-container){
+    @apply p-5!;
+}
 .heroBanner {
     @apply flex flex-col lg:flex-row
     justify-between items-center
