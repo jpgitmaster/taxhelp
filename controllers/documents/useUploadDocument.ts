@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import * as XLSX from 'xlsx'
 import useDocumentAPI from './api'
 import { ExcelRow } from './types'
+import { notification } from 'antd'
 import {
     useState,
     useEffect,
@@ -1041,9 +1042,7 @@ const useUploadDocuments = () => {
 
                 const link = document.createElement('a')
                 link.href = url
-                link.download = `${formType}_${selectedMonth.format(
-                    'YYYYMM'
-                )}.dat`
+                link.download = `${formType}_${selectedMonth.format('YYYYMM')}.dat`
 
                 document.body.appendChild(link)
                 link.click()
@@ -1053,6 +1052,14 @@ const useUploadDocuments = () => {
             },
             onError: (error) => {
                 console.error(error)
+
+                notification.error({
+                    message: 'Upload Failed',
+                    description: error.errors.message,
+                    placement: 'topRight',
+                    duration: 6,
+                })
+                // or message.error(error.errors.message) if using Ant Design
             },
         })
     }
