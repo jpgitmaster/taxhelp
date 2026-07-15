@@ -1037,12 +1037,12 @@ const useUploadDocuments = () => {
         }
 
         useDownloadDatFile.mutate(payload, {
-            onSuccess: (blob) => {
-                const url = URL.createObjectURL(blob)
+            onSuccess: ({ data, filename }) => {
+                const url = URL.createObjectURL(data)
 
                 const link = document.createElement('a')
                 link.href = url
-                link.download = `${formType}_${selectedMonth.format('YYYYMM')}.dat`
+                link.download = filename
 
                 document.body.appendChild(link)
                 link.click()

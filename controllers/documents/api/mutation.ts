@@ -54,7 +54,11 @@ const useMutationDocuments = () => {
     const apiVersion = process.env?.NEXT_PUBLIC_API_VERSION
     const [status, setStatus] = useState<Status>(initStatus)
 
-    const useDownloadDatFile = useMutation<Blob, ApiError, Payload>({
+    const useDownloadDatFile = useMutation<
+        { data: Blob; filename: string },
+        ApiError,
+        Payload
+    >({
         mutationFn: async (payload) => {
             try {
                 const response = await api.post(
@@ -65,7 +69,15 @@ const useMutationDocuments = () => {
                     }
                 )
 
-                return response.data
+                const disposition = response.headers['content-disposition']
+                const filename =
+                    disposition?.match(/filename="?([^"]+)"?/)?.[1] ??
+                    'download.dat'
+
+                return {
+                    data: response.data,
+                    filename,
+                }
             } catch (error) {
                 if (axios.isAxiosError(error)) {
                     const axiosError = error as AxiosError<Blob>
