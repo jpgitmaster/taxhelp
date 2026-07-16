@@ -1,3 +1,4 @@
+import { notification } from 'antd'
 import dayjs, { Dayjs } from 'dayjs';
 import useQuerySchedules from './api/queries';
 import { EventClickArg } from '@fullcalendar/core';
@@ -419,7 +420,17 @@ const useDashboard = () => {
                             message: ''
                         }))
                     }, 5000)
-                }
+                },
+                onError: (error) => {
+
+                    notification.error({
+                        message: 'Schedule Creation Failed',
+                        description: error.errors?.message,
+                        placement: 'topRight',
+                        duration: 6,
+                    })
+                    // or message.error(error.errors.message) if using Ant Design
+                },
             })
         }else{
             createSchedule.mutate(dashboard.scheduleObj, {
@@ -455,7 +466,17 @@ const useDashboard = () => {
                             message: ''
                         }))
                     }, 5000)
-                }
+                },
+                onError: (error) => {
+                    console.log(error)
+                    notification.error({
+                        message: 'Schedule Creation Failed',
+                        description: error.errors?.message,
+                        placement: 'topRight',
+                        duration: 6,
+                    })
+                    // or message.error(error.errors.message) if using Ant Design
+                },
             })
         }
     }

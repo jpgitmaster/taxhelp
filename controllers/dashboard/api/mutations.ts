@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from 'react'
 import api from '@/components/reusables/axios'
 import { Dashboard, ScheduleObj } from '../types'
@@ -5,7 +6,11 @@ import { Status } from '@/controllers/global/types'
 import { initStatus } from '@/controllers/global/states'
 import { initDashboard, initScheduleObj } from '../states'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-
+interface ApiError {
+    errors: {
+        message: string
+    }
+}
 const useMutationSchedules = () => {
     const queryClient = useQueryClient()
     const apiVersion = process.env?.NEXT_PUBLIC_API_VERSION
@@ -37,75 +42,102 @@ const useMutationSchedules = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['schedule_categories'] })
         },
-        onError: (error: any) => {
+        onError: (error) => {
             console.log(error)
         }
     })
 
-    const createSchedule = useMutation({
-        mutationFn: async (schedule: ScheduleObj) => {
-            const startDate = schedule.schedule?.[0]?.format('YYYY-MM-DD');
-            const endDate = schedule.schedule?.[1]?.format('YYYY-MM-DD');
-            const res = await api.post(`/api/${apiVersion}/schedules`, {
-                title: schedule.title,
-                schedule_date_to: endDate,
-                client_id: schedule.client_id,
-                schedule_date_from: startDate,
-                category_id: schedule.category.id,
-                description: schedule.description,
-                category_name: schedule.category.name,
-                category_color: schedule.category.color,
-            })
-            return res.data
+    const createSchedule = useMutation<unknown, ApiError, ScheduleObj>({
+        mutationFn: async (schedule) => {
+            try {
+                const startDate = schedule.schedule?.[0]?.format('YYYY-MM-DD')
+                const endDate = schedule.schedule?.[1]?.format('YYYY-MM-DD')
+
+                const res = await api.post(`/api/${apiVersion}/schedules`, {
+                    title: schedule.title,
+                    schedule_date_to: endDate,
+                    client_id: schedule.client_id,
+                    schedule_date_from: startDate,
+                    category_id: schedule.category.id,
+                    description: schedule.description,
+                    category_name: schedule.category.name,
+                    category_color: schedule.category.color,
+                })
+
+                return res.data
+            } catch (error) {
+                if (axios.isAxiosError<ApiError>(error) && error.response) {
+                    throw error.response.data
+                }
+
+                throw error
+            }
         },
+
         onSuccess: () => {
             setStatus(prev => ({
                 ...prev,
                 loader: false,
-                message: 'Schedule created successfully.'
+                message: 'Schedule created successfully.',
             }))
 
             setTimeout(() => {
                 setStatus(prev => ({
                     ...prev,
-                    message: ''
+                    message: '',
                 }))
             }, 5000)
 
             setDashboard({
                 ...dashboard,
-                scheduleObj: initScheduleObj
+                scheduleObj: initScheduleObj,
             })
 
             queryClient.invalidateQueries({ queryKey: ['schedules'] })
         },
+
         onError: (error) => {
-            console.log(error)
-        }
+            console.log(error.errors.message)
+        },
     })
 
-    const updateSchedule = useMutation({
+    const updateSchedule = useMutation<unknown, ApiError, ScheduleObj>({
         mutationFn: async (schedule: ScheduleObj) => {
-            const startDate = schedule.schedule?.[0]?.format('YYYY-MM-DD');
-            const endDate = schedule.schedule?.[1]?.format('YYYY-MM-DD');
-            const res = await api.put(`/api/${apiVersion}/schedules/${schedule.id}`, {
-                title: schedule.title,
-                schedule_date_to: endDate,
-                client_id: schedule.client_id,
-                schedule_date_from: startDate,
-                category_id: schedule.category.id,
-                description: schedule.description,
-                category_name: schedule.category.name,
-                category_color: schedule.category.color,
-            })
-            return res.data
+            try {
+                const startDate = schedule.schedule?.[0]?.format('YYYY-MM-DD')
+                const endDate = schedule.schedule?.[1]?.format('YYYY-MM-DD')
+
+                const res = await api.put(
+                    `/api/${apiVersion}/schedules/${schedule.id}`,
+                    {
+                        title: schedule.title,
+                        schedule_date_to: endDate,
+                        client_id: schedule.client_id,
+                        schedule_date_from: startDate,
+                        category_id: schedule.category.id,
+                        description: schedule.description,
+                        category_name: schedule.category.name,
+                        category_color: schedule.category.color,
+                    }
+                )
+
+                return res.data
+            } catch (error) {
+                if (axios.isAxiosError<ApiError>(error) && error.response) {
+                    throw error.response.data
+                }
+
+                throw error
+            }
         },
+
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['schedules'] })
         },
+
         onError: (error) => {
-            console.log(error)
-        }
+            console.log(error.errors.message)
+        },
     })
 
     const deleteSchedule = useMutation({

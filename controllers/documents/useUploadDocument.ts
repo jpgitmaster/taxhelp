@@ -955,12 +955,22 @@ const useUploadDocuments = () => {
         e.preventDefault()
 
         if (!doc.client.id) {
-            alert('Please select a client.')
+            notification.error({
+                message: 'Upload Failed',
+                description: 'Please select a client.',
+                placement: 'topRight',
+                duration: 6,
+            })
             return
         }
 
         if (!selectedMonth) {
-            alert('Please select a taxable month.')
+            notification.error({
+                message: 'Upload Failed',
+                description: 'Please select a taxable month.',
+                placement: 'topRight',
+                duration: 6,
+            })
             return
         }
 
@@ -1051,7 +1061,6 @@ const useUploadDocuments = () => {
                 URL.revokeObjectURL(url)
             },
             onError: (error) => {
-                console.error(error)
 
                 notification.error({
                     message: 'Upload Failed',
