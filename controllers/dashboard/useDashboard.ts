@@ -422,13 +422,13 @@ const useDashboard = () => {
                     }, 5000)
                 },
                 onError: (error) => {
-
                     notification.error({
                         message: 'Schedule Creation Failed',
                         description: error.errors?.message,
                         placement: 'topRight',
                         duration: 6,
                     })
+                    setStatus({...status, loader: false})
                     // or message.error(error.errors.message) if using Ant Design
                 },
             })
@@ -468,13 +468,13 @@ const useDashboard = () => {
                     }, 5000)
                 },
                 onError: (error) => {
-                    console.log(error)
                     notification.error({
                         message: 'Schedule Creation Failed',
                         description: error.errors?.message,
                         placement: 'topRight',
                         duration: 6,
                     })
+                    setStatus({...status, loader: false})
                     // or message.error(error.errors.message) if using Ant Design
                 },
             })
