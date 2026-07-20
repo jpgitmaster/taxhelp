@@ -24,7 +24,7 @@ const Client_V = () => {
     return (
       <form onSubmit={handleUpdateSubmit} className={scss.addClient}>
         { (loader || isLoading) && <Loader scss={scss} position='absolute' />}
-        <Link href={`/bookkeeper/users/clients/${client.clientObj.id}`} className={scss.editLink}>
+        <Link href={`/bookkeeper/clients/${client.clientObj.id}`} className={scss.editLink}>
           <Image src='/svgs/eyecon_check.svg' alt='View Details' priority width={20} height={20} unoptimized={true} />
           View Details
         </Link>
@@ -108,14 +108,17 @@ const Client_V = () => {
                       err={client.clientErr.representative_email as string}
                     >
                       <input
+                        readOnly
                         type='text'
-                        id='representative_email'
-                        name='representative_email'
                         maxLength={30}
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
+                        id='representative_email'
+                        name='representative_email'
+                        className={scss.lblContent}
                         placeholder='jrizal@gmail.com'
+                        style={{backgroundColor: 'transparent'}}
                         value={client.clientObj.representative_email}
                       />
                     </CustomContainer>
@@ -185,14 +188,17 @@ const Client_V = () => {
                     >
                       <input
                         id='tin'
-                        type='text'
+                        readOnly
                         name='tin'
+                        type='text'
                         maxLength={30}
                         autoComplete='off'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
                         placeholder="000-000-000"
+                        className={scss.lblContent}
                         value={client.clientObj.tin}
+                        style={{backgroundColor: 'transparent'}}
                       />
                     </CustomContainer>
                     <CustomContainer
@@ -368,15 +374,18 @@ const Client_V = () => {
                       err={client.clientErr.email as string}
                     >
                       <input
+                        readOnly
+                        id='email'
                         type='text'
+                        name='email'
                         maxLength={30}
                         autoComplete='off'
-                        id='email'
-                        name='email'
-                        placeholder='yourname@yourcompany.com'
                         onKeyUp={handleBlur}
                         onChange={handleChange}
+                        className={scss.lblContent}
                         value={client.clientObj.email}
+                        placeholder='yourname@yourcompany.com'
+                        style={{backgroundColor: 'transparent'}}
                       />
                     </CustomContainer>
                     <CustomContainer
