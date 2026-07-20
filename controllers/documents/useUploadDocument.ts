@@ -432,9 +432,9 @@ const useUploadDocuments = () => {
             dataIndex: 'atc_code',
         },
         {
-            key: 'amount_of_income_payment',
+            key: 'income_payment',
             title: 'Amount of Income Payment',
-            dataIndex: 'amount_of_income_payment',
+            dataIndex: 'income_payment',
             render: formatNumber,
         },
         {
@@ -444,9 +444,9 @@ const useUploadDocuments = () => {
             render: formatNumber,
         },
         {
-            key: 'amount_of_tax_withheld',
+            key: 'tax_amount',
             title: 'Amount of Tax Withheld',
-            dataIndex: 'amount_of_tax_withheld',
+            dataIndex: 'tax_amount',
             render: formatNumber,
         },
     ]
@@ -464,9 +464,9 @@ const useUploadDocuments = () => {
             dataIndex: 'atc_code',
         },
         {
-            key: 'amount_of_income_payment',
+            key: 'income_payment',
             title: 'Amount of Income Payment',
-            dataIndex: 'amount_of_income_payment',
+            dataIndex: 'income_payment',
             render: formatNumber,
         },
         {
@@ -476,9 +476,9 @@ const useUploadDocuments = () => {
             render: formatNumber,
         },
         {
-            key: 'amount_of_tax_withheld',
+            key: 'tax_amount',
             title: 'Amount of Tax Withheld',
-            dataIndex: 'amount_of_tax_withheld',
+            dataIndex: 'tax_amount',
             render: formatNumber,
         },
     ]
@@ -1028,20 +1028,16 @@ const useUploadDocuments = () => {
 
                 ...(formType === 'SAWT' && {
                     atc_code: row.atc_code,
-                    amount_of_income_payment:
-                        row.amount_of_income_payment ?? 0,
+                    income_payment: row.amount_of_income_payment ?? 0,
                     tax_rate: row.tax_rate ?? 0,
-                    amount_of_tax_withheld:
-                        row.amount_of_tax_withheld ?? 0,
+                    tax_amount: row.amount_of_tax_withheld ?? 0,
                 }),
 
                 ...(formType === 'QAP' && {
                     atc_code: row.atc_code,
-                    amount_of_income_payment:
-                        row.amount_of_income_payment ?? 0,
+                    income_payment: row.amount_of_income_payment ?? 0,
                     tax_rate: row.tax_rate ?? 0,
-                    amount_of_tax_withheld:
-                        row.amount_of_tax_withheld ?? 0,
+                    tax_amount: row.amount_of_tax_withheld ?? 0,
                 }),
             })),
         }
