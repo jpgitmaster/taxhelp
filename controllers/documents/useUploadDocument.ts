@@ -672,13 +672,13 @@ const useUploadDocuments = () => {
                 return {
                     ...base,
                     atc_code: row['ATC CODE'],
-                    amount_of_income_payment: Number(
+                    income_payment: Number(
                         row['AMOUNT OF INCOME PAYMENT'] || 0
                     ),
                     tax_rate: Number(
                         row['TAX RATE'] || 0
                     ),
-                    amount_of_tax_withheld: Number(
+                    tax_amount: Number(
                         row['AMOUNT OF TAX WITHHELD'] || 0
                     ),
                 }

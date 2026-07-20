@@ -67,8 +67,8 @@ type ExcelRow = {
 
   atc_code?: string
   tax_rate?: number
-  amount_of_tax_withheld?: number
-  amount_of_income_payment?: number
+  tax_amount?: number
+  income_payment?: number
 }
 export type {
     Doc,
