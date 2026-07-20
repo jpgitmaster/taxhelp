@@ -59,8 +59,8 @@ const UploadNewDocument_V = () => {
         | 'vatable_purchase_of_services'
         | 'vatable_purchase_of_other_goods'
         | 'vatable_purchase_of_capital_goods'
-        | 'amount_of_income_payment'
-        | 'amount_of_tax_withheld'
+        | 'income_payment'
+        | 'tax_amount'
     const total = (field: NumericFields) =>
       rows.reduce(
         (sum, row) => sum + Number(row[field] || 0),
@@ -224,7 +224,7 @@ const UploadNewDocument_V = () => {
 
                                                     {/* Amount of Income Payment */}
                                                     <Table.Summary.Cell index={9}>
-                                                        {formatNumber(total('amount_of_income_payment'))}
+                                                        {formatNumber(total('income_payment'))}
                                                     </Table.Summary.Cell>
 
                                                     {/* Tax Rate */}
@@ -232,7 +232,7 @@ const UploadNewDocument_V = () => {
 
                                                     {/* Amount of Tax Withheld */}
                                                     <Table.Summary.Cell index={11}>
-                                                        {formatNumber(total('amount_of_tax_withheld'))}
+                                                        {formatNumber(total('tax_amount'))}
                                                     </Table.Summary.Cell>
                                                 </>
                                             )}
