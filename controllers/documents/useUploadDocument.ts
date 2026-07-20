@@ -1028,16 +1028,16 @@ const useUploadDocuments = () => {
 
                 ...(formType === 'SAWT' && {
                     atc_code: row.atc_code,
-                    income_payment: row.amount_of_income_payment ?? 0,
+                    income_payment: row.income_payment ?? 0,
                     tax_rate: row.tax_rate ?? 0,
-                    tax_amount: row.amount_of_tax_withheld ?? 0,
+                    tax_amount: row.tax_amount ?? 0,
                 }),
 
                 ...(formType === 'QAP' && {
                     atc_code: row.atc_code,
-                    income_payment: row.amount_of_income_payment ?? 0,
+                    income_payment: row.income_payment ?? 0,
                     tax_rate: row.tax_rate ?? 0,
-                    tax_amount: row.amount_of_tax_withheld ?? 0,
+                    tax_amount: row.tax_amount ?? 0,
                 }),
             })),
         }
