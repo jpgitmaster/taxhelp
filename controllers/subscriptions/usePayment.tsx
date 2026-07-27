@@ -10,7 +10,8 @@ const usePayment = () => {
     const {
         status,
         setStatus,
-        paymentSubscription
+        paymentSubscription,
+        checkoutSubscription
     } = useMutationSubscriptions()
     const router = useRouter()
     const { plan, price, billing } = router.query
@@ -18,28 +19,45 @@ const usePayment = () => {
     const handlePayment = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         setStatus({...status, loader: true})
-        paymentSubscription.mutate(String(plan), {
-            onSuccess: () => {
-                setStatus(prev => ({
-                    ...prev,
-                    loader: false,
-                    message: (
-                        <>
-                            Payment successful! Your TaxHelp{' '}
-                            <span style={{textTransform: 'capitalize'}}>{plan?.toString().toLowerCase()}</span>{' '}<br />
-                            subscription has been activated.
-                        </>
-                    )
-                }))
-                setTimeout(() => {
+        checkoutSubscription.mutate(
+            {
+                plan: String(plan),
+                billing_cycle: String(billing),
+            },
+            {
+                onSuccess: (data) => {
+                    paymentSubscription.mutate(String(plan), {
+                        onSuccess: () => {
+                            // setStatus(prev => ({
+                            //     ...prev,
+                            //     loader: false,
+                            //     message: (
+                            //         <>
+                            //             Payment successful! Your TaxHelp{' '}
+                            //             <span style={{textTransform: 'capitalize'}}>{plan?.toString().toLowerCase()}</span>{' '}<br />
+                            //             subscription has been activated.
+                            //         </>
+                            //     )
+                            // }))
+                            setTimeout(() => {
+                                setStatus(prev => ({
+                                    ...prev,
+                                    message: '',
+                                    submessage: ''
+                                }))
+                            }, 5000)
+                        }
+                    })
+                    window.location.href = data.checkout_url
+                },
+                onError: () => {
                     setStatus(prev => ({
                         ...prev,
-                        message: '',
-                        submessage: ''
+                        loader: false,
                     }))
-                }, 5000)
+                },
             }
-        })
+        )
     }
 
     return {

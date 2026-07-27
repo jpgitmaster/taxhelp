@@ -1011,6 +1011,9 @@ const useUploadDocuments = () => {
                     zero_rated_sales: row.zero_rated_sales ?? 0,
                     vatable_sales: row.vatable_sales ?? 0,
                     vat_rate: row.vat_rate ?? 0,
+                    vat_amount: row.vat_amount ?? 0,
+                    gross_amount: row.gross_amount ?? 0,
+                    gross_taxable: row.gross_taxable ?? 0,
                 }),
 
                 ...(formType === 'SLP' && {
@@ -1024,6 +1027,9 @@ const useUploadDocuments = () => {
                     vatable_purchase_of_other_goods:
                         row.vatable_purchase_of_other_goods ?? 0,
                     vat_rate: row.vat_rate ?? 0,
+                    vat_amount: row.vat_amount ?? 0,
+                    gross_amount: row.gross_amount ?? 0,
+                    gross_taxable: row.gross_taxable ?? 0,
                 }),
 
                 ...(formType === 'SAWT' && {
@@ -1041,7 +1047,14 @@ const useUploadDocuments = () => {
                 }),
             })),
         }
+        console.log(payload.records);
 
+        console.log(
+            payload.records.reduce(
+                (sum, r) => sum + Number(r.vatable_purchases || 0),
+                0
+            )
+        );
         useDownloadDatFile.mutate(payload, {
             onSuccess: ({ data, filename }) => {
                 const url = URL.createObjectURL(data)

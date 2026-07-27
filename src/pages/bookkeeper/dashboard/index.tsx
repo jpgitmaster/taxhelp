@@ -5,9 +5,9 @@ import FullCalendar from '@fullcalendar/react';
 import scss from './styles/Dashboard.module.scss';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import { Modal, DatePicker, Popconfirm } from 'antd';
 import interactionPlugin from '@fullcalendar/interaction';
 import Loader from '@/components/reusables/RotatingLoader';
+import { Modal, DatePicker, Popconfirm, Rate } from 'antd';
 import { initDashboard } from '@/controllers/dashboard/states';
 import useDashboard from '@/controllers/dashboard/useDashboard';
 import SuccessMessage from '@/components/reusables/SuccessMessage';
@@ -32,11 +32,13 @@ const Dashboard_V = () => {
     isEditMode,
     isModalOpen,
     clientLoader,
+    selectedReport,
     categoryLoader,
     displayClients,
     calendarHeight,
     schedCategories,
     displayCategory,
+    isReportModalOpen,
 
     // SET STATES
     setDoc,
@@ -45,6 +47,7 @@ const Dashboard_V = () => {
     openEventModal,
     setDisplayClients,
     setDisplayCategory,
+    setIsReportModalOpen,
     
     // HANDLES
     handleDate,
@@ -56,6 +59,7 @@ const Dashboard_V = () => {
     handleOpenModal,
     handleCloseModal,
     handleEventClick,
+    handleOpenReport,
     handleSelectClient,
     handleDeleteRecord,
     handleSelectCategory,
@@ -222,10 +226,31 @@ const Dashboard_V = () => {
             }
             <div className={scss.scheduleBox}>
               <div className={scss.feedbackActions}>
-                <button className={scss.button+' '+scss.btnblue}>
+                <button className={scss.button+' '+scss.btnblue}
+                  onClick={() =>
+                    handleOpenReport({
+                      name: 'Juan Dela Cruz',
+                      email: 'juan@example.com',
+                      description: 'The dashboard chart fails to load.',
+                      images: ['https://example.com/screenshot.png'],
+                      review_type: 'feedback',
+                    })
+                  }
+                >
                   Add Feedback
                 </button>
-                <button className={scss.button+' '+scss.btnorange}>
+                <button
+                  className={scss.button + ' ' + scss.btnorange}
+                  onClick={() =>
+                    handleOpenReport({
+                      name: 'Juan Dela Cruz',
+                      email: 'juan@example.com',
+                      description: 'The dashboard chart fails to load.',
+                      images: ['https://example.com/screenshot.png'],
+                      review_type: 'bug',
+                    })
+                  }
+                >
                   Report a bug
                 </button>
               </div>
@@ -501,6 +526,89 @@ const Dashboard_V = () => {
               }
             </form>
           </div>
+        </Modal>
+        <Modal
+          open={isReportModalOpen}
+          footer={null}
+          onCancel={() => setIsReportModalOpen(false)}
+        >
+          <div className={scss.addSchedule}>
+            <h3 className={scss.addSchedLbl}>
+              {selectedReport.review_type === 'bug'
+              ? 'Bug Report'
+              : 'Add Feedback'}
+            </h3>
+          </div>
+          <form onSubmit={handleSubmit} className={scss.schedForm}>
+            { loader && <Loader scss={scss} position='absolute' />}
+            <div className={scss.cards}>
+              {
+                selectedReport.review_type === 'feedback' &&
+                <CustomContainer
+                  scss={scss}
+                  width={100}
+                  label='Rate'
+                >
+                  <Rate />
+                </CustomContainer>
+              }
+              {
+                selectedReport.review_type === 'bug' &&
+                <div className={scss.customFile+' '+scss.card+' '+scss.w100}>
+                  <div className={scss.customFileUpload}>
+                      <label className={scss.customFile}>
+                          <input
+                              name="file"
+                              type="file"
+                              // onChange={handleFileChange}
+                          />
+                          <div className={scss.empty_image}>
+                              <Image
+                                  src="/svgs/reports.svg"
+                                  alt="Empty Image"
+                                  width={26}
+                                  height={26}
+                                  unoptimized
+                              />
+                          </div>
+                          <>
+                              <p>Browse or upload your file here</p>
+                              <span>
+                                  Supported formats: .jpg, .png<br />
+                                  Maximum file size: 5 MB
+                              </span>
+                          </>
+                      </label>
+                  </div>
+                </div>
+              }
+              <CustomContainer
+                scss={scss}
+                width={100}
+                required={true}
+                label={selectedReport.review_type === 'bug'
+                  ? 'Bug Description'
+                  : 'Feedback'}
+                labelFor='description'
+                err={dashboard.scheduleErr.title as string}
+              >
+                <textarea
+                  id='description'
+                  name='description'
+                  maxLength={1000}
+                  style={{minHeight: '100px'}}
+                  value={dashboard.scheduleObj.description}
+                  onKeyUp={handleBlur}
+                  onChange={handleChange}
+                />
+              </CustomContainer>
+            </div>
+            <button type='submit' className={scss.button+' '+scss.btnblue} style={{display: 'block', maxWidth: '300px', margin: '-10px auto 30px'}} onKeyDown={handleResubmit}>
+              Submit {selectedReport.review_type === 'bug'
+                  ? 'Bug Report'
+                  : 'Feedback'}
+            </button>
+          </form>
         </Modal>
       </div>
   )

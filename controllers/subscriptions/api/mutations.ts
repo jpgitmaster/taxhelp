@@ -15,15 +15,26 @@ type ErrorResponse = {
 type SuccessResponse = {
     message: string
 }
+interface CheckoutPayload {
+    plan: string
+    billing_cycle: string
+}
+
+interface CheckoutResponse {
+    checkout_url: string
+    payment_id: number
+    success: boolean
+    message: string
+}
 const useMutationSubscriptions = () => {
     const queryClient = useQueryClient()
     const apiVersion = process.env?.NEXT_PUBLIC_API_VERSION
     const [status, setStatus] = useState<Status>(initStatus)
     const paymentSubscription = useMutation<
-            SuccessResponse,
-            AxiosError<ErrorResponse>,
-            string
-        >({
+        SuccessResponse,
+        AxiosError<ErrorResponse>,
+        string
+    >({
         mutationFn: async (plan: string) => {
             const res = await api({
                 method: 'PUT',
@@ -45,6 +56,22 @@ const useMutationSubscriptions = () => {
             })
         }
     })
+
+    const checkoutSubscription = useMutation<
+        CheckoutResponse,
+        AxiosError<ErrorResponse>,
+        CheckoutPayload
+    >({
+        mutationFn: async (payload) => {
+            const res = await api({
+                method: 'POST',
+                url: `/api/${apiVersion}/subscriptions/checkout`,
+                data: payload,
+            })
+
+            return res.data
+        },
+    })
     return {
         // STATES
         status,
@@ -54,6 +81,7 @@ const useMutationSubscriptions = () => {
 
         // MUTATIONS
         paymentSubscription,
+        checkoutSubscription,
     }
 }
 

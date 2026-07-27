@@ -124,7 +124,6 @@ const DAT_File_V = () => {
       }
 
       if (docType === 'PURCHASES') {
-        console.log(doc)
         return {
           ...base,
           supplier: doc.supplier,

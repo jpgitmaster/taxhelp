@@ -82,6 +82,14 @@ const useDashboard = () => {
     const [calendarHeight, setCalendarHeight] = useState(500)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayCategory, setDisplayCategory] = useState(false)
+    const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+    const [selectedReport, setSelectedReport] = useState({
+        name: '',
+        email: '',
+        description: '',
+        images: [] as string[],
+        review_type: '',
+    });
     const [doc, setDoc] = useState<{
         clientSearch: string
         selectedCategory: {
@@ -144,6 +152,11 @@ const useDashboard = () => {
         clientFilter.search
     )
     const clientArr = dataClients?.clients;
+
+    const handleOpenReport = (report: any) => {
+        setSelectedReport(report);
+        setIsReportModalOpen(true);
+    };
     const handleDeleteRecord = (id: number) => {
         setStatus({...status, loader: true})
         deleteSchedule.mutate(id, {
@@ -505,10 +518,12 @@ const useDashboard = () => {
         clientArr,
         isEditMode,
         isModalOpen,
+        selectedReport,
         displayClients,
         calendarHeight,
         displayCategory,
         schedCategories,
+        isReportModalOpen,
         clientLoader: isLoadingClients || isFetchingClients,
         categoryLoader: isLoadingCategories || isFetchingCategories,
 
@@ -519,6 +534,7 @@ const useDashboard = () => {
         openEventModal,
         setDisplayClients,
         setDisplayCategory,
+        setIsReportModalOpen,
         
         // HANDLES
         handleDate,
@@ -529,6 +545,7 @@ const useDashboard = () => {
         handleResubmit,
         handleRemoveErr,
         handleOpenModal,
+        handleOpenReport,
         handleCloseModal,
         handleEventClick,
         handleDeleteRecord,
