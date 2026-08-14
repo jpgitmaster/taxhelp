@@ -744,9 +744,19 @@ const useUploadDocuments = () => {
 
         const sheet = workbook.Sheets[sheetName]
 
-        const json = XLSX.utils.sheet_to_json(sheet, {
+        const rawJson = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, {
             defval: '',
         })
+
+        const json = rawJson.map(row =>
+            Object.entries(row).reduce(
+                (acc, [key, value]) => {
+                    acc[key.trim()] = value
+                    return acc
+                },
+                {} as Record<string, any>
+            )
+        )
         // console.log(json[0])
         // console.log(Object.keys(json[0] || {}))
 
@@ -1047,14 +1057,14 @@ const useUploadDocuments = () => {
                 }),
             })),
         }
-        console.log(payload.records);
+        // console.log(payload.records);
 
-        console.log(
-            payload.records.reduce(
-                (sum, r) => sum + Number(r.vatable_purchases || 0),
-                0
-            )
-        );
+        // console.log(
+        //     payload.records.reduce(
+        //         (sum, r) => sum + Number(r.vatable_purchases || 0),
+        //         0
+        //     )
+        // );
         useDownloadDatFile.mutate(payload, {
             onSuccess: ({ data, filename }) => {
                 const url = URL.createObjectURL(data)

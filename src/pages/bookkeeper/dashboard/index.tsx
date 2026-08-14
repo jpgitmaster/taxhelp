@@ -24,6 +24,7 @@ const Dashboard_V = () => {
     // STATES
     doc,
     user,
+    review,
     events,
     status,
     mounted,
@@ -60,6 +61,7 @@ const Dashboard_V = () => {
     handleCloseModal,
     handleEventClick,
     handleOpenReport,
+    handleReviewChange,
     handleSelectClient,
     handleDeleteRecord,
     handleSelectCategory,
@@ -594,12 +596,13 @@ const Dashboard_V = () => {
               >
                 <textarea
                   id='description'
-                  name='description'
                   maxLength={1000}
-                  style={{minHeight: '100px'}}
-                  value={dashboard.scheduleObj.description}
+                  name='description'
                   onKeyUp={handleBlur}
-                  onChange={handleChange}
+                  onChange={handleReviewChange}
+                  value={review.description}
+                  style={{minHeight: '100px'}}
+                  
                 />
               </CustomContainer>
             </div>

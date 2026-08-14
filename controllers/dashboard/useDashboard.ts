@@ -90,6 +90,16 @@ const useDashboard = () => {
         images: [] as string[],
         review_type: '',
     });
+    const [review, setReview] = useState({
+        name: '',
+        email: '',
+        description: '',
+        images: [
+            "https://example.com/screenshot.png"
+        ],
+        rating: 5,
+        review_type: ''
+    })
     const [doc, setDoc] = useState<{
         clientSearch: string
         selectedCategory: {
@@ -241,6 +251,16 @@ const useDashboard = () => {
         setIsModalOpen(false);
     };
 
+    const handleReviewChange = (
+        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    ) => {
+        const { name, value } = event.target
+        setReview(prev => ({
+            ...prev,
+            [name]: value
+        }))
+    }
+    
     const handleChange = (
         event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => {
@@ -511,6 +531,7 @@ const useDashboard = () => {
         // STATES
         doc,
         user,
+        review,
         events,
         status,
         mounted,
@@ -548,6 +569,7 @@ const useDashboard = () => {
         handleOpenReport,
         handleCloseModal,
         handleEventClick,
+        handleReviewChange,
         handleDeleteRecord,
         handleSelectClient,
         handleSelectCategory,
