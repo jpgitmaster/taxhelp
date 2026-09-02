@@ -180,6 +180,7 @@ export default function ScheduleCategoryDropdown(props: {
     const categoryLimits = {
         basic: 2,
         pro: 5,
+        enterprise: Infinity,
     } as const;
 
     type Plan = keyof typeof categoryLimits;
