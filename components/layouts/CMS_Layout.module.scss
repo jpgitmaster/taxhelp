@@ -237,7 +237,7 @@ body, html{
             border-bottom: .5px solid rgba($gray, .8);
             @apply px-5 pt-2.5 pb-1.25 min-h-17.5 justify-between flex flex-row items-center w-full;
             .logo{
-                @apply w-63 h-22.5 block float-left;
+                @apply w-55 m-1 block float-left;
                 img{
                     @apply w-full h-full;
                 }

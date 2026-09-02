@@ -76,6 +76,7 @@ const CMS_Layout: FC<MasterProps> = ({ children }) => {
       ),
     },
 	];
+  console.log(user?.subscription?.plan)
   return (
     isPageLoad &&
     <div className={scss.app}>

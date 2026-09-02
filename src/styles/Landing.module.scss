@@ -28,10 +28,10 @@
   @apply min-h-screen bg-linear-to-br from-blue-50 to-blue-200 flex flex-col;
   .topbar {
     background-color: var(--white);
-    @apply px-15 py-4 flex justify-between items-center;
+    @apply px-15 py-2 flex justify-between items-center;
 
     .logo {
-      @apply w-60 inline-block focus-visible:outline-none;
+      @apply w-50 inline-block focus-visible:outline-none;
       img {
         @apply w-full;
       }
@@ -47,15 +47,18 @@
         @apply flex-1 z-10 pr-10 overflow-hidden;
         
         h1{
-          @apply text-4xl md:text-5xl font-extrabold text-blue-800 mb-6 leading-tight drop-shadow-sm;
+          color: $taxhelpBlue;
+          @apply text-4xl md:text-5xl font-extrabold mb-6 leading-tight drop-shadow-sm;
         }
 
         p{
-          @apply text-lg md:text-2xl text-blue-700 mb-8 max-w-xl;
+          color: $taxhelpBlue;
+          @apply text-lg md:text-2xl mb-8 max-w-xl;
         }
         
         a{
-          @apply inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-lg shadow transition mb-4;
+          background-color: $taxhelpBlue;
+          @apply inline-block hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-lg shadow transition mb-4;
         }
       }
 
@@ -80,7 +83,8 @@
           @apply rounded-xl shadow-lg w-full max-w-xs h-55 object-cover;
       }
       h2{
-        @apply text-2xl md:text-3xl font-bold text-blue-800 mb-4;
+        color: $taxhelpBlue;
+        @apply text-2xl md:text-3xl font-bold mb-4;
       }
       p{
         @apply text-gray-700 text-lg mb-4;
@@ -95,7 +99,8 @@
   .services{
       @apply py-12 pb-18 px-6 bg-blue-50;
       .serviceTitle{
-          @apply text-2xl md:text-3xl font-bold text-blue-800 mb-10 text-center;
+        color: $taxhelpBlue;
+        @apply text-2xl md:text-3xl font-bold mb-10 text-center;
       }
       .serviceBox{
           @apply grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto;
@@ -105,7 +110,8 @@
                   @apply w-16 h-16 mb-4;
               }
               h3{
-                  @apply font-semibold text-lg text-blue-700 mb-2;
+                color: $taxhelpBlue;
+                @apply font-semibold text-lg mb-2;
               }
               p{
                   @apply text-gray-600;
@@ -181,7 +187,8 @@
           @apply p-4 rounded-lg border border-blue-200 bg-blue-50 text-gray-800;
         }
         button{
-          @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-lg shadow transition;
+          background-color: $taxhelpBlue;
+          @apply hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-lg shadow transition;
         }
       }
     }

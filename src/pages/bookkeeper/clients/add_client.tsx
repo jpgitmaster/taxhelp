@@ -8,7 +8,7 @@ import useSaveClient from '@/controllers/clients/useSaveClient'
 import CustomContainer from '@/components/reusables/CustomContainer'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
-type Plan = 'basic' | 'pro';
+type Plan = 'basic' | 'pro' | 'enterprise';
 const AddCustomer_V = () => {
   const {
     user,
@@ -29,6 +29,7 @@ const AddCustomer_V = () => {
   const limits: Record<Plan, number> = {
     basic: 3,
     pro: 10,
+    enterprise: Infinity,
   };
   const featureType =
     plan === 'basic'
