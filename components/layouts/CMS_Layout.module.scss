@@ -298,6 +298,10 @@ body, html{
                                         &.pro{
                                             background-color: $orange;
                                         }
+                                        &.enterprise{
+                                            background-color: $green;
+                                            @apply min-w-16 relative -left-1.5;
+                                        }
                                     }
                                     img{
                                         @apply w-full ml-1.25;

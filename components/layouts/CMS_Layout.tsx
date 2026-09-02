@@ -76,7 +76,7 @@ const CMS_Layout: FC<MasterProps> = ({ children }) => {
       ),
     },
 	];
-  console.log(user?.subscription?.plan)
+  // console.log(user?.subscription?.plan)
   return (
     isPageLoad &&
     <div className={scss.app}>
@@ -175,15 +175,9 @@ const CMS_Layout: FC<MasterProps> = ({ children }) => {
                 <h2>
                   {(user?.first_name && user?.last_name) ? user?.first_name+' '+user?.last_name: user?.email} &nbsp;
                 </h2>
-                {/* {
-                  user?.subscription?.plan &&
-                  <p className={scss.subscriptionStatus}>
-                    {user?.subscription?.plan} Subscriber
-                  </p>
-                } */}
                 <div className={scss.headerIcons}>
                   <div className={scss.headerIcon}>
-                    <Link href='/bookkeeper/subscription' className={scss.icon+' '+scss.subscriptionStatus +' '+ (user?.subscription?.plan === 'pro' ? scss.pro : user?.subscription?.plan === 'basic' ? scss.basic :'')}>
+                    <Link href='/bookkeeper/subscription' className={scss.icon+' '+scss.subscriptionStatus +' '+ (user?.subscription?.plan === 'pro' ? scss.pro : user?.subscription?.plan === 'basic' ? scss.basic : user?.subscription?.plan === 'enterprise' ? scss.enterprise : '')}>
                       {user?.subscription?.plan}
                     </Link>
                   </div>
