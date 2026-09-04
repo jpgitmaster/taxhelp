@@ -30,6 +30,7 @@ const useProfile = () => {
     const fieldValidations = {
         lastName: { usename: 'Last Name', required: true },
         firstName: { usename: 'First Name', required: true },
+        birthdate: { usename: 'Birthdate', required: true },
     }
     const { data: fetchUser } = getUser()
     
