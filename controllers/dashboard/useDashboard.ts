@@ -130,7 +130,8 @@ const useDashboard = () => {
         },
     })
     const { data: scheds } = getSchedules()
-    const { data, isLoading: isLoadingCategories, isFetching: isFetchingCategories } = getScheduleCategories()
+    const [categorySearch, setCategorySearch] = useState('')
+    const { data, isLoading: isLoadingCategories, isFetching: isFetchingCategories } = getScheduleCategories(categorySearch)
     const schedCategories = data?.schedCategories
     const events =
         scheds?.schedules?.map((schedule: ScheduleObj) => ({
@@ -542,6 +543,7 @@ const useDashboard = () => {
         selectedReport,
         displayClients,
         calendarHeight,
+        categorySearch,
         displayCategory,
         schedCategories,
         isReportModalOpen,
@@ -553,6 +555,7 @@ const useDashboard = () => {
         setIsEditMode,
         setDashboard,
         openEventModal,
+        setCategorySearch,
         setDisplayClients,
         setDisplayCategory,
         setIsReportModalOpen,

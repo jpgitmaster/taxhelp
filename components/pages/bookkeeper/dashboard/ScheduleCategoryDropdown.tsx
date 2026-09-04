@@ -16,12 +16,13 @@ export default function ScheduleCategoryDropdown(props: {
             color: string
         }
     }
+    categorySearch: string
     schedCategories: {
         id: number,  name: string, color: string
     }[]
     categoryLoader: boolean
     displayCategory: boolean
-
+    setCategorySearch: Dispatch<SetStateAction<string>>
     setDisplayCategory: Dispatch<SetStateAction<boolean>>
 
     handleToggle(dropdown: string): void
@@ -34,10 +35,12 @@ export default function ScheduleCategoryDropdown(props: {
     const {
         doc,
         err,
+        categorySearch,
         categoryLoader,
         displayCategory,
         schedCategories,
         
+        setCategorySearch,
         setDisplayCategory,
 
         handleToggle,
@@ -186,6 +189,7 @@ export default function ScheduleCategoryDropdown(props: {
     type Plan = keyof typeof categoryLimits;
     const categoryCount = schedCategories?.length || 0;
     const plan = user?.subscription?.plan as Plan | undefined;
+    const isEnterprise = plan === 'enterprise';
     const limit = plan ? categoryLimits[plan] : 0;
     const canCreateCategory = categoryCount < limit;
     return (
@@ -214,18 +218,39 @@ export default function ScheduleCategoryDropdown(props: {
                     {doc.selectedCategory.name} &nbsp; {err}
                 </div>
             </div>
-            
             {
                 displayCategory &&
                 <div className={scss.dropwdownList} style={{padding: '10px 8px 30px', marginTop: '-5px'}}>
                     {(categoryLoader || loader) && (
-                    <Loader scss={scss} position='absolute' />
+                        <Loader scss={scss} position='absolute' />
+                    )}
+                    {isEnterprise && (
+                        <div className={scss.dropwdownSearch + ' ' + scss.npt}>
+                            <div className={scss.searchIcon}>
+                                <Image
+                                    src="/svgs/search.svg"
+                                    alt="Search"
+                                    priority
+                                    width={12}
+                                    height={12}
+                                    unoptimized={true}
+                                />
+                            </div>
+
+                            <input
+                                type="text"
+                                name="categorySearch"
+                                value={categorySearch}
+                                placeholder="Enter category name..."
+                                onChange={(e) => setCategorySearch(e.target.value)}
+                            />
+                        </div>
                     )}
                     {
                         !displayAddCat ?
                             (
                                 schedCategories?.length ?
-                                    <ul style={{height: '80px', padding: 0, margin: 0}}>
+                                    <ul style={{height: '100px', padding: 0, margin: '5px 0 0'}}>
                                         {
                                             schedCategories?.length ? schedCategories?.map((option: { id: number,  name: string, color: string }) => 
                                                 <li key={option.id} onClick={() => {

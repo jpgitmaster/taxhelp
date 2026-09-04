@@ -33,6 +33,7 @@ const Dashboard_V = () => {
     isEditMode,
     isModalOpen,
     clientLoader,
+    categorySearch,
     selectedReport,
     categoryLoader,
     displayClients,
@@ -46,6 +47,7 @@ const Dashboard_V = () => {
     setIsEditMode,
     setDashboard,
     openEventModal,
+    setCategorySearch,
     setDisplayClients,
     setDisplayCategory,
     setIsReportModalOpen,
@@ -448,10 +450,12 @@ const Dashboard_V = () => {
                     :
                     <ScheduleCategoryDropdown
                       doc={doc}
+                      categorySearch={categorySearch}
                       categoryLoader={categoryLoader}
                       displayCategory={displayCategory}
                       schedCategories={schedCategories}
                       err={dashboard.scheduleErr.category ? true : false}
+                      setCategorySearch={setCategorySearch}
                       setDisplayCategory={setDisplayCategory}
 
                       handleToggle={handleToggle}

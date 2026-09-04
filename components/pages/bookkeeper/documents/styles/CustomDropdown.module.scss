@@ -100,7 +100,7 @@
     .categoryCreation{
       @apply px-1.25 pb-2.5 relative pt-4 overflow-x-hidden;
       .categoryClose{
-        @apply absolute w-3 h-3 pt-1 right-1 -top-2 cursor-pointer;
+        @apply absolute w-3 h-3 pt-1 right-1 -top-1.5 cursor-pointer;
         filter: invert(49%) sepia(58%) saturate(13%) hue-rotate(328deg) brightness(87%) contrast(87%);
       }
       .inputCategory{
@@ -124,7 +124,7 @@
       }
     }
     .createNewCategory{
-      @apply absolute bottom-0 text-[11px] py-1 my-1 text-center left-0 right-0;
+      @apply absolute bottom-0 text-[11px] py-1 my-0 text-center left-0 right-0;
       button{
         color: $blue;
         border-bottom: 1px solid $transparent;

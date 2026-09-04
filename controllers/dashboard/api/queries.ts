@@ -3,16 +3,20 @@ import { useQuery } from '@tanstack/react-query'
 const useQuerySchedules = () => {
     const apiVersion = process.env?.NEXT_PUBLIC_API_VERSION
 
-    const getScheduleCategories = () => {
+    const getScheduleCategories = (search: string = '') => {
         return useQuery({
             queryKey: [
-                'schedule_categories'
+                'schedule_categories',
+                search
             ],
 
             queryFn: async () => {
 
                 const res = await api({
                     method: 'GET',
+                    params: {
+                        search
+                    },
                     url: `/api/${apiVersion}/schedule-categories`
                 })
                 return {
@@ -68,8 +72,6 @@ const useQuerySchedules = () => {
         // QUERIES
         getSchedules,
         getScheduleCategories,
-
-
     }
 }
 

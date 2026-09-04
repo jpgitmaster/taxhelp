@@ -31,7 +31,7 @@ const useQueryClients = () => {
                         page,
                         search,
                         page_size: limit,
-                        sortOrder: 'ASC',
+                        sortOrder: 'DESC',
                         filter: JSON.stringify(filter)
                     }
                 })
