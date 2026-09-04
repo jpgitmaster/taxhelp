@@ -186,13 +186,13 @@ const Purchases_V = () => {
       align: 'center',
       render: (record: PurchasesTableRow) =>
           <div className={scss.actions}>
-              <Link href={'/bookkeeper/sales/'+record.id} className={scss.action+' '+scss.purchases}>
+              <Link href={'/bookkeeper/purchases/'+record.id} className={scss.action+' '+scss.purchases}>
                   <Image src='/svgs/eyecon_check.svg' alt='Purchases' priority width={22} height={22} unoptimized={true} />
                   <span style={{top: '-2px'}}>
                       View
                   </span>
               </Link>
-              <Link href={'/bookkeeper/sales/'+record.id+'/edit'} className={scss.action+' '+scss.edit}>
+              <Link href={'/bookkeeper/purchases/'+record.id+'/edit'} className={scss.action+' '+scss.edit}>
                   <Image src='/svgs/edit.svg' alt='Edit' priority width={20} height={20} unoptimized={true} />
                   <span>
                       Edit
@@ -215,6 +215,12 @@ const Purchases_V = () => {
                     </span>
                 </button>
               </Popconfirm>
+              <Link href={'/bookkeeper/purchases/'+record.id} className={scss.action+' '+scss.purchases} style={{marginTop: '4px'}}>
+                  <Image src='/svgs/scan_receipt.svg' alt='Scan Receipt' priority width={18} height={18} unoptimized={true} />
+                  <span style={{top: '-2px'}}>
+                    Receipt
+                  </span>
+              </Link>
           </div>
     },
   ];

@@ -51,22 +51,22 @@ const CMS_Layout: FC<MasterProps> = ({ children }) => {
 			</Link>
 			),
 		},
-    {
-			key: '2',
-			label: (
-			<Link href={''} className={scss.actionItem}>
-				Account Settings
-			</Link>
-			),
-		},
-		{
-			key: '3',
-			label: (
-			<Link href={''} className={scss.actionItem}>
-				Change Password
-			</Link>
-			),
-		},
+    // {
+		// 	key: '2',
+		// 	label: (
+		// 	<Link href={''} className={scss.actionItem}>
+		// 		Account Settings
+		// 	</Link>
+		// 	),
+		// },
+		// {
+		// 	key: '3',
+		// 	label: (
+		// 	<Link href={''} className={scss.actionItem}>
+		// 		Change Password
+		// 	</Link>
+		// 	),
+		// },
     {
       key: '4',
       label: (

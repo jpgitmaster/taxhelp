@@ -1,5 +1,5 @@
+import { Table } from 'antd'
 import Image from 'next/image'
-import { DatePicker, Table } from 'antd'
 import scss from './styles/Documents.module.scss'
 import { signOut, getSession } from 'next-auth/react'
 import Loader from '@/components/reusables/RotatingLoader'
@@ -20,7 +20,6 @@ const UploadNewDocument_V = () => {
         options,
         clientArr,
         datLoader,
-        childOptions,
         rowSelection,
         clientLoader,
         displayDocsTbl,

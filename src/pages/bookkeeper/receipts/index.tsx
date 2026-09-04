@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import scss from './styles/Receipts.module.scss'
 import { signOut, getSession } from 'next-auth/react'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
@@ -5,15 +6,35 @@ import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 
 const Receipts_V = () => {
   return (
-    <div className={scss.box}>
-      <div className={scss.card}>
-        <h3>
-          Coming soon...
-        </h3>
-        
-        <p className={scss.caption}>
-          We&rsquo;re working hard to bring you a seamless <strong>Tax<span>Help</span></strong> experience. Stay tuned!
-        </p>
+    <div>
+      <br /><br />
+      <div className={scss.customFile}>
+          <div className={scss.customFileUpload}>
+              <label className={scss.customFile}>
+                  <input
+                      name="file"
+                      type="file"
+                      accept=".xlsx, .xls"
+                      // onChange={handleFileChange}
+                  />
+                  <div className={scss.empty_image}>
+                      <Image
+                          src="/svgs/reports.svg"
+                          alt="Empty Image"
+                          width={26}
+                          height={26}
+                          unoptimized
+                      />
+                  </div>
+                  <>
+                      <p>Browse or upload your receipt template here</p>
+                      <span>
+                          Supported formats: .pdf, .jpeg<br />
+                          Maximum file size: 5 MB
+                      </span>
+                  </>
+              </label>
+          </div>
       </div>
     </div>
   )

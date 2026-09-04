@@ -219,6 +219,12 @@ const Sales_V = () => {
                     </span>
                 </button>
               </Popconfirm>
+              <Link href={'/bookkeeper/sales/'+record.id} className={scss.action+' '+scss.purchases} style={{marginTop: '4px'}}>
+                  <Image src='/svgs/printer.svg' alt='Print' priority width={18} height={18} unoptimized={true} />
+                  <span style={{top: '-2px'}}>
+                    Print
+                  </span>
+              </Link>
           </div>
     },
   ];
