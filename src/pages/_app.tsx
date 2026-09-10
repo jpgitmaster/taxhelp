@@ -35,7 +35,7 @@ export default function App({ Component, pageProps }: AppProps) {
                 property="og:image:type"
                 content="image/jpg"
             />
-            <meta content="Tax made simple, Compliance made easy | TaxHelp" property="og:title"></meta>
+            <meta content="Tax made simple. Compliance made easy | TaxHelp" property="og:title"></meta>
         </Head>
         <AppProvider>
           {
