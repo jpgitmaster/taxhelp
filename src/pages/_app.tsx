@@ -25,11 +25,11 @@ export default function App({ Component, pageProps }: AppProps) {
             />
             <meta
                 property="og:image:width"
-                content="400"
+                content="500"
             />
             <meta
                 property="og:image:height"
-                content="400"
+                content="200"
             />
             <meta
                 property="og:image:type"
