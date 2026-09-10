@@ -330,6 +330,14 @@ const DAT_File_V = () => {
                             }}
                         />
                     </div>
+                    <div className={scss.pagination}>
+                        {
+                        rows.length != 0 &&
+                        <div className={scss.total_records}>
+                            {'Total Record'+ (rows.length > 1 ? 's' : '')}: <strong>{rows.length}</strong>
+                        </div>
+                        }
+                    </div>
                     <br /><br />
                 </form>
                 :

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import Image from 'next/image'
 import scss from './styles/Receipts.module.scss'
 import { signOut, getSession } from 'next-auth/react'
@@ -7,34 +8,62 @@ import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 const Receipts_V = () => {
   return (
     <div>
-      <br /><br />
-      <div className={scss.customFile}>
-          <div className={scss.customFileUpload}>
-              <label className={scss.customFile}>
-                  <input
-                      name="file"
-                      type="file"
-                      accept=".xlsx, .xls"
-                      // onChange={handleFileChange}
-                  />
-                  <div className={scss.empty_image}>
-                      <Image
-                          src="/svgs/reports.svg"
-                          alt="Empty Image"
-                          width={26}
-                          height={26}
-                          unoptimized
-                      />
-                  </div>
-                  <>
-                      <p>Browse or upload your receipt template here</p>
-                      <span>
-                          Supported formats: .pdf, .jpeg<br />
-                          Maximum file size: 5 MB
-                      </span>
-                  </>
-              </label>
+      <div className={scss.header}>
+        <Link href='/bookkeeper/receipts/upload_new_receipt' className={scss.button+' '+scss.btnblue}>
+          Upload New Receipt Template
+        </Link>
+      </div>
+      <div className={scss.cards}>
+        <div className={scss.card+' '+scss.w33}>
+          <div className={scss.cardHeader}>
+            <h3>Receipt Template 1</h3>
           </div>
+          <div className={scss.cardBody}>
+            <Image
+              src="/images/receipts/receipt-template-1.png"
+              alt="Receipt Template 1"
+              width={26}
+              height={26}
+              unoptimized
+            />
+          </div>
+        </div> 
+        <div className={scss.card+' '+scss.w33}>
+          <div className={scss.cardHeader}>
+            <h3>Receipt Template 2</h3>
+          </div>
+          <div className={scss.cardBody}>
+            <Image
+              src="/images/receipts/receipt-template-2.jpg"
+              alt="Receipt Template 2"
+              width={26}
+              height={26}
+              unoptimized
+            />
+          </div>
+        </div> 
+        <div className={scss.card+' '+scss.w33}>
+          <div className={scss.cardHeader}>
+            <h3>Receipt Template 3</h3>
+          </div>
+          <div className={scss.cardBody}>
+            <Image
+              src="/images/receipts/receipt-template-3.png"
+              alt="Receipt Template 3"
+              width={26}
+              height={26}
+              unoptimized
+            />
+          </div>
+        </div> 
+        <div className={scss.card+' '+scss.w33}>
+          <div className={scss.cardHeader}>
+            <h3>Receipt Template 4</h3>
+          </div>
+          <div className={scss.cardBody}>
+            
+          </div>
+        </div> 
       </div>
     </div>
   )

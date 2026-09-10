@@ -532,7 +532,7 @@ const DAT_File_V = () => {
             {
               record.totalRecords != 0 &&
               <div className={scss.total_records}>
-                {'Total Document'+ (record.totalRecords > 1 ? 's' : '')}: <strong>{record.totalRecords}</strong>
+                {'Total Record'+ (record.totalRecords > 1 ? 's' : '')}: <strong>{record.totalRecords}</strong>
               </div>
             }
             <div className={scss.paginationComponent}>

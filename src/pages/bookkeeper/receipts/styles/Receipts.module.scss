@@ -1,7 +1,37 @@
+@use '@/styles/forms';
+@use '@/styles/helpers';
 @use '@/styles/colors' as *;
 
 @reference 'tailwindcss';
 
+.header{
+  @apply inline-block w-full mb-0 mt-0;
+    .button{
+      @apply -mt-1 mr-2.5 w-auto;
+      &.btnorange{
+        @apply relative top-0 h-8 pt-1.5;
+      }
+    }
+    .searchComponent{
+        @apply float-right -mt-0.5;
+        .button{
+            @apply mr-0 mt-0;
+        }
+    }
+}
+.cards{
+  @apply my-8;
+  .card{
+    @apply p-4;
+    .cardBody{
+      border: 1px solid $gray;
+      @apply py-2 shadow-lg rounded-[20px] my-2 h-100 overflow-hidden;
+      img{
+        @apply w-full h-full object-cover;
+      }
+    }
+  }
+}
 .box {
   border: 1px solid $gray;
   background-color: $lightGray;

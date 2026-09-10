@@ -259,27 +259,27 @@ const Documents_V = () => {
           <SuccessMessage message={message} />
         }
         <div className={scss.header}>
-              <Link href='/bookkeeper/documents/upload_new_document' className={scss.button+' '+scss.btnblue}>
-                Upload New Document
-              </Link>
-              <button type='button' className={scss.button+' '+scss.btnorange}
-                onClick={handleOpenModal}
-              >
-                Select Template
-              </button>
-              <form className={scss.searchComponent}
-                  // onSubmit={handleSubmitSearch}
-              >
-                  <input id='search' type='text' name='search' maxLength={50} autoComplete='search' placeholder='Enter keyword...'
-                      // value={filter.search} onKeyUp={handleBlur} onChange={handleSearch}
-                  />
-                  <button type='submit' className={`${scss.button} ${scss.btnblue}`}
-                      // onKeyDown={handleResubmit}
-                  >
-                  Search
-                  </button>
-              </form>
-          </div>
+            <Link href='/bookkeeper/documents/upload_new_document' className={scss.button+' '+scss.btnblue}>
+              Upload New Document
+            </Link>
+            <button type='button' className={scss.button+' '+scss.btnorange}
+              onClick={handleOpenModal}
+            >
+              Select Template
+            </button>
+            <form className={scss.searchComponent}
+                // onSubmit={handleSubmitSearch}
+            >
+                <input id='search' type='text' name='search' maxLength={50} autoComplete='search' placeholder='Enter keyword...'
+                    // value={filter.search} onKeyUp={handleBlur} onChange={handleSearch}
+                />
+                <button type='submit' className={`${scss.button} ${scss.btnblue}`}
+                    // onKeyDown={handleResubmit}
+                >
+                Search
+                </button>
+            </form>
+        </div>
         <div className={scss.tableRecords} style={{width:tableWidth+'px', marginTop: '15px'}}>
           { loader && <Loader scss={scss} position='absolute' />}
             <Table
