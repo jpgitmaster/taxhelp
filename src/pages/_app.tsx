@@ -19,6 +19,10 @@ export default function App({ Component, pageProps }: AppProps) {
             <title>TaxHelp - Books of Accounts & DAT File System</title>
             <meta name="description" content="Created by JP VASQUEZ" />
             <link rel="icon" href="/svgs/icon.png" sizes="32x32" type='image/png' />
+            <meta
+                property="og:image"
+                content="/images/icon.png"
+            />
         </Head>
         <AppProvider>
           {
