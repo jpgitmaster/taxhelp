@@ -7,8 +7,10 @@ interface UserObj{
   middleName: string
   password?: string
   birthdate: string
+  newPassword?: string
   confirmPassword?: string
   isActive: boolean | null
+  confirmNewPassword?: string
 }
 
 interface User{

@@ -22,6 +22,10 @@ type RegisterPayload = {
     user: UserObj
     checkedFeatures: string[]
 }
+interface ChangePasswordVariables {
+    user: UserObj
+    token: string
+}
 const useMutationUsers = () => {
     const queryClient = useQueryClient()
     const [user, setUser] = useState<User>(initUser)
@@ -63,6 +67,7 @@ const useMutationUsers = () => {
             console.log(error)
         }
     })
+
     const userLogout = async () => {
         queryClient.removeQueries({ queryKey: ['user'] });
         return await signOut({redirect: true, callbackUrl: '/'});
@@ -120,6 +125,32 @@ const useMutationUsers = () => {
             )
         }
     });
+
+    const changePasswordMutation = useMutation<
+        unknown,
+        AxiosError<RegisterErrorResponse>,
+        ChangePasswordVariables
+    >({
+        mutationFn: async ({ user, token }: ChangePasswordVariables) => {
+            const res = await api.post(
+                `/api/${apiVersion}/auth/reset-password`,
+                {
+                    token,
+                    password: user.newPassword?.trim(),
+                    confirm_password: user.confirmNewPassword?.trim()
+                }
+            )
+
+            return res.data
+        },
+
+        onSuccess: async () => {
+            await queryClient.refetchQueries({
+                queryKey: ['user']
+            })
+        }
+    })
+
     return {
         //STATES
         user,
@@ -139,6 +170,7 @@ const useMutationUsers = () => {
         verifyUserMutation,
         editProfileMutation,
         forgotPasswordMutation,
+        changePasswordMutation,
     }
 }
 export default useMutationUsers;

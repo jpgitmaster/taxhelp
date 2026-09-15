@@ -8,8 +8,9 @@ const initUserObj = {
     role: [],
     password: '',
     birthdate: '',
+    newPassword: '',
     confirmPassword: '',
-    
+    confirmNewPassword: ''
 }
 const initUser = {
     userArr: [],
