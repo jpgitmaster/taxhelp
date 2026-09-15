@@ -55,7 +55,7 @@ const EmailVerification = () => {
     return (
         <div className={scss.container}>
           <div className={scss.card}>
-            <Image src='/images/logo.png' alt='TaxHelp Logo' priority width={20} height={20} unoptimized={true} style={{width: '100%'}} />
+            <Image src='/images/logo.png' alt='TaxHelp Logo' priority width={20} height={20} unoptimized={true} style={{width: '70%'}} />
             
             <div className={scss.iconWrapper}>
               <Loader scss={scss} position="absolute" />

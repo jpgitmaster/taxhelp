@@ -10,6 +10,7 @@ import { useState, useRef, useEffect } from 'react';
 import Login_V from '@/components/pages/landing/login';
 import Register_V from '@/components/pages/landing/register';
 import ContactUs_V from '@/components/pages/landing/contact_us';
+import SuccessMessage from '@/components/reusables/SuccessMessage';
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import ForgotPassword_V from '@/components/pages/landing/forgot_password';
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types';
@@ -20,6 +21,7 @@ const LandingPage = () => {
     registration: false,
     forgot_password: false
   })
+  const [message, setMessage] = useState('');
   const [mounted, setMounted] = useState(false);
   const [fadeTransition, setFadeTransition] = useState(false);
   
@@ -54,6 +56,15 @@ const LandingPage = () => {
     setMounted(true);
     window.addEventListener('resize', handleResize);
 
+    const successMessage = sessionStorage.getItem('successMessage');
+    if (successMessage) {
+        setMessage(successMessage);
+
+        setTimeout(() => {
+            setMessage('');
+            sessionStorage.removeItem('successMessage');
+        }, 5000)
+    }
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   return (
@@ -72,9 +83,14 @@ const LandingPage = () => {
             </Link>
             
             <Login_V toggleModal={toggleModal} />
+            {
+                message &&
+                <SuccessMessage message={message} />
+            }
           </div>
         </header>
         {/* Hero Section */}
+        
         <section className={scss.banners}>
           {
             mounted && (

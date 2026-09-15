@@ -69,13 +69,12 @@ const useResetPassword = () => {
         }, {
             onSuccess: () => {
                 setTimeout(() => {
-                    setStatus(prev => ({
-                        ...prev,
-                        loader: false,
-                        message: 'Account Created Successfully!',
-                        submessage:
-                            "Check your email to activate your account and get started. Once verified, you're ready to explore."
-                    }))
+                    sessionStorage.setItem(
+                        'successMessage',
+                        'Your password has been reset successfully.'
+                    );
+                    setStatus({...status, loader: false})
+                    router.push(`/`);
                 }, 500)
             },
             onError: (err) => {
