@@ -9,6 +9,7 @@ import scss from '@/styles/Landing.module.scss';
 import { useState, useRef, useEffect } from 'react';
 import Login_V from '@/components/pages/landing/login';
 import Register_V from '@/components/pages/landing/register';
+import ContactUs_V from '@/components/pages/landing/contact_us';
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import ForgotPassword_V from '@/components/pages/landing/forgot_password';
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types';
@@ -225,18 +226,7 @@ const LandingPage = () => {
         </section>
 
         {/* Contact Section */}
-        <section id="contactus" className={scss.contact_us}>
-          <div className={scss.contact_us_box}>
-              <h2>Contact Us</h2>
-              <p>Ready to get started? Reach out for a free consultation or to learn more about our services.</p>
-              <form>
-                  <input type="text" placeholder="Your Name" required />
-                  <input type="email" placeholder="Your Email" required />
-                  <textarea placeholder="How can we help you?" required></textarea>
-                  <button type="submit">Send Message</button>
-              </form>
-          </div>
-        </section>
+        <ContactUs_V scss={scss} />
 
         {/* Footer */}
         <footer className={scss.footer}>
