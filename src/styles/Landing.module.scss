@@ -188,7 +188,7 @@
         }
         button{
           background-color: $taxhelpBlue;
-          @apply hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-lg shadow transition;
+          @apply hover:bg-blue-700 cursor-pointer text-white font-semibold px-8 py-4 rounded-lg shadow transition;
         }
       }
     }

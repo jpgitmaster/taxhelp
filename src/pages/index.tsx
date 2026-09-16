@@ -103,7 +103,7 @@ const LandingPage = () => {
                   <p>
                     Empowering your business and family with expert financial guidance, tax compliance, and peace of mind.
                   </p>
-                  <Link href="#contact">
+                  <Link href="#contactus">
                     Get a Free Consultation
                   </Link>
                 </div>
@@ -119,7 +119,7 @@ const LandingPage = () => {
                   <p>
                     Stay fully compliant with BIR regulations. We handle filings, reports, and deadlines so you can focus on growing your business.
                   </p>
-                  <Link href="#contact">
+                  <Link href="#contactus">
                     Get a Free Consultation
                   </Link>
                 </div>
@@ -135,7 +135,7 @@ const LandingPage = () => {
                   <p>
                     Minimize liabilities and maximize savings with expert tax planning, preparation, and compliance tailored to your needs.
                   </p>
-                  <Link href="#contact">
+                  <Link href="#contactus">
                     Get a Free Consultation
                   </Link>
                 </div>
@@ -151,7 +151,7 @@ const LandingPage = () => {
                   <p>
                     Let us handle the numbers so you can focus on growing your business.
                   </p>
-                  <Link href="#contact">
+                  <Link href="#contactus">
                     Get a Free Consultation
                   </Link>
                 </div>
