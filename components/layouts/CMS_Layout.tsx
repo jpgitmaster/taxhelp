@@ -8,6 +8,7 @@ import useMaster from '@/controllers/layouts/useMaster'
 import Breadcrumbs from '@/components/reusables/BreadCrumbs'
 import Avatar from '@/components/reusables/AvatarPlaceholder'
 import { MasterProps } from '@/controllers/layouts/types/cms_types'
+
 const SidebarSkeleton = () => {
   return (
     <>
