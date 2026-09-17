@@ -1,3 +1,6 @@
+@use '@/styles/forms';
+@use '@/styles/helpers';
+@use '@/styles/reuseable';
 @use '@/styles/colors' as *;
 
 @reference 'tailwindcss';
@@ -95,4 +98,91 @@
             font-semibold;
         }
     }
+}
+.stats{
+    @apply grid grid-cols-2 lg:grid-cols-4 gap-6 my-10;
+}
+
+.statCard{
+    @apply bg-white rounded-3xl shadow-lg p-6 text-center mb-4;
+}
+
+.statCard h2{
+    color: $orange;
+    @apply text-3xl font-bold;
+}
+
+.statCard span{
+    @apply text-gray-500;
+}
+
+.filters{
+    @apply flex flex-col lg:flex-row items-end gap-4 my-6;
+
+    .dropdowns{
+        @apply flex flex-col md:flex-row gap-4 w-full lg:w-auto;
+
+        > div{
+            @apply w-full md:w-60;
+        }
+    }
+
+    .searchComponent{
+        @apply w-full lg:w-95;
+    }
+
+    .resetButton{
+        @apply w-auto min-w-32 flex items-center justify-center;
+    }
+}
+
+.tableRecords{
+    @apply relative;
+}
+
+.actionBadge {
+    @apply inline-block px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide;
+
+    &.create{
+        color: $green;
+        background-color: rgba($green, .12);
+    }
+    &.update{
+        color: $blue;
+        background-color: rgba($blue, .12);
+    }
+    &.delete{
+        color: $red;
+        background-color: rgba($red, .12);
+    }
+    &.login{
+        color: $darkBlue;
+        background-color: rgba($lightBlue, .15);
+    }
+    &.logout{
+        color: $darkgray;
+        background-color: rgba($darkgray, .15);
+    }
+    &.upload{
+        color: $orange;
+        background-color: rgba($orange, .15);
+    }
+    &.download{
+        color: $darkGreen;
+        background-color: rgba($darkGreen, .15);
+    }
+}
+
+.resource{
+    color: $lightBlack;
+    @apply text-[12.5px] capitalize;
+}
+
+@media (max-width: 768px) {
+  .statCard{
+    @apply mb-0;
+  }
+  .tableRecords{
+    @apply w-full!;
+  }
 }

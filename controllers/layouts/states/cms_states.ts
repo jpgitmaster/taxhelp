@@ -131,6 +131,14 @@ const initCustomLinks: NavLink[] = [
             },
         ]
     },
+    {
+        active: false,
+        key: 'audit_trail',
+        name: 'Audit Trail',
+        icon: 'audit_trail.svg',
+        iconWidth: 20,
+        url: '/bookkeeper/audit_trail',
+    },
 ]
 const initDatLinks: NavLink[] = [
     {
