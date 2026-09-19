@@ -40,6 +40,16 @@ const AuditTrail_V = () => {
         }
     )) : []
 
+    const descriptionWidth = auditLogs.length
+        ? Math.min(
+            620,
+            Math.max(
+                240,
+                ...auditLogs.map((log) => (log.description?.length || 0) * 8 + 48)
+            )
+        )
+        : 280
+
     const columns: ColumnsType<AuditLogTableRow> = [
         {
             title: 'No.',
@@ -71,6 +81,9 @@ const AuditTrail_V = () => {
             title: 'Description',
             key: 'description',
             dataIndex: 'description',
+            width: descriptionWidth,
+            render: (description: string) =>
+                <span className={scss.description}>{description}</span>
         },
         {
             title: 'Date & Time',

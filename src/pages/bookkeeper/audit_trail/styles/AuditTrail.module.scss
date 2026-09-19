@@ -178,6 +178,12 @@
     @apply text-[12.5px] capitalize;
 }
 
+.description{
+    color: $lightBlack;
+    @apply block text-[13px] leading-snug;
+    word-break: break-word;
+}
+
 @media (max-width: 768px) {
   .statCard{
     @apply mb-0;
