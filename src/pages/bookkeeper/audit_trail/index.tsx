@@ -195,22 +195,25 @@ const AuditTrail_V = () => {
                         onSelect={handleResourceTypeSelect}
                     />
                 </div>
-                <form className={scss.searchComponent}
-                    onSubmit={(e) => {
-                        e.preventDefault()
-                        handleSearch()
-                    }}
-                >
-                    <input id='search' type='text' name='search' maxLength={50} autoComplete='search' placeholder='Search by description...'
-                        value={searchInput} onChange={(e) => setSearchInput(e.target.value)}
-                    />
-                    <button type='submit' className={`${scss.button} ${scss.btnblue}`}>
-                        Search
-                    </button>
-                </form>
                 <button type='button' onClick={handleResetFilters} className={`${scss.button} ${scss.btnorange} ${scss.resetButton}`}>
                     Reset Filters
                 </button>
+                <div className={scss.searchWrapper}>
+                    <form 
+                        onSubmit={(e) => {
+                            e.preventDefault()
+                            handleSearch()
+                        }}
+                        className={scss.searchComponent}
+                    >
+                        <input id='search' type='text' name='search' maxLength={50} autoComplete='search' placeholder='Search by description...'
+                            value={searchInput} onChange={(e) => setSearchInput(e.target.value)}
+                        />
+                        <button type='submit' className={`${scss.button} ${scss.btnblue}`}>
+                            Search
+                        </button>
+                    </form>
+                </div>
             </div>
 
             <div className={scss.tableRecords} style={{ marginTop: '15px' }}>

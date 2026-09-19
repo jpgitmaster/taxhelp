@@ -126,9 +126,14 @@
             @apply w-full md:w-60;
         }
     }
-
-    .searchComponent{
-        @apply w-full lg:w-95;
+    .searchWrapper{
+        @apply flex-1;
+        .searchComponent{
+            @apply w-full lg:w-105 float-right;
+            input[type="text"]{
+                @apply py-2;
+            }
+        }
     }
 
     .resetButton{

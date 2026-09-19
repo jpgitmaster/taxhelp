@@ -52,6 +52,15 @@ export default function AuditTrailDropdown(props: Props) {
             <span className={scss.label}>{label}</span>
             <div className={scss.customDropdown} onClick={handleHeaderClick}>
                 <div className={scss.dropdownInput} onClick={() => setDisplay((prev) => !prev)} ref={ref}>
+                    <div className={scss.selected}>
+                        {
+                            selected?.label ?
+                            selected.label :
+                            <span className={scss.placeholder}>
+                                {placeholder}
+                            </span>
+                        }
+                    </div>
                     {
                         value ?
                         <div className={scss.erase} onClick={(e) => {
@@ -65,16 +74,6 @@ export default function AuditTrailDropdown(props: Props) {
                             <Image src='/svgs/arrowDown.svg' alt='Arrow Down' priority width={12} height={12} unoptimized={true} />
                         </div>
                     }
-
-                    <div className={scss.selected}>
-                        {
-                            selected?.label ?
-                            selected.label :
-                            <span className={scss.placeholder}>
-                                {placeholder}
-                            </span>
-                        }
-                    </div>
                 </div>
                 {
                     display &&
