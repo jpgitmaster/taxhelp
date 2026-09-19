@@ -294,6 +294,18 @@ const EdtProfile_V = () => {
                         </div>
                     </div>
                 </div>
+                <br />
+                <div className={scss.editProfile+' '+scss.box}>
+                    <div className={scss.boxTitle}>
+                        Contact Details
+                    </div>
+                </div>
+                <br />
+                <div className={scss.editProfile+' '+scss.box}>
+                    <div className={scss.boxTitle}>
+                        Employment Details
+                    </div>
+                </div>
                 <button type='submit' className={scss.button+' '+scss.btnblue} style={{display: 'block', maxWidth: '300px', margin: '30px auto'}}>
                     Save Profile
                 </button>
