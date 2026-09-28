@@ -4,19 +4,21 @@ import { signOut, getSession } from 'next-auth/react'
 import scss from './styles/Subscription.module.scss'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
+import useQuerySubscriptions from '@/controllers/subscriptions/api/queries'
+import useMutationSubscriptions from '@/controllers/subscriptions/api/mutations'
 
 const ManageSubscription_V = ({ session }: PageProps) => {
+  const { getMySubscription } = useQuerySubscriptions()
+  const { cancelSubscription } = useMutationSubscriptions()
+  const { data: subscription } = getMySubscription()
 
-  // TODO: Replace with real DB data
-  const subscription = {
-    plan: 'Pro', // 'Basic FREE' | 'Pro' | 'Enterprise'
-    billing: 'monthly',
-    price: 129,
-    nextBilling: 'May 15, 2026',
+  const isFree = subscription?.plan === 'basic'
+  const isEnterprise = subscription?.plan === 'enterprise'
+
+  const handleCancel = () => {
+    if (!confirm('Cancel your subscription? You will keep access until your current billing period ends.')) return
+    cancelSubscription.mutate()
   }
-
-  const isFree = subscription.plan === 'Basic FREE'
-  const isEnterprise = subscription.plan === 'Enterprise'
 
   return (
     <div>
@@ -52,15 +54,17 @@ const ManageSubscription_V = ({ session }: PageProps) => {
         <section className={scss.cards+' '+scss.plantop}>
           <div className={scss.card+' '+scss.w70}>
             <div className={scss.planbox+' '+scss.blue}>
-              <h2>
-                {subscription.plan} Plan
+              <h2 style={{textTransform: 'capitalize'}}>
+                {subscription?.plan} Plan
               </h2>
               <p>
-                {isFree
-                  ? 'Free plan'
-                  : `₱${subscription.price} / ${subscription.billing === 'monthly' ? 'month' : 'year'}`
-                }
+                {isFree ? 'Free plan' : `Active until ${subscription?.expires_at ?? 'N/A'}`}
               </p>
+              {subscription?.pending_plan && (
+                <p style={{textTransform: 'capitalize'}}>
+                  Downgrading to {subscription.pending_plan} on {subscription.expires_at}
+                </p>
+              )}
               <Link href='/bookkeeper/subscription/plans' className={scss.button+' '+scss.btnblue}>
                 Change Plan
               </Link>
@@ -94,16 +98,23 @@ const ManageSubscription_V = ({ session }: PageProps) => {
               </h2>
             </div>
           </div>
-          <div className={scss.card+' '+scss.w100}>
-            <div className={scss.planbox+' '+scss.red}>
-              <h2>
-                Cancel Subscription
-              </h2>
-              <Link href='' className={scss.button+' '+scss.btnred}>
-                Cancel Subscription
-              </Link>
+          {!isFree && (
+            <div className={scss.card+' '+scss.w100}>
+              <div className={scss.planbox+' '+scss.red}>
+                <h2>
+                  Cancel Subscription
+                </h2>
+                <button
+                  type='button'
+                  onClick={handleCancel}
+                  disabled={cancelSubscription.isPending}
+                  className={scss.button+' '+scss.btnred}
+                >
+                  {cancelSubscription.isPending ? 'Cancelling...' : 'Cancel Subscription'}
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </section>
         {/* <section className={"grid md:grid-cols-3 gap-6 my-5"}>
           <div className="col-span-2 bg-white border rounded-xl p-6 shadow-sm relative overflow-hidden">
