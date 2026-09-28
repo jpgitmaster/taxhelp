@@ -10,7 +10,7 @@ const usePayment = () => {
     const {
         status,
         setStatus,
-        paymentSubscription,
+        downgradeSubscription,
         checkoutSubscription
     } = useMutationSubscriptions()
     const router = useRouter()
@@ -19,6 +19,33 @@ const usePayment = () => {
     const handlePayment = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         setStatus({...status, loader: true})
+
+        if (plan === 'basic') {
+            downgradeSubscription.mutate(String(plan), {
+                onSuccess: () => {
+                    setStatus(prev => ({
+                        ...prev,
+                        loader: false,
+                        message: 'Your Basic plan is now active.',
+                    }))
+                    setTimeout(() => {
+                        setStatus(prev => ({
+                            ...prev,
+                            message: '',
+                            submessage: ''
+                        }))
+                    }, 5000)
+                },
+                onError: () => {
+                    setStatus(prev => ({
+                        ...prev,
+                        loader: false,
+                    }))
+                },
+            })
+            return
+        }
+
         checkoutSubscription.mutate(
             {
                 plan: String(plan),
@@ -26,28 +53,6 @@ const usePayment = () => {
             },
             {
                 onSuccess: (data) => {
-                    paymentSubscription.mutate(String(plan), {
-                        onSuccess: () => {
-                            // setStatus(prev => ({
-                            //     ...prev,
-                            //     loader: false,
-                            //     message: (
-                            //         <>
-                            //             Payment successful! Your TaxHelp{' '}
-                            //             <span style={{textTransform: 'capitalize'}}>{plan?.toString().toLowerCase()}</span>{' '}<br />
-                            //             subscription has been activated.
-                            //         </>
-                            //     )
-                            // }))
-                            setTimeout(() => {
-                                setStatus(prev => ({
-                                    ...prev,
-                                    message: '',
-                                    submessage: ''
-                                }))
-                            }, 5000)
-                        }
-                    })
                     window.location.href = data.checkout_url
                 },
                 onError: () => {
