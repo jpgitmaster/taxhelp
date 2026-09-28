@@ -4,6 +4,7 @@ import api from '@/components/reusables/axios'
 import { Status } from '@/controllers/global/types'
 import { initStatus } from '@/controllers/global/states'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Subscription } from '../types'
 interface ErrorItem{
     field: string
     message: string
@@ -11,9 +12,6 @@ interface ErrorItem{
 };
 type ErrorResponse = {
     message?: ErrorItem[]
-}
-type SuccessResponse = {
-    message: string
 }
 interface CheckoutPayload {
     plan: string
@@ -26,19 +24,27 @@ interface CheckoutResponse {
     success: boolean
     message: string
 }
+
+interface SubscriptionResponse {
+    subscription: Subscription
+    success: boolean
+    message: string
+}
+
 const useMutationSubscriptions = () => {
     const queryClient = useQueryClient()
     const apiVersion = process.env?.NEXT_PUBLIC_API_VERSION
     const [status, setStatus] = useState<Status>(initStatus)
-    const paymentSubscription = useMutation<
-        SuccessResponse,
+
+    const downgradeSubscription = useMutation<
+        SubscriptionResponse,
         AxiosError<ErrorResponse>,
         string
     >({
         mutationFn: async (plan: string) => {
             const res = await api({
-                method: 'PUT',
-                url: `/api/${apiVersion}/subscriptions/me`,
+                method: 'POST',
+                url: `/api/${apiVersion}/subscriptions/me/downgrade`,
                 data: {
                     plan: plan,
                 }
@@ -47,7 +53,31 @@ const useMutationSubscriptions = () => {
             return res.data
         },
 
-        onSuccess: (data) => {
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['subscriptions']
+            })
+            queryClient.invalidateQueries({
+                queryKey: ['user']
+            })
+        }
+    })
+
+    const cancelSubscription = useMutation<
+        SubscriptionResponse,
+        AxiosError<ErrorResponse>,
+        void
+    >({
+        mutationFn: async () => {
+            const res = await api({
+                method: 'POST',
+                url: `/api/${apiVersion}/subscriptions/me/cancel`,
+            })
+
+            return res.data
+        },
+
+        onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ['subscriptions']
             })
@@ -80,7 +110,8 @@ const useMutationSubscriptions = () => {
         setStatus,
 
         // MUTATIONS
-        paymentSubscription,
+        downgradeSubscription,
+        cancelSubscription,
         checkoutSubscription,
     }
 }
