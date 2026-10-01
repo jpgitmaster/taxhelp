@@ -78,7 +78,7 @@
   .about{
     @apply py-16 md:py-24 px-6 md:px-20 bg-white;
     .about_box{
-      @apply max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-12;
+      @apply max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-8;
       .about_img{
           @apply rounded-xl shadow-lg w-full max-w-xs h-55 object-cover;
       }
@@ -95,6 +95,15 @@
     }
   }
 
+  .video_wrapper {
+    width: 450px;
+    .mute_button{
+      color: $orange;
+      font-weight: 700;
+      @apply cursor-pointer uppercase text-[11px];
+    }
+  }
+  
   /* SERVICES */
   .services{
       @apply py-12 pb-18 px-6 bg-blue-50;

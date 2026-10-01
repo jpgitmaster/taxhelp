@@ -22,6 +22,7 @@ const LandingPage = () => {
     forgot_password: false
   })
   const [message, setMessage] = useState('');
+  const [isMuted, setIsMuted] = useState(true);
   const [mounted, setMounted] = useState(false);
   const [fadeTransition, setFadeTransition] = useState(false);
   
@@ -42,7 +43,19 @@ const LandingPage = () => {
       [form]: modal
     })
   };
+  const toggleMute = () => {
+    const video = videoRef.current;
 
+    if (!video) return;
+
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
+
+    // Make sure video is playing after user interaction
+    if (video.paused) {
+      video.play().catch(() => {});
+    }
+  };
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 800) {
@@ -66,6 +79,32 @@ const LandingPage = () => {
         }, 5000)
     }
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+
+    if (!video) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {
+            // Autoplay may be blocked by the browser
+          });
+        } else {
+          video.pause();
+        }
+      },
+      {
+        threshold: 0.5,
+      }
+    );
+
+    observer.observe(video);
+
+    return () => observer.disconnect();
   }, []);
   return (
     <>
@@ -188,18 +227,42 @@ const LandingPage = () => {
         {/* About Section */}
         <section className={scss.about}>
             <div className={scss.about_box}>
-              <Image src='/images/taxhelp_image2_.JPG' alt="About TaxHelp" width={400} height={200} />
-                <div>
-                    <h2>About TaxHelp</h2>
-                    <p>
-                        With over 20 years of experience, TaxHelp is dedicated to providing personalized accounting and tax services to small businesses and families. Our team of certified professionals ensures your finances are in safe hands.
-                    </p>
-                    <ul>
-                        <li>Certified Public Accountants</li>
-                        <li>Family-owned and operated</li>
-                        <li>Client-focused, transparent, and reliable</li>
-                    </ul>
-                </div>
+              <div className={scss.video_wrapper}>
+                  <video
+                    ref={videoRef}
+                    src="/images/taxhelp_vid.mp4"
+                    muted
+                    playsInline
+                    preload="metadata"
+                    width={450}
+                    style={{
+                      marginTop: '-200px',
+                      width: '450px',
+                      height: 'auto',
+                      display: 'block',
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={toggleMute}
+                  className={scss.mute_button}
+                  aria-label={isMuted ? 'Unmute video' : 'Mute video'}
+                >
+                  {isMuted ? 'Unmute' : 'Mute'}
+                </button>
+              </div>
+              <div style={{flex: 1}}>
+                  <h2>About TaxHelp</h2>
+                  <p style={{fontSize: '16px'}}>
+                    <strong>TaxHelp</strong> is a digital solution by <strong>Pintek</strong> that helps businesses and entrepreneurs navigate their tax and compliance needs with greater ease.
+                    <br /><br />
+                    Designed with businesses in mind, TaxHelp provides practical digital tools and resources that simplify essential tax requirements, helping users manage their obligations more efficiently while staying focused on running and growing their businesses.
+                    <br /><br />
+                    TaxHelp is registered with the Bureau of Internal Revenue (BIR), with Registration Seal Number <strong>RSN 024RC20260000003722</strong>. Our BIR Registration Seal Badge is displayed for public verification and transparency.
+                  </p>
+                  <br />
+                  <Image src='/images/bir_registered_seal.png' alt="Registered Seal Badge" width={450} height={200} />
+              </div>
             </div>
         </section>
         {/* Promotions Section */}

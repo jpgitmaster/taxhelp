@@ -70,7 +70,7 @@ const SubscriptionPlans_V = () => {
         {
             name: 'Pro',
             key: 'pro',
-            price: billing === 'monthly' ? 129 : 1299,
+            price: billing === 'monthly' ? 199 : 2299,
             description: 'Best for growing businesses',
             highlight: true,
             features: [
@@ -123,7 +123,7 @@ const SubscriptionPlans_V = () => {
         {
             name: 'Enterprise',
             key: 'enterprise',
-            price: billing === 'monthly' ? 179 : 1999,
+            price: billing === 'monthly' ? 299 : 3499,
             description: 'Advanced tools for large operations',
             highlight: false,
             features: [
