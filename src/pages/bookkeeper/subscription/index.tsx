@@ -7,13 +7,31 @@ import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 import useQuerySubscriptions from '@/controllers/subscriptions/api/queries'
 import useMutationSubscriptions from '@/controllers/subscriptions/api/mutations'
 
+const formatDate = (value: string | null | undefined) => {
+  if (!value) return 'N/A'
+  return new Date(value).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })
+}
+
+const formatAmount = (amount: string, currency: string) => {
+  const symbol = currency === 'PHP' ? '₱' : `${currency} `
+  return `${symbol}${Number(amount).toLocaleString('en-PH', { minimumFractionDigits: 2 })}`
+}
+
+const PLAN_ICON: Record<string, string> = {
+  basic: '◻',
+  pro: '◆',
+  enterprise: '⬢',
+}
+
 const ManageSubscription_V = ({ session }: PageProps) => {
-  const { getMySubscription } = useQuerySubscriptions()
+  const { getMySubscription, getMyPayments } = useQuerySubscriptions()
   const { cancelSubscription } = useMutationSubscriptions()
   const { data: subscription } = getMySubscription()
+  const { data: payments } = getMyPayments()
 
   const isFree = subscription?.plan === 'basic'
   const isEnterprise = subscription?.plan === 'enterprise'
+  const latestPayment = payments?.find((payment) => payment.status === 'paid')
 
   const handleCancel = () => {
     if (!confirm('Cancel your subscription? You will keep access until your current billing period ends.')) return
@@ -52,17 +70,44 @@ const ManageSubscription_V = ({ session }: PageProps) => {
           </p>
         </div>
         <section className={scss.cards+' '+scss.plantop}>
-          <div className={scss.card+' '+scss.w70}>
+          <div className={scss.card+' '+scss.w100}>
             <div className={scss.planbox+' '+scss.blue}>
-              <h2 style={{textTransform: 'capitalize'}}>
-                {subscription?.plan} Plan
-              </h2>
-              <p>
-                {isFree ? 'Free plan' : `Active until ${subscription?.expires_at ?? 'N/A'}`}
-              </p>
+              <div className={scss.planHeader}>
+                <div className={scss.planIcon} aria-hidden="true">{PLAN_ICON[subscription?.plan ?? 'basic']}</div>
+                <div>
+                  <h2 style={{textTransform: 'capitalize'}}>
+                    {subscription?.plan} Plan
+                  </h2>
+                  <span className={scss.statusBadge+' '+(subscription?.status === 'active' ? scss.statusActive : scss.statusCancelled)}>
+                    {subscription?.status}
+                  </span>
+                </div>
+              </div>
+              {isFree ? (
+                <p>Free plan</p>
+              ) : (
+                <div className={scss.planStats}>
+                  <div className={scss.planStat}>
+                    <span className={scss.planStatLabel}>Price</span>
+                    <span className={scss.planStatValue}>
+                      {latestPayment ? formatAmount(latestPayment.amount, latestPayment.currency) : 'N/A'}
+                    </span>
+                  </div>
+                  <div className={scss.planStat}>
+                    <span className={scss.planStatLabel}>Active Until</span>
+                    <span className={scss.planStatValue}>{formatDate(subscription?.expires_at)}</span>
+                  </div>
+                  <div className={scss.planStat}>
+                    <span className={scss.planStatLabel}>Billing Cycle</span>
+                    <span className={scss.planStatValue} style={{textTransform: 'capitalize'}}>
+                      {latestPayment?.billing_cycle ?? 'N/A'}
+                    </span>
+                  </div>
+                </div>
+              )}
               {subscription?.pending_plan && (
                 <p style={{textTransform: 'capitalize'}}>
-                  Downgrading to {subscription.pending_plan} on {subscription.expires_at}
+                  Downgrading to {subscription.pending_plan} on {formatDate(subscription.expires_at)}
                 </p>
               )}
               <Link href='/bookkeeper/subscription/plans' className={scss.button+' '+scss.btnblue}>
@@ -70,32 +115,41 @@ const ManageSubscription_V = ({ session }: PageProps) => {
               </Link>
             </div>
           </div>
-          <div className={scss.card+' '+scss.w30}>
-            <div className={scss.planbox+' '+scss.blue}>
-              <h2>
-                Usage
-              </h2>
-            </div>
-          </div>
-          <div className={scss.card+' '+scss.w50}>
-            <div className={scss.planbox+' '+scss.blue}>
-              <h2>
-                Payment Method
-              </h2>
-            </div>
-          </div>
-          <div className={scss.card+' '+scss.w50}>
-            <div className={scss.planbox+' '+scss.blue}>
-              <h2>
-                Billing Address
-              </h2>
-            </div>
-          </div>
           <div className={scss.card+' '+scss.w100}>
             <div className={scss.planbox+' '+scss.blue}>
               <h2>
                 Billing History
               </h2>
+              {payments && payments.length > 0 ? (
+                <table className={scss.billingTable}>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Plan</th>
+                      <th>Billing Cycle</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {payments.map((payment) => (
+                      <tr key={payment.id}>
+                        <td>{formatDate(payment.paid_at ?? payment.created_at)}</td>
+                        <td style={{textTransform: 'capitalize'}}>{payment.plan}</td>
+                        <td style={{textTransform: 'capitalize'}}>{payment.billing_cycle}</td>
+                        <td>{formatAmount(payment.amount, payment.currency)}</td>
+                        <td>
+                          <span className={scss.statusPill+' '+scss['status_'+payment.status]} style={{textTransform: 'capitalize'}}>
+                            {payment.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className={scss.emptyState}>No billing history yet.</p>
+              )}
             </div>
           </div>
           {!isFree && (
