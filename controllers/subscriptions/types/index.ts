@@ -10,6 +10,19 @@ interface Subscription {
   updated_at: string
 }
 
+interface Payment {
+  id: number
+  user_id: number
+  plan: string
+  billing_cycle: string
+  amount: string
+  currency: string
+  status: string
+  paid_at: string | null
+  created_at: string
+}
+
 export type {
-  Subscription
+  Subscription,
+  Payment
 }
