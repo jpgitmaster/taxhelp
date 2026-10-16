@@ -1,0 +1,77 @@
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+.bell {
+  @apply flex items-center justify-center cursor-pointer;
+
+  :global(img) {
+    width: 18px;
+    filter: invert(64%) sepia(1%) saturate(0%) hue-rotate(28deg) brightness(98%) contrast(95%);
+  }
+}
+
+.panel {
+  @apply w-75;
+
+  .header {
+    @apply flex flex-row items-center justify-between px-3.5 py-2.5;
+    border-bottom: 1px solid $lightGray2;
+
+    strong {
+      color: $blue;
+      @apply text-[13px];
+    }
+  }
+
+  .loading {
+    @apply px-3.5 py-3;
+  }
+
+  .list {
+    @apply max-h-75 overflow-y-auto m-0 p-0 list-none;
+
+    .item {
+      @apply px-3.5 py-2.5 cursor-pointer;
+      border-bottom: 1px solid $lightGray2;
+      transition: background-color .2s ease;
+
+      &:last-child {
+        border-bottom: 0;
+      }
+
+      &:hover {
+        background-color: $lightGray;
+      }
+
+      .itemMessage {
+        color: $darkgray;
+        @apply text-[11px] leading-snug;
+      }
+
+      .itemTime {
+        color: $gray;
+        @apply text-[10px] mt-1;
+      }
+
+      &.unread {
+        background-color: rgba($lightBlue, .2);
+
+        .itemMessage {
+          color: $blue;
+          @apply font-semibold;
+
+          &::before {
+            content: "";
+            background-color: $orange;
+            @apply inline-block w-1.5 h-1.5 rounded-full mr-1;
+          }
+        }
+      }
+    }
+  }
+
+  .empty {
+    color: $gray;
+    @apply text-[12px] text-center py-5 m-0;
+  }
+}
