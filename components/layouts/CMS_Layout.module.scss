@@ -266,7 +266,7 @@ body, html{
                         }
                         .headerIcons{
                             // use w-55 if chat and notification are enabled
-                            @apply flex flex-row w-35 mt-2;
+                            @apply flex flex-row w-45 mt-2;
                             .headerIcon{
                                 @apply flex-1 flex justify-center items-center;
                                 &:first-child::before{

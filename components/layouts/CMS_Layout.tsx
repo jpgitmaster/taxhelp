@@ -7,6 +7,7 @@ import { Dropdown, type MenuProps } from 'antd'
 import useMaster from '@/controllers/layouts/useMaster'
 import Breadcrumbs from '@/components/reusables/BreadCrumbs'
 import Avatar from '@/components/reusables/AvatarPlaceholder'
+import NotificationBell from '@/components/reusables/NotificationBell'
 import { MasterProps } from '@/controllers/layouts/types/cms_types'
 
 const SidebarSkeleton = () => {
@@ -186,12 +187,10 @@ const CMS_Layout: FC<MasterProps> = ({ children }) => {
                     <div className={scss.icon}>
                       <Image src={'/svgs/header/chat.svg'} alt='Chat' priority width={20} height={20} unoptimized={true} />
                     </div>
-                  </div>
-                  <div className={scss.headerIcon}>
-                    <div className={scss.icon}>
-                      <Image src={'/svgs/header/notification.svg'} alt='Notification' priority width={20} height={20} unoptimized={true} />
-                    </div>
                   </div> */}
+                  <div className={scss.headerIcon}>
+                    <NotificationBell />
+                  </div>
                   <div className={scss.headerIcon+' '+scss.active}>
                     <Dropdown 
                       menu={{ items: linkItems() }}
