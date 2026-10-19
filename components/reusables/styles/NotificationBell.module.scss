@@ -1,14 +1,14 @@
 @use '@/styles/colors' as *;
 @reference 'tailwindcss';
 
-.bell {
-  @apply flex items-center justify-center cursor-pointer;
+// .bell {
+//   @apply flex items-center justify-center cursor-pointer;
 
-  :global(img) {
-    width: 18px;
-    filter: invert(64%) sepia(1%) saturate(0%) hue-rotate(28deg) brightness(98%) contrast(95%);
-  }
-}
+//   :global(img) {
+//     width: 18px;
+//     filter: invert(64%) sepia(1%) saturate(0%) hue-rotate(28deg) brightness(98%) contrast(95%);
+//   }
+// }
 
 .panel {
   @apply w-75;

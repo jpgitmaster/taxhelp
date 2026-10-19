@@ -2,35 +2,37 @@ import dayjs from 'dayjs'
 import Image from 'next/image'
 import { Badge, Popover, Skeleton } from 'antd'
 import useNotifications from '@/controllers/notifications/useNotifications'
-import scss from './styles/NotificationBell.module.scss'
-
-const NotificationBell = () => {
+import sass from './styles/NotificationBell.module.scss'
+interface PropsDefinition {
+  scss: { [key: string]: string };
+}
+const NotificationBell = ({ scss }: PropsDefinition) => {
     const { notifications, unreadCount, isLoading, handleMarkRead } = useNotifications()
 
     const content = (
-        <div className={scss.panel}>
-            <div className={scss.header}>
+        <div className={sass.panel}>
+            <div className={sass.header}>
                 <strong>Notifications</strong>
             </div>
             {
                 isLoading
                 ?
-                <div className={scss.loading}>
+                <div className={sass.loading}>
                     <Skeleton active title={false} paragraph={{ rows: 3 }} />
                 </div>
                 :
                 notifications.length
                 ?
-                <ul className={scss.list}>
+                <ul className={sass.list}>
                     {
                         notifications.map((notification) =>
                             <li
                                 key={notification.id}
-                                className={scss.item+(notification.is_read ? '' : ' '+scss.unread)}
+                                className={sass.item+(notification.is_read ? '' : ' '+sass.unread)}
                                 onClick={() => handleMarkRead(notification.id)}
                             >
-                                <div className={scss.itemMessage}>{notification.bell_notification_content}</div>
-                                <div className={scss.itemTime}>
+                                <div className={sass.itemMessage}>{notification.bell_notification_content}</div>
+                                <div className={sass.itemTime}>
                                     {
                                         notification.created_at
                                         ? dayjs(notification.created_at).format('MM/DD/YYYY h:mm A')
@@ -42,7 +44,7 @@ const NotificationBell = () => {
                     }
                 </ul>
                 :
-                <p className={scss.empty}>No notifications</p>
+                <p className={sass.empty}>No notifications</p>
             }
         </div>
     )
@@ -55,7 +57,7 @@ const NotificationBell = () => {
             arrow={false}
             styles={{ container: { padding: 0, borderRadius: 10, overflow: 'hidden' } }}
         >
-            <button type='button' className={scss.bell} aria-label={'Notifications, '+unreadCount+' unread'}>
+            <button type='button' className={scss.icon} aria-label={'Notifications, '+unreadCount+' unread'} style={{width: '18px', height: '18px'}}>
                 <Badge count={unreadCount} size='small' offset={[2, -2]}>
                     <Image src='/svgs/header/notification.svg' alt='Notifications' priority width={20} height={20} unoptimized={true} />
                 </Badge>
