@@ -581,6 +581,7 @@ const AddSalesRecord_V = () => {
                 name='invoice_number'
                 maxLength={20}
                 autoComplete='off'
+                placeholder='0000000'
                 value={sales.salesObj.invoice_number}
                 onKeyUp={handleBlur}
                 onChange={handleChange}

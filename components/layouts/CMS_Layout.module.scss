@@ -8,7 +8,7 @@ body, html{
 .app{
     @apply min-h-screen flex flex-row;
     .appSidebar{
-        @apply w-50 bg-app-blue relative px-2.5;
+        @apply w-52 bg-app-blue relative px-2.5;
         img{
             filter: invert(97%) sepia(15%) saturate(303%) hue-rotate(250deg) brightness(119%) contrast(100%);
         }
@@ -197,6 +197,9 @@ body, html{
                         }
                         &.hasFive{
                             @apply h-52.5;
+                        }
+                        &.hasSix{
+                            @apply h-65;
                         }
                     }
                     li{

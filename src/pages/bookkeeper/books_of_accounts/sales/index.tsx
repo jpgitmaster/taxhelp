@@ -326,7 +326,7 @@ const Sales_V = () => {
           </div>
         </div>
         <div className={scss.header}>
-          <Link href='/bookkeeper/sales/add' className={scss.button+' '+scss.btnblue}>
+          <Link href='/bookkeeper/books_of_accounts/sales/add' className={scss.button+' '+scss.btnblue}>
             Add Record
           </Link>
           <button

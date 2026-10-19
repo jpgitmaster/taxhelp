@@ -143,7 +143,8 @@ const CMS_Layout: FC<MasterProps> = ({ children }) => {
                             (appLink.children?.length == 2 ? ' '+scss.hasTwo : '') +
                             (appLink.children?.length == 3 ? ' '+scss.hasThree : '') +
                             (appLink.children?.length == 4 ? ' '+scss.hasFour : '') +
-                            (appLink.children?.length == 5 ? ' '+scss.hasFive : '')
+                            (appLink.children?.length == 5 ? ' '+scss.hasFive : '') +
+                            (appLink.children?.length == 6 ? ' '+scss.hasSix : '')
                           )}>
                         {
                           appLink.children?.map((sublink, indx) =>
