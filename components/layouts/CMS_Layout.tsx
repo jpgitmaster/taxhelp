@@ -202,6 +202,11 @@ const CMS_Layout: FC<MasterProps> = ({ children }) => {
                     </Dropdown>
                   </div>
                   <div className={scss.headerIcon}>
+                    <div className={scss.icon}>
+                      <Image src={'/svgs/header/notification.svg'} alt='Notification' priority width={20} height={20} unoptimized={true} />
+                    </div>
+                  </div>
+                  <div className={scss.headerIcon}>
                     <button type='button' className={scss.icon} onClick={userLogout}>
                       <Image src={'/svgs/header/logout.svg'} alt='Profile' priority width={20} height={20} unoptimized={true} />
                     </button>

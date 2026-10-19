@@ -17,7 +17,7 @@ body, html{
             @apply absolute cursor-pointer rounded-[5px] top-5.5 h-6.25 w-6.25 p-1.5 -right-2.5;
         }
         &.slideRight{
-            @apply w-45;
+            @apply w-52;
             transition: width .3s ease;
             .sidebarArrow{
                 transform: rotate(90deg);
@@ -168,7 +168,7 @@ body, html{
                     text-shadow: 1px 1px 0 $lightBlack;
                     @apply text-app-white inline-block w-full p-2.5 text-[14px];
                     .mainLinkIcon{
-                        @apply cursor-pointer float-left h-5 mr-1 ml-0;
+                        @apply cursor-pointer float-left h-5 mr-1 ml-0 flex;
                         img{
                             @apply w-full;
                         }
@@ -268,7 +268,7 @@ body, html{
                             // use w-55 if chat and notification are enabled
                             @apply flex flex-row w-45 mt-2;
                             .headerIcon{
-                                @apply flex-1 flex justify-center items-center;
+                                @apply flex-1 flex justify-center items-center pr-5;
                                 &:first-child::before{
                                     @apply hidden;
                                 }
@@ -280,7 +280,7 @@ body, html{
                                 &::before{
                                     content: "";
                                     border-left: 1px dashed $lightBlue;
-                                    @apply relative -left-2 h-3.5;
+                                    @apply relative -left-1.5 h-3.5;
                                 }
                                 &:last-child .icon{
                                     filter: invert(14%) sepia(68%) saturate(6951%) hue-rotate(358deg) brightness(101%) contrast(113%);
