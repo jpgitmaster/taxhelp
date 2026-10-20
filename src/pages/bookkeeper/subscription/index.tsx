@@ -1,23 +1,106 @@
 
 import Link from 'next/link'
+import Image from 'next/image'
+import { useState } from 'react'
 import { signOut, getSession } from 'next-auth/react'
 import scss from './styles/Subscription.module.scss'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 import useQuerySubscriptions from '@/controllers/subscriptions/api/queries'
 import useMutationSubscriptions from '@/controllers/subscriptions/api/mutations'
+import useQueryBillingAddresses from '@/controllers/billingAddresses/api/queries'
+import useMutationBillingAddresses from '@/controllers/billingAddresses/api/mutations'
+import { BillingAddress, BillingAddressForm } from '@/controllers/billingAddresses/types'
+import BillingAddressModal from '@/components/pages/bookkeeper/subscription/BillingAddressModal'
+
+const formatDate = (value: string | null | undefined) => {
+  if (!value) return 'N/A'
+  return new Date(value).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })
+}
+
+const formatAmount = (amount: string, currency: string) => {
+  const symbol = currency === 'PHP' ? '₱' : `${currency} `
+  return `${symbol}${Number(amount).toLocaleString('en-PH', { minimumFractionDigits: 2 })}`
+}
+
+const PLAN_ICON: Record<string, string> = {
+  basic: '◻',
+  pro: '◆',
+  enterprise: '⬢',
+}
+
+const emptyBillingForm: BillingAddressForm = {
+  name: '',
+  phone: '',
+  line1: '',
+  line2: '',
+  city: '',
+  state: '',
+  postal_code: '',
+  country: '',
+}
 
 const ManageSubscription_V = ({ session }: PageProps) => {
-  const { getMySubscription } = useQuerySubscriptions()
+  const { getMySubscription, getMyPayments } = useQuerySubscriptions()
   const { cancelSubscription } = useMutationSubscriptions()
+  const { getMyBillingAddresses } = useQueryBillingAddresses()
+  const { createBillingAddress, updateBillingAddress, setDefaultBillingAddress, deleteBillingAddress } = useMutationBillingAddresses()
   const { data: subscription } = getMySubscription()
+  const { data: payments } = getMyPayments()
+  const { data: billingAddresses } = getMyBillingAddresses()
 
   const isFree = subscription?.plan === 'basic'
   const isEnterprise = subscription?.plan === 'enterprise'
+  const latestPayment = payments?.find((payment) => payment.status === 'paid')
+
+  // null = not editing, 'new' = adding a new address, number = editing that address id
+  const [editingAddressId, setEditingAddressId] = useState<number | 'new' | null>(null)
+  const [billingForm, setBillingForm] = useState<BillingAddressForm>(emptyBillingForm)
+
+  const handleBillingFieldChange = (field: keyof BillingAddressForm) =>
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      setBillingForm((prev) => ({ ...prev, [field]: e.target.value }))
+
+  const startAddAddress = () => {
+    setBillingForm(emptyBillingForm)
+    setEditingAddressId('new')
+  }
+
+  const startEditAddress = (address: BillingAddress) => {
+    setBillingForm({
+      name: address.name ?? '',
+      phone: address.phone ?? '',
+      line1: address.line1 ?? '',
+      line2: address.line2 ?? '',
+      city: address.city ?? '',
+      state: address.state ?? '',
+      postal_code: address.postal_code ?? '',
+      country: address.country ?? '',
+    })
+    setEditingAddressId(address.id)
+  }
 
   const handleCancel = () => {
     if (!confirm('Cancel your subscription? You will keep access until your current billing period ends.')) return
     cancelSubscription.mutate()
+  }
+
+  const isSavingBilling = createBillingAddress.isPending || updateBillingAddress.isPending
+
+  const handleSaveBilling = () => {
+    if (editingAddressId === 'new') {
+      createBillingAddress.mutate(billingForm, { onSuccess: () => setEditingAddressId(null) })
+    } else if (editingAddressId !== null) {
+      updateBillingAddress.mutate(
+        { id: editingAddressId, ...billingForm },
+        { onSuccess: () => setEditingAddressId(null) }
+      )
+    }
+  }
+
+  const handleDeleteAddress = (id: number) => {
+    if (!confirm('Delete this billing address?')) return
+    deleteBillingAddress.mutate(id)
   }
 
   return (
@@ -52,17 +135,44 @@ const ManageSubscription_V = ({ session }: PageProps) => {
           </p>
         </div>
         <section className={scss.cards+' '+scss.plantop}>
-          <div className={scss.card+' '+scss.w70}>
+          <div className={scss.card+' '+scss.w100}>
             <div className={scss.planbox+' '+scss.blue}>
-              <h2 style={{textTransform: 'capitalize'}}>
-                {subscription?.plan} Plan
-              </h2>
-              <p>
-                {isFree ? 'Free plan' : `Active until ${subscription?.expires_at ?? 'N/A'}`}
-              </p>
+              <div className={scss.planHeader}>
+                <div className={scss.planIcon} aria-hidden="true">{PLAN_ICON[subscription?.plan ?? 'basic']}</div>
+                <div>
+                  <h2 style={{textTransform: 'capitalize'}}>
+                    {subscription?.plan} Plan
+                  </h2>
+                  <span className={scss.statusBadge+' '+(subscription?.status === 'active' ? scss.statusActive : scss.statusCancelled)}>
+                    {subscription?.status}
+                  </span>
+                </div>
+              </div>
+              {isFree ? (
+                <p>Free plan</p>
+              ) : (
+                <div className={scss.planStats}>
+                  <div className={scss.planStat}>
+                    <span className={scss.planStatLabel}>Price</span>
+                    <span className={scss.planStatValue}>
+                      {latestPayment ? formatAmount(latestPayment.amount, latestPayment.currency) : 'N/A'}
+                    </span>
+                  </div>
+                  <div className={scss.planStat}>
+                    <span className={scss.planStatLabel}>Active Until</span>
+                    <span className={scss.planStatValue}>{formatDate(subscription?.expires_at)}</span>
+                  </div>
+                  <div className={scss.planStat}>
+                    <span className={scss.planStatLabel}>Billing Cycle</span>
+                    <span className={scss.planStatValue} style={{textTransform: 'capitalize'}}>
+                      {latestPayment?.billing_cycle ?? 'N/A'}
+                    </span>
+                  </div>
+                </div>
+              )}
               {subscription?.pending_plan && (
                 <p style={{textTransform: 'capitalize'}}>
-                  Downgrading to {subscription.pending_plan} on {subscription.expires_at}
+                  Downgrading to {subscription.pending_plan} on {formatDate(subscription.expires_at)}
                 </p>
               )}
               <Link href='/bookkeeper/subscription/plans' className={scss.button+' '+scss.btnblue}>
@@ -70,32 +180,107 @@ const ManageSubscription_V = ({ session }: PageProps) => {
               </Link>
             </div>
           </div>
-          <div className={scss.card+' '+scss.w30}>
-            <div className={scss.planbox+' '+scss.blue}>
-              <h2>
-                Usage
-              </h2>
-            </div>
-          </div>
-          <div className={scss.card+' '+scss.w50}>
-            <div className={scss.planbox+' '+scss.blue}>
-              <h2>
-                Payment Method
-              </h2>
-            </div>
-          </div>
-          <div className={scss.card+' '+scss.w50}>
-            <div className={scss.planbox+' '+scss.blue}>
-              <h2>
-                Billing Address
-              </h2>
-            </div>
-          </div>
           <div className={scss.card+' '+scss.w100}>
             <div className={scss.planbox+' '+scss.blue}>
               <h2>
                 Billing History
               </h2>
+              {payments && payments.length > 0 ? (
+                <table className={scss.billingTable}>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Plan</th>
+                      <th>Billing Cycle</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {payments.map((payment) => (
+                      <tr key={payment.id}>
+                        <td>{formatDate(payment.paid_at ?? payment.created_at)}</td>
+                        <td style={{textTransform: 'capitalize'}}>{payment.plan}</td>
+                        <td style={{textTransform: 'capitalize'}}>{payment.billing_cycle}</td>
+                        <td>{formatAmount(payment.amount, payment.currency)}</td>
+                        <td>
+                          <span className={scss.statusPill+' '+scss['status_'+payment.status]} style={{textTransform: 'capitalize'}}>
+                            {payment.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className={scss.emptyState}>No billing history yet.</p>
+              )}
+            </div>
+          </div>
+          <div className={scss.card+' '+scss.w100}>
+            <div className={scss.planbox+' '+scss.blue}>
+              <h2>
+                Billing Addresses
+              </h2>
+              <p className={scss.billingAddressNote}>
+                Used on your payment receipts. The default address is also sent to PayMongo at checkout.
+              </p>
+
+              {billingAddresses && billingAddresses.length > 0 ? (
+                <ul className={scss.addressList}>
+                  {billingAddresses.map((address) => (
+                    <li key={address.id} className={scss.addressCard}>
+                      <div className={scss.addressCardActions}>
+                        {address.is_default ? (
+                          <span className={scss.defaultBadge}>Default</span>
+                        ) : (
+                          <button
+                            type='button'
+                            title='Set as Default'
+                            onClick={() => setDefaultBillingAddress.mutate(address.id)}
+                            className={scss.iconBtn}
+                          >
+                            <Image src='/svgs/check.svg' alt='Set as Default' width={16} height={16} unoptimized={true} />
+                          </button>
+                        )}
+                        <button
+                          type='button'
+                          title='Edit'
+                          onClick={() => startEditAddress(address)}
+                          className={scss.iconBtn}
+                        >
+                          <Image src='/svgs/edit.svg' alt='Edit' width={16} height={16} unoptimized={true} />
+                        </button>
+                        <button
+                          type='button'
+                          title='Delete'
+                          onClick={() => handleDeleteAddress(address.id)}
+                          className={scss.iconBtn}
+                        >
+                          <Image src='/svgs/delete.svg' alt='Delete' width={16} height={16} unoptimized={true} />
+                        </button>
+                      </div>
+                      <p>
+                        {address.name}<br />
+                        {[address.line1, address.line2].filter(Boolean).join(', ')}
+                        {(address.line1 || address.line2) && <br />}
+                        {[address.city, address.state, address.postal_code].filter(Boolean).join(', ')}
+                        {address.country && ` ${address.country}`}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className={scss.emptyState}>No billing address set.</p>
+              )}
+
+              <button
+                type='button'
+                onClick={startAddAddress}
+                className={scss.button+' '+scss.btnblue}
+              >
+                Add New Address
+              </button>
             </div>
           </div>
           {!isFree && (
@@ -116,6 +301,15 @@ const ManageSubscription_V = ({ session }: PageProps) => {
             </div>
           )}
         </section>
+        <BillingAddressModal
+          open={editingAddressId !== null}
+          mode={editingAddressId === 'new' ? 'new' : 'edit'}
+          form={billingForm}
+          saving={isSavingBilling}
+          onChange={handleBillingFieldChange}
+          onSave={handleSaveBilling}
+          onCancel={() => setEditingAddressId(null)}
+        />
         {/* <section className={"grid md:grid-cols-3 gap-6 my-5"}>
           <div className="col-span-2 bg-white border rounded-xl p-6 shadow-sm relative overflow-hidden">
             <div className="absolute top-0 right-0 bg-black text-white text-xs px-3 py-1 rounded-bl-lg">

@@ -1,0 +1,48 @@
+@use '@/styles/colors' as *;
+
+@reference 'tailwindcss';
+
+.billingAddressModal{
+    @apply relative;
+    .title{
+        color: $blue;
+        font-weight: 600;
+        @apply text-xl mb-5;
+    }
+    .label{
+        color: $darkgray;
+        @apply text-xs font-medium uppercase tracking-wide mt-2 block;
+    }
+    .input{
+        color: $lightBlack;
+        border: 1px solid rgba($gray, .8);
+        @apply rounded-lg px-3 py-2 text-sm outline-none w-full;
+        &:focus{
+            border-color: $lightBlue;
+        }
+    }
+    .row{
+        @apply grid grid-cols-2 gap-4 w-full;
+    }
+    .actions{
+        @apply flex gap-3 mt-6;
+    }
+    .btn{
+        outline: none;
+        border: 1px solid;
+        @apply rounded-[10px] text-xs cursor-pointer uppercase py-2 px-5;
+        &:disabled{
+            @apply cursor-not-allowed opacity-60;
+        }
+    }
+    .btnSave{
+        background-color: $blue;
+        color: $white;
+        border-color: $border_blue;
+    }
+    .btnCancel{
+        background-color: $white;
+        color: $lightBlack;
+        border-color: rgba($gray, .8);
+    }
+}
