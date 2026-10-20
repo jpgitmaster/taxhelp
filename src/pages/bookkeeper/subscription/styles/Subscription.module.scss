@@ -65,6 +65,37 @@
                 @apply text-sm font-normal;
             }
         }
+        .billingAddressNote{
+            color: $darkgray;
+            @apply text-xs mb-3;
+        }
+        .addressList{
+            @apply flex flex-col gap-3 mt-2;
+        }
+        .addressCard{
+            background-color: rgba($lightGray, .5);
+            border: 1px solid rgba($gray, .6);
+            @apply rounded-xl p-4 relative;
+            p{
+                @apply text-sm pr-28;
+            }
+        }
+        .defaultBadge{
+            color: $border_blue;
+            background-color: rgba($lightBlue, .15);
+            @apply inline-flex items-center h-7 text-[10px] font-semibold uppercase tracking-wide px-2 rounded-full;
+        }
+        .addressCardActions{
+            @apply flex items-center gap-2 absolute top-3 right-3;
+        }
+        .iconBtn{
+            background-color: $white;
+            border: 1px solid rgba($gray, .7);
+            @apply w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer;
+            &:hover{
+                border-color: $lightBlue;
+            }
+        }
         .planStats{
             @apply grid grid-cols-3 gap-10 mt-3 pt-3 w-full justify-items-center;
             border-top: 1px solid rgba($gray, .5);

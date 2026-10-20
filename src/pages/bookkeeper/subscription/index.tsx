@@ -1,11 +1,17 @@
 
 import Link from 'next/link'
+import Image from 'next/image'
+import { useState } from 'react'
 import { signOut, getSession } from 'next-auth/react'
 import scss from './styles/Subscription.module.scss'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 import useQuerySubscriptions from '@/controllers/subscriptions/api/queries'
 import useMutationSubscriptions from '@/controllers/subscriptions/api/mutations'
+import useQueryBillingAddresses from '@/controllers/billingAddresses/api/queries'
+import useMutationBillingAddresses from '@/controllers/billingAddresses/api/mutations'
+import { BillingAddress, BillingAddressForm } from '@/controllers/billingAddresses/types'
+import BillingAddressModal from '@/components/pages/bookkeeper/subscription/BillingAddressModal'
 
 const formatDate = (value: string | null | undefined) => {
   if (!value) return 'N/A'
@@ -23,19 +29,78 @@ const PLAN_ICON: Record<string, string> = {
   enterprise: '⬢',
 }
 
+const emptyBillingForm: BillingAddressForm = {
+  name: '',
+  phone: '',
+  line1: '',
+  line2: '',
+  city: '',
+  state: '',
+  postal_code: '',
+  country: '',
+}
+
 const ManageSubscription_V = ({ session }: PageProps) => {
   const { getMySubscription, getMyPayments } = useQuerySubscriptions()
   const { cancelSubscription } = useMutationSubscriptions()
+  const { getMyBillingAddresses } = useQueryBillingAddresses()
+  const { createBillingAddress, updateBillingAddress, setDefaultBillingAddress, deleteBillingAddress } = useMutationBillingAddresses()
   const { data: subscription } = getMySubscription()
   const { data: payments } = getMyPayments()
+  const { data: billingAddresses } = getMyBillingAddresses()
 
   const isFree = subscription?.plan === 'basic'
   const isEnterprise = subscription?.plan === 'enterprise'
   const latestPayment = payments?.find((payment) => payment.status === 'paid')
 
+  // null = not editing, 'new' = adding a new address, number = editing that address id
+  const [editingAddressId, setEditingAddressId] = useState<number | 'new' | null>(null)
+  const [billingForm, setBillingForm] = useState<BillingAddressForm>(emptyBillingForm)
+
+  const handleBillingFieldChange = (field: keyof BillingAddressForm) =>
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      setBillingForm((prev) => ({ ...prev, [field]: e.target.value }))
+
+  const startAddAddress = () => {
+    setBillingForm(emptyBillingForm)
+    setEditingAddressId('new')
+  }
+
+  const startEditAddress = (address: BillingAddress) => {
+    setBillingForm({
+      name: address.name ?? '',
+      phone: address.phone ?? '',
+      line1: address.line1 ?? '',
+      line2: address.line2 ?? '',
+      city: address.city ?? '',
+      state: address.state ?? '',
+      postal_code: address.postal_code ?? '',
+      country: address.country ?? '',
+    })
+    setEditingAddressId(address.id)
+  }
+
   const handleCancel = () => {
     if (!confirm('Cancel your subscription? You will keep access until your current billing period ends.')) return
     cancelSubscription.mutate()
+  }
+
+  const isSavingBilling = createBillingAddress.isPending || updateBillingAddress.isPending
+
+  const handleSaveBilling = () => {
+    if (editingAddressId === 'new') {
+      createBillingAddress.mutate(billingForm, { onSuccess: () => setEditingAddressId(null) })
+    } else if (editingAddressId !== null) {
+      updateBillingAddress.mutate(
+        { id: editingAddressId, ...billingForm },
+        { onSuccess: () => setEditingAddressId(null) }
+      )
+    }
+  }
+
+  const handleDeleteAddress = (id: number) => {
+    if (!confirm('Delete this billing address?')) return
+    deleteBillingAddress.mutate(id)
   }
 
   return (
@@ -152,6 +217,72 @@ const ManageSubscription_V = ({ session }: PageProps) => {
               )}
             </div>
           </div>
+          <div className={scss.card+' '+scss.w100}>
+            <div className={scss.planbox+' '+scss.blue}>
+              <h2>
+                Billing Addresses
+              </h2>
+              <p className={scss.billingAddressNote}>
+                Used on your payment receipts. The default address is also sent to PayMongo at checkout.
+              </p>
+
+              {billingAddresses && billingAddresses.length > 0 ? (
+                <ul className={scss.addressList}>
+                  {billingAddresses.map((address) => (
+                    <li key={address.id} className={scss.addressCard}>
+                      <div className={scss.addressCardActions}>
+                        {address.is_default ? (
+                          <span className={scss.defaultBadge}>Default</span>
+                        ) : (
+                          <button
+                            type='button'
+                            title='Set as Default'
+                            onClick={() => setDefaultBillingAddress.mutate(address.id)}
+                            className={scss.iconBtn}
+                          >
+                            <Image src='/svgs/check.svg' alt='Set as Default' width={16} height={16} unoptimized={true} />
+                          </button>
+                        )}
+                        <button
+                          type='button'
+                          title='Edit'
+                          onClick={() => startEditAddress(address)}
+                          className={scss.iconBtn}
+                        >
+                          <Image src='/svgs/edit.svg' alt='Edit' width={16} height={16} unoptimized={true} />
+                        </button>
+                        <button
+                          type='button'
+                          title='Delete'
+                          onClick={() => handleDeleteAddress(address.id)}
+                          className={scss.iconBtn}
+                        >
+                          <Image src='/svgs/delete.svg' alt='Delete' width={16} height={16} unoptimized={true} />
+                        </button>
+                      </div>
+                      <p>
+                        {address.name}<br />
+                        {[address.line1, address.line2].filter(Boolean).join(', ')}
+                        {(address.line1 || address.line2) && <br />}
+                        {[address.city, address.state, address.postal_code].filter(Boolean).join(', ')}
+                        {address.country && ` ${address.country}`}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className={scss.emptyState}>No billing address set.</p>
+              )}
+
+              <button
+                type='button'
+                onClick={startAddAddress}
+                className={scss.button+' '+scss.btnblue}
+              >
+                Add New Address
+              </button>
+            </div>
+          </div>
           {!isFree && (
             <div className={scss.card+' '+scss.w100}>
               <div className={scss.planbox+' '+scss.red}>
@@ -170,6 +301,15 @@ const ManageSubscription_V = ({ session }: PageProps) => {
             </div>
           )}
         </section>
+        <BillingAddressModal
+          open={editingAddressId !== null}
+          mode={editingAddressId === 'new' ? 'new' : 'edit'}
+          form={billingForm}
+          saving={isSavingBilling}
+          onChange={handleBillingFieldChange}
+          onSave={handleSaveBilling}
+          onCancel={() => setEditingAddressId(null)}
+        />
         {/* <section className={"grid md:grid-cols-3 gap-6 my-5"}>
           <div className="col-span-2 bg-white border rounded-xl p-6 shadow-sm relative overflow-hidden">
             <div className="absolute top-0 right-0 bg-black text-white text-xs px-3 py-1 rounded-bl-lg">
