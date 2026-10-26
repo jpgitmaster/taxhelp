@@ -1,6 +1,6 @@
 import { Dayjs } from 'dayjs';
 import useSalesAPI from "./api"
-import { SalesErr } from './types'
+import { Particular, SalesErr } from './types'
 import useQueryClients from '../clients/api/queries';
 import useGlobal from '@/controllers/global/useGlobal';
 import useQueryCustomers from '../customers/api/queries';
@@ -38,7 +38,7 @@ const useSaveSales = () => {
     const [displayTerms, setDisplayTerms] = useState(false)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayCustomers, setDisplayCustomers] = useState(false)
-    
+    const [errArr, setErrArr] = useState(sales.salesObj.particulars)
     const options = [
         {
             value: 'INCLUSIVE',
@@ -118,7 +118,6 @@ const useSaveSales = () => {
         client: { usename: 'Client', required: true },
         customer: { usename: 'Customer', required: true },
         vat_amount: { usename: 'VAT Amount', required: true },
-        particulars: { usename: 'Particulars', required: true },
         exempt_sales: { usename: 'Exempt Sales', required: true },
         account_name: { usename: 'Account Name', required: true },
         invoice_date: { usename: 'Invoice Date', required: true },
@@ -146,6 +145,12 @@ const useSaveSales = () => {
             condition: sales.salesObj.customer?.classification === 'NON-INDIVIDUAL',
             required: true
         }},
+        particulars: sales.salesObj.particulars.map(() => ({
+            amount: { usename: 'Amount', required: true },
+            quantity: { usename: 'Quantity', required: true },
+            unit_price: { usename: 'Unit Price', required: true },
+            description: { usename: 'Item Description / Service Nature', required: true },
+        })),
     }
     const recalcSales = (salesObj: any) => {
         const VAT_RATE = 0.12
@@ -298,6 +303,97 @@ const useSaveSales = () => {
         handleRemoveErr(sales.salesErr, 'classification')
     }
 
+    const handleAddParticular = () => {
+        setSales(prev => ({
+            ...prev,
+            salesObj: {
+                ...prev.salesObj,
+                particulars: [
+                    ...prev.salesObj.particulars,
+                    {
+                        description: '',
+                        quantity: '',
+                        unit_price: '',
+                        amount: '',
+                    }
+                ]
+            }
+        }))
+    }
+
+    const handleRemoveParticular = (index: number) => {
+        setSales(prev => ({
+            ...prev,
+            salesObj: {
+                ...prev.salesObj,
+                particulars: prev.salesObj.particulars.filter(
+                    (_, i) => i !== index
+                )
+            }
+        }))
+    }
+
+    const handleParticularChange = (
+        index: number,
+        event: ChangeEvent<HTMLInputElement>
+    ) => {
+        const { name, value } = event.target
+        const numericFields = ['quantity', 'unit_price']
+        const regexNumericDecimalOnly = /^\d*\.?\d*$/
+
+        if (
+            numericFields.includes(name) &&
+            value !== '' &&
+            !regexNumericDecimalOnly.test(value)
+        ) {
+            return
+        }
+
+        setSales(prev => {
+            const particulars = prev.salesObj.particulars.map(
+                (particular, i) => {
+                    if (i !== index) return particular
+
+                    const updated = {
+                        ...particular,
+                        [name]: value,
+                    }
+
+                    if (numericFields.includes(name)) {
+                        const quantity = parseFloat(
+                            name === 'quantity'
+                                ? value
+                                : updated.quantity
+                        ) || 0
+
+                        const unitPrice = parseFloat(
+                            name === 'unit_price'
+                                ? value
+                                : updated.unit_price
+                        ) || 0
+
+                        updated.amount =
+                            updated.quantity !== '' &&
+                            updated.unit_price !== ''
+                                ? (quantity * unitPrice).toFixed(2)
+                                : ''
+                    }
+
+                    return updated
+                }
+            )
+
+            return {
+                ...prev,
+                salesObj: {
+                    ...prev.salesObj,
+                    particulars,
+                }
+            }
+        })
+
+        handleRemoveErr(sales.salesErr, `particulars.${index}.${name}`)
+    }
     const handleChange = (
         event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => {
@@ -508,9 +604,11 @@ const useSaveSales = () => {
     const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         setStatus({...status, loader: true})
+        console.log(sales.salesObj.particulars)
         const {
             validation_errors,
             validation_has_error,
+            validation_errors_array
         } = ValidatorV3(fieldValidations, {
             atc: sales.salesObj.atc || '',
             ewt_rate: sales.salesObj.ewt_rate || '',
@@ -533,7 +631,6 @@ const useSaveSales = () => {
             terms: sales.salesObj.terms || '',
             tax_amount: sales.salesObj.tax_amount || '',
             vat_amount: sales.salesObj.vat_amount || '',
-            particulars: sales.salesObj.particulars || '',
             gross_amount: sales.salesObj.gross_amount || '',
             exempt_sales: sales.salesObj.exempt_sales || '',
             account_name: sales.salesObj.account_name || '',
@@ -544,13 +641,22 @@ const useSaveSales = () => {
             invoice_number: sales.salesObj.invoice_number || '',
             zero_rated_sales: sales.salesObj.zero_rated_sales || '',
             total_gross_amount: sales.salesObj.total_gross_amount || '',
+
+            particulars: sales.salesObj.particulars?.map(particular => ({
+                amount: particular.amount ? particular.amount : '',
+                quantity: particular.quantity ? particular.quantity : '',
+                unit_price: particular.unit_price ? particular.unit_price : '',
+                description: particular.description ? particular.description : '',
+            })),
         })
+        console.log(validation_errors_array)
         if (validation_has_error) {
             const timer = setTimeout(() => {
                 setSales({
                     ...sales,
                     salesErr: validation_errors as SalesErr
                 })
+                setErrArr(validation_errors_array as Particular[])
                 setStatus({...status, loader: false})
                 return false
             }, 500)
@@ -563,6 +669,7 @@ const useSaveSales = () => {
         doc,
         sales,
         status,
+        errArr,
         options,
         clientArr,
         customerArr,
@@ -588,8 +695,10 @@ const useSaveSales = () => {
         handleSelectTerms,
         handleEditCustomer,
         handleSelectClient,
-        handleSelectCustomer
-        
+        handleAddParticular,
+        handleSelectCustomer,
+        handleRemoveParticular,
+        handleParticularChange,
     }
 }
 

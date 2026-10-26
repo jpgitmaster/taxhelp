@@ -11,11 +11,13 @@ import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 import TermsDropdown from '@/components/pages/bookkeeper/sales/TermsDropdown'
 import ClientsDropdown from '@/components/pages/bookkeeper/documents/ClientsDropdown'
 import CustomersDropdown from '@/components/pages/bookkeeper/sales/CustomersDropdown'
+import { Fragment } from 'react/jsx-runtime'
 const AddSalesRecord_V = () => {
   const {
     doc,
     sales,
     status,
+    errArr,
     options,
     clientArr,
     customerArr,
@@ -39,7 +41,10 @@ const AddSalesRecord_V = () => {
     handleSelectTerms,
     handleSelectClient,
     handleEditCustomer,
-    handleSelectCustomer
+    handleAddParticular,
+    handleSelectCustomer,
+    handleRemoveParticular,
+    handleParticularChange,
   } = useSaveSales()
   const { loader } = status
   const dateFormat = 'MM/DD/YYYY'
@@ -589,26 +594,7 @@ const AddSalesRecord_V = () => {
             </CustomContainer>
             <CustomContainer
               scss={scss}
-              width={25}
-              required={true}
-              label='Particulars'
-              labelFor='particulars'
-              err={sales.salesErr.particulars as string}
-            >
-              <input
-                id='particulars'
-                type='text'
-                name='particulars'
-                maxLength={20}
-                autoComplete='off'
-                value={sales.salesObj.particulars}
-                onKeyUp={handleBlur}
-                onChange={handleChange}
-              />
-            </CustomContainer>
-            <CustomContainer
-              scss={scss}
-              width={25}
+              width={20}
               required={true}
               label='Terms'
               labelFor='terms'
@@ -634,7 +620,7 @@ const AddSalesRecord_V = () => {
             </CustomContainer>
             <CustomContainer
               scss={scss}
-              width={50}
+              width={80}
               required={true}
               label='Account Name'
               labelFor='account_name'
@@ -651,6 +637,122 @@ const AddSalesRecord_V = () => {
                 onChange={handleChange}
               />
             </CustomContainer>
+          </div>
+          <div className={scss.divider}>
+              <h2>
+                  Particulars
+              </h2>
+              <hr />
+          </div>
+          <button
+            className={scss.button + ' ' + scss.btngreen}
+            style={{
+              float: 'left',
+              width: '150px',
+              margin: '-15px 0 20px'
+            }}
+            type="button"
+            onClick={handleAddParticular}
+          >
+            Add Particular
+          </button>
+          <div className={scss.cards} style={{paddingRight: '35px'}}>
+            {sales.salesObj.particulars.map((particular, index) => (
+            <Fragment key={index}>
+                    <CustomContainer
+                      scss={scss}
+                      width={50}
+                      required={true}
+                      labelFor={`description-${index}`}
+                      label='Item Description / Service Nature'
+                      err={errArr[index]?.description as string}
+                    >
+                      <input
+                        type='text'
+                        name='description'
+                        autoComplete='off'
+                        onKeyUp={handleBlur}
+                        id={`description-${index}`}
+                        value={particular.description}
+                        onChange={(e) => handleParticularChange(index, e)}
+                      />
+                    </CustomContainer>
+                    <div className={scss.card+' '+scss.w50}>
+                      <div className={scss.cards+' '+scss.particulars}>
+                        <CustomContainer
+                          scss={scss}
+                          width={33}
+                          required={true}
+                          label='Quantity'
+                          labelFor={`quantity-${index}`}
+                          err={errArr[index]?.quantity as string}
+                        >
+                          <input
+                            type='text'
+                            name='quantity'
+                            placeholder='0'
+                            autoComplete='off'
+                            onKeyUp={handleBlur}
+                            id={`quantity-${index}`}
+                            value={particular.quantity}
+                            onChange={(e) => handleParticularChange(index, e)}
+                          />
+                        </CustomContainer>
+                        <CustomContainer
+                          scss={scss}
+                          width={33}
+                          required={true}
+                          label='Unit Price'
+                          labelFor={`unit-price-${index}`}
+                          err={errArr[index]?.unit_price as string}
+                        >
+                          <input
+                            type='text'
+                            name='unit_price'
+                            autoComplete='off'
+                            placeholder='0.00'
+                            id={`unit-price-${index}`}
+                            onKeyUp={handleBlur}
+                            value={particular.unit_price}
+                            onChange={(e) => handleParticularChange(index, e)}
+                          />
+                        </CustomContainer>
+                        <CustomContainer
+                          scss={scss}
+                          width={33}
+                          label='Amount'
+                          required={true}
+                          labelFor={`amount-${index}`}
+                          err={errArr[index]?.amount as string}
+                        >
+                          <input
+                            readOnly
+                            type='text'
+                            name='amount'
+                            autoComplete='off'
+                            placeholder='0.00'
+                            onKeyUp={handleBlur}
+                            id={`amount-${index}`}
+                            value={particular.amount}
+                            className={scss.lblContent}
+                            onChange={(e) => handleParticularChange(index, e)}
+                          />
+                        </CustomContainer>
+                        <div className={scss.removeBtn}>
+                          {sales.salesObj.particulars.length > 1 && (
+                            <button
+                              type='button'
+                              className={scss.remove}
+                              onClick={() => handleRemoveParticular(index)}
+                            >
+                              <Image src='/svgs/cross.svg' alt='Remove Record' priority width={25} height={25} unoptimized={true} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                </Fragment>
+              ))}
           </div>
         </div>
         <div className={scss.box}>
@@ -695,27 +797,6 @@ const AddSalesRecord_V = () => {
                       ))
                   }
               </ul>
-              {/* <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <input
-                    type="radio"
-                    name="vat_type"
-                    checked={sales.salesObj.vat_type === 'INCLUSIVE'}
-                    onChange={() => setVatType('INCLUSIVE')}
-                  />
-                  Inclusive
-                </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <input
-                    type="radio"
-                    name="vat_type"
-                    checked={sales.salesObj.vat_type === 'EXCLUSIVE'}
-                    onChange={() => setVatType('EXCLUSIVE')}
-                  />
-
-                  Exclusive
-                </label>
-              </div> */}
             </CustomContainer>
             <CustomContainer
               scss={scss}
@@ -856,10 +937,10 @@ const AddSalesRecord_V = () => {
               <input
                 type='text'
                 maxLength={20}
+                placeholder='0.00'
                 autoComplete='off'
                 id='gross_taxable'
                 name='gross_taxable'
-                placeholder='0.00'
                 value={sales.salesObj.gross_taxable}
                 readOnly={sales.salesObj.vat_type === 'EXCLUSIVE'}
                 className={sales.salesObj.vat_type === 'EXCLUSIVE' ? scss.lblContent : ''}
@@ -879,10 +960,10 @@ const AddSalesRecord_V = () => {
                 readOnly
                 type='text'
                 maxLength={20}
+                placeholder='0.00'
                 autoComplete='off'
                 id='total_gross_amount'
                 name='total_gross_amount'
-                placeholder='0.00'
                 className={scss.lblContent}
                 value={sales.salesObj.total_gross_amount}
                 onKeyUp={handleBlur}
@@ -891,22 +972,22 @@ const AddSalesRecord_V = () => {
             </CustomContainer>
             
             <CustomContainer
-              scss={scss}
               width={33}
-              required={true}
+              scss={scss}
               label='ATC'
               labelFor='atc'
+              required={true}
               err={sales.salesErr.atc as string}
             >
               <input
+                id='atc'
+                name='atc'
                 type='text'
                 maxLength={10}
                 autoComplete='off'
-                id='atc'
-                name='atc'
-                value={sales.salesObj.atc}
                 onKeyUp={handleBlur}
                 onChange={handleChange}
+                value={sales.salesObj.atc}
               />
             </CustomContainer>
             

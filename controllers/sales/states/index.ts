@@ -9,7 +9,6 @@ const initSalesObj = {
     tax_amount: '',
     vat_amount: '',
     toDelete: false,
-    particulars: '',
     account_name: '',
     gross_amount: '',
     exempt_sales: '',
@@ -20,6 +19,14 @@ const initSalesObj = {
     invoice_number: '',
     zero_rated_sales: '',
     total_gross_amount: '',
+    particulars: [
+        {
+            amount: '',
+            quantity: '',
+            unit_price: '',
+            description: '',
+        }
+    ],
     customer: {
         ...initCustomerObj,
         classification: ''

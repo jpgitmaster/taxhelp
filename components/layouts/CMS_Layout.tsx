@@ -88,80 +88,128 @@ const CMS_Layout: FC<MasterProps> = ({ children }) => {
           <Image src='/svgs/master/arrowDown.svg' alt='Arrow Left' priority width={20} height={20} unoptimized={true} />
         </button>
         <nav className={scss.appSidebarLinks}>
-          <ul className={scss.links} ref={ref}>
-            {
-              !isUserReady
-              ? (
-                <div style={{width: '100%', overflow: 'hidden'}}>
-                  <SidebarSkeleton />
-                </div>
-              )
-              :
-              appLinks.map((appLink, index) =>
-                <li key={index}>
-                  <div className={scss.mainLink+' '+((appLink.key === activeLink[2]) ? scss.isActive : '')}>
-                    {
-                      appLink.url ?
-                      <Link href={appLink.url} className={scss.link} onClick={() => handleShowSublinks(appLink, index)}>
-                        {
-                          appLink.icon &&
-                          <div className={scss.mainLinkIcon} style={{width: appLink.iconWidth+'px'}}>
-                            <Image src={'/svgs/master/'+appLink.icon} alt={appLink.name} priority width={20} height={20} unoptimized={true} />
-                          </div>
-                        }
-                        <span>
-                          {appLink.name}
-                        </span>
-                      </Link>
-                      :
-                      <div className={scss.link} onClick={() => handleShowSublinks(appLink, index)}>
-                        {
-                          appLink.icon &&
-                          <div className={scss.mainLinkIcon} style={{width: appLink.iconWidth+'px'}}>
-                            <Image src={'/svgs/master/'+appLink.icon} alt={appLink.name} priority width={20} height={20} unoptimized={true} />
-                          </div>
-                        }
-                        <span>
-                          {appLink.name}
-                        </span>
-                      </div>
-                    }
-                    {
-                      appLink.children?.length &&
-                      <div className={scss.linkArrow+' '+(appLink.active ? scss.linkArrowOpen : scss.linkArrowClose)} onClick={() => handleShowSublinks(appLink, index, 'withoutLink')}>
-                        <Image src='/svgs/master/arrowDown.svg' alt='Slider' priority width={20} height={20} unoptimized={true} />
-                      </div>
-                    }
+          <ul
+              className={scss.links}
+              ref={ref}
+              onClick={handleHeaderClick}
+          >
+              {!isUserReady ? (
+                  <div style={{ width: '100%', overflow: 'hidden' }}>
+                      <SidebarSkeleton />
                   </div>
-                  {
-                      appLink.children?.length &&
-                      <ul className={
-                          scss.sublinks+' '+
-                          (
-                            (appLink.active ? scss.open : scss.close) +
-                            (appLink.children?.length == 1 ? ' '+scss.hasOne : '') +
-                            (appLink.children?.length == 2 ? ' '+scss.hasTwo : '') +
-                            (appLink.children?.length == 3 ? ' '+scss.hasThree : '') +
-                            (appLink.children?.length == 4 ? ' '+scss.hasFour : '') +
-                            (appLink.children?.length == 5 ? ' '+scss.hasFive : '') +
-                            (appLink.children?.length == 6 ? ' '+scss.hasSix : '')
-                          )}>
-                        {
-                          appLink.children?.map((sublink, indx) =>
-                              <li key={indx}>
-                                <Link href={sublink.url} className={scss.link +(sublink.key === activeLink[3] ? ' '+scss.isActive : '')}>
-                                  {sublink.name}
-                                </Link>
-                              </li>
-                          )
-                        }
-                      </ul>
-                    }
-                </li>
-              )
-            }
+              ) : (
+                  appLinks.map((appLink, index) => (
+                      <li key={appLink.key}>
+                          <div
+                              className={`${scss.mainLink} ${
+                                  appLink.routeActive ? scss.isActive : ''
+                              }`}
+                          >
+                              {appLink.url ? (
+                                  <Link
+                                      href={appLink.url}
+                                      className={scss.link}
+                                  >
+                                      {appLink.icon && (
+                                          <div
+                                              className={scss.mainLinkIcon}
+                                              style={{ width: `${appLink.iconWidth}px` }}
+                                          >
+                                              <Image
+                                                  src={`/svgs/master/${appLink.icon}`}
+                                                  alt={appLink.name}
+                                                  priority
+                                                  width={20}
+                                                  height={20}
+                                                  unoptimized
+                                              />
+                                          </div>
+                                      )}
+                                      <span>{appLink.name}</span>
+                                  </Link>
+                              ) : (
+                                  <button
+                                      type="button"
+                                      className={scss.link}
+                                      onClick={() =>
+                                          handleShowSublinks(appLink, index, 'withoutLink')
+                                      }
+                                  >
+                                      {appLink.icon && (
+                                          <div
+                                              className={scss.mainLinkIcon}
+                                              style={{ width: `${appLink.iconWidth}px` }}
+                                          >
+                                              <Image
+                                                  src={`/svgs/master/${appLink.icon}`}
+                                                  alt={appLink.name}
+                                                  priority
+                                                  width={20}
+                                                  height={20}
+                                                  unoptimized
+                                              />
+                                          </div>
+                                      )}
+                                      <span>{appLink.name}</span>
+                                  </button>
+                              )}
+
+                              {appLink.children?.length ? (
+                                  <button
+                                      type="button"
+                                      aria-expanded={appLink.active}
+                                      className={`${scss.linkArrow} ${
+                                          appLink.active
+                                              ? scss.linkArrowOpen
+                                              : scss.linkArrowClose
+                                      }`}
+                                      onClick={() =>
+                                          handleShowSublinks(appLink, index, 'withoutLink')
+                                      }
+                                  >
+                                      <Image
+                                          src="/svgs/master/arrowDown.svg"
+                                          alt="Toggle submenu"
+                                          width={20}
+                                          height={20}
+                                          unoptimized
+                                      />
+                                  </button>
+                              ) : null}
+                          </div>
+
+                          {appLink.children?.length ? (
+                              <ul
+                                  className={`${scss.sublinks} ${
+                                      appLink.active ? scss.open : scss.close
+                                  } ${
+                                      appLink.children.length <= 6
+                                          ? scss[`has${[
+                                              'Zero', 'One', 'Two', 'Three',
+                                              'Four', 'Five', 'Six'
+                                          ][appLink.children.length]}`]
+                                          : ''
+                                  }`}
+                              >
+                                  {appLink.children.map(sublink => (
+                                      <li key={sublink.key}>
+                                          <Link
+                                              href={sublink.url || '#'}
+                                              className={`${scss.link} ${
+                                                  sublink.active ? scss.isActive : ''
+                                              }`}
+                                          >
+                                              {sublink.name}
+                                          </Link>
+                                      </li>
+                                  ))}
+                              </ul>
+                          ) : null}
+                      </li>
+                  ))
+              )}
           </ul>
-        </nav>
+      </nav>
       </aside>
       <main className={scss.appContent}>
         <div className={scss.appHeader}>
@@ -199,15 +247,10 @@ const CMS_Layout: FC<MasterProps> = ({ children }) => {
                       </button>
                     </Dropdown>
                   </div>
-                  <div className={scss.headerIcon}>
+                  <div className={scss.headerIcon+' '+scss.notif}>
                     <NotificationBell scss={scss} />
                   </div>
-                  {/* <div className={scss.headerIcon}>
-                    <div className={scss.icon}>
-                      <Image src={'/svgs/header/notification.svg'} alt='Notification' priority width={20} height={20} unoptimized={true} />
-                    </div>
-                  </div> */}
-                  <div className={scss.headerIcon}>
+                  <div className={scss.headerIcon+' '+scss.logout}>
                     <button type='button' className={scss.icon} onClick={userLogout}>
                       <Image src={'/svgs/header/logout.svg'} alt='Profile' priority width={20} height={20} unoptimized={true} />
                     </button>

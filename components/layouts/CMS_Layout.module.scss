@@ -8,7 +8,7 @@ body, html{
 .app{
     @apply min-h-screen flex flex-row;
     .appSidebar{
-        @apply w-52 bg-app-blue relative px-2.5;
+        @apply w-50 bg-app-blue relative px-2.5;
         img{
             filter: invert(97%) sepia(15%) saturate(303%) hue-rotate(250deg) brightness(119%) contrast(100%);
         }
@@ -17,11 +17,13 @@ body, html{
             @apply absolute cursor-pointer rounded-[5px] top-5.5 h-6.25 w-6.25 p-1.5 -right-2.5;
         }
         &.slideRight{
-            @apply w-52;
             transition: width .3s ease;
             .sidebarArrow{
                 transform: rotate(90deg);
                 transition: transform .4s ease-out;
+            }
+            .mainLink{
+                @apply w-45;
             }
             .mainLink, .sublinks{
                 @apply block;
@@ -43,13 +45,9 @@ body, html{
                 .mainLink{
                     border: 1px dotted $white !important;
                     transition-delay: .2s;
+                    @apply w-auto;
                     span, .linkArrow{
                         @apply hidden;
-                    }
-                    .link{
-                        .mainLinkIcon{
-                            @apply -ml-px;
-                        }
                     }
                 }
             }
@@ -166,7 +164,7 @@ body, html{
                 
                 .link{
                     text-shadow: 1px 1px 0 $lightBlack;
-                    @apply text-app-white inline-block w-full p-2.5 text-[14px];
+                    @apply text-app-white text-left inline-block w-full p-2.5 text-[13px];
                     .mainLinkIcon{
                         @apply cursor-pointer float-left h-5 mr-1 ml-0 flex;
                         img{
@@ -271,7 +269,7 @@ body, html{
                             // use w-55 if chat and notification are enabled
                             @apply flex flex-row w-45 mt-2;
                             .headerIcon{
-                                @apply flex-1 flex justify-center items-center pr-5;
+                                @apply flex-1 flex justify-center items-center;
                                 &:first-child::before{
                                     @apply hidden;
                                 }
@@ -285,7 +283,10 @@ body, html{
                                     border-left: 1px dashed $lightBlue;
                                     @apply relative -left-1.5 h-3.5;
                                 }
-                                &:last-child .icon{
+                                &.notif .hasUnread{
+                                    filter: invert(53%) sepia(86%) saturate(1071%) hue-rotate(343deg) brightness(100%) contrast(96%);
+                                }
+                                &.logout .icon{
                                     filter: invert(14%) sepia(68%) saturate(6951%) hue-rotate(358deg) brightness(101%) contrast(113%);
                                 }
                                 .icon{

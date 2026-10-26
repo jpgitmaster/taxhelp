@@ -57,11 +57,11 @@ const NotificationBell = ({ scss }: PropsDefinition) => {
             arrow={false}
             styles={{ container: { padding: 0, borderRadius: 10, overflow: 'hidden' } }}
         >
-            <button type='button' className={scss.icon} aria-label={'Notifications, '+unreadCount+' unread'} style={{width: '18px', height: '18px'}}>
-                <Badge count={unreadCount} size='small' offset={[2, -2]}>
+            <Badge count={unreadCount} size='small' offset={[2, -2]}>
+                <button type='button' className={scss.icon + (unreadCount ? ' ' + scss.hasUnread : '')} aria-label={'Notifications, '+unreadCount+' unread'} style={{width: '18px', height: '18px'}}>
                     <Image src='/svgs/header/notification.svg' alt='Notifications' priority width={20} height={20} unoptimized={true} />
-                </Badge>
-            </button>
+                </button>
+            </Badge>
         </Popover>
     )
 }

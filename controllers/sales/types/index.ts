@@ -1,5 +1,12 @@
 import { Dayjs } from 'dayjs';
 import { CustomerObj } from '@/controllers/customers/types'
+
+type Particular = {
+    amount: string
+    quantity: string
+    unit_price: string
+    description: string
+}
 interface SalesObj{
     atc: string
     terms: string
@@ -10,7 +17,6 @@ interface SalesObj{
     toDelete: boolean
     tax_amount: string
     vat_amount: string
-    particulars: string
     account_name: string
     gross_amount: string
     exempt_sales: string
@@ -20,6 +26,7 @@ interface SalesObj{
     customer: CustomerObj
     invoice_number: string
     zero_rated_sales: string
+    particulars: Particular[]
     total_gross_amount: string
     created_at?: Dayjs | null
     taxable_month: Dayjs | null
@@ -89,5 +96,6 @@ export type {
     DocState,
     SalesErr,
     AppliedDoc,
+    Particular,
     SalesTableRow,
 }

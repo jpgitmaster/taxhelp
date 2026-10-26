@@ -41,6 +41,27 @@
     @apply px-2.5!;
   }
 }
+.particulars{
+  @apply relative m-0;
+  .remove{
+    @apply absolute -right-7.5 top-1.5 cursor-pointer;
+    filter: invert(24%) sepia(69%) saturate(6154%) hue-rotate(353deg) brightness(91%) contrast(127%);
+  }
+}
+.divider {
+  @apply relative text-center mt-0 mb-10;
+
+  h2 {
+    color: $blue;
+    background-color: $lightGray;
+    @apply absolute -top-6 left-1/2 -translate-x-1/2
+      inline-block w-25 p-4 text-[11px] uppercase;
+  }
+  hr{
+    border-top: 1px solid $blue;
+    border-style: dashed;
+  }
+}
 .box{
   border: 1px solid $gray;
   background-color: $lightGray;
