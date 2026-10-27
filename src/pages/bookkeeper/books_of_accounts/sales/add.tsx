@@ -12,6 +12,7 @@ import TermsDropdown from '@/components/pages/bookkeeper/sales/TermsDropdown'
 import ClientsDropdown from '@/components/pages/bookkeeper/documents/ClientsDropdown'
 import CustomersDropdown from '@/components/pages/bookkeeper/sales/CustomersDropdown'
 import { Fragment } from 'react/jsx-runtime'
+import DiscountsDropdown from '@/components/pages/bookkeeper/sales/DiscountsDropdown'
 const AddSalesRecord_V = () => {
   const {
     doc,
@@ -27,10 +28,12 @@ const AddSalesRecord_V = () => {
     displayClients,
     customerLoader,
     displayCustomers,
+    displayDiscounts,
 
     setDisplayTerms,
     setDisplayClients,
     setDisplayCustomers,
+    setDisplayDiscounts,
     
     handleBlur,
     handleDate,
@@ -43,6 +46,7 @@ const AddSalesRecord_V = () => {
     handleEditCustomer,
     handleAddParticular,
     handleSelectCustomer,
+    handleSelectDiscount,
     handleRemoveParticular,
     handleParticularChange,
   } = useSaveSales()
@@ -637,6 +641,62 @@ const AddSalesRecord_V = () => {
                 onChange={handleChange}
               />
             </CustomContainer>
+            <CustomContainer
+              scss={scss}
+              width={50}
+              required={true}
+              label='Discount Type'
+              labelFor='terms'
+              err={sales.salesErr.terms as string}
+            >
+              <DiscountsDropdown
+                doc={doc}
+                options={[
+                  {
+                    label: 'Senior Citizen',
+                    value: 'SC'
+                  },
+                  {
+                    label: 'Person with Disability',
+                    value: 'PWD'
+                  },
+                  {
+                    label: 'Medal of Valor',
+                    value: 'MOV'
+                  },
+                  {
+                    label: 'National Athletes and Coaches Benefits and Incentives Act',
+                    value: 'NAAC'
+                  },
+                  {
+                    label: 'Solo Parent',
+                    value: 'SP'
+                  }
+                ]}
+                displayDiscounts={displayDiscounts}
+                setDisplayDiscounts={setDisplayDiscounts}
+                handleToggle={handleToggle}
+                handleSelectDiscount={handleSelectDiscount}
+              />
+            </CustomContainer>
+            <CustomContainer
+              scss={scss}
+              width={30}
+              required={true}
+              label={(doc.selectedDiscount?.value ?? doc.selectedDiscount?.value)+' ID No.'}
+              labelFor='id_number'
+              err={sales.salesErr.id_number as string}
+            >
+              <input
+                type='text'
+                name='id_number'
+                autoComplete='off'
+                onKeyUp={handleBlur}
+                placeholder='0000000'
+                value={sales.salesObj.id_number}
+                onChange={handleChange}
+              />
+            </CustomContainer>
           </div>
           <div className={scss.divider}>
               <h2>
@@ -658,99 +718,99 @@ const AddSalesRecord_V = () => {
           </button>
           <div className={scss.cards} style={{paddingRight: '35px'}}>
             {sales.salesObj.particulars.map((particular, index) => (
-            <Fragment key={index}>
-                    <CustomContainer
-                      scss={scss}
-                      width={50}
-                      required={true}
-                      labelFor={`description-${index}`}
-                      label='Item Description / Service Nature'
-                      err={errArr[index]?.description as string}
-                    >
-                      <input
-                        type='text'
-                        name='description'
-                        autoComplete='off'
-                        onKeyUp={handleBlur}
-                        id={`description-${index}`}
-                        value={particular.description}
-                        onChange={(e) => handleParticularChange(index, e)}
-                      />
-                    </CustomContainer>
-                    <div className={scss.card+' '+scss.w50}>
-                      <div className={scss.cards+' '+scss.particulars}>
-                        <CustomContainer
-                          scss={scss}
-                          width={33}
-                          required={true}
-                          label='Quantity'
-                          labelFor={`quantity-${index}`}
-                          err={errArr[index]?.quantity as string}
-                        >
-                          <input
-                            type='text'
-                            name='quantity'
-                            placeholder='0'
-                            autoComplete='off'
-                            onKeyUp={handleBlur}
-                            id={`quantity-${index}`}
-                            value={particular.quantity}
-                            onChange={(e) => handleParticularChange(index, e)}
-                          />
-                        </CustomContainer>
-                        <CustomContainer
-                          scss={scss}
-                          width={33}
-                          required={true}
-                          label='Unit Price'
-                          labelFor={`unit-price-${index}`}
-                          err={errArr[index]?.unit_price as string}
-                        >
-                          <input
-                            type='text'
-                            name='unit_price'
-                            autoComplete='off'
-                            placeholder='0.00'
-                            id={`unit-price-${index}`}
-                            onKeyUp={handleBlur}
-                            value={particular.unit_price}
-                            onChange={(e) => handleParticularChange(index, e)}
-                          />
-                        </CustomContainer>
-                        <CustomContainer
-                          scss={scss}
-                          width={33}
-                          label='Amount'
-                          required={true}
-                          labelFor={`amount-${index}`}
-                          err={errArr[index]?.amount as string}
-                        >
-                          <input
-                            readOnly
-                            type='text'
-                            name='amount'
-                            autoComplete='off'
-                            placeholder='0.00'
-                            onKeyUp={handleBlur}
-                            id={`amount-${index}`}
-                            value={particular.amount}
-                            className={scss.lblContent}
-                            onChange={(e) => handleParticularChange(index, e)}
-                          />
-                        </CustomContainer>
-                        <div className={scss.removeBtn}>
-                          {sales.salesObj.particulars.length > 1 && (
-                            <button
-                              type='button'
-                              className={scss.remove}
-                              onClick={() => handleRemoveParticular(index)}
-                            >
-                              <Image src='/svgs/cross.svg' alt='Remove Record' priority width={25} height={25} unoptimized={true} />
-                            </button>
-                          )}
-                        </div>
+              <Fragment key={index}>
+                <CustomContainer
+                  scss={scss}
+                  width={50}
+                  required={true}
+                  labelFor={`description-${index}`}
+                  label='Item Description / Service Nature'
+                  err={errArr[index]?.description as string}
+                >
+                  <input
+                    type='text'
+                    name='description'
+                    autoComplete='off'
+                    onKeyUp={handleBlur}
+                    id={`description-${index}`}
+                    value={particular.description}
+                    onChange={(e) => handleParticularChange(index, e)}
+                  />
+                </CustomContainer>
+                  <div className={scss.card+' '+scss.w50}>
+                    <div className={scss.cards+' '+scss.particulars}>
+                      <CustomContainer
+                        scss={scss}
+                        width={33}
+                        required={true}
+                        label='Quantity'
+                        labelFor={`quantity-${index}`}
+                        err={errArr[index]?.quantity as string}
+                      >
+                        <input
+                          type='text'
+                          name='quantity'
+                          placeholder='0'
+                          autoComplete='off'
+                          onKeyUp={handleBlur}
+                          id={`quantity-${index}`}
+                          value={particular.quantity}
+                          onChange={(e) => handleParticularChange(index, e)}
+                        />
+                      </CustomContainer>
+                      <CustomContainer
+                        scss={scss}
+                        width={33}
+                        required={true}
+                        label='Unit Price'
+                        labelFor={`unit-price-${index}`}
+                        err={errArr[index]?.unit_price as string}
+                      >
+                        <input
+                          type='text'
+                          name='unit_price'
+                          autoComplete='off'
+                          placeholder='0.00'
+                          id={`unit-price-${index}`}
+                          onKeyUp={handleBlur}
+                          value={particular.unit_price}
+                          onChange={(e) => handleParticularChange(index, e)}
+                        />
+                      </CustomContainer>
+                      <CustomContainer
+                        scss={scss}
+                        width={33}
+                        label='Amount'
+                        required={true}
+                        labelFor={`amount-${index}`}
+                        err={errArr[index]?.amount as string}
+                      >
+                        <input
+                          readOnly
+                          type='text'
+                          name='amount'
+                          autoComplete='off'
+                          placeholder='0.00'
+                          onKeyUp={handleBlur}
+                          id={`amount-${index}`}
+                          value={particular.amount}
+                          className={scss.lblContent}
+                          onChange={(e) => handleParticularChange(index, e)}
+                        />
+                      </CustomContainer>
+                      <div className={scss.removeBtn}>
+                        {sales.salesObj.particulars.length > 1 && (
+                          <button
+                            type='button'
+                            className={scss.remove}
+                            onClick={() => handleRemoveParticular(index)}
+                          >
+                            <Image src='/svgs/cross.svg' alt='Remove Record' priority width={25} height={25} unoptimized={true} />
+                          </button>
+                        )}
                       </div>
                     </div>
+                  </div>
                 </Fragment>
               ))}
           </div>

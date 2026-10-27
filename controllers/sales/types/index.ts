@@ -15,6 +15,7 @@ interface SalesObj{
     vat_rate: string
     id: number | null
     toDelete: boolean
+    id_number: string
     tax_amount: string
     vat_amount: string
     account_name: string

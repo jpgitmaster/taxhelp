@@ -37,6 +37,7 @@ const useSaveSales = () => {
     const [editCustomer, setEditCustomer] = useState(false)
     const [displayTerms, setDisplayTerms] = useState(false)
     const [displayClients, setDisplayClients] = useState(false)
+    const [displayDiscounts, setDisplayDiscounts] = useState(false)
     const [displayCustomers, setDisplayCustomers] = useState(false)
     const [errArr, setErrArr] = useState(sales.salesObj.particulars)
     const options = [
@@ -83,6 +84,10 @@ const useSaveSales = () => {
             value: string,
             label: string
         }
+        selectedDiscount?: {
+            value: string,
+            label: string
+        }
         client: {
             id: number | null,
             last_name: string
@@ -109,6 +114,10 @@ const useSaveSales = () => {
         selectedTerms: {
             value: 'CASH',
             label: 'Cash'
+        },
+        selectedDiscount: {
+            value: 'SC',
+            label: 'Senior Citizen'
         },
         period: null,
     })
@@ -219,6 +228,9 @@ const useSaveSales = () => {
         if(dropdown === 'customers'){
             setDisplayCustomers(prevState => !prevState)
         }
+        if(dropdown === 'discounts'){
+            setDisplayDiscounts(prevState => !prevState)
+        }
     }
 
     const handleSelectTerms = (selectedTerms: { value: string, label: string }) => {
@@ -231,6 +243,20 @@ const useSaveSales = () => {
             salesObj: {
                 ...prev.salesObj,
                 terms: selectedTerms.value
+            }
+        }))
+    }
+
+    const handleSelectDiscount = (selectedDiscount: { value: string, label: string }) => {
+        setDoc({
+            ...doc,
+            selectedDiscount: selectedDiscount
+        })
+        setSales(prev => ({
+            ...prev,
+            salesObj: {
+                ...prev.salesObj,
+                terms: selectedDiscount.value
             }
         }))
     }
@@ -676,6 +702,7 @@ const useSaveSales = () => {
         editCustomer,
         displayTerms,
         displayClients,
+        displayDiscounts,
         displayCustomers,
         clientLoader: isLoadingClients || isFetchingClients,
         customerLoader: isLoadingCustomers || isFetchingCustomers,
@@ -684,6 +711,7 @@ const useSaveSales = () => {
         setDisplayTerms,
         setDisplayClients,
         setDisplayCustomers,
+        setDisplayDiscounts,
 
         // HANDLES
         handleBlur,
@@ -697,6 +725,7 @@ const useSaveSales = () => {
         handleSelectClient,
         handleAddParticular,
         handleSelectCustomer,
+        handleSelectDiscount,
         handleRemoveParticular,
         handleParticularChange,
     }
