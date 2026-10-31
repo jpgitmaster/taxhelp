@@ -1,0 +1,153 @@
+@use '@/styles/forms';
+@use '@/styles/helpers';
+@use '@/styles/reuseable';
+@use '@/styles/colors' as *;
+
+@reference 'tailwindcss';
+.heroBanner {
+    @apply flex flex-col lg:flex-row
+    justify-between items-center
+    rounded-3xl
+    p-6 md:p-8 lg:p-10
+    gap-10
+    text-white;
+
+    background: linear-gradient(
+        135deg,
+        #0F4C81,
+        #2F80ED,
+        #56CCF2
+    );
+
+    .left {
+        @apply w-full lg:w-3/5
+        text-center lg:text-left;
+
+        .badge {
+            @apply bg-white text-blue-700
+            px-4 py-2 rounded-full
+            text-sm font-semibold
+            inline-block;
+        }
+
+        h1 {
+            @apply mt-5
+            text-3xl md:text-4xl lg:text-5xl
+            font-bold
+            leading-tight;
+        }
+
+        p {
+            @apply mt-5
+            text-base md:text-lg
+            leading-7 md:leading-8
+            opacity-90;
+        }
+
+        .features {
+            @apply flex flex-col sm:flex-row
+            flex-wrap
+            gap-3 sm:gap-6
+            mt-8
+            text-sm md:text-base
+            font-semibold
+            justify-center lg:justify-start;
+
+            > span {
+                @apply inline-flex items-start gap-2 text-[14.5px];
+
+                &::before {
+                    content: '✓';
+                }
+            }
+        }
+    }
+}
+.filters{
+    @apply flex flex-col lg:flex-row items-end gap-4 my-6;
+
+    .dropdowns{
+        @apply flex flex-col md:flex-row gap-4 w-full lg:w-auto;
+
+        > div{
+            @apply w-full md:w-60;
+        }
+    }
+    .searchWrapper{
+        @apply flex-1;
+        .searchComponent{
+            @apply w-full lg:w-105 float-right;
+            input[type="text"]{
+                @apply py-2;
+            }
+        }
+    }
+
+    .resetButton{
+        @apply w-auto min-w-32 flex items-center justify-center;
+    }
+}
+
+.tableRecords{
+    @apply relative;
+}
+
+.paginationComponent{
+    @apply flex justify-end;
+}
+
+.jobId{
+    color: $lightBlack;
+    @apply block text-[12px] leading-snug;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    word-break: break-all;
+}
+
+.filename{
+    color: $lightBlack;
+    @apply block text-[13px] leading-snug;
+    word-break: break-word;
+}
+
+.statusBadge {
+    @apply inline-block px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide;
+
+    &.passed{
+        color: $green;
+        background-color: rgba($green, .12);
+    }
+    &.failed{
+        color: $red;
+        background-color: rgba($red, .12);
+    }
+    &.processing{
+        color: $orange;
+        background-color: rgba($orange, .15);
+    }
+}
+
+.userId{
+    color: $lightBlack;
+    @apply block text-[13px];
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.errorList{
+    color: $red;
+    @apply m-0 pl-4 text-[12.5px] leading-snug list-disc;
+    li{
+        @apply mb-0.5;
+        word-break: break-word;
+    }
+}
+
+.noErrors{
+    color: $gray;
+    @apply text-[12.5px] italic;
+}
+
+@media (max-width: 768px) {
+  .tableRecords{
+    @apply w-full!;
+  }
+}
