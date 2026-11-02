@@ -86,6 +86,10 @@
     .resetButton{
         @apply w-auto min-w-32 flex items-center justify-center;
     }
+
+    .uploadButton{
+        @apply w-auto min-w-32 flex items-center justify-center;
+    }
 }
 
 .tableRecords{

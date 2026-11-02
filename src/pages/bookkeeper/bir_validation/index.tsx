@@ -8,6 +8,7 @@ import Loader from '@/components/reusables/RotatingLoader'
 import { BirValidationTableRow } from '@/controllers/bir_validation/types'
 import { BIR_VALIDATION_STATUSES } from '@/controllers/bir_validation/constants'
 import BirValidationStatusDropdown from '@/components/pages/bookkeeper/bir_validation/BirValidationStatusDropdown'
+import BirValidationUploadModal from '@/components/pages/bookkeeper/bir_validation/BirValidationUploadModal'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 
@@ -38,10 +39,17 @@ const BirValidation_V = () => {
         filter,
         searchInput,
         setSearchInput,
+        isUploadOpen,
+        uploadFiles,
+        uploadLoader,
         handlePageChange,
         handleSearch,
         handleStatusSelect,
-        handleResetFilters
+        handleResetFilters,
+        handleOpenUpload,
+        handleCloseUpload,
+        handleUploadChange,
+        handleSubmitUpload
     } = useBirValidation()
 
     const totalRecords = data?.total ?? 0
@@ -141,6 +149,9 @@ const BirValidation_V = () => {
             </div>
 
             <div className={scss.filters}>
+                <button type='button' onClick={handleOpenUpload} className={`${scss.button} ${scss.btnblue} ${scss.uploadButton}`}>
+                    Upload
+                </button>
                 <div className={scss.dropdowns}>
                     <BirValidationStatusDropdown
                         label='Status'
@@ -190,6 +201,15 @@ const BirValidation_V = () => {
                 </div>
             </div>
             <br />
+
+            <BirValidationUploadModal
+                open={isUploadOpen}
+                fileList={uploadFiles}
+                submitting={uploadLoader}
+                onChange={handleUploadChange}
+                onClose={handleCloseUpload}
+                onSubmit={handleSubmitUpload}
+            />
         </>
     )
 }
