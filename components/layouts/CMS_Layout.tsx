@@ -37,7 +37,6 @@ const CMS_Layout: FC<MasterProps> = ({ children }) => {
     appLinks,
     isMobile,
     isPageLoad,
-    activeLink,
     isUserReady,
     userLogout,
     handleExpand,

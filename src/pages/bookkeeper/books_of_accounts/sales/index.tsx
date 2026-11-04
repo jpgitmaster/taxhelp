@@ -1,19 +1,21 @@
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useState } from 'react'
 import scss from './styles/Sales.module.scss'
 import type { ColumnsType } from 'antd/es/table'
 import useSales from '@/controllers/sales/useSales'
 import { signOut, getSession } from 'next-auth/react'
 import { SalesTableRow } from '@/controllers/sales/types'
 import Loader from '@/components/reusables/RotatingLoader'
-import { Table, Pagination, DatePicker, Popconfirm } from 'antd'
 import SuccessMessage from '@/components/reusables/SuccessMessage'
 import CustomContainer from '@/components/reusables/CustomContainer'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 import ClientsDropdown from '@/components/pages/bookkeeper/documents/ClientsDropdown'
 import DocumentsDropdown from '@/components/pages/bookkeeper/documents/DocumentsDropdown'
+import { Dropdown, Table, Pagination, DatePicker, Popconfirm, type MenuProps, Modal } from 'antd'
+import ReceiptModal from './ReceiptModal'
 
 const Sales_V = () => {
   const {
@@ -51,6 +53,8 @@ const Sales_V = () => {
   } = useSales()
   const { message } = status
   const { salesArr } = sales
+  const [showReceipt, setShowReceipt] = useState(false)
+  const [selectedReceipt, setSelectedReceipt] = useState<SalesTableRow | null>(null)
   const dataSource = salesArr?.length ? salesArr.map(sales => (
       {
         id: sales.id,
@@ -85,6 +89,11 @@ const Sales_V = () => {
           (sales.customer?.last_name ? sales.customer.last_name : ''),
       }
   )) : []
+
+  const handlePrintReceipt = (record: SalesTableRow) => {
+    setSelectedReceipt(record)
+    setShowReceipt(true)
+  }
   const columns: ColumnsType<SalesTableRow> = [
     {
       title: 'Taxable Month',
@@ -219,12 +228,29 @@ const Sales_V = () => {
                     </span>
                 </button>
               </Popconfirm>
-              <Link href={'/bookkeeper/sales/'+record.id} className={scss.action+' '+scss.purchases} style={{marginTop: '4px'}}>
-                  <Image src='/svgs/printer.svg' alt='Print' priority width={18} height={18} unoptimized={true} />
-                  <span style={{top: '-2px'}}>
+              <Dropdown
+                menu={{ items: printItems(record) }}
+                placement="bottomRight"
+                trigger={['click']}
+              >
+                <button
+                  type="button"
+                  className={scss.action + ' ' + scss.purchases}
+                  style={{ marginTop: '4px' }}
+                >
+                  <Image
+                    src="/svgs/printer.svg"
+                    alt="Print"
+                    priority
+                    width={18}
+                    height={18}
+                    unoptimized={true}
+                  />
+                  <span style={{ top: '-2px' }}>
                     Print
                   </span>
-              </Link>
+                </button>
+              </Dropdown>
           </div>
     },
   ];
@@ -245,6 +271,29 @@ const Sales_V = () => {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     })
+  
+  const printItems = (record: SalesTableRow): MenuProps['items'] => [
+    {
+      key: '1',
+      label: (
+        <button
+          type="button"
+          className={scss.actionItem}
+          onClick={() => handlePrintReceipt(record)}
+        >
+          Default Receipt
+        </button>
+      ),
+    },
+    {
+      key: '2',
+      label: <Link href="">CAS Receipt</Link>,
+    },
+    {
+      key: '3',
+      label: <Link href="">Custom Receipt</Link>,
+    },
+  ]
   return (
       <div>
         {
@@ -447,6 +496,19 @@ const Sales_V = () => {
             </div>
         </div>
         <br />
+        <Modal
+          title="Default Receipt"
+          open={showReceipt}
+          onCancel={() => setShowReceipt(false)}
+          footer={null}
+          width={850}
+          centered
+        >
+          {selectedReceipt && (
+            <ReceiptModal receipt={selectedReceipt} />
+          )}
+        </Modal>
+
       </div>
   )
 }

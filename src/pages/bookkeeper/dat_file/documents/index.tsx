@@ -259,7 +259,7 @@ const Documents_V = () => {
           <SuccessMessage message={message} />
         }
         <div className={scss.header}>
-            <Link href='/bookkeeper/documents/upload_new_document' className={scss.button+' '+scss.btnblue}>
+            <Link href='/bookkeeper/dat_file/documents/upload_new_document' className={scss.button+' '+scss.btnblue}>
               Upload New Document
             </Link>
             <button type='button' className={scss.button+' '+scss.btnorange}

@@ -413,7 +413,7 @@ const useSales = () => {
     }, [dataDocument?.data])
     useEffect(() => {
         if(typeof window !== 'undefined'){
-            setTableWidth(window.innerWidth - 220)
+            setTableWidth(window.innerWidth - 240)
         }
 
         const successMessage = sessionStorage.getItem('successMessage');

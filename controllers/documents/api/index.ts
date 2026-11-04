@@ -116,7 +116,7 @@ const useDocumentAPI = () => {
                 'successMessage',
                 'Your document has been uploaded.'
             )
-            router.push('/bookkeeper/documents')
+            router.push('/bookkeeper/dat_file/documents')
         },
 
         onError: (error) => {

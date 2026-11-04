@@ -49,7 +49,7 @@ const initCustomLinks: NavLink[] = [
                 active: false,
                 key: 'documents',
                 name: 'Documents',
-                url: '',
+                url: '/bookkeeper/dat_file/documents',
             },
             {
                 active: false,

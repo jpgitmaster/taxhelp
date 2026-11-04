@@ -43,12 +43,34 @@ interface Sales{
     salesErr: Record<string, string | { value: string; }>
 }
 
+// interface SalesTableRow {
+//   id: number | null
+//   toDelete: boolean
+//   invoice_date: string
+//   taxable_month: string
+//   invoice_number: string
+// }
 interface SalesTableRow {
   id: number | null
   toDelete: boolean
   invoice_date: string
   taxable_month: string
   invoice_number: string
+
+  terms?: string
+  tin?: string
+  registered_name?: string
+  indivicdual_name?: string
+  first_address?: string
+  second_address?: string
+
+  exempt_sales?: number
+  zero_rated_sales?: number
+  vatable_sales?: number
+  gross_amount?: number
+  vat_rate?: number | string
+  vat_amount?: number
+  gross_taxable?: number
 }
 
 type AppliedDoc = {
