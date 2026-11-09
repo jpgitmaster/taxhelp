@@ -388,16 +388,27 @@ const useSaveSales = () => {
 
         const netSalesTotal = effectiveExempt + zeroRated + effectiveVatable
         const totalGrossAmount = netSalesTotal + effectiveVat
-        // VAT-exempt discounts (SC/PWD/MOV/NAAC) still deduct the discount from
-        // the amount actually due; Solo Parent's discount is already baked into
-        // effectiveVatable above, so totalGrossAmount is already net.
-        const netAmountDue = totalGrossAmount - (discountRule?.vatExempt ? discountAmount : 0)
 
         // EWT only applies to the taxable (vatable) base, and only when the
         // customer is a withholding agent — gated by hasWithholding in the UI,
         // so ewt_rate being blank already keeps this at ''.
         const ewtRate = toNumber(salesObj.ewt_rate) / 100
         const taxAmount = effectiveVatable * ewtRate
+        const hasWithholdingAmount = withholdingActive && !!salesObj.ewt_rate && hasAnyAmount
+
+        // A BIR-compliant invoice always ends in a final Amount Due line —
+        // Total Gross Amount, less any discount, less any withholding — even
+        // when neither applies (it just equals Total Gross Amount then).
+        // VAT-exempt discounts (SC/PWD/MOV/NAAC) deduct from the amount due;
+        // Solo Parent's discount is already baked into effectiveVatable above.
+        // Withholding tax never reduces the invoiced sale itself (Total Gross
+        // Amount is unaffected per RR 2-98) — it only reduces the cash
+        // actually collected, since the buyer remits the withheld amount to
+        // the BIR directly and the seller gets it back later as a tax credit
+        // via the buyer's Form 2307 — so it's deducted here, same as discount.
+        const netAmountDue = totalGrossAmount
+            - (discountRule?.vatExempt ? discountAmount : 0)
+            - (hasWithholdingAmount ? taxAmount : 0)
 
         return {
             ...salesObj,
@@ -422,9 +433,7 @@ const useSaveSales = () => {
             discount_amount: discountRule && hasAnyAmount ? Number(discountAmount).toFixed(2) : '',
             net_amount_due: hasAnyAmount ? Number(netAmountDue).toFixed(2) : '',
 
-            tax_amount: withholdingActive && salesObj.ewt_rate && hasAnyAmount
-                ? Number(taxAmount).toFixed(2)
-                : ''
+            tax_amount: hasWithholdingAmount ? Number(taxAmount).toFixed(2) : ''
         }
     }
     // Particulars is the source of truth for the taxable amount — keep Tax

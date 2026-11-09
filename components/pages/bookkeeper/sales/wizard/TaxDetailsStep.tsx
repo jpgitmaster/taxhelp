@@ -291,9 +291,6 @@ const TaxDetailsStep = (props: {
               <WizardField span={4} label="Discount Amount">
                 <input readOnly type="text" placeholder="0.00" value={salesObj.discount_amount || ''} />
               </WizardField>
-              <WizardField span={12} label="Net Amount Due">
-                <input readOnly type="text" placeholder="0.00" value={salesObj.net_amount_due || ''} />
-              </WizardField>
             </div>
           </>
         )}
@@ -352,6 +349,12 @@ const TaxDetailsStep = (props: {
                 onChange={handleChange}
               />
             </WizardField>
+            <p style={{ color: 'var(--darkgray, #6b7280)', fontSize: 12, gridColumn: '1 / -1', marginTop: -8 }}>
+              Withholding tax doesn't reduce the sale itself — Total Gross Amount above still reflects the
+              full invoiced price for VAT/Sales Book purposes. It's deducted in Total Amount Due below, since
+              the buyer remits the withheld amount to the BIR directly; you'll get it back as a tax credit
+              via the buyer's Form 2307.
+            </p>
           </div>
         ) : (
           <p style={{ color: 'var(--darkgray, #6b7280)', fontSize: 12, marginTop: -8 }}>
@@ -360,6 +363,18 @@ const TaxDetailsStep = (props: {
             for an ordinary sale.
           </p>
         )}
+
+        <hr className={scss.divider} />
+
+        {/* Every BIR-compliant invoice ends in a final Amount Due line —
+            Total Gross Amount, less any discount, less any withholding —
+            so this always renders, not just when a discount/withholding
+            is actually present (it simply equals Total Gross Amount then). */}
+        <div className={scss.fieldGrid}>
+          <WizardField span={12} label="Total Amount Due">
+            <input readOnly type="text" placeholder="0.00" value={salesObj.net_amount_due || ''} />
+          </WizardField>
+        </div>
       </div>
     </>
   )

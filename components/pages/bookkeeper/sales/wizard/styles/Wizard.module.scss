@@ -300,13 +300,22 @@
       border-color: $lightBlue;
       box-shadow: 0 0 0 2px rgba($lightBlue, .15);
     }
-    &:read-only, &.readonly {
+    &.readonly {
       background-color: $lightGray;
       color: $lightBlack;
     }
     &.invalid {
       border-color: $red;
     }
+  }
+
+  // Scoped to input[type=text] only — a bare :read-only would also match
+  // <select>, which the spec treats as "not read-write" (no editable state)
+  // regardless of whether it's actually interactive, graying out every
+  // editable dropdown along with genuinely read-only text fields.
+  input[type=text]:read-only {
+    background-color: $lightGray;
+    color: $lightBlack;
   }
 
   select {
