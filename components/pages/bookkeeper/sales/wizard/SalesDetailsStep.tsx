@@ -4,6 +4,7 @@ import { ChangeEvent, Dispatch, KeyboardEvent, SetStateAction } from 'react'
 import scss from './styles/Wizard.module.scss'
 import WizardField from './WizardField'
 import { Particular } from '@/controllers/sales/types'
+import SectionHeader from '@/components/reusables/SectionHeader'
 import TermsDropdown from '@/components/pages/bookkeeper/sales/TermsDropdown'
 import DiscountsDropdown from '@/components/pages/bookkeeper/sales/DiscountsDropdown'
 import ParticularsTable from '@/components/pages/bookkeeper/sales/ParticularsTable'
@@ -62,6 +63,7 @@ const SalesDetailsStep = (props: {
               key: '1',
               label: (
                 <div className={scss.summaryHeader}>
+                  <span className={scss.summaryIcon}>1</span>
                   <div>
                     <strong>{doc.client?.registered_name || doc.client?.first_name || 'Client'}</strong>
                     <small>Billed to: {customerName || 'No customer selected'} · TIN {customer?.tin || '—'}</small>
@@ -84,10 +86,7 @@ const SalesDetailsStep = (props: {
       </div>
 
       <div className={scss.panel}>
-        <div className={scss.panelTitle}>
-          Sales Details
-          <span>The main details of this invoice</span>
-        </div>
+        <SectionHeader title="Sales Details" />
 
         <div className={scss.fieldGrid}>
           <WizardField span={4} label="Taxable Month" htmlFor="taxable_month" required err={sales.salesErr.taxable_month as string}>
@@ -126,7 +125,9 @@ const SalesDetailsStep = (props: {
               onChange={handleChange}
             />
           </WizardField>
+        </div>
 
+        <div className={scss.fieldGrid}>
           <WizardField span={3} label="Terms" htmlFor="terms" required err={sales.salesErr.terms as string}>
             <TermsDropdown
               doc={doc}
@@ -140,31 +141,7 @@ const SalesDetailsStep = (props: {
               handleSelectTerms={handleSelectTerms}
             />
           </WizardField>
-          <WizardField span={6} label="Account Name" htmlFor="account_name" required err={sales.salesErr.account_name as string}>
-            <input
-              id="account_name"
-              type="text"
-              name="account_name"
-              maxLength={20}
-              autoComplete="off"
-              value={sales.salesObj.account_name}
-              onKeyUp={handleBlur}
-              onChange={handleChange}
-            />
-          </WizardField>
-          <WizardField span={3} label={(doc.selectedDiscount?.value ?? '') + ' ID No.'} htmlFor="id_number" required err={sales.salesErr.id_number as string}>
-            <input
-              type="text"
-              name="id_number"
-              autoComplete="off"
-              onKeyUp={handleBlur}
-              placeholder="0000000"
-              value={sales.salesObj.id_number}
-              onChange={handleChange}
-            />
-          </WizardField>
-
-          <WizardField span={6} label="Discount Type" htmlFor="discount_type" required err={sales.salesErr.terms as string}>
+          <WizardField span={5} label="Discount Type" htmlFor="discount_type" required err={sales.salesErr.terms as string}>
             <DiscountsDropdown
               doc={doc}
               options={[
@@ -180,7 +157,35 @@ const SalesDetailsStep = (props: {
               handleSelectDiscount={handleSelectDiscount}
             />
           </WizardField>
+          <WizardField span={4} label={(doc.selectedDiscount?.value ?? '') + ' ID No.'} htmlFor="id_number" required err={sales.salesErr.id_number as string}>
+            <input
+              type="text"
+              name="id_number"
+              autoComplete="off"
+              onKeyUp={handleBlur}
+              placeholder="0000000"
+              value={sales.salesObj.id_number}
+              onChange={handleChange}
+            />
+          </WizardField>
         </div>
+
+        <div className={scss.fieldGrid}>
+          <WizardField span={12} label="Account Name" htmlFor="account_name" required err={sales.salesErr.account_name as string}>
+            <input
+              id="account_name"
+              type="text"
+              name="account_name"
+              maxLength={20}
+              autoComplete="off"
+              value={sales.salesObj.account_name}
+              onKeyUp={handleBlur}
+              onChange={handleChange}
+            />
+          </WizardField>
+        </div>
+
+        <hr className={scss.divider} />
 
         <ParticularsTable
           particulars={sales.salesObj.particulars}

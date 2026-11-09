@@ -363,6 +363,29 @@ const useSaveSales = () => {
                     : ''
         }
     }
+    // Particulars is the source of truth for the taxable amount — keep Tax
+    // Details' Gross Taxable (VAT Inclusive) / Vatable Sales (VAT Exclusive) in
+    // sync with the particulars subtotal instead of making the user retype the
+    // same total a second time. Re-syncs whenever particulars or the VAT type
+    // itself changes; manual edits made directly in Tax Details afterward are
+    // left alone until the particulars change again.
+    useEffect(() => {
+        const subtotal = sales.salesObj.particulars.reduce(
+            (sum, p) => sum + (parseFloat(p.amount) || 0), 0
+        )
+        const subtotalStr = subtotal ? subtotal.toFixed(2) : ''
+        const vatType = sales.salesObj.vat_type || 'INCLUSIVE'
+        const targetField = vatType === 'INCLUSIVE' ? 'gross_taxable' : 'vatable_sales'
+
+        if (sales.salesObj[targetField] === subtotalStr) return
+
+        setSales(prev => ({
+            ...prev,
+            salesObj: recalcSales({ ...prev.salesObj, [targetField]: subtotalStr })
+        }))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sales.salesObj.particulars, sales.salesObj.vat_type])
+
     const handleEditCustomer = (edit: boolean) => {
         setEditCustomer(edit)
     }
@@ -556,7 +579,9 @@ const useSaveSales = () => {
             }
         })
 
-        handleRemoveErr(sales.salesErr, `particulars.${index}.${name}`)
+        // Particulars errors live in errArr (one entry per row), not sales.salesErr —
+        // clear just this row's field as the user corrects it.
+        setErrArr(prev => prev.map((err, i) => i === index ? { ...err, [name]: '' } : err))
     }
     const handleChange = (
         event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>

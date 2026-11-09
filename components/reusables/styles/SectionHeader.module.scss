@@ -1,0 +1,7 @@
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+.sectionHeader {
+  color: $darkgray;
+  @apply text-[11px] uppercase tracking-wide font-bold mb-3 mt-1 flex flex-row items-center justify-between;
+}

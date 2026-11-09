@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { ChangeEvent, KeyboardEvent } from 'react'
 import { Particular } from '@/controllers/sales/types'
+import SectionHeader from '@/components/reusables/SectionHeader'
 import scss from './styles/ParticularsTable.module.scss'
 
 interface PropsDefinition {
@@ -27,13 +28,15 @@ const ParticularsTable = ({
 
   return (
     <div className={scss.particularsSection}>
-      <div className={scss.sectionHeader}>
-        <h2>Particulars</h2>
-        <button type="button" className={scss.addLine} onClick={handleAddParticular}>
-          <span className={scss.plus}>+</span>
-          Add Line
-        </button>
-      </div>
+      <SectionHeader
+        title="Particulars"
+        action={(
+          <button type="button" className={scss.addLine} onClick={handleAddParticular}>
+            <span className={scss.plus}>+</span>
+            Add Line
+          </button>
+        )}
+      />
 
       <div className={scss.table}>
         <div className={scss.row + ' ' + scss.headRow}>

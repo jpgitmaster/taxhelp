@@ -158,25 +158,45 @@
   .clientSummary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-// ============ Summary accordion (Step 2) ============
+// ============ Summary accordion (Step 2 / Step 3) ============
 .summaryCard {
-  background-color: $lightGray;
+  background-color: $white;
   border: 1px solid rgba($gray, .6);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .03);
   @apply rounded-[14px] mb-6 overflow-hidden;
 
   :global(.ant-collapse-item) {
     border: none !important;
   }
   :global(.ant-collapse-header) {
-    @apply px-4! py-3!;
+    background: linear-gradient(180deg, rgba($lightBlue, .06), rgba($lightBlue, .02));
+    border-bottom: 1px solid rgba($gray, .5);
+    @apply px-4! py-3! items-center!;
+  }
+  :global(.ant-collapse-item-active .ant-collapse-header) {
+    border-bottom: 1px solid rgba($gray, .6);
+  }
+  :global(.ant-collapse-content) {
+    border-top: none !important;
   }
   :global(.ant-collapse-content-box) {
-    @apply px-4! pt-0! pb-4!;
+    background-color: $white;
+    @apply px-5! pt-4! pb-4!;
+  }
+  :global(.ant-collapse-expand-icon) {
+    color: $blue;
   }
 }
 
 .summaryHeader {
   @apply flex flex-row items-center gap-3;
+
+  .summaryIcon {
+    background-color: $white;
+    border: 1px solid rgba($lightBlue, .4);
+    color: $blue;
+    @apply w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold flex-shrink-0;
+  }
 
   strong {
     color: $lightBlack;
@@ -184,24 +204,65 @@
   }
   small {
     color: $darkgray;
-    @apply text-[11px] block;
+    @apply text-[11px] block mt-0.5;
   }
 }
 
 .summaryGrid {
-  @apply grid gap-x-6 gap-y-2;
+  @apply grid gap-x-6 gap-y-3;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 
   .field {
+    border-left: 2px solid rgba($lightBlue, .35);
+    @apply pl-3;
+
     small {
       color: $darkgray;
       @apply block text-[10px] uppercase tracking-wide;
     }
     span {
       color: $lightBlack;
-      @apply text-[13px];
+      @apply text-[13px] font-medium;
     }
   }
+}
+
+.summaryDivider {
+  border: none;
+  border-top: 1px solid rgba($gray, .5);
+  @apply my-4;
+}
+
+.summaryTable {
+  background-color: $lightGray;
+  @apply w-full mt-1 text-[12px] border-collapse rounded-[10px] overflow-hidden;
+
+  th, td {
+    @apply text-left py-2 px-3;
+  }
+  th {
+    background-color: rgba($gray, .3);
+    color: $darkgray;
+    @apply text-[10px] uppercase tracking-wide font-bold;
+  }
+  tbody tr {
+    border-top: 1px solid rgba($gray, .6);
+  }
+  td {
+    color: $lightBlack;
+  }
+  td.amount, th.amount {
+    @apply text-right;
+  }
+  tfoot td {
+    border-top: 1.5px solid rgba($darkgray, .5);
+    color: $lightBlack;
+    @apply font-bold;
+  }
+}
+
+@media (max-width: 768px) {
+  .summaryGrid { grid-template-columns: 1fr; }
 }
 
 // ============ Field grid (used by every step) ============
@@ -212,6 +273,7 @@
 .col2 { grid-column: span 2; }
 .col3 { grid-column: span 3; }
 .col4 { grid-column: span 4; }
+.col5 { grid-column: span 5; }
 .col6 { grid-column: span 6; }
 .col8 { grid-column: span 8; }
 .col12 { grid-column: span 12; }
@@ -245,6 +307,15 @@
     }
     &.invalid {
       border-color: $red;
+    }
+  }
+
+  &.hasError {
+    input[type=text], select {
+      border-color: $red !important;
+    }
+    :global(.ant-picker) {
+      border-color: $red !important;
     }
   }
 

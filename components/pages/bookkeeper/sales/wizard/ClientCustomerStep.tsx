@@ -2,6 +2,7 @@ import { ChangeEvent, Dispatch, KeyboardEvent, SetStateAction } from 'react'
 import scss from './styles/Wizard.module.scss'
 import WizardField from './WizardField'
 import { CustomerObj } from '@/controllers/customers/types'
+import SectionHeader from '@/components/reusables/SectionHeader'
 import ClientsDropdown from '@/components/pages/bookkeeper/documents/ClientsDropdown'
 import CustomersDropdown from '@/components/pages/bookkeeper/sales/CustomersDropdown'
 
@@ -53,9 +54,7 @@ const ClientCustomerStep = (props: {
 
   return (
     <div className={scss.panel}>
-      <div className={scss.panelTitle}>Who is this sale for?</div>
-
-      <div className={scss.sectionLabel}>Client</div>
+      <SectionHeader title="Client" />
       <div className={scss.fieldGrid}>
         <WizardField span={8} label="Client" htmlFor="client" required err={sales.salesErr.client as string}>
           <div
@@ -106,14 +105,14 @@ const ClientCustomerStep = (props: {
 
       <hr className={scss.divider} />
 
-      <div className={scss.sectionLabel}>
-        Customer
-        {hasSelectedCustomer && (
+      <SectionHeader
+        title="Customer"
+        action={hasSelectedCustomer && (
           <span className={scss.editToggle} onClick={() => handleEditCustomer(!editCustomer)}>
             {editCustomer ? 'View Details' : 'Edit Details'}
           </span>
         )}
-      </div>
+      />
 
       <div className={scss.fieldGrid}>
         <WizardField span={8} label="Customer" htmlFor="customer" required err={sales.salesErr.customer as string}>
