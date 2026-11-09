@@ -174,7 +174,7 @@ const useSaveSales = () => {
         },
         customer: {
             ...initCustomerObj,
-            classification: ''
+            classification: 'NON-INDIVIDUAL'
         },
         selectedTerms: {
             value: 'CASH',
@@ -590,6 +590,10 @@ const useSaveSales = () => {
                 ]
             }
         }))
+        // Keep errArr's length/index alignment with particulars — otherwise a
+        // newly added row inherits whatever error happened to sit at that
+        // index before (e.g. a since-removed row's stale error).
+        setErrArr(prev => [...prev, { description: '', quantity: '', unit_price: '', amount: '' }])
     }
 
     const handleRemoveParticular = (index: number) => {
@@ -602,6 +606,7 @@ const useSaveSales = () => {
                 )
             }
         }))
+        setErrArr(prev => prev.filter((_, i) => i !== index))
     }
 
     const handleParticularChange = (
@@ -968,6 +973,19 @@ const useSaveSales = () => {
                 useCreateDraft.mutate({ client_id: doc.client!.id! }, {
                     onSuccess: (created) => {
                         setDraftId(created.id)
+                        // Stamp the draft id into the URL (shallow — no reload, no
+                        // refetch) so a refresh/crash reopens *this* draft instead of
+                        // a blank form, the same way a Google Doc's URL always points
+                        // at the doc you're editing. The URL update makes draftIdFromQuery
+                        // go truthy on the next render — mark hydration as already done
+                        // so that doesn't re-trigger the ?draft= hydration effect and
+                        // clobber the form with a GET of the draft we just created.
+                        hasHydratedRef.current = true
+                        router.replace(
+                            { pathname: router.pathname, query: { ...router.query, draft: created.id } },
+                            undefined,
+                            { shallow: true }
+                        )
                         useAutosaveDraft.mutate({ id: created.id, data: payload }, {
                             onSuccess: () => {
                                 lastSavedPayloadRef.current = payloadKey
@@ -1150,6 +1168,12 @@ const useSaveSales = () => {
             useCreateDraft.mutate({ client_id: doc.client.id }, {
                 onSuccess: (created) => {
                     setDraftId(created.id)
+                    hasHydratedRef.current = true
+                    router.replace(
+                        { pathname: router.pathname, query: { ...router.query, draft: created.id } },
+                        undefined,
+                        { shallow: true }
+                    )
                     useFinalizeDraft.mutate({ id: created.id, data: finalizePayload }, {
                         onSuccess: onFinalizeSuccess,
                         onError: onFinalizeError,

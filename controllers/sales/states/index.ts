@@ -33,7 +33,7 @@ const initSalesObj = {
     ],
     customer: {
         ...initCustomerObj,
-        classification: ''
+        classification: 'NON-INDIVIDUAL'
     }
 }
 const initSales = {
