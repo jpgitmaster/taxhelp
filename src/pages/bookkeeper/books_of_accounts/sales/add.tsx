@@ -1,9 +1,10 @@
-import { useEffect } from 'react'
+import { ReactElement, useEffect } from 'react'
 import scss from './styles/Sales.module.scss'
 import useWizard from '@/controllers/wizard/useWizard'
 import wizardScss from '@/components/pages/bookkeeper/sales/wizard/styles/Wizard.module.scss'
 import { signOut, getSession } from 'next-auth/react'
 import Loader from '@/components/reusables/RotatingLoader'
+import CMS_Layout from '@/components/layouts/CMS_Layout'
 import useSaveSales from '@/controllers/sales/useSaveSales'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
@@ -12,6 +13,7 @@ import WizardSteps, { WizardStepDefinition } from '@/components/pages/bookkeeper
 import TaxDetailsStep from '@/components/pages/bookkeeper/sales/wizard/TaxDetailsStep'
 import SalesDetailsStep from '@/components/pages/bookkeeper/sales/wizard/SalesDetailsStep'
 import ClientCustomerStep from '@/components/pages/bookkeeper/sales/wizard/ClientCustomerStep'
+import type { NextPageWithLayout } from '@/pages/_app'
 
 const WIZARD_STEPS: WizardStepDefinition[] = [
   { key: 1, title: 'Step 1', subtitle: 'Client & Customer' },
@@ -19,7 +21,7 @@ const WIZARD_STEPS: WizardStepDefinition[] = [
   { key: 3, title: 'Step 3', subtitle: 'Tax Details' },
 ]
 
-const AddSalesRecord_V = () => {
+const AddSalesRecord_V: NextPageWithLayout = () => {
   const {
     doc,
     sales,
@@ -247,4 +249,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (context:
     props: { session }
   }
 }
+
+AddSalesRecord_V.getLayout = (page: ReactElement) => <CMS_Layout spacious>{page}</CMS_Layout>
+
 export default AddSalesRecord_V;

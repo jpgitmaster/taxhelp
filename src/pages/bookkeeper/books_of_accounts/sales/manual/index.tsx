@@ -1,10 +1,12 @@
 import dayjs from 'dayjs'
 import Link from 'next/link'
+import { ReactElement } from 'react'
 import { DatePicker } from 'antd'
 import { signOut, getSession } from 'next-auth/react'
 import useSalesManual from '@/controllers/salesManual/useSalesManual'
 import FilterBar from '@/components/reusables/FilterBar'
 import ListToolbar from '@/components/reusables/ListToolbar'
+import CMS_Layout from '@/components/layouts/CMS_Layout'
 import SuccessMessage from '@/components/reusables/SuccessMessage'
 import RowActionsMenu from '@/components/reusables/RowActionsMenu'
 import CustomContainer from '@/components/reusables/CustomContainer'
@@ -13,6 +15,7 @@ import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 import ClientsDropdown from '@/components/pages/bookkeeper/documents/ClientsDropdown'
 import ColumnFilterTable, { ColumnFilterTableColumn } from '@/components/reusables/ColumnFilterTable'
+import type { NextPageWithLayout } from '@/pages/_app'
 
 interface ManualSalesRow {
   id: number
@@ -29,7 +32,7 @@ interface ManualSalesRow {
   gross_taxable?: number
 }
 
-const SalesManual_V = () => {
+const SalesManual_V: NextPageWithLayout = () => {
   const {
     doc,
     message,
@@ -247,4 +250,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (context:
     props: { session }
   }
 }
+
+SalesManual_V.getLayout = (page: ReactElement) => <CMS_Layout spacious>{page}</CMS_Layout>
+
 export default SalesManual_V;

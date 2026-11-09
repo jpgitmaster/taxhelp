@@ -2,6 +2,8 @@ import Axios from 'axios';
 import Head from 'next/head';
 import '@/styles/globals.css';
 import '@/styles/globals.scss';
+import type { ReactElement, ReactNode } from 'react';
+import type { NextPage } from 'next';
 import type { AppProps } from "next/app";
 import { SessionProvider } from 'next-auth/react';
 import CMS_Layout from '@/components/layouts/CMS_Layout';
@@ -10,8 +12,20 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
 
-export default function App({ Component, pageProps }: AppProps) {
+// Standard Next.js (pages router) per-page-layout pattern — most pages don't
+// need it and get the default <CMS_Layout> wrap below unchanged; a page can
+// opt into a customized layout (e.g. extra spacing) by exporting its own
+// getLayout, without every other page having to care.
+export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
+
+export default function App({ Component, pageProps }: AppPropsWithLayout) {
   Axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL
+  const getLayout = Component.getLayout ?? ((page: ReactElement) => <CMS_Layout>{page}</CMS_Layout>)
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider session={pageProps.session}>
@@ -40,9 +54,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <AppProvider>
           {
             pageProps.session?.user ?
-            <CMS_Layout>
-              <Component {...pageProps} />
-            </CMS_Layout>
+            getLayout(<Component {...pageProps} />)
             :
             <Component {...pageProps} />
           }

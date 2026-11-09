@@ -319,6 +319,10 @@ body, html{
         }
         .appBody{
             @apply p-5 pt-2.5;
+
+            &.appBodySpacious{
+                @apply pt-5 pb-15;
+            }
             .breadcrumbs{
                 @apply mb-6.25;
                 ol{
