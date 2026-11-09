@@ -12,6 +12,7 @@ import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 
 interface ManualSalesRow {
   id: number
+  status: 'draft' | 'posted'
   terms?: string
   tin?: string
   registered_name?: string
@@ -51,6 +52,7 @@ const SalesManual_V = () => {
 
   const dataSource: ManualSalesRow[] = salesArr?.length ? salesArr.map((sale: any) => ({
     id: sale.id,
+    status: sale.status === 'posted' ? 'posted' : 'draft',
     terms: sale.terms,
     tin: sale.customer?.tin,
     registered_name: sale.customer?.registered_name,
@@ -66,6 +68,25 @@ const SalesManual_V = () => {
   })) : []
 
   const columns: ColumnsType<ManualSalesRow> = [
+    {
+      title: 'Status',
+      key: 'status',
+      dataIndex: 'status',
+      render: (value: 'draft' | 'posted') => (
+        <span style={{
+          display: 'inline-block',
+          padding: '2px 10px',
+          borderRadius: '10px',
+          fontSize: '11px',
+          fontWeight: 600,
+          textTransform: 'uppercase',
+          color: value === 'posted' ? '#135200' : '#874d00',
+          backgroundColor: value === 'posted' ? '#d9f7be' : '#fff1b8',
+        }}>
+          {value}
+        </span>
+      ),
+    },
     { title: 'Taxable Month', key: 'taxable_month', dataIndex: 'taxable_month' },
     { title: 'Invoice Date', key: 'invoice_date', dataIndex: 'invoice_date' },
     { title: 'Invoice No.', key: 'invoice_number', dataIndex: 'invoice_number' },
@@ -77,22 +98,33 @@ const SalesManual_V = () => {
     { title: 'VAT Amount', key: 'vat_amount', dataIndex: 'vat_amount', render: formatNumber },
     { title: 'Total Gross Amount', key: 'total_gross_amount', dataIndex: 'total_gross_amount', render: formatNumber },
     {
-      width: 100,
+      width: 160,
       fixed: 'right',
       title: 'Actions',
       align: 'center',
       render: (record: ManualSalesRow) =>
-        <Popconfirm
-          title="Delete the record"
-          description="Are you sure to delete this record?"
-          onConfirm={() => handleDeleteRecord(record.id)}
-          okText="Yes"
-          cancelText="No"
-        >
-          <button type='button' className={scss.action + ' ' + scss.delete}>
-            Delete
-          </button>
-        </Popconfirm>
+        <div className={scss.actions}>
+          {
+            record.status === 'draft' &&
+            <Link
+              href={`/bookkeeper/books_of_accounts/sales/add?draft=${record.id}`}
+              className={scss.action + ' ' + scss.edit}
+            >
+              Resume
+            </Link>
+          }
+          <Popconfirm
+            title="Delete the record"
+            description="Are you sure to delete this record?"
+            onConfirm={() => handleDeleteRecord(record.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <button type='button' className={scss.action + ' ' + scss.delete}>
+              Delete
+            </button>
+          </Popconfirm>
+        </div>
     },
   ]
 
