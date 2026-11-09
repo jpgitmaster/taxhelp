@@ -5,6 +5,7 @@ import { Particular, SalesErr } from './types'
 import useQueryClients from '../clients/api/queries';
 import useGlobal from '@/controllers/global/useGlobal';
 import useQueryCustomers from '../customers/api/queries';
+import { ClientObj } from '@/controllers/clients/types'
 import { CustomerObj } from '@/controllers/customers/types'
 import { initCustomerObj } from '@/controllers/customers/states';
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3';
@@ -16,6 +17,24 @@ const AUTOSAVE_DEBOUNCE_MS = 1200
 const HEARTBEAT_INTERVAL_MS = 20000
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
+
+// Which fieldValidations keys belong to which wizard step — used to scope
+// validation (and therefore which fields light up red) to just the step
+// the user is currently trying to leave, instead of validating the whole
+// form (and marking steps the user hasn't reached yet as already invalid).
+const STEP_FIELDS: Record<number, string[]> = {
+    1: [
+        'client', 'customer', 'tin', 'classification', 'registered_name',
+        'first_name', 'last_name', 'first_address', 'second_address',
+    ],
+    2: [
+        'taxable_month', 'invoice_date', 'invoice_number', 'terms', 'account_name', 'particulars',
+    ],
+    3: [
+        'atc', 'ewt_rate', 'vat_amount', 'exempt_sales', 'gross_amount', 'gross_taxable',
+        'vatable_sales', 'zero_rated_sales', 'tax_amount', 'total_gross_amount',
+    ],
+}
 
 const useSaveSales = () => {
     const router = useRouter()
@@ -121,13 +140,7 @@ const useSaveSales = () => {
             value: string,
             label: string
         }
-        client: {
-            id: number | null,
-            last_name: string
-            first_name: string
-            trade_name: string
-            registered_name: string
-        },
+        client: Partial<ClientObj> & { id: number | null },
         customer: CustomerObj,
         period: Dayjs | null
     }>({
@@ -384,29 +397,15 @@ const useSaveSales = () => {
     }
 
     const handleSelectDiscount = (selectedDiscount: { value: string, label: string }) => {
+        // discount_type is read from doc.selectedDiscount (see buildDraftPayload) —
+        // salesObj.terms is a different field (Cash/Charge) and must stay untouched.
         setDoc({
             ...doc,
             selectedDiscount: selectedDiscount
         })
-        setSales(prev => ({
-            ...prev,
-            salesObj: {
-                ...prev.salesObj,
-                terms: selectedDiscount.value
-            }
-        }))
     }
 
-    const handleSelectClient = (client: {
-        id: number | null,
-        tin: string
-        last_name: string
-        first_name: string
-        trade_name: string
-        middle_name: string
-        classification: string
-        registered_name: string
-    }) => {
+    const handleSelectClient = (client: Partial<ClientObj> & { id: number | null }) => {
         setDoc({
             ...doc,
             client: client
@@ -421,9 +420,9 @@ const useSaveSales = () => {
                     trade_name: client.trade_name,
                     first_name: client.first_name,
                     middle_name: client.middle_name,
-                    branch_code: '',
-                    first_address: '',
-                    second_address: '',
+                    branch_code: client.branch_code || '',
+                    first_address: client.first_address || '',
+                    second_address: client.second_address || '',
                     classification: client.classification,
                     registered_name: client.registered_name
                 }
@@ -927,66 +926,88 @@ const useSaveSales = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [draftId])
 
-    const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        setStatus({...status, loader: true})
-        console.log(sales.salesObj.particulars)
+    const buildValidationData = () => ({
+        atc: sales.salesObj.atc || '',
+        ewt_rate: sales.salesObj.ewt_rate || '',
+        client: doc.client?.id ? String(doc.client?.id) : '',
+        customer: sales.salesObj.customer?.id ? String(sales.salesObj.customer?.id) : '',
+
+        tin: sales.salesObj.customer?.tin || '',
+        email: sales.salesObj.customer?.email || '',
+        last_name: sales.salesObj.customer?.last_name || '',
+        first_name: sales.salesObj.customer?.first_name || '',
+        middle_name: sales.salesObj.customer?.middle_name || '',
+        trade_name: sales.salesObj.customer?.trade_name || '',
+        postal_code: sales.salesObj.customer?.postal_code || '',
+        phone_number: sales.salesObj.customer?.phone_number || '',
+        first_address: sales.salesObj.customer?.first_address || '',
+        second_address: sales.salesObj.customer?.second_address || '',
+        classification: sales.salesObj.customer?.classification || '',
+        registered_name: sales.salesObj.customer?.registered_name || '',
+
+        terms: sales.salesObj.terms || '',
+        tax_amount: sales.salesObj.tax_amount || '',
+        vat_amount: sales.salesObj.vat_amount || '',
+        gross_amount: sales.salesObj.gross_amount || '',
+        exempt_sales: sales.salesObj.exempt_sales || '',
+        account_name: sales.salesObj.account_name || '',
+        invoice_date: sales.salesObj.invoice_date || '',
+        gross_taxable: sales.salesObj.gross_taxable || '',
+        vatable_sales: sales.salesObj.vatable_sales || '',
+        taxable_month: sales.salesObj.taxable_month || '',
+        invoice_number: sales.salesObj.invoice_number || '',
+        zero_rated_sales: sales.salesObj.zero_rated_sales || '',
+        total_gross_amount: sales.salesObj.total_gross_amount || '',
+
+        particulars: sales.salesObj.particulars?.map(particular => ({
+            amount: particular.amount ? particular.amount : '',
+            quantity: particular.quantity ? particular.quantity : '',
+            unit_price: particular.unit_price ? particular.unit_price : '',
+            description: particular.description ? particular.description : '',
+        })),
+    })
+
+    /** Validate only the given fieldValidations keys (defaults to all), surfacing
+     * errors for just those fields via sales.salesErr/errArr. Returns whether it
+     * passed. Used both by the final submit (all fields) and by per-step "Continue"
+     * checks (just that step's fields), so navigating forward doesn't light up
+     * fields on steps the user hasn't reached yet. */
+    const validateFields = (fieldNames?: string[]) => {
+        const scopedValidations = fieldNames
+            ? Object.fromEntries(Object.entries(fieldValidations).filter(([key]) => fieldNames.includes(key)))
+            : fieldValidations
+
         const {
             validation_errors,
             validation_has_error,
             validation_errors_array
-        } = ValidatorV3(fieldValidations, {
-            atc: sales.salesObj.atc || '',
-            ewt_rate: sales.salesObj.ewt_rate || '',
-            client: doc.client?.id ? String(doc.client?.id) : '',
-            customer: sales.salesObj.customer?.id ? String(sales.salesObj.customer?.id) : '',
-            
-            tin: sales.salesObj.customer?.tin || '',
-            email: sales.salesObj.customer?.email || '',
-            last_name: sales.salesObj.customer?.last_name || '',
-            first_name: sales.salesObj.customer?.first_name || '',
-            middle_name: sales.salesObj.customer?.middle_name || '',
-            trade_name: sales.salesObj.customer?.trade_name || '',
-            postal_code: sales.salesObj.customer?.postal_code || '',
-            phone_number: sales.salesObj.customer?.phone_number || '',
-            first_address: sales.salesObj.customer?.first_address || '',
-            second_address: sales.salesObj.customer?.second_address || '',
-            classification: sales.salesObj.customer?.classification || '',
-            registered_name: sales.salesObj.customer?.registered_name || '',
+        } = ValidatorV3(scopedValidations, buildValidationData())
 
-            terms: sales.salesObj.terms || '',
-            tax_amount: sales.salesObj.tax_amount || '',
-            vat_amount: sales.salesObj.vat_amount || '',
-            gross_amount: sales.salesObj.gross_amount || '',
-            exempt_sales: sales.salesObj.exempt_sales || '',
-            account_name: sales.salesObj.account_name || '',
-            invoice_date: sales.salesObj.invoice_date || '',
-            gross_taxable: sales.salesObj.gross_taxable || '',
-            vatable_sales: sales.salesObj.vatable_sales || '',
-            taxable_month: sales.salesObj.taxable_month || '',
-            invoice_number: sales.salesObj.invoice_number || '',
-            zero_rated_sales: sales.salesObj.zero_rated_sales || '',
-            total_gross_amount: sales.salesObj.total_gross_amount || '',
-
-            particulars: sales.salesObj.particulars?.map(particular => ({
-                amount: particular.amount ? particular.amount : '',
-                quantity: particular.quantity ? particular.quantity : '',
-                unit_price: particular.unit_price ? particular.unit_price : '',
-                description: particular.description ? particular.description : '',
-            })),
+        setSales(prev => {
+            const nextErr = { ...prev.salesErr }
+            Object.keys(scopedValidations).forEach(key => delete nextErr[key])
+            return {
+                ...prev,
+                salesErr: { ...nextErr, ...validation_errors } as SalesErr
+            }
         })
-        console.log(validation_errors_array)
-        if (validation_has_error) {
-            const timer = setTimeout(() => {
-                setSales({
-                    ...sales,
-                    salesErr: validation_errors as SalesErr
-                })
-                setErrArr(validation_errors_array as Particular[])
-                setStatus({...status, loader: false})
-                return false
-            }, 500)
-            return () => clearTimeout(timer)
+        if (!fieldNames || fieldNames.includes('particulars')) {
+            setErrArr(validation_errors_array as Particular[])
+        }
+
+        return !validation_has_error
+    }
+
+    /** Validate just one wizard step's fields — used by the "Continue" button. */
+    const validateStep = (step: number) => validateFields(STEP_FIELDS[step])
+
+    const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setStatus({...status, loader: true})
+
+        if (!validateFields()) {
+            setStatus(prev => ({...prev, loader: false}))
+            return
         }
 
         if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
@@ -1070,6 +1091,7 @@ const useSaveSales = () => {
         handleDate,
         handleSubmit,
         handleChange,
+        validateStep,
         handleToggle,
         handleResubmit,
         handleSelectTerms,

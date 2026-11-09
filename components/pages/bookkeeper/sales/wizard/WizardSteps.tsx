@@ -1,30 +1,31 @@
 import scss from './styles/Wizard.module.scss'
 
-interface StepDefinition {
+export interface WizardStepDefinition {
   key: number
   title: string
   subtitle: string
 }
 
 interface PropsDefinition {
+  steps: WizardStepDefinition[]
   current: number
-  canLeaveStepOne: boolean
+  /** A step is reachable once every step before it is complete. Pass one
+   * boolean per step index (1-based) — e.g. [stepOneComplete, stepTwoComplete]. */
+  completedSteps: boolean[]
   onStepClick: (step: number) => void
 }
 
-const STEPS: StepDefinition[] = [
-  { key: 1, title: 'Step 1', subtitle: 'Client & Customer' },
-  { key: 2, title: 'Step 2', subtitle: 'Sales Details' },
-  { key: 3, title: 'Step 3', subtitle: 'Tax Details' },
-]
+/** Clickable step indicator for a wizard flow — reusable by any multi-step
+ * form, not just Sales. Steps ahead of the first incomplete one are disabled. */
+const WizardSteps = ({ steps, current, completedSteps, onStepClick }: PropsDefinition) => {
+  const firstIncomplete = completedSteps.findIndex(complete => !complete) + 1 || steps.length + 1
 
-const WizardSteps = ({ current, canLeaveStepOne, onStepClick }: PropsDefinition) => {
   return (
     <div className={scss.steps}>
-      {STEPS.map((step) => {
+      {steps.map((step) => {
         const isActive = step.key === current
         const isComplete = step.key < current
-        const isDisabled = step.key > 1 && !canLeaveStepOne
+        const isDisabled = step.key > firstIncomplete
 
         return (
           <div

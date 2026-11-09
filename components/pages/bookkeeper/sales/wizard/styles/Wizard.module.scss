@@ -118,7 +118,44 @@
 
 .sectionLabel {
   color: $darkgray;
-  @apply text-[11px] uppercase tracking-wide font-bold mb-3 mt-1;
+  @apply text-[11px] uppercase tracking-wide font-bold mb-3 mt-1 flex flex-row items-center justify-between;
+}
+
+.editToggle {
+  color: $blue;
+  @apply flex flex-row items-center gap-1 text-[11px] font-semibold uppercase tracking-wide cursor-pointer normal-case;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.divider {
+  border: none;
+  border-top: 1px dashed rgba($gray, 1.2);
+  @apply my-6;
+}
+
+.clientSummary {
+  background-color: $lightGray;
+  border: 1px solid rgba($gray, .6);
+  @apply rounded-[14px] p-4 grid gap-x-6 gap-y-2 mb-2;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  .field {
+    small {
+      color: $darkgray;
+      @apply block text-[10px] uppercase tracking-wide;
+    }
+    span {
+      color: $lightBlack;
+      @apply text-[13px];
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .clientSummary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 // ============ Summary accordion (Step 2) ============
@@ -172,6 +209,7 @@
   @apply grid gap-x-5 gap-y-5 mb-5;
   grid-template-columns: repeat(12, minmax(0, 1fr));
 }
+.col2 { grid-column: span 2; }
 .col3 { grid-column: span 3; }
 .col4 { grid-column: span 4; }
 .col6 { grid-column: span 6; }
