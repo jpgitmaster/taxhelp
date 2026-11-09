@@ -1,4 +1,5 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
+import { Dropdown } from 'antd'
 import scss from './styles/DataPagination.module.scss'
 
 interface PropsDefinition {
@@ -21,6 +22,7 @@ const DataPagination = ({
   pageSizeOptions = [10, 20, 50, 100],
   onPageSizeChange,
 }: PropsDefinition) => {
+  const [pageSizeOpen, setPageSizeOpen] = useState(false)
   const pageCount = Math.max(1, Math.ceil(total / pageSize))
 
   const pageNumbers = useMemo(() => {
@@ -86,11 +88,30 @@ const DataPagination = ({
       {onPageSizeChange && (
         <div className={scss.pageSize}>
           <span>Rows per page</span>
-          <select value={pageSize} onChange={e => onPageSizeChange(Number(e.target.value))}>
-            {pageSizeOptions.map(opt => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
+          <Dropdown
+            trigger={['click']}
+            open={pageSizeOpen}
+            onOpenChange={setPageSizeOpen}
+            popupRender={() => (
+              <ul className={scss.pageSizeMenu}>
+                {pageSizeOptions.map(opt => (
+                  <li key={opt}>
+                    <button
+                      type="button"
+                      className={opt === pageSize ? scss.active : undefined}
+                      onClick={() => { onPageSizeChange(opt); setPageSizeOpen(false) }}
+                    >
+                      {opt}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          >
+            <button type="button" className={scss.pageSizeBtn}>
+              {pageSize}
+            </button>
+          </Dropdown>
         </div>
       )}
     </div>

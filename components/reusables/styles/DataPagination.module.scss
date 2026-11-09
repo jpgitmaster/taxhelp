@@ -51,16 +51,60 @@
 .pageSize {
   color: $lightBlack;
   @apply flex flex-row items-center gap-2 text-[13px];
+}
 
-  select {
-    background-color: $white;
-    border: 1px solid rgba($gray, .9);
+.pageSizeBtn {
+  background-color: $white;
+  border: 1px solid rgba($gray, .9);
+  color: $lightBlack;
+  @apply flex flex-row items-center gap-1.5 rounded-[8px] px-2.5 py-1 text-[13px] font-semibold cursor-pointer transition-colors;
+
+  &::after {
+    content: '';
+    background-image: url('/svgs/arrowDown.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    filter: invert(45%) sepia(8%) saturate(300%);
+    opacity: .6;
+    @apply w-2.5 h-1.5;
+  }
+
+  &:hover {
+    border-color: $blue;
+    color: $blue;
+
+    &::after {
+      filter: invert(45%) sepia(90%) saturate(2000%) hue-rotate(175deg);
+      opacity: 1;
+    }
+  }
+}
+
+.pageSizeMenu {
+  background-color: $white;
+  border: 1px solid rgba($gray, .7);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .08);
+  @apply rounded-[10px] p-1 m-0 list-none w-20;
+
+  li {
+    @apply m-0 p-0;
+  }
+
+  button {
     color: $lightBlack;
-    @apply rounded-[8px] px-2.5 py-1 text-[13px] font-semibold cursor-pointer;
+    background-color: transparent;
+    border: none;
+    @apply w-full text-left rounded-[8px] px-3 py-1.5 text-[13px] font-medium cursor-pointer;
 
-    &:focus {
-      outline: none;
-      border-color: $blue;
+    &:hover {
+      background-color: rgba($lightBlue, .08);
+    }
+
+    &.active {
+      background-color: rgba($lightBlue, .12);
+      color: $blue;
+      font-weight: 700;
     }
   }
 }
