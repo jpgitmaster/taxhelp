@@ -54,7 +54,7 @@ type SalesManualDraftPayload = Partial<Omit<SalesManualCreatePayload, 'particula
     particulars?: DraftParticularPayload[]
 }
 
-interface SalesManualRecord extends Partial<SalesManualCreatePayload> {
+interface SalesManualRecord extends Partial<Omit<SalesManualCreatePayload, 'particulars'>> {
     id: number
     client_id: number
     customer_id: number | null
@@ -65,7 +65,10 @@ interface SalesManualRecord extends Partial<SalesManualCreatePayload> {
     lock_is_mine: boolean
     tax_amount: number | string
     vat_amount: number | string
+    vat_rate: number | string
+    gross_amount: number | string
     total_gross_amount: number | string
+    particulars: DraftParticularPayload[]
     is_active: boolean
     customer: Record<string, unknown> | null
     created_at: string | null

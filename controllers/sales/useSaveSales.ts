@@ -4,16 +4,29 @@ import { useRouter } from 'next/router';
 import { Particular, SalesErr } from './types'
 import useQueryClients from '../clients/api/queries';
 import useGlobal from '@/controllers/global/useGlobal';
-import useSalesManualAPI from '../salesManual/api';
 import useQueryCustomers from '../customers/api/queries';
 import { CustomerObj } from '@/controllers/customers/types'
-import { useState, ChangeEvent, SyntheticEvent } from "react";
 import { initCustomerObj } from '@/controllers/customers/states';
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3';
+import useSalesManualAPI, { LockConflictError } from '../salesManual/api';
+import { SalesManualDraftPayload, SalesManualRecord } from '../salesManual/types';
+import { useState, useEffect, useRef, useCallback, ChangeEvent, SyntheticEvent } from "react";
+
+const AUTOSAVE_DEBOUNCE_MS = 1200
+const HEARTBEAT_INTERVAL_MS = 20000
+
+type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
+
 const useSaveSales = () => {
     const router = useRouter()
+    const draftIdFromQuery = router.query.draft ? Number(router.query.draft) : null
     const {
-        useCreateSalesManual
+        useGetSalesManualById,
+        useCreateDraft,
+        useAutosaveDraft,
+        useLockDraft,
+        useUnlockDraft,
+        useFinalizeDraft,
     } = useSalesManualAPI()
     const {
         handleBlur,
@@ -23,15 +36,16 @@ const useSaveSales = () => {
     const {
         sales,
         status,
-        
+
         setSales,
         setStatus,
     } = useSalesAPI()
-    
+
     const {
         filter: clientFilter,
         setFilter: clientSetFilter,
 
+        getClient,
         getClients
     } = useQueryClients()
 
@@ -46,6 +60,18 @@ const useSaveSales = () => {
     const [displayDiscounts, setDisplayDiscounts] = useState(false)
     const [displayCustomers, setDisplayCustomers] = useState(false)
     const [errArr, setErrArr] = useState(sales.salesObj.particulars)
+
+    // DRAFT / AUTOSAVE / LOCKING
+    const [draftId, setDraftId] = useState<number | null>(draftIdFromQuery)
+    const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle')
+    const [lockConflict, setLockConflict] = useState<{ locked: boolean, message: string | null }>({ locked: false, message: null })
+    const [isHydrating, setIsHydrating] = useState(!!draftIdFromQuery)
+    const hasHydratedRef = useRef(false)
+    const skipNextAutosaveRef = useRef(false)
+    const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+    const { data: existingDraft } = useGetSalesManualById(draftIdFromQuery)
+    const { data: draftClient } = getClient(Number(existingDraft?.client_id))
     const options = [
         {
             value: 'INCLUSIVE',
@@ -127,6 +153,90 @@ const useSaveSales = () => {
         },
         period: null,
     })
+
+    // Hydrate from an existing draft (?draft=<id>) once its record and client have loaded.
+    useEffect(() => {
+        if (!draftIdFromQuery || hasHydratedRef.current) return
+        if (!existingDraft || !draftClient) return
+
+        hasHydratedRef.current = true
+        skipNextAutosaveRef.current = true
+
+        const customer = (existingDraft.customer || {}) as unknown as CustomerObj
+        const client = draftClient as unknown as {
+            id: number | null
+            last_name: string
+            first_name: string
+            trade_name: string
+            registered_name: string
+        }
+
+        setDoc(prev => ({
+            ...prev,
+            client: {
+                id: client.id ?? null,
+                last_name: client.last_name || '',
+                first_name: client.first_name || '',
+                trade_name: client.trade_name || '',
+                registered_name: client.registered_name || '',
+            },
+            customer,
+            selectedTerms: existingDraft.terms
+                ? { value: existingDraft.terms, label: existingDraft.terms === 'CASH' ? 'Cash' : 'Charge' }
+                : prev.selectedTerms,
+            selectedDiscount: existingDraft.discount_type
+                ? { value: existingDraft.discount_type, label: existingDraft.discount_type }
+                : prev.selectedDiscount,
+        }))
+
+        setSales(prev => ({
+            ...prev,
+            salesObj: {
+                ...prev.salesObj,
+                id: existingDraft.id,
+                atc: existingDraft.atc || '',
+                terms: existingDraft.terms || 'CASH',
+                id_number: existingDraft.discount_id_number || '',
+                vat_type: existingDraft.vat_type || 'INCLUSIVE',
+                ewt_rate: existingDraft.ewt_rate != null ? String(existingDraft.ewt_rate) : '',
+                vat_rate: '12%',
+                tax_amount: existingDraft.tax_amount != null ? String(existingDraft.tax_amount) : '',
+                vat_amount: existingDraft.vat_amount != null ? String(existingDraft.vat_amount) : '',
+                account_name: existingDraft.account_name || '',
+                gross_amount: existingDraft.gross_amount != null ? String(existingDraft.gross_amount) : '',
+                exempt_sales: existingDraft.exempt_sales != null ? String(existingDraft.exempt_sales) : '',
+                invoice_date: existingDraft.invoice_date ? dayjs(existingDraft.invoice_date).format('MM/DD/YYYY') : '',
+                gross_taxable: existingDraft.gross_taxable != null ? String(existingDraft.gross_taxable) : '',
+                vatable_sales: existingDraft.vatable_sales != null ? String(existingDraft.vatable_sales) : '',
+                taxable_month: existingDraft.taxable_month ? dayjs(existingDraft.taxable_month) : null,
+                invoice_number: existingDraft.invoice_number || '',
+                zero_rated_sales: existingDraft.zero_rated_sales != null ? String(existingDraft.zero_rated_sales) : '',
+                total_gross_amount: existingDraft.total_gross_amount != null ? String(existingDraft.total_gross_amount) : '',
+                particulars: existingDraft.particulars?.length ? existingDraft.particulars.map(p => ({
+                    description: p.description || '',
+                    quantity: p.quantity != null ? String(p.quantity) : '',
+                    unit_price: p.unit_price != null ? String(p.unit_price) : '',
+                    amount: p.amount != null ? String(p.amount) : '',
+                })) : prev.salesObj.particulars,
+                customer,
+            }
+        }))
+
+        setIsHydrating(false)
+
+        if (!existingDraft.lock_is_mine) {
+            useLockDraft.mutate(draftIdFromQuery, {
+                onError: (error) => {
+                    const message = error instanceof LockConflictError
+                        ? error.message
+                        : 'This draft could not be opened for editing.'
+                    setLockConflict({ locked: true, message })
+                }
+            })
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [draftIdFromQuery, existingDraft, draftClient])
+
     const fieldValidations = {
         atc: { usename: 'ATC', required: true },
         tin: { usename: 'TIN No.', required: true },
@@ -300,6 +410,21 @@ const useSaveSales = () => {
             }
         }))
         handleRemoveErr(sales.salesErr, 'client')
+
+        // Start autosaving as soon as we know which client this sale belongs to.
+        if (!draftId && client.id) {
+            useCreateDraft.mutate({ client_id: client.id }, {
+                onSuccess: (created) => {
+                    setDraftId(created.id)
+                },
+                onError: () => {
+                    setStatus(prev => ({
+                        ...prev,
+                        message: 'Could not start a draft for this sale — your changes may not be saved. Please retry.',
+                    }))
+                }
+            })
+        }
     }
 
     const handleSelectCustomer = (customer: CustomerObj) => {
@@ -633,6 +758,118 @@ const useSaveSales = () => {
         handleRemoveErr(sales.salesErr, name)
     }
 
+    const buildDraftPayload = useCallback((): SalesManualDraftPayload => {
+        const { customer, taxable_month, invoice_date, ...rest } = sales.salesObj
+        const toNumber = (val: string) => val ? Number(val) : 0
+
+        return {
+            tin: customer?.tin || undefined,
+            classification: customer?.classification || undefined,
+            registered_name: customer?.registered_name,
+            first_name: customer?.first_name,
+            last_name: customer?.last_name,
+            middle_name: customer?.middle_name,
+            trade_name: customer?.trade_name,
+            phone_number: customer?.phone_number,
+            email: customer?.email,
+            first_address: customer?.first_address,
+            second_address: customer?.second_address,
+            postal_code: customer?.postal_code,
+
+            taxable_month: taxable_month ? dayjs(taxable_month).format('YYYY-MM-DD') : undefined,
+            invoice_date: invoice_date ? dayjs(invoice_date, 'MM/DD/YYYY').format('YYYY-MM-DD') : undefined,
+            invoice_number: rest.invoice_number || undefined,
+            terms: rest.terms || undefined,
+            account_name: rest.account_name || undefined,
+
+            atc: rest.atc || undefined,
+            ewt_rate: rest.ewt_rate ? Number(rest.ewt_rate) : undefined,
+
+            discount_type: doc.selectedDiscount?.value,
+            discount_id_number: rest.id_number || undefined,
+
+            vat_type: rest.vat_type || undefined,
+            exempt_sales: toNumber(rest.exempt_sales),
+            zero_rated_sales: toNumber(rest.zero_rated_sales),
+            vatable_sales: toNumber(rest.vatable_sales),
+            gross_taxable: toNumber(rest.gross_taxable),
+
+            particulars: rest.particulars
+                .filter(p => p.description || p.quantity || p.unit_price || p.amount)
+                .map(particular => ({
+                    description: particular.description || undefined,
+                    quantity: particular.quantity ? toNumber(particular.quantity) : undefined,
+                    unit_price: particular.unit_price ? toNumber(particular.unit_price) : undefined,
+                    amount: particular.amount ? toNumber(particular.amount) : undefined,
+                })),
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sales.salesObj, doc.selectedDiscount])
+
+    // DEBOUNCED AUTOSAVE — fires a bit after the user stops typing/changing anything.
+    useEffect(() => {
+        if (!draftId || isHydrating || lockConflict.locked) return
+
+        if (skipNextAutosaveRef.current) {
+            skipNextAutosaveRef.current = false
+            return
+        }
+
+        if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
+
+        autosaveTimerRef.current = setTimeout(() => {
+            setSaveStatus('saving')
+            useAutosaveDraft.mutate({ id: draftId, data: buildDraftPayload() }, {
+                onSuccess: () => setSaveStatus('saved'),
+                onError: (error) => {
+                    if (error instanceof LockConflictError) {
+                        setLockConflict({ locked: true, message: error.message })
+                    } else {
+                        setSaveStatus('error')
+                    }
+                }
+            })
+        }, AUTOSAVE_DEBOUNCE_MS)
+
+        return () => {
+            if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sales.salesObj, doc.selectedDiscount, draftId, isHydrating, lockConflict.locked])
+
+    // HEARTBEAT — refreshes the lock every HEARTBEAT_INTERVAL_MS even if nothing changed,
+    // so a tab that's just sitting open (no edits) doesn't lose its lock to staleness.
+    useEffect(() => {
+        if (!draftId || lockConflict.locked) return
+
+        const interval = setInterval(() => {
+            useLockDraft.mutate(draftId, {
+                onError: (error) => {
+                    if (error instanceof LockConflictError) {
+                        setLockConflict({ locked: true, message: error.message })
+                    }
+                }
+            })
+        }, HEARTBEAT_INTERVAL_MS)
+
+        return () => clearInterval(interval)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [draftId, lockConflict.locked])
+
+    // Best-effort lock release on unmount (SPA navigation) and tab close.
+    useEffect(() => {
+        if (!draftId) return
+
+        const release = () => useUnlockDraft.mutate(draftId)
+        window.addEventListener('pagehide', release)
+
+        return () => {
+            window.removeEventListener('pagehide', release)
+            release()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [draftId])
+
     const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         setStatus({...status, loader: true})
@@ -695,60 +932,35 @@ const useSaveSales = () => {
             return () => clearTimeout(timer)
         }
 
-        const { customer, taxable_month, invoice_date, ...rest } = sales.salesObj
-        const toNumber = (val: string) => val ? Number(val) : 0
+        if (!draftId) {
+            // Should only happen if the draft-create call failed earlier (e.g. offline).
+            setStatus(prev => ({
+                ...prev,
+                loader: false,
+                message: 'No draft to submit yet — reselect the client to start one.',
+            }))
+            return
+        }
 
-        useCreateSalesManual.mutate({
-            client_id: Number(doc.client?.id),
+        if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
 
-            tin: customer?.tin || '',
-            classification: customer?.classification || '',
-            registered_name: customer?.registered_name,
-            first_name: customer?.first_name,
-            last_name: customer?.last_name,
-            middle_name: customer?.middle_name,
-            trade_name: customer?.trade_name,
-            phone_number: customer?.phone_number,
-            email: customer?.email,
-            first_address: customer?.first_address || '',
-            second_address: customer?.second_address || '',
-            postal_code: customer?.postal_code,
-
-            taxable_month: taxable_month ? dayjs(taxable_month).format('YYYY-MM-DD') : '',
-            invoice_date: invoice_date ? dayjs(invoice_date, 'MM/DD/YYYY').format('YYYY-MM-DD') : '',
-            invoice_number: rest.invoice_number,
-            terms: rest.terms,
-            account_name: rest.account_name,
-
-            atc: rest.atc || undefined,
-            ewt_rate: rest.ewt_rate ? Number(rest.ewt_rate) : undefined,
-
-            discount_type: doc.selectedDiscount?.value,
-            discount_id_number: rest.id_number,
-
-            vat_type: rest.vat_type,
-            exempt_sales: toNumber(rest.exempt_sales),
-            zero_rated_sales: toNumber(rest.zero_rated_sales),
-            vatable_sales: toNumber(rest.vatable_sales),
-            gross_taxable: toNumber(rest.gross_taxable),
-
-            particulars: rest.particulars.map(particular => ({
-                description: particular.description,
-                quantity: toNumber(particular.quantity),
-                unit_price: toNumber(particular.unit_price),
-                amount: toNumber(particular.amount),
-            })),
-        }, {
+        useFinalizeDraft.mutate({ id: draftId, data: buildDraftPayload() }, {
             onSuccess: () => {
                 sessionStorage.setItem(
                     'successMessage',
-                    'Your sale record has been created.'
+                    'Your sale record has been posted.'
                 )
                 router.push('/bookkeeper/books_of_accounts/sales/manual')
             },
             onError: (error) => {
-                console.log(error)
-                setStatus({...status, loader: false})
+                setStatus(prev => ({
+                    ...prev,
+                    loader: false,
+                    message: error instanceof LockConflictError
+                        ? error.message
+                        : (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+                            || 'Could not post this sale — please check the form and try again.',
+                }))
             }
         })
     }
@@ -769,6 +981,12 @@ const useSaveSales = () => {
         displayCustomers,
         clientLoader: isLoadingClients || isFetchingClients,
         customerLoader: isLoadingCustomers || isFetchingCustomers,
+
+        // DRAFT / AUTOSAVE / LOCKING
+        draftId,
+        saveStatus,
+        lockConflict,
+        isHydrating,
 
         // SET STATES
         setDisplayTerms,
