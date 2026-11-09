@@ -12,29 +12,31 @@
 }
 
 .columnsBtn {
-  background-color: $white;
-  border: 1px solid rgba($gray, .9);
-  color: $lightBlack;
-  @apply flex flex-row items-center gap-1.5 rounded-[10px] text-[12px] font-semibold px-3.5 py-1.5 cursor-pointer transition-colors whitespace-nowrap;
+  background-color: rgba($lightBlue, .12);
+  // Search/Add Record have a real 1px border, which adds to the box's
+  // total height under border-box sizing — `border: none` here left this
+  // button a few px shorter even with identical padding. A transparent
+  // border of the same width equalizes the box model exactly.
+  border: 1px solid transparent;
+  color: $blue;
+  @apply flex flex-row items-center gap-1.5 rounded-[10px] text-[12px] font-bold px-4 py-2 cursor-pointer transition-colors whitespace-nowrap;
 
   &::after {
     content: '';
     background-image: url('/svgs/arrowDown.svg');
     background-repeat: no-repeat;
     background-size: contain;
-    filter: invert(45%) sepia(8%) saturate(300%);
-    opacity: .6;
-    @apply w-2.5 h-2.5;
+    // The source SVG is 15x8 (not square) — forcing it into a square box
+    // with no background-position left it scaled down and stuck in the
+    // box's top-left corner (the default position) instead of centered,
+    // which read as "not centered" and "too close" to the text.
+    background-position: center;
+    filter: invert(27%) sepia(89%) saturate(1942%) hue-rotate(185deg) brightness(96%) contrast(101%);
+    @apply w-2.5 h-1.5 ml-0.5;
   }
 
   &:hover {
-    border-color: $blue;
-    color: $blue;
-
-    &::after {
-      filter: invert(45%) sepia(90%) saturate(2000%) hue-rotate(175deg);
-      opacity: 1;
-    }
+    background-color: rgba($lightBlue, .22);
   }
 }
 
@@ -114,16 +116,35 @@
     background: linear-gradient(180deg, rgba($lightBlue, .14), rgba($lightBlue, .05)) !important;
     border-bottom: 1.5px solid rgba($blue, .3) !important;
     color: $blue;
-    @apply text-[13px] font-bold py-5! px-4!;
+    white-space: nowrap;
+    @apply text-[13px] font-bold py-3! px-4!;
 
     &::before {
       display: none !important;
     }
   }
+  // The icon's position must never depend on the title's text width — any
+  // per-column width tuning to "make room" breaks again the moment a
+  // longer title or a narrower column shows up. Instead pin the icon to a
+  // fixed slot at the cell's right edge and let the title truncate with an
+  // ellipsis behind it if it doesn't fit, so collisions are structurally
+  // impossible regardless of column width or title length.
   :global(.ant-table-column-sorters) {
+    position: relative;
+    display: block !important;
+    padding-right: 16px !important;
     @apply py-0!;
   }
+  :global(.ant-table-column-sorters .ant-table-column-title) {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   :global(.ant-table-column-sorter) {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
     color: rgba($blue, .55);
   }
   :global(.ant-table-column-sorter-up.active),
@@ -133,7 +154,7 @@
   :global(.ant-table-tbody > tr > td) {
     border-bottom: 1px solid rgba($gray, .5) !important;
     color: $lightBlack;
-    @apply text-[13px] py-4! px-4!;
+    @apply text-[13px] py-2.5! px-4!;
   }
   // antd's hidden row for measuring column widths when scroll.x is set —
   // needs to win over the !important cell padding above so it stays
@@ -152,16 +173,29 @@
   :global(.ant-table-tbody > tr:hover > td) {
     background-color: rgba($lightBlue, .06) !important;
   }
+  // This antd version renders sticky columns with -start/-end suffixes
+  // (not -left/-right, which matched nothing and silently no-opped —
+  // leaving these cells fully transparent so the column scrolled
+  // underneath showed through, which looked like the two columns
+  // overlapping each other).
   :global(.ant-table-tbody .ant-table-cell-fix-left),
-  :global(.ant-table-tbody .ant-table-cell-fix-right) {
+  :global(.ant-table-tbody .ant-table-cell-fix-right),
+  :global(.ant-table-tbody .ant-table-cell-fix-start),
+  :global(.ant-table-tbody .ant-table-cell-fix-end) {
     background-color: $white !important;
   }
   :global(.ant-table-thead .ant-table-cell-fix-left),
-  :global(.ant-table-thead .ant-table-cell-fix-right) {
-    background: rgba($lightBlue, .1) !important;
+  :global(.ant-table-thead .ant-table-cell-fix-right),
+  :global(.ant-table-thead .ant-table-cell-fix-start),
+  :global(.ant-table-thead .ant-table-cell-fix-end) {
+    // Must be fully opaque — this cell is sticky-positioned on top of
+    // whatever column is currently scrolled underneath it.
+    background-color: #e8f3fd !important;
   }
   :global(.ant-table-tbody > tr:hover .ant-table-cell-fix-left),
-  :global(.ant-table-tbody > tr:hover .ant-table-cell-fix-right) {
+  :global(.ant-table-tbody > tr:hover .ant-table-cell-fix-right),
+  :global(.ant-table-tbody > tr:hover .ant-table-cell-fix-start),
+  :global(.ant-table-tbody > tr:hover .ant-table-cell-fix-end) {
     background-color: #f5fafe !important;
   }
   :global(.ant-table-placeholder .ant-table-cell) {
