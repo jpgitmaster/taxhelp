@@ -1,0 +1,18 @@
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+.field {
+  @apply flex flex-col gap-1 min-w-0;
+}
+
+.label {
+  color: $darkgray;
+  @apply text-[10px] uppercase tracking-wide font-semibold;
+}
+
+.value {
+  color: $lightBlack;
+  background-color: rgba($lightBlue, .06);
+  border-bottom: 1px solid rgba($gray, .8);
+  @apply text-[14px] font-medium px-2 py-2 rounded-t-[4px] truncate;
+}
