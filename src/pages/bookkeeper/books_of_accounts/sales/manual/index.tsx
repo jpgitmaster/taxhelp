@@ -99,13 +99,14 @@ const SalesManual_V = () => {
       render: (value: 'draft' | 'posted') => (
         <span style={{
           display: 'inline-block',
-          padding: '2px 10px',
-          borderRadius: '10px',
-          fontSize: '11px',
-          fontWeight: 600,
+          padding: '4px 14px',
+          borderRadius: 999,
+          fontSize: 11,
+          fontWeight: 700,
+          letterSpacing: '.03em',
           textTransform: 'uppercase',
-          color: value === 'posted' ? '#135200' : '#874d00',
-          backgroundColor: value === 'posted' ? '#d9f7be' : '#fff1b8',
+          color: '#fff',
+          backgroundColor: value === 'posted' ? '#52c41a' : '#fa8c16',
         }}>
           {value}
         </span>

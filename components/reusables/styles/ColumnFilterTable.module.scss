@@ -75,30 +75,31 @@
   }
 }
 
-// ============ Table card ============
+// ============ Table — borderless, sits flat on the page ============
+// Reference: flat white table with no card/border/shadow, plain bold black
+// header text (no tinted background), no zebra striping, generous row
+// padding, hairline separation only — not a boxed-in panel.
 .tableWrap {
   background-color: $white;
-  border: 1px solid rgba($gray, .7);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, .04);
-  @apply relative rounded-[18px] overflow-hidden;
+  @apply relative;
 
   :global(.ant-table) {
     background: transparent;
   }
   :global(.ant-table-thead > tr > th) {
-    background-color: rgba($lightBlue, .05) !important;
-    border-bottom: 1px solid rgba($gray, .7) !important;
-    color: $darkgray;
-    @apply text-[11px] uppercase tracking-wide font-bold py-3! px-4!;
+    background: $white !important;
+    border-bottom: 1.5px solid rgba($lightBlack, .85) !important;
+    color: $lightBlack;
+    @apply text-[13px] font-bold py-3! px-4!;
 
     &::before {
       display: none !important;
     }
   }
   :global(.ant-table-tbody > tr > td) {
-    border-bottom: 1px solid rgba($gray, .4) !important;
+    border-bottom: 1px solid rgba($gray, .5) !important;
     color: $lightBlack;
-    @apply text-[13px] py-3! px-4!;
+    @apply text-[13px] py-4! px-4!;
   }
   // antd's hidden row for measuring column widths when scroll.x is set —
   // needs to win over the !important cell padding above so it stays
@@ -111,8 +112,11 @@
   :global(.ant-table-tbody > tr:last-child > td) {
     border-bottom: none !important;
   }
+  :global(.ant-table-tbody > tr) {
+    transition: background-color .12s ease;
+  }
   :global(.ant-table-tbody > tr:hover > td) {
-    background-color: rgba($lightBlue, .05) !important;
+    background-color: rgba($lightBlue, .06) !important;
   }
   :global(.ant-table-cell-fix-left),
   :global(.ant-table-cell-fix-right) {
@@ -120,28 +124,66 @@
   }
   :global(.ant-table-tbody > tr:hover .ant-table-cell-fix-left),
   :global(.ant-table-tbody > tr:hover .ant-table-cell-fix-right) {
-    background-color: #f7fbff !important;
+    background-color: #f5fafe !important;
   }
   :global(.ant-table-placeholder .ant-table-cell) {
-    @apply py-10!;
+    @apply py-12!;
   }
 }
 
-// ============ Pagination row — unboxed, matching the app's own
-// .pagination/.total_records convention (plain row, no card). ============
+// ============ Pagination row ============
 .paginationRow {
-  @apply flex flex-row items-center justify-between gap-3 flex-wrap mt-3;
+  @apply flex flex-row items-center justify-between gap-3 flex-wrap mt-4;
 }
 
 .rangeLabel {
   color: $darkgray;
-  @apply text-[12px];
+  @apply text-[12px] font-medium;
 }
 
-.paginationRow :global(.ant-pagination-item-active) {
-  border-color: $blue !important;
+// Rounded pill pager instead of antd's default square-ish boxes — bigger,
+// friendlier touch targets with a clear filled-blue active state.
+.paginationRow {
+  :global(.ant-pagination-item) {
+    border: 1px solid rgba($gray, .9) !important;
+    background-color: $white !important;
+    @apply rounded-full! min-w-8! h-8! leading-7.5!;
 
-  a {
-    color: $blue !important;
+    a {
+      color: $lightBlack !important;
+      @apply text-[12px] font-semibold;
+    }
+
+    &:hover {
+      border-color: $blue !important;
+
+      a { color: $blue !important; }
+    }
+  }
+  :global(.ant-pagination-item-active) {
+    background-color: $blue !important;
+    border-color: $blue !important;
+
+    a {
+      color: $white !important;
+    }
+    &:hover a {
+      color: $white !important;
+    }
+  }
+  :global(.ant-pagination-prev .ant-pagination-item-link),
+  :global(.ant-pagination-next .ant-pagination-item-link) {
+    border: 1px solid rgba($gray, .9) !important;
+    background-color: $white !important;
+    color: $darkgray !important;
+    @apply rounded-full! min-w-8! h-8!;
+
+    &:hover {
+      border-color: $blue !important;
+      color: $blue !important;
+    }
+  }
+  :global(.ant-pagination-disabled .ant-pagination-item-link) {
+    opacity: .4;
   }
 }
