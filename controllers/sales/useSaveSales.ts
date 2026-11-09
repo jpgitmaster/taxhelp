@@ -1,14 +1,20 @@
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import useSalesAPI from "./api"
+import { useRouter } from 'next/router';
 import { Particular, SalesErr } from './types'
 import useQueryClients from '../clients/api/queries';
 import useGlobal from '@/controllers/global/useGlobal';
+import useSalesManualAPI from '../salesManual/api';
 import useQueryCustomers from '../customers/api/queries';
 import { CustomerObj } from '@/controllers/customers/types'
 import { useState, ChangeEvent, SyntheticEvent } from "react";
 import { initCustomerObj } from '@/controllers/customers/states';
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3';
 const useSaveSales = () => {
+    const router = useRouter()
+    const {
+        useCreateSalesManual
+    } = useSalesManualAPI()
     const {
         handleBlur,
         handleResubmit,
@@ -688,8 +694,65 @@ const useSaveSales = () => {
             }, 500)
             return () => clearTimeout(timer)
         }
+
+        const { customer, taxable_month, invoice_date, ...rest } = sales.salesObj
+        const toNumber = (val: string) => val ? Number(val) : 0
+
+        useCreateSalesManual.mutate({
+            client_id: Number(doc.client?.id),
+
+            tin: customer?.tin || '',
+            classification: customer?.classification || '',
+            registered_name: customer?.registered_name,
+            first_name: customer?.first_name,
+            last_name: customer?.last_name,
+            middle_name: customer?.middle_name,
+            trade_name: customer?.trade_name,
+            phone_number: customer?.phone_number,
+            email: customer?.email,
+            first_address: customer?.first_address || '',
+            second_address: customer?.second_address || '',
+            postal_code: customer?.postal_code,
+
+            taxable_month: taxable_month ? dayjs(taxable_month).format('YYYY-MM-DD') : '',
+            invoice_date: invoice_date ? dayjs(invoice_date, 'MM/DD/YYYY').format('YYYY-MM-DD') : '',
+            invoice_number: rest.invoice_number,
+            terms: rest.terms,
+            account_name: rest.account_name,
+
+            atc: rest.atc || undefined,
+            ewt_rate: rest.ewt_rate ? Number(rest.ewt_rate) : undefined,
+
+            discount_type: doc.selectedDiscount?.value,
+            discount_id_number: rest.id_number,
+
+            vat_type: rest.vat_type,
+            exempt_sales: toNumber(rest.exempt_sales),
+            zero_rated_sales: toNumber(rest.zero_rated_sales),
+            vatable_sales: toNumber(rest.vatable_sales),
+            gross_taxable: toNumber(rest.gross_taxable),
+
+            particulars: rest.particulars.map(particular => ({
+                description: particular.description,
+                quantity: toNumber(particular.quantity),
+                unit_price: toNumber(particular.unit_price),
+                amount: toNumber(particular.amount),
+            })),
+        }, {
+            onSuccess: () => {
+                sessionStorage.setItem(
+                    'successMessage',
+                    'Your sale record has been created.'
+                )
+                router.push('/bookkeeper/books_of_accounts/sales/manual')
+            },
+            onError: (error) => {
+                console.log(error)
+                setStatus({...status, loader: false})
+            }
+        })
     }
-    
+
     return {
         // STATES
         doc,
