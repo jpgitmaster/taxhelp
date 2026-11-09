@@ -1,22 +1,22 @@
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import scss from '../styles/Sales.module.scss'
-import type { ColumnsType } from 'antd/es/table'
-import { Table, Pagination, Popconfirm } from 'antd'
 import { signOut, getSession } from 'next-auth/react'
 import Loader from '@/components/reusables/RotatingLoader'
 import useSalesManual from '@/controllers/salesManual/useSalesManual'
 import SuccessMessage from '@/components/reusables/SuccessMessage'
+import RowActionsMenu from '@/components/reusables/RowActionsMenu'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
+import ColumnFilterTable, { ColumnFilterTableColumn } from '@/components/reusables/ColumnFilterTable'
 
 interface ManualSalesRow {
   id: number
   status: 'draft' | 'posted'
   terms?: string
   tin?: string
-  registered_name?: string
-  individual_name?: string
+  classification?: string
+  customer_name?: string
   invoice_number?: string
   invoice_date?: string
   taxable_month?: string
@@ -55,10 +55,10 @@ const SalesManual_V = () => {
     status: sale.status === 'posted' ? 'posted' : 'draft',
     terms: sale.terms,
     tin: sale.customer?.tin,
-    registered_name: sale.customer?.registered_name,
-    individual_name:
-      (sale.customer?.first_name ? sale.customer.first_name + ' ' : '') +
-      (sale.customer?.last_name ? sale.customer.last_name : ''),
+    classification: sale.customer?.classification,
+    customer_name: sale.customer?.classification === 'NON-INDIVIDUAL'
+      ? sale.customer?.registered_name
+      : [sale.customer?.first_name, sale.customer?.last_name].filter(Boolean).join(' '),
     invoice_number: sale.invoice_number,
     invoice_date: sale.invoice_date ? dayjs(sale.invoice_date).format('MM/DD/YYYY') : '',
     taxable_month: sale.taxable_month ? dayjs(sale.taxable_month).format('YYYY-MM') : '',
@@ -67,10 +67,18 @@ const SalesManual_V = () => {
     gross_taxable: Number(sale.gross_taxable || 0),
   })) : []
 
-  const columns: ColumnsType<ManualSalesRow> = [
+  // Only Invoice No. is pinned left and Actions pinned right — everything
+  // else (including the other always-shown columns) scrolls normally, so
+  // pinning doesn't eat into the scrollable width for no reason. Taxable
+  // Month/Terms/TIN/Vatable Sales/VAT Amount/Total Gross Amount are hidden
+  // until picked from the Columns dropdown, appended in the order clicked.
+  const columns: ColumnFilterTableColumn<ManualSalesRow>[] = [
+    { key: 'invoice_number', title: 'Invoice No.', dataIndex: 'invoice_number', frozen: 'left' },
+    { key: 'invoice_date', title: 'Invoice Date', dataIndex: 'invoice_date' },
+    { key: 'customer_name', title: 'Customer', dataIndex: 'customer_name' },
     {
-      title: 'Status',
       key: 'status',
+      title: 'Status',
       dataIndex: 'status',
       render: (value: 'draft' | 'posted') => (
         <span style={{
@@ -87,44 +95,44 @@ const SalesManual_V = () => {
         </span>
       ),
     },
-    { title: 'Taxable Month', key: 'taxable_month', dataIndex: 'taxable_month' },
-    { title: 'Invoice Date', key: 'invoice_date', dataIndex: 'invoice_date' },
-    { title: 'Invoice No.', key: 'invoice_number', dataIndex: 'invoice_number' },
-    { title: 'Terms', key: 'terms', dataIndex: 'terms' },
-    { title: 'TIN', key: 'tin', dataIndex: 'tin' },
-    { title: 'Registered Name', key: 'registered_name', dataIndex: 'registered_name' },
-    { title: 'Individual Name', key: 'individual_name', dataIndex: 'individual_name' },
-    { title: 'Vatable Sales', key: 'gross_taxable', dataIndex: 'gross_taxable', render: formatNumber },
-    { title: 'VAT Amount', key: 'vat_amount', dataIndex: 'vat_amount', render: formatNumber },
-    { title: 'Total Gross Amount', key: 'total_gross_amount', dataIndex: 'total_gross_amount', render: formatNumber },
     {
-      width: 160,
-      fixed: 'right',
+      key: 'classification',
+      title: 'Classification',
+      dataIndex: 'classification',
+      render: (value: string) => value ? value.charAt(0) + value.slice(1).toLowerCase() : '',
+    },
+
+    { key: 'taxable_month', title: 'Taxable Month', dataIndex: 'taxable_month', optional: true },
+    { key: 'terms', title: 'Terms', dataIndex: 'terms', optional: true },
+    { key: 'tin', title: 'TIN', dataIndex: 'tin', optional: true },
+    { key: 'gross_taxable', title: 'Vatable Sales', dataIndex: 'gross_taxable', render: formatNumber, optional: true },
+    { key: 'vat_amount', title: 'VAT Amount', dataIndex: 'vat_amount', render: formatNumber, optional: true },
+    { key: 'total_gross_amount', title: 'Total Gross Amount', dataIndex: 'total_gross_amount', render: formatNumber, optional: true },
+
+    {
+      key: 'actions',
       title: 'Actions',
+      width: 80,
       align: 'center',
-      render: (record: ManualSalesRow) =>
-        <div className={scss.actions}>
-          {
-            record.status === 'draft' &&
-            <Link
-              href={`/bookkeeper/books_of_accounts/sales/add?draft=${record.id}`}
-              className={scss.action + ' ' + scss.edit}
-            >
-              Resume
-            </Link>
-          }
-          <Popconfirm
-            title="Delete the record"
-            description="Are you sure to delete this record?"
-            onConfirm={() => handleDeleteRecord(record.id)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <button type='button' className={scss.action + ' ' + scss.delete}>
-              Delete
-            </button>
-          </Popconfirm>
-        </div>
+      frozen: 'right',
+      render: (_: unknown, record: ManualSalesRow) =>
+        <RowActionsMenu
+          actions={[
+            ...(record.status === 'draft' ? [{
+              label: 'Resume',
+              href: `/bookkeeper/books_of_accounts/sales/add?draft=${record.id}`,
+            }] : []),
+            {
+              label: 'Delete',
+              danger: true,
+              onClick: () => handleDeleteRecord(record.id),
+              confirm: {
+                title: 'Delete the record',
+                description: 'Are you sure to delete this record?',
+              },
+            },
+          ]}
+        />
     },
   ]
 
@@ -154,21 +162,18 @@ const SalesManual_V = () => {
       </div>
       <div className={scss.tableRecords}>
         {salesLoader && <Loader scss={scss} position='absolute' />}
-        <Table
+        <ColumnFilterTable
           rowKey='id'
           columns={columns}
-          pagination={false}
           dataSource={dataSource}
-          scroll={{ x: 'max-content', y: 60 * 5 }}
+          pagination={{
+            current: currentPage,
+            pageSize: recordsLimit,
+            total: totalSales,
+            onChange: handlePageChange,
+          }}
         />
       </div>
-      <Pagination
-        current={currentPage}
-        pageSize={recordsLimit}
-        total={totalSales}
-        onChange={handlePageChange}
-        showSizeChanger={false}
-      />
     </div>
   )
 }

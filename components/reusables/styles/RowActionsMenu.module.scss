@@ -1,0 +1,39 @@
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+.trigger {
+  background-color: $white;
+  border: 1px solid rgba($gray, .8);
+  color: $darkgray;
+  @apply w-8 h-8 rounded-[8px] text-[16px] leading-none cursor-pointer transition-colors;
+
+  &:hover {
+    border-color: $blue;
+    color: $blue;
+    background-color: rgba($lightBlue, .06);
+  }
+}
+
+.panel {
+  background-color: $white;
+  border: 1px solid rgba($gray, .7);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .1);
+  @apply rounded-[10px] p-1.5 min-w-32;
+}
+
+.item {
+  color: $lightBlack;
+  @apply block w-full text-left rounded-[7px] text-[13px] px-3 py-2 cursor-pointer border-none bg-transparent;
+
+  &:hover {
+    background-color: rgba($lightBlue, .08);
+  }
+
+  &.danger {
+    color: $red;
+
+    &:hover {
+      background-color: rgba($red, .08);
+    }
+  }
+}

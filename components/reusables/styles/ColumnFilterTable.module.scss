@@ -1,0 +1,140 @@
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+.columnFilterTable {
+  @apply w-full;
+}
+
+.toolbar {
+  @apply flex flex-row justify-end mb-2.5;
+}
+
+.columnsBtn {
+  background-color: $white;
+  border: 1px solid rgba($gray, .9);
+  color: $lightBlack;
+  @apply flex flex-row items-center gap-1.5 rounded-[10px] text-[12px] font-semibold px-3.5 py-1.5 cursor-pointer transition-colors;
+
+  &::before {
+    content: '';
+    background-image: url('/svgs/arrowDown.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+    filter: invert(45%) sepia(8%) saturate(300%);
+    opacity: .6;
+    @apply w-2.5 h-2.5 rotate-180;
+  }
+
+  &:hover {
+    border-color: $blue;
+    color: $blue;
+
+    &::before {
+      filter: invert(45%) sepia(90%) saturate(2000%) hue-rotate(175deg);
+      opacity: 1;
+    }
+  }
+}
+
+.panel {
+  background-color: $white;
+  border: 1px solid rgba($gray, .7);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .08);
+  @apply rounded-[12px] p-3 w-64;
+}
+
+.search {
+  @apply mb-2 rounded-[8px]!;
+}
+
+.list {
+  @apply flex flex-col gap-0.5 max-h-60 overflow-y-auto m-0 p-0 list-none;
+
+  li {
+    @apply rounded-[8px];
+
+    label {
+      color: $lightBlack;
+      @apply flex flex-row items-center gap-2 text-[13px] px-2 py-1.5 cursor-pointer rounded-[8px] w-full;
+
+      &:hover {
+        background-color: rgba($lightBlue, .08);
+      }
+
+      input[type=checkbox] {
+        @apply w-3.5 h-3.5 cursor-pointer;
+      }
+    }
+  }
+
+  .empty {
+    color: $darkgray;
+    @apply text-[12px] text-center py-3;
+  }
+}
+
+// Receipt-style card matching the Sales wizard's .panel convention — white
+// surface, 18px rounded corners, hairline border — rather than antd's bare
+// default table chrome.
+.tableWrap {
+  background-color: $white;
+  border: 1px solid rgba($gray, .7);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .04);
+  @apply relative rounded-[18px] overflow-hidden;
+
+  :global(.ant-table) {
+    background: transparent;
+  }
+  :global(.ant-table-thead > tr > th) {
+    background-color: rgba($lightBlue, .05) !important;
+    border-bottom: 1px solid rgba($gray, .7) !important;
+    color: $darkgray;
+    @apply text-[11px] uppercase tracking-wide font-bold py-3! px-4!;
+
+    &::before {
+      display: none !important;
+    }
+  }
+  :global(.ant-table-tbody > tr > td) {
+    border-bottom: 1px solid rgba($gray, .4) !important;
+    color: $lightBlack;
+    @apply text-[13px] py-3! px-4!;
+  }
+  // antd's hidden row for measuring column widths when scroll.x is set —
+  // the !important padding above was overriding its own height:0, making
+  // it render as a visible blank row.
+  :global(tr.ant-table-measure-row td) {
+    padding: 0 !important;
+    height: 0 !important;
+    border: none !important;
+  }
+  :global(.ant-table-tbody > tr:last-child > td) {
+    border-bottom: none !important;
+  }
+  :global(.ant-table-tbody > tr:hover > td) {
+    background-color: rgba($lightBlue, .05) !important;
+  }
+  :global(.ant-table-cell-fix-left),
+  :global(.ant-table-cell-fix-right) {
+    background-color: $white !important;
+  }
+  :global(.ant-table-tbody > tr:hover .ant-table-cell-fix-left),
+  :global(.ant-table-tbody > tr:hover .ant-table-cell-fix-right) {
+    background-color: #f7fbff !important;
+  }
+  :global(.ant-table-placeholder .ant-table-cell) {
+    @apply py-10!;
+  }
+}
+
+.pagination {
+  @apply flex flex-row justify-end mt-4;
+
+  :global(.ant-pagination-item-active) {
+    border-color: $blue !important;
+
+    a {
+      color: $blue !important;
+    }
+  }
+}
