@@ -1,0 +1,28 @@
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+.row {
+  @apply flex flex-row flex-wrap items-center gap-2 mb-3;
+}
+
+.label {
+  color: $darkgray;
+  @apply text-[11px] font-semibold uppercase tracking-wide;
+}
+
+.chip {
+  background-color: rgba($lightBlue, .1);
+  color: $blue;
+  @apply flex flex-row items-center gap-1.5 rounded-full text-[12px] font-semibold pl-3 pr-2 py-1;
+
+  button {
+    color: $blue;
+    background: transparent;
+    border: none;
+    @apply w-4 h-4 flex items-center justify-center rounded-full cursor-pointer text-[13px] leading-none transition-colors;
+
+    &:hover {
+      background-color: rgba($blue, .15);
+    }
+  }
+}
