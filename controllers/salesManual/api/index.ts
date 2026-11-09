@@ -11,9 +11,26 @@ export class LockConflictError extends Error {
     }
 }
 
-const isConflict = (error: unknown) =>
-    !!error && typeof error === 'object' && 'response' in error &&
-    (error as AxiosError).response?.status === 409
+/** The draft has already been posted (or otherwise can't be edited as a draft anymore) — e.g. a stale ?draft= link, or finalized by another tab mid-edit. */
+export class DraftNotEditableError extends Error {
+    constructor(message: string) {
+        super(message)
+        this.name = 'DraftNotEditableError'
+    }
+}
+
+const statusOf = (error: unknown) =>
+    !!error && typeof error === 'object' && 'response' in error
+        ? (error as AxiosError).response?.status
+        : undefined
+
+const toDraftError = (error: unknown, fallback: string): Error => {
+    const status = statusOf(error)
+    const message = (error as AxiosError<{ message: string }>)?.response?.data?.message || fallback
+    if (status === 409) return new LockConflictError(message)
+    if (status === 403) return new DraftNotEditableError(message)
+    return error as Error
+}
 
 const useSalesManualAPI = () => {
     const queryClient = useQueryClient()
@@ -124,10 +141,7 @@ const useSalesManualAPI = () => {
                 })
                 return res.data?.data
             } catch (error) {
-                if (isConflict(error)) {
-                    throw new LockConflictError((error as AxiosError<{ message: string }>).response?.data?.message || 'Locked by another tab')
-                }
-                throw error
+                throw toDraftError(error, 'Locked by another tab')
             }
         },
     })
@@ -142,10 +156,7 @@ const useSalesManualAPI = () => {
                 })
                 return res.data?.data
             } catch (error) {
-                if (isConflict(error)) {
-                    throw new LockConflictError((error as AxiosError<{ message: string }>).response?.data?.message || 'Locked by another tab')
-                }
-                throw error
+                throw toDraftError(error, 'Locked by another tab')
             }
         },
     })
@@ -172,10 +183,7 @@ const useSalesManualAPI = () => {
                 })
                 return res.data?.data
             } catch (error) {
-                if (isConflict(error)) {
-                    throw new LockConflictError((error as AxiosError<{ message: string }>).response?.data?.message || 'Unable to finalize')
-                }
-                throw error
+                throw toDraftError(error, 'Unable to finalize')
             }
         },
         onSuccess: invalidate,

@@ -8,7 +8,7 @@ import useQueryCustomers from '../customers/api/queries';
 import { CustomerObj } from '@/controllers/customers/types'
 import { initCustomerObj } from '@/controllers/customers/states';
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3';
-import useSalesManualAPI, { LockConflictError } from '../salesManual/api';
+import useSalesManualAPI, { LockConflictError, DraftNotEditableError } from '../salesManual/api';
 import { SalesManualDraftPayload, SalesManualRecord } from '../salesManual/types';
 import { useState, useEffect, useRef, useCallback, ChangeEvent, SyntheticEvent } from "react";
 
@@ -69,6 +69,7 @@ const useSaveSales = () => {
     const hasHydratedRef = useRef(false)
     const skipNextAutosaveRef = useRef(false)
     const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const lastSavedPayloadRef = useRef<string | null>(null)
 
     const { data: existingDraft } = useGetSalesManualById(draftIdFromQuery)
     const { data: draftClient } = getClient(Number(existingDraft?.client_id))
@@ -162,7 +163,24 @@ const useSaveSales = () => {
         hasHydratedRef.current = true
         skipNextAutosaveRef.current = true
 
-        const customer = (existingDraft.customer || {}) as unknown as CustomerObj
+        const rawCustomer = (existingDraft.customer || {}) as unknown as Partial<CustomerObj>
+        // Controlled inputs can't take null (React warns and drops back to uncontrolled) —
+        // the backend returns nulls for unset text fields, so coerce them to ''.
+        const customer: CustomerObj = {
+            id: rawCustomer.id ?? null,
+            tin: rawCustomer.tin || '',
+            email: rawCustomer.email || '',
+            last_name: rawCustomer.last_name || '',
+            trade_name: rawCustomer.trade_name || '',
+            first_name: rawCustomer.first_name || '',
+            middle_name: rawCustomer.middle_name || '',
+            postal_code: rawCustomer.postal_code || '',
+            phone_number: rawCustomer.phone_number || '',
+            first_address: rawCustomer.first_address || '',
+            second_address: rawCustomer.second_address || '',
+            classification: rawCustomer.classification || '',
+            registered_name: rawCustomer.registered_name || '',
+        }
         const client = draftClient as unknown as {
             id: number | null
             last_name: string
@@ -224,10 +242,12 @@ const useSaveSales = () => {
 
         setIsHydrating(false)
 
-        if (!existingDraft.lock_is_mine) {
+        if (existingDraft.status !== 'draft') {
+            setLockConflict({ locked: true, message: 'This sale has already been posted and can no longer be edited here.' })
+        } else if (!existingDraft.lock_is_mine) {
             useLockDraft.mutate(draftIdFromQuery, {
                 onError: (error) => {
-                    const message = error instanceof LockConflictError
+                    const message = (error instanceof LockConflictError || error instanceof DraftNotEditableError)
                         ? error.message
                         : 'This draft could not be opened for editing.'
                     setLockConflict({ locked: true, message })
@@ -410,21 +430,9 @@ const useSaveSales = () => {
             }
         }))
         handleRemoveErr(sales.salesErr, 'client')
-
-        // Start autosaving as soon as we know which client this sale belongs to.
-        if (!draftId && client.id) {
-            useCreateDraft.mutate({ client_id: client.id }, {
-                onSuccess: (created) => {
-                    setDraftId(created.id)
-                },
-                onError: () => {
-                    setStatus(prev => ({
-                        ...prev,
-                        message: 'Could not start a draft for this sale — your changes may not be saved. Please retry.',
-                    }))
-                }
-            })
-        }
+        // A draft isn't created yet — picking a client alone shouldn't leave a row
+        // behind. The autosave effect below creates one lazily on the first real
+        // field change.
     }
 
     const handleSelectCustomer = (customer: CustomerObj) => {
@@ -806,9 +814,23 @@ const useSaveSales = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sales.salesObj, doc.selectedDiscount])
 
+    // terms/vat_type/discount_type all default to a pre-selected value from mount
+    // (Cash/Inclusive/Senior Citizen) — they're not evidence the user typed anything,
+    // so they're deliberately excluded here.
+    const isDraftPayloadEmpty = (payload: SalesManualDraftPayload) =>
+        !payload.tin && !payload.registered_name && !payload.first_name && !payload.last_name &&
+        !payload.first_address && !payload.second_address &&
+        !payload.taxable_month && !payload.invoice_date && !payload.invoice_number && !payload.account_name &&
+        !payload.atc && !payload.ewt_rate && !payload.discount_id_number &&
+        !payload.exempt_sales && !payload.zero_rated_sales && !payload.vatable_sales && !payload.gross_taxable &&
+        (!payload.particulars || payload.particulars.length === 0)
+
     // DEBOUNCED AUTOSAVE — fires a bit after the user stops typing/changing anything.
+    // No draft exists yet until there's something worth saving (picking a client
+    // alone doesn't create one); once real content shows up, the draft is created
+    // lazily and the same change is saved into it in one go.
     useEffect(() => {
-        if (!draftId || isHydrating || lockConflict.locked) return
+        if (!doc.client?.id || isHydrating || lockConflict.locked) return
 
         if (skipNextAutosaveRef.current) {
             skipNextAutosaveRef.current = false
@@ -818,16 +840,51 @@ const useSaveSales = () => {
         if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
 
         autosaveTimerRef.current = setTimeout(() => {
-            setSaveStatus('saving')
-            useAutosaveDraft.mutate({ id: draftId, data: buildDraftPayload() }, {
-                onSuccess: () => setSaveStatus('saved'),
-                onError: (error) => {
-                    if (error instanceof LockConflictError) {
-                        setLockConflict({ locked: true, message: error.message })
-                    } else {
-                        setSaveStatus('error')
-                    }
+            const payload = buildDraftPayload()
+            if (!draftId && isDraftPayloadEmpty(payload)) return
+
+            const payloadKey = JSON.stringify(payload)
+            if (payloadKey === lastSavedPayloadRef.current) return
+
+            const onSaveError = (error: unknown) => {
+                if (error instanceof LockConflictError || error instanceof DraftNotEditableError) {
+                    setLockConflict({ locked: true, message: error.message })
+                } else {
+                    setSaveStatus('error')
                 }
+            }
+
+            setSaveStatus('saving')
+
+            if (!draftId) {
+                useCreateDraft.mutate({ client_id: doc.client!.id! }, {
+                    onSuccess: (created) => {
+                        setDraftId(created.id)
+                        useAutosaveDraft.mutate({ id: created.id, data: payload }, {
+                            onSuccess: () => {
+                                lastSavedPayloadRef.current = payloadKey
+                                setSaveStatus('saved')
+                            },
+                            onError: onSaveError,
+                        })
+                    },
+                    onError: () => {
+                        setSaveStatus('error')
+                        setStatus(prev => ({
+                            ...prev,
+                            message: 'Could not start a draft for this sale — your changes may not be saved. Please retry.',
+                        }))
+                    }
+                })
+                return
+            }
+
+            useAutosaveDraft.mutate({ id: draftId, data: payload }, {
+                onSuccess: () => {
+                    lastSavedPayloadRef.current = payloadKey
+                    setSaveStatus('saved')
+                },
+                onError: onSaveError,
             })
         }, AUTOSAVE_DEBOUNCE_MS)
 
@@ -835,7 +892,7 @@ const useSaveSales = () => {
             if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [sales.salesObj, doc.selectedDiscount, draftId, isHydrating, lockConflict.locked])
+    }, [sales.salesObj, doc.client?.id, doc.selectedDiscount, draftId, isHydrating, lockConflict.locked])
 
     // HEARTBEAT — refreshes the lock every HEARTBEAT_INTERVAL_MS even if nothing changed,
     // so a tab that's just sitting open (no edits) doesn't lose its lock to staleness.
@@ -845,7 +902,7 @@ const useSaveSales = () => {
         const interval = setInterval(() => {
             useLockDraft.mutate(draftId, {
                 onError: (error) => {
-                    if (error instanceof LockConflictError) {
+                    if ((error instanceof LockConflictError || error instanceof DraftNotEditableError)) {
                         setLockConflict({ locked: true, message: error.message })
                     }
                 }
@@ -860,7 +917,7 @@ const useSaveSales = () => {
     useEffect(() => {
         if (!draftId) return
 
-        const release = () => useUnlockDraft.mutate(draftId)
+        const release = () => useUnlockDraft.mutate(draftId, { onError: () => undefined })
         window.addEventListener('pagehide', release)
 
         return () => {
@@ -932,36 +989,50 @@ const useSaveSales = () => {
             return () => clearTimeout(timer)
         }
 
-        if (!draftId) {
-            // Should only happen if the draft-create call failed earlier (e.g. offline).
+        if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
+
+        const finalizePayload = buildDraftPayload()
+        const onFinalizeSuccess = () => {
+            sessionStorage.setItem(
+                'successMessage',
+                'Your sale record has been posted.'
+            )
+            router.push('/bookkeeper/books_of_accounts/sales/manual')
+        }
+        const onFinalizeError = (error: unknown) => {
             setStatus(prev => ({
                 ...prev,
                 loader: false,
-                message: 'No draft to submit yet — reselect the client to start one.',
+                message: (error instanceof LockConflictError || error instanceof DraftNotEditableError)
+                    ? error.message
+                    : (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+                        || 'Could not post this sale — please check the form and try again.',
             }))
+        }
+
+        if (!draftId) {
+            // Passed validation fast enough that the debounced autosave never got a
+            // chance to create the draft — create it now, then finalize straight away.
+            if (!doc.client?.id) {
+                setStatus(prev => ({ ...prev, loader: false, message: 'Select a client first.' }))
+                return
+            }
+            useCreateDraft.mutate({ client_id: doc.client.id }, {
+                onSuccess: (created) => {
+                    setDraftId(created.id)
+                    useFinalizeDraft.mutate({ id: created.id, data: finalizePayload }, {
+                        onSuccess: onFinalizeSuccess,
+                        onError: onFinalizeError,
+                    })
+                },
+                onError: onFinalizeError,
+            })
             return
         }
 
-        if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
-
-        useFinalizeDraft.mutate({ id: draftId, data: buildDraftPayload() }, {
-            onSuccess: () => {
-                sessionStorage.setItem(
-                    'successMessage',
-                    'Your sale record has been posted.'
-                )
-                router.push('/bookkeeper/books_of_accounts/sales/manual')
-            },
-            onError: (error) => {
-                setStatus(prev => ({
-                    ...prev,
-                    loader: false,
-                    message: error instanceof LockConflictError
-                        ? error.message
-                        : (error as { response?: { data?: { message?: string } } })?.response?.data?.message
-                            || 'Could not post this sale — please check the form and try again.',
-                }))
-            }
+        useFinalizeDraft.mutate({ id: draftId, data: finalizePayload }, {
+            onSuccess: onFinalizeSuccess,
+            onError: onFinalizeError,
         })
     }
 
