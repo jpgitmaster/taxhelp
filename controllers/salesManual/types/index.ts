@@ -42,7 +42,40 @@ interface SalesManualCreatePayload {
     }[]
 }
 
+interface DraftParticularPayload {
+    description?: string
+    quantity?: number | string
+    unit_price?: number | string
+    amount?: number | string
+}
+
+/** Every field optional — used for autosave/finalize partial PATCH bodies. */
+type SalesManualDraftPayload = Partial<Omit<SalesManualCreatePayload, 'particulars' | 'client_id'>> & {
+    particulars?: DraftParticularPayload[]
+}
+
+interface SalesManualRecord extends Partial<SalesManualCreatePayload> {
+    id: number
+    client_id: number
+    customer_id: number | null
+    status: 'draft' | 'posted'
+    locked_by_user_id: number | null
+    locked_by_name: string | null
+    locked_at: string | null
+    lock_is_mine: boolean
+    tax_amount: number | string
+    vat_amount: number | string
+    total_gross_amount: number | string
+    is_active: boolean
+    customer: Record<string, unknown> | null
+    created_at: string | null
+    updated_at: string | null
+}
+
 export type {
     Particular,
     SalesManualCreatePayload,
+    SalesManualDraftPayload,
+    SalesManualRecord,
+    DraftParticularPayload,
 }
