@@ -13,8 +13,8 @@ export interface ColumnFilterTableColumn<T> {
   /** Pins the column so it never scrolls out of view. */
   frozen?: 'left' | 'right'
   /** Hidden by default — only rendered once the user checks it in the
-   * Columns dropdown. Columns are appended to the table in the order
-   * they're checked, not in the dropdown's (alphabetical) list order. */
+   * Columns dropdown. Columns are appended to the table in click order,
+   * not the dropdown's (alphabetical) list order. */
   optional?: boolean
 }
 
@@ -23,7 +23,12 @@ interface PropsDefinition<T> {
   columns: ColumnFilterTableColumn<T>[]
   dataSource: T[]
   loading?: boolean
-  scrollY?: number
+  /** Fixed pixel width for the table's outer container (e.g. viewport minus
+   * sidebar). Without this the container has no definite width to scroll
+   * within, so adding optional columns grows the whole page instead of
+   * scrolling inside a fixed-width table — same fix the Sales list already
+   * uses (tableWidth = window.innerWidth - 240). */
+  width?: number
   pagination?: {
     current: number
     pageSize: number
@@ -43,11 +48,11 @@ function ColumnFilterTable<T extends Record<string, any>>({
   columns,
   dataSource,
   loading,
-  scrollY,
+  width,
   pagination,
 }: PropsDefinition<T>) {
   const [selectedOptionalKeys, setSelectedOptionalKeys] = useState<string[]>([])
-  const [search, setSearch] = useState('')
+  const [columnSearch, setColumnSearch] = useState('')
   const [open, setOpen] = useState(false)
 
   const optionalColumns = useMemo(
@@ -60,9 +65,9 @@ function ColumnFilterTable<T extends Record<string, any>>({
   )
   const filteredOptionalColumns = useMemo(
     () => optionalColumnsAlphabetical.filter(c =>
-      c.title.toLowerCase().includes(search.trim().toLowerCase())
+      c.title.toLowerCase().includes(columnSearch.trim().toLowerCase())
     ),
-    [optionalColumnsAlphabetical, search]
+    [optionalColumnsAlphabetical, columnSearch]
   )
 
   const toggleColumn = (key: string) => {
@@ -93,10 +98,13 @@ function ColumnFilterTable<T extends Record<string, any>>({
     return antdColumns
   }, [columns, selectedOptionalKeys, optionalColumns])
 
+  const rangeStart = pagination ? (pagination.total === 0 ? 0 : (pagination.current - 1) * pagination.pageSize + 1) : 0
+  const rangeEnd = pagination ? Math.min(pagination.current * pagination.pageSize, pagination.total) : 0
+
   return (
-    <div className={scss.columnFilterTable}>
+    <div className={scss.wrapper} style={width ? { width: `${width}px` } : undefined}>
       {!!optionalColumns.length && (
-        <div className={scss.toolbar}>
+        <div className={scss.columnsRow}>
           <Dropdown
             trigger={['click']}
             open={open}
@@ -107,9 +115,9 @@ function ColumnFilterTable<T extends Record<string, any>>({
                   autoFocus
                   allowClear
                   placeholder="Search columns..."
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  className={scss.search}
+                  value={columnSearch}
+                  onChange={e => setColumnSearch(e.target.value)}
+                  className={scss.columnSearch}
                 />
                 <ul className={scss.list}>
                   {filteredOptionalColumns.length ? filteredOptionalColumns.map(c => (
@@ -144,12 +152,17 @@ function ColumnFilterTable<T extends Record<string, any>>({
           dataSource={dataSource}
           loading={loading}
           pagination={false}
-          scroll={{ x: 'max-content', y: scrollY }}
+          scroll={{ x: 'max-content' }}
         />
       </div>
 
       {pagination && (
-        <div className={scss.pagination}>
+        <div className={scss.paginationRow}>
+          <span className={scss.rangeLabel}>
+            {pagination.total
+              ? `Showing ${rangeStart}–${rangeEnd} of ${pagination.total}`
+              : 'No records'}
+          </span>
           <Pagination
             current={pagination.current}
             pageSize={pagination.pageSize}

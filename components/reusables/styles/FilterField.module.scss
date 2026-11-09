@@ -1,0 +1,12 @@
+@use '@/styles/forms';
+@use '@/styles/helpers';
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+// Pulls in the shared .npt/.card/.w33 etc. field styles (same ones the
+// Sales list's own filter box uses) so CustomContainer renders identically
+// here without this component depending on any one page's stylesheet.
+:global(.ant-picker) {
+  border: 1px solid $gray;
+  background-color: $white;
+}

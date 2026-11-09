@@ -44,9 +44,11 @@ const useSalesManualAPI = () => {
         limit: number,
         search: string,
         clientId: number | null,
+        taxableMonthFrom?: string | null,
+        taxableMonthTo?: string | null,
     ) => {
         return useQuery({
-            queryKey: ['salesManual', page, limit, search, clientId],
+            queryKey: ['salesManual', page, limit, search, clientId, taxableMonthFrom, taxableMonthTo],
             queryFn: async () => {
                 const res = await api({
                     method: 'GET',
@@ -56,6 +58,8 @@ const useSalesManualAPI = () => {
                         search,
                         page_size: limit,
                         client_id: clientId ?? null,
+                        taxable_month_from: taxableMonthFrom ?? null,
+                        taxable_month_to: taxableMonthTo ?? null,
                     }
                 })
                 return {

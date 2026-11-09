@@ -1,13 +1,17 @@
 import dayjs from 'dayjs'
 import Link from 'next/link'
-import scss from '../styles/Sales.module.scss'
+import { DatePicker } from 'antd'
 import { signOut, getSession } from 'next-auth/react'
-import Loader from '@/components/reusables/RotatingLoader'
 import useSalesManual from '@/controllers/salesManual/useSalesManual'
+import FilterBar from '@/components/reusables/FilterBar'
+import ListToolbar from '@/components/reusables/ListToolbar'
 import SuccessMessage from '@/components/reusables/SuccessMessage'
 import RowActionsMenu from '@/components/reusables/RowActionsMenu'
+import CustomContainer from '@/components/reusables/CustomContainer'
+import filterFieldScss from '@/components/reusables/styles/FilterField.module.scss'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
+import ClientsDropdown from '@/components/pages/bookkeeper/documents/ClientsDropdown'
 import ColumnFilterTable, { ColumnFilterTableColumn } from '@/components/reusables/ColumnFilterTable'
 
 interface ManualSalesRow {
@@ -27,21 +31,33 @@ interface ManualSalesRow {
 
 const SalesManual_V = () => {
   const {
+    doc,
     message,
     search,
     currentPage,
     recordsLimit,
+    tableWidth,
+
+    clientArr,
+    displayClients,
+    clientLoader,
 
     salesArr,
     totalSales,
     salesLoader,
 
+    setDisplayClients,
+
     handleBlur,
-    handleResubmit,
+    handleToggle,
+    handleChange,
     handleSearch,
+    handleDateChange,
     handlePageChange,
     handleDeleteRecord,
+    handleSelectClient,
     handleSubmitSearch,
+    handleClearSelected,
   } = useSalesManual()
 
   const formatNumber = (value: number) =>
@@ -139,41 +155,67 @@ const SalesManual_V = () => {
   return (
     <div>
       {message && <SuccessMessage message={message} />}
-      <div className={scss.header}>
-        <Link href='/bookkeeper/books_of_accounts/sales/add' className={scss.button + ' ' + scss.btnblue}>
-          Add Record
-        </Link>
-        <form className={scss.searchComponent} onSubmit={handleSubmitSearch}>
-          <input
-            id='search'
-            type='text'
-            name='search'
-            maxLength={50}
-            autoComplete='search'
-            placeholder='Search by TIN, Name or Invoice Number...'
-            value={search}
-            onKeyUp={handleBlur}
-            onChange={handleSearch}
+
+      <FilterBar>
+        <CustomContainer scss={filterFieldScss} width={33} label="Filter by Client">
+          <ClientsDropdown
+            doc={doc}
+            clients={clientArr}
+            loader={clientLoader}
+            displayClients={displayClients}
+            setDisplayClients={setDisplayClients}
+            handleChange={handleChange}
+            handleToggle={handleToggle}
+            handleSelectClient={handleSelectClient}
+            handleClearSelected={handleClearSelected}
           />
-          <button type='submit' className={`${scss.button} ${scss.btnblue}`} onKeyDown={handleResubmit}>
-            Search
-          </button>
-        </form>
-      </div>
-      <div className={scss.tableRecords}>
-        {salesLoader && <Loader scss={scss} position='absolute' />}
-        <ColumnFilterTable
-          rowKey='id'
-          columns={columns}
-          dataSource={dataSource}
-          pagination={{
-            current: currentPage,
-            pageSize: recordsLimit,
-            total: totalSales,
-            onChange: handlePageChange,
-          }}
-        />
-      </div>
+        </CustomContainer>
+        <CustomContainer scss={filterFieldScss} width={33} label="Taxable Month Range">
+          <DatePicker
+            placeholder="Month - Year From"
+            picker="month"
+            value={doc.taxable_month_from}
+            onChange={(date) => handleDateChange(date, 'taxable_month_from')}
+          />
+          &nbsp;&nbsp;
+          <DatePicker
+            placeholder="Month - Year To"
+            picker="month"
+            disabled={!doc.taxable_month_from}
+            value={doc.taxable_month_to}
+            onChange={(date) => handleDateChange(date, 'taxable_month_to')}
+          />
+        </CustomContainer>
+      </FilterBar>
+
+      <ListToolbar
+        action={
+          <Link href='/bookkeeper/books_of_accounts/sales/add'>
+            + Add Record
+          </Link>
+        }
+        search={{
+          value: search,
+          placeholder: 'Search by TIN, Name or Invoice Number...',
+          onChange: handleSearch,
+          onKeyUp: handleBlur,
+          onSubmit: handleSubmitSearch,
+        }}
+      />
+
+      <ColumnFilterTable
+        rowKey='id'
+        columns={columns}
+        dataSource={dataSource}
+        loading={salesLoader}
+        width={tableWidth || undefined}
+        pagination={{
+          current: currentPage,
+          pageSize: recordsLimit,
+          total: totalSales,
+          onChange: handlePageChange,
+        }}
+      />
     </div>
   )
 }

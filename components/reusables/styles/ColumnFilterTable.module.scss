@@ -1,35 +1,37 @@
 @use '@/styles/colors' as *;
 @reference 'tailwindcss';
 
-.columnFilterTable {
-  @apply w-full;
+.wrapper {
+  max-width: 100%;
+  @apply relative;
 }
 
-.toolbar {
-  @apply flex flex-row justify-end mb-2.5;
+// ============ Columns filter trigger ============
+.columnsRow {
+  @apply flex flex-row justify-end mb-2;
 }
 
 .columnsBtn {
   background-color: $white;
   border: 1px solid rgba($gray, .9);
   color: $lightBlack;
-  @apply flex flex-row items-center gap-1.5 rounded-[10px] text-[12px] font-semibold px-3.5 py-1.5 cursor-pointer transition-colors;
+  @apply flex flex-row items-center gap-1.5 rounded-[10px] text-[12px] font-semibold px-3.5 py-1.5 cursor-pointer transition-colors whitespace-nowrap;
 
-  &::before {
+  &::after {
     content: '';
     background-image: url('/svgs/arrowDown.svg');
     background-repeat: no-repeat;
     background-size: contain;
     filter: invert(45%) sepia(8%) saturate(300%);
     opacity: .6;
-    @apply w-2.5 h-2.5 rotate-180;
+    @apply w-2.5 h-2.5;
   }
 
   &:hover {
     border-color: $blue;
     color: $blue;
 
-    &::before {
+    &::after {
       filter: invert(45%) sepia(90%) saturate(2000%) hue-rotate(175deg);
       opacity: 1;
     }
@@ -43,7 +45,7 @@
   @apply rounded-[12px] p-3 w-64;
 }
 
-.search {
+.columnSearch {
   @apply mb-2 rounded-[8px]!;
 }
 
@@ -73,9 +75,7 @@
   }
 }
 
-// Receipt-style card matching the Sales wizard's .panel convention — white
-// surface, 18px rounded corners, hairline border — rather than antd's bare
-// default table chrome.
+// ============ Table card ============
 .tableWrap {
   background-color: $white;
   border: 1px solid rgba($gray, .7);
@@ -101,8 +101,8 @@
     @apply text-[13px] py-3! px-4!;
   }
   // antd's hidden row for measuring column widths when scroll.x is set —
-  // the !important padding above was overriding its own height:0, making
-  // it render as a visible blank row.
+  // needs to win over the !important cell padding above so it stays
+  // invisible instead of rendering as a blank row under the header.
   :global(tr.ant-table-measure-row td) {
     padding: 0 !important;
     height: 0 !important;
@@ -127,14 +127,21 @@
   }
 }
 
-.pagination {
-  @apply flex flex-row justify-end mt-4;
+// ============ Pagination row — unboxed, matching the app's own
+// .pagination/.total_records convention (plain row, no card). ============
+.paginationRow {
+  @apply flex flex-row items-center justify-between gap-3 flex-wrap mt-3;
+}
 
-  :global(.ant-pagination-item-active) {
-    border-color: $blue !important;
+.rangeLabel {
+  color: $darkgray;
+  @apply text-[12px];
+}
 
-    a {
-      color: $blue !important;
-    }
+.paginationRow :global(.ant-pagination-item-active) {
+  border-color: $blue !important;
+
+  a {
+    color: $blue !important;
   }
 }
