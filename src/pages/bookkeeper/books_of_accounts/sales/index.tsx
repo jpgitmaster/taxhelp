@@ -15,7 +15,7 @@ import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 import ClientsDropdown from '@/components/pages/bookkeeper/documents/ClientsDropdown'
 import DocumentsDropdown from '@/components/pages/bookkeeper/documents/DocumentsDropdown'
 import { Dropdown, Table, Pagination, DatePicker, Popconfirm, type MenuProps, Modal } from 'antd'
-import ReceiptModal from './ReceiptModal'
+import ReceiptModal from '@/components/pages/bookkeeper/sales/ReceiptModal'
 
 const Sales_V = () => {
   const {
