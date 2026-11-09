@@ -54,7 +54,7 @@ const ClientCustomerStep = (props: {
 
   return (
     <div className={scss.panel}>
-      <SectionHeader title="Client" />
+      <SectionHeader title="Client Details" />
       <div className={scss.fieldGrid}>
         <WizardField span={8} label="Client" htmlFor="client" required err={sales.salesErr.client as string}>
           <div
@@ -106,7 +106,7 @@ const ClientCustomerStep = (props: {
       <hr className={scss.divider} />
 
       <SectionHeader
-        title="Customer"
+        title="Customer Details"
         action={hasSelectedCustomer && (
           <span className={scss.editToggle} onClick={() => handleEditCustomer(!editCustomer)}>
             {editCustomer ? 'View Details' : 'Edit Details'}

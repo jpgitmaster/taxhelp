@@ -52,6 +52,7 @@ const SalesDetailsStep = (props: {
   const customerName = customer?.classification === 'NON-INDIVIDUAL'
     ? customer?.registered_name
     : [customer?.first_name, customer?.middle_name, customer?.last_name].filter(Boolean).join(' ')
+  const titleCase = (value?: string) => value ? value.charAt(0) + value.slice(1).toLowerCase() : ''
 
   return (
     <>
@@ -73,7 +74,7 @@ const SalesDetailsStep = (props: {
               ),
               children: (
                 <div className={scss.summaryList}>
-                  <div className={scss.summaryRow}><small>Classification</small><span>{customer?.classification?.toLowerCase() || '—'}</span></div>
+                  <div className={scss.summaryRow}><small>Classification</small><span>{titleCase(customer?.classification) || '—'}</span></div>
                   <div className={scss.summaryRow}><small>TIN No.</small><span>{customer?.tin || '—'}</span></div>
                   <div className={scss.summaryRow}><small>Trade Name</small><span>{customer?.trade_name || '—'}</span></div>
                   <div className={scss.summaryRow}><small>Phone</small><span>{customer?.phone_number || '—'}</span></div>

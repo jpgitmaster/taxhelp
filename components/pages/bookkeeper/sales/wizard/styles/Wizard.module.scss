@@ -288,6 +288,11 @@
   input[type=text], select {
     border: 1px solid rgba($gray, .9);
     background-color: $white;
+    // Native <select> chrome (esp. macOS Safari) ignores background-color
+    // without this — it was rendering its own gray control background
+    // instead of matching the text inputs.
+    appearance: none;
+    -webkit-appearance: none;
     @apply rounded-[10px] px-3 py-2.5 text-[13px] w-full;
 
     &:focus {
@@ -302,6 +307,14 @@
     &.invalid {
       border-color: $red;
     }
+  }
+
+  select {
+    background-image: url('/svgs/arrowDown.svg');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 11px;
+    @apply pr-8;
   }
 
   &.hasError {

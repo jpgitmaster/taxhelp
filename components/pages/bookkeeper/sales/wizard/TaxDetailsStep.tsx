@@ -28,9 +28,49 @@ const TaxDetailsStep = (props: {
   const { doc, sales, options, hasWithholding, handleBlur, handleChange, handleToggleWithholding } = props
   const { salesObj } = sales
   const discountLabel = doc.selectedDiscount?.value ? doc.selectedDiscount?.label : ''
+  const customer = salesObj.customer
+  const customerName = customer?.classification === 'NON-INDIVIDUAL'
+    ? customer?.registered_name
+    : [customer?.first_name, customer?.middle_name, customer?.last_name].filter(Boolean).join(' ')
+  const titleCase = (value?: string) => value ? value.charAt(0) + value.slice(1).toLowerCase() : ''
+  const formattedTaxableMonth = salesObj.taxable_month ? dayjs(salesObj.taxable_month).format('MMMM YYYY') : '—'
+  const formattedInvoiceDate = salesObj.invoice_date
+    ? dayjs(salesObj.invoice_date, 'MM/DD/YYYY').format('MMM D, YYYY')
+    : '—'
 
   return (
     <>
+      <div className={scss.summaryCard}>
+        <Collapse
+          ghost
+          expandIconPosition="end"
+          items={[
+            {
+              key: '1',
+              label: (
+                <div className={scss.summaryHeader}>
+                  <span className={scss.summaryIcon}>1</span>
+                  <div>
+                    <strong>{doc.client?.registered_name || doc.client?.first_name || 'Client'}</strong>
+                    <small>Billed to: {customerName || 'No customer selected'} · TIN {customer?.tin || '—'}</small>
+                  </div>
+                </div>
+              ),
+              children: (
+                <div className={scss.summaryList}>
+                  <div className={scss.summaryRow}><small>Classification</small><span>{titleCase(customer?.classification) || '—'}</span></div>
+                  <div className={scss.summaryRow}><small>TIN No.</small><span>{customer?.tin || '—'}</span></div>
+                  <div className={scss.summaryRow}><small>Trade Name</small><span>{customer?.trade_name || '—'}</span></div>
+                  <div className={scss.summaryRow}><small>Phone</small><span>{customer?.phone_number || '—'}</span></div>
+                  <div className={scss.summaryRow}><small>First Address</small><span>{customer?.first_address || '—'}</span></div>
+                  <div className={scss.summaryRow}><small>Second Address</small><span>{customer?.second_address || '—'}</span></div>
+                </div>
+              ),
+            },
+          ]}
+        />
+      </div>
+
       <div className={scss.summaryCard}>
         <Collapse
           ghost
@@ -44,7 +84,7 @@ const TaxDetailsStep = (props: {
                   <div>
                     <strong>Invoice {salesObj.invoice_number || '—'}</strong>
                     <small>
-                      {salesObj.taxable_month ? dayjs(salesObj.taxable_month).format('MMM YYYY') : '—'} ·{' '}
+                      {formattedTaxableMonth} ·{' '}
                       {salesObj.particulars.filter((p: { description: string }) => p.description).length} line item(s)
                     </small>
                   </div>
@@ -53,8 +93,8 @@ const TaxDetailsStep = (props: {
               children: (
                 <>
                   <div className={scss.summaryList}>
-                    <div className={scss.summaryRow}><small>Taxable Month</small><span>{salesObj.taxable_month ? dayjs(salesObj.taxable_month).format('MM-YYYY') : '—'}</span></div>
-                    <div className={scss.summaryRow}><small>Invoice Date</small><span>{salesObj.invoice_date || '—'}</span></div>
+                    <div className={scss.summaryRow}><small>Taxable Month</small><span>{formattedTaxableMonth}</span></div>
+                    <div className={scss.summaryRow}><small>Invoice Date</small><span>{formattedInvoiceDate}</span></div>
                     <div className={scss.summaryRow}><small>Terms</small><span>{salesObj.terms || '—'}</span></div>
                     <div className={scss.summaryRow}><small>Account Name</small><span>{salesObj.account_name || '—'}</span></div>
                   </div>
