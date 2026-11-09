@@ -20,17 +20,40 @@ const useSalesManual = () => {
     const [tableWidth, setTableWidth] = useState(0)
     const [displayClients, setDisplayClients] = useState(false)
     const [recordsLimit, setRecordsLimit] = useState(10)
+    const [sortBy, setSortBy] = useState<string | null>(null)
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+    // The popover's fields edit `doc` live (so inputs stay responsive/
+    // controlled as the user picks), but the query only reads from this —
+    // it's only synced from `doc` when "Search" is clicked, so picking a
+    // date doesn't refire the API on every keystroke/selection.
+    const [appliedFilters, setAppliedFilters] = useState({
+        clientId: null as number | null,
+        taxableMonthFrom: null as string | null,
+        taxableMonthTo: null as string | null,
+        invoiceDateFrom: null as string | null,
+        invoiceDateTo: null as string | null,
+        status: null as string | null,
+        tin: null as string | null,
+    })
 
     const [doc, setDoc] = useState<{
         clientSearch: string
         client: { id: number | null, last_name: string, first_name: string, trade_name: string, registered_name: string }
         taxable_month_from: Dayjs | null
         taxable_month_to: Dayjs | null
+        invoice_date_from: Dayjs | null
+        invoice_date_to: Dayjs | null
+        status: string
+        tin: string
     }>({
         clientSearch: '',
         client: { id: null, last_name: '', first_name: '', trade_name: '', registered_name: '' },
         taxable_month_from: null,
         taxable_month_to: null,
+        invoice_date_from: null,
+        invoice_date_to: null,
+        status: '',
+        tin: '',
     })
 
     const { data: dataClients, isLoading: isLoadingClients, isFetching: isFetchingClients } = getClients(
@@ -45,9 +68,15 @@ const useSalesManual = () => {
         currentPage,
         recordsLimit,
         appliedSearch,
-        doc.client.id,
-        doc.taxable_month_from ? doc.taxable_month_from.format('MM/YYYY') : null,
-        doc.taxable_month_to ? doc.taxable_month_to.format('MM/YYYY') : null,
+        appliedFilters.clientId,
+        appliedFilters.taxableMonthFrom,
+        appliedFilters.taxableMonthTo,
+        sortBy,
+        sortOrder,
+        appliedFilters.invoiceDateFrom,
+        appliedFilters.invoiceDateTo,
+        appliedFilters.status,
+        appliedFilters.tin,
     )
 
     useEffect(() => {
@@ -88,6 +117,12 @@ const useSalesManual = () => {
         setCurrentPage(1)
     }
 
+    const handleSortChange = (field: string | null, order: 'asc' | 'desc') => {
+        setSortBy(field)
+        setSortOrder(order)
+        setCurrentPage(1)
+    }
+
     const handleDeleteRecord = (id: number) => {
         useDeleteSalesManual.mutate(id)
     }
@@ -104,26 +139,69 @@ const useSalesManual = () => {
         setDoc(prev => ({ ...prev, [name]: value }))
     }
 
+    // Only edits the draft `doc` — doesn't touch the query. Query only
+    // updates once handleApplyFilters runs (Search button click).
     const handleSelectClient = (client: { id: number | null, last_name: string, first_name: string, trade_name: string, registered_name: string }) => {
         setDoc(prev => ({ ...prev, client }))
-        setCurrentPage(1)
     }
 
+    // Clearing is an immediate action (not a draft edit) — resets both the
+    // visible field and the actual query right away, same as Gmail's
+    // "Clear filters" doesn't wait for a separate Search click.
     const handleClearSelected = (dropdown: string) => {
         if (dropdown === 'client') {
             setDoc(prev => ({
                 ...prev,
                 client: { id: null, last_name: '', first_name: '', trade_name: '', registered_name: '' },
             }))
+            setAppliedFilters(prev => ({ ...prev, clientId: null }))
+            setCurrentPage(1)
+        }
+        if (dropdown === 'taxable_month') {
+            setDoc(prev => ({ ...prev, taxable_month_from: null, taxable_month_to: null }))
+            setAppliedFilters(prev => ({ ...prev, taxableMonthFrom: null, taxableMonthTo: null }))
+            setCurrentPage(1)
+        }
+        if (dropdown === 'invoice_date') {
+            setDoc(prev => ({ ...prev, invoice_date_from: null, invoice_date_to: null }))
+            setAppliedFilters(prev => ({ ...prev, invoiceDateFrom: null, invoiceDateTo: null }))
+            setCurrentPage(1)
+        }
+        if (dropdown === 'status') {
+            setDoc(prev => ({ ...prev, status: '' }))
+            setAppliedFilters(prev => ({ ...prev, status: null }))
+            setCurrentPage(1)
+        }
+        if (dropdown === 'tin') {
+            setDoc(prev => ({ ...prev, tin: '' }))
+            setAppliedFilters(prev => ({ ...prev, tin: null }))
             setCurrentPage(1)
         }
     }
 
-    const handleDateChange = (date: Dayjs | null, name: 'taxable_month_from' | 'taxable_month_to') => {
+    const handleDateChange = (
+        date: Dayjs | null,
+        name: 'taxable_month_from' | 'taxable_month_to' | 'invoice_date_from' | 'invoice_date_to',
+    ) => {
         setDoc(prev => {
             const updated = { ...prev, [name]: date }
             if (name === 'taxable_month_from') updated.taxable_month_to = null
+            if (name === 'invoice_date_from') updated.invoice_date_to = null
             return updated
+        })
+    }
+
+    // Commits the draft `doc` filter fields into the query — called when
+    // the filter popover's Search button is clicked.
+    const handleApplyFilters = () => {
+        setAppliedFilters({
+            clientId: doc.client.id,
+            taxableMonthFrom: doc.taxable_month_from ? doc.taxable_month_from.format('MM/YYYY') : null,
+            taxableMonthTo: doc.taxable_month_to ? doc.taxable_month_to.format('MM/YYYY') : null,
+            invoiceDateFrom: doc.invoice_date_from ? doc.invoice_date_from.format('YYYY-MM-DD') : null,
+            invoiceDateTo: doc.invoice_date_to ? doc.invoice_date_to.format('YYYY-MM-DD') : null,
+            status: doc.status || null,
+            tin: doc.tin || null,
         })
         setCurrentPage(1)
     }
@@ -135,6 +213,9 @@ const useSalesManual = () => {
         currentPage,
         recordsLimit,
         tableWidth,
+        sortBy,
+        sortOrder,
+        appliedFilters,
 
         clientArr,
         displayClients,
@@ -152,8 +233,10 @@ const useSalesManual = () => {
         handleResubmit,
         handleSearch,
         handleDateChange,
+        handleApplyFilters,
         handlePageChange,
         handlePageSizeChange,
+        handleSortChange,
         handleDeleteRecord,
         handleSelectClient,
         handleSubmitSearch,

@@ -46,9 +46,15 @@ const useSalesManualAPI = () => {
         clientId: number | null,
         taxableMonthFrom?: string | null,
         taxableMonthTo?: string | null,
+        sortBy?: string | null,
+        sortOrder?: 'asc' | 'desc',
+        invoiceDateFrom?: string | null,
+        invoiceDateTo?: string | null,
+        status?: string | null,
+        tin?: string | null,
     ) => {
         return useQuery({
-            queryKey: ['salesManual', page, limit, search, clientId, taxableMonthFrom, taxableMonthTo],
+            queryKey: ['salesManual', page, limit, search, clientId, taxableMonthFrom, taxableMonthTo, sortBy, sortOrder, invoiceDateFrom, invoiceDateTo, status, tin],
             queryFn: async () => {
                 const res = await api({
                     method: 'GET',
@@ -60,6 +66,12 @@ const useSalesManualAPI = () => {
                         client_id: clientId ?? null,
                         taxable_month_from: taxableMonthFrom ?? null,
                         taxable_month_to: taxableMonthTo ?? null,
+                        sort_by: sortBy ?? null,
+                        sort_order: sortOrder ?? 'asc',
+                        invoice_date_from: invoiceDateFrom ?? null,
+                        invoice_date_to: invoiceDateTo ?? null,
+                        status: status ?? null,
+                        tin: tin ?? null,
                     }
                 })
                 return {
