@@ -1,16 +1,17 @@
 import dayjs from 'dayjs'
 import Link from 'next/link'
-import { ReactElement } from 'react'
+import { ReactElement, useState } from 'react'
 import { DatePicker } from 'antd'
 import { signOut, getSession } from 'next-auth/react'
 import useSalesManual from '@/controllers/salesManual/useSalesManual'
-import FilterBar from '@/components/reusables/FilterBar'
 import ListToolbar from '@/components/reusables/ListToolbar'
+import ActiveFilterChips from '@/components/reusables/ActiveFilterChips'
 import CMS_Layout from '@/components/layouts/CMS_Layout'
 import SuccessMessage from '@/components/reusables/SuccessMessage'
 import RowActionsMenu from '@/components/reusables/RowActionsMenu'
-import CustomContainer from '@/components/reusables/CustomContainer'
-import filterFieldScss from '@/components/reusables/styles/FilterField.module.scss'
+import ColumnsDropdownButton from '@/components/reusables/ColumnsDropdownButton'
+import FilterPopoverButton from '@/components/reusables/FilterPopoverButton'
+import filterPopoverScss from '@/components/reusables/styles/FilterPopoverButton.module.scss'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types'
 import ClientsDropdown from '@/components/pages/bookkeeper/documents/ClientsDropdown'
@@ -33,6 +34,16 @@ interface ManualSalesRow {
 }
 
 const SalesManual_V: NextPageWithLayout = () => {
+  // Lifted up (rather than owned inside ColumnFilterTable) so the "Columns"
+  // picker can render inline in the toolbar, next to Add Record/Search,
+  // instead of wrapping onto its own row below them.
+  const [selectedOptionalKeys, setSelectedOptionalKeys] = useState<string[]>([])
+  const toggleOptionalColumn = (key: string) => {
+    setSelectedOptionalKeys(prev =>
+      prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
+    )
+  }
+
   const {
     doc,
     message,
@@ -40,6 +51,9 @@ const SalesManual_V: NextPageWithLayout = () => {
     currentPage,
     recordsLimit,
     tableWidth,
+    sortBy,
+    sortOrder,
+    appliedFilters,
 
     clientArr,
     displayClients,
@@ -56,8 +70,10 @@ const SalesManual_V: NextPageWithLayout = () => {
     handleChange,
     handleSearch,
     handleDateChange,
+    handleApplyFilters,
     handlePageChange,
     handlePageSizeChange,
+    handleSortChange,
     handleDeleteRecord,
     handleSelectClient,
     handleSubmitSearch,
@@ -95,14 +111,16 @@ const SalesManual_V: NextPageWithLayout = () => {
   // Every column gets an explicit width so adding an optional column never
   // shrinks the existing ones — the table just gets wider and scrolls.
   const columns: ColumnFilterTableColumn<ManualSalesRow>[] = [
-    { key: 'invoice_number', title: 'Invoice No.', dataIndex: 'invoice_number', width: 110, frozen: 'left', sorter: true },
-    { key: 'invoice_date', title: 'Invoice Date', dataIndex: 'invoice_date', width: 120, sorter: true },
-    { key: 'customer_name', title: 'Customer', dataIndex: 'customer_name', width: 260, sorter: true },
+    { key: 'invoice_number', title: 'Invoice No.', dataIndex: 'invoice_number', flexible: true, minWidth: 130, frozen: 'left', sorter: true },
+    { key: 'invoice_date', title: 'Invoice Date', dataIndex: 'invoice_date', flexible: true, minWidth: 150, sorter: true },
+    { key: 'tin', title: 'TIN', dataIndex: 'tin', flexible: true, minWidth: 140, sorter: true },
+    { key: 'customer_name', title: 'Customer', dataIndex: 'customer_name', flexible: true, minWidth: 260, sorter: true },
     {
       key: 'classification',
       title: 'Classification',
       dataIndex: 'classification',
-      width: 130,
+      flexible: true,
+      minWidth: 160,
       sorter: true,
       render: (value: string) => value ? value.charAt(0) + value.slice(1).toLowerCase() : '',
     },
@@ -110,7 +128,8 @@ const SalesManual_V: NextPageWithLayout = () => {
       key: 'status',
       title: 'Status',
       dataIndex: 'status',
-      width: 110,
+      flexible: true,
+      minWidth: 110,
       sorter: true,
       render: (value: 'draft' | 'posted') => (
         <span style={{
@@ -129,17 +148,17 @@ const SalesManual_V: NextPageWithLayout = () => {
       ),
     },
 
-    { key: 'taxable_month', title: 'Taxable Month', dataIndex: 'taxable_month', width: 130, optional: true },
-    { key: 'terms', title: 'Terms', dataIndex: 'terms', width: 100, optional: true },
-    { key: 'tin', title: 'TIN', dataIndex: 'tin', width: 140, optional: true },
-    { key: 'gross_taxable', title: 'Vatable Sales', dataIndex: 'gross_taxable', width: 140, render: formatNumber, optional: true },
-    { key: 'vat_amount', title: 'VAT Amount', dataIndex: 'vat_amount', width: 130, render: formatNumber, optional: true },
-    { key: 'total_gross_amount', title: 'Total Gross Amount', dataIndex: 'total_gross_amount', width: 160, render: formatNumber, optional: true },
+    { key: 'taxable_month', title: 'Taxable Month', dataIndex: 'taxable_month', flexible: true, minWidth: 160, sorter: true, optional: true },
+    { key: 'terms', title: 'Terms', dataIndex: 'terms', flexible: true, minWidth: 100, sorter: true, optional: true },
+    { key: 'gross_taxable', title: 'Vatable Sales', dataIndex: 'gross_taxable', flexible: true, minWidth: 140, sorter: true, render: formatNumber, optional: true },
+    { key: 'vat_amount', title: 'VAT Amount', dataIndex: 'vat_amount', flexible: true, minWidth: 130, sorter: true, render: formatNumber, optional: true },
+    { key: 'total_gross_amount', title: 'Total Gross Amount', dataIndex: 'total_gross_amount', flexible: true, minWidth: 160, sorter: true, render: formatNumber, optional: true },
 
     {
       key: 'actions',
       title: 'Actions',
-      width: 80,
+      flexible: true,
+      minWidth: 80,
       align: 'center',
       frozen: 'right',
       render: (_: unknown, record: ManualSalesRow) =>
@@ -149,7 +168,11 @@ const SalesManual_V: NextPageWithLayout = () => {
               label: 'Resume',
               icon: '/svgs/edit.svg',
               href: `/bookkeeper/books_of_accounts/sales/add?draft=${record.id}`,
-            }] : []),
+            }] : [{
+              label: 'View',
+              icon: '/svgs/eyecon.svg',
+              href: `/bookkeeper/books_of_accounts/sales/view?id=${record.id}`,
+            }]),
             {
               label: 'Delete',
               icon: '/svgs/delete.svg',
@@ -169,37 +192,35 @@ const SalesManual_V: NextPageWithLayout = () => {
     <div>
       {message && <SuccessMessage message={message} />}
 
-      <FilterBar>
-        <CustomContainer scss={filterFieldScss} width={33} label="Filter by Client">
-          <ClientsDropdown
-            doc={doc}
-            clients={clientArr}
-            loader={clientLoader}
-            displayClients={displayClients}
-            setDisplayClients={setDisplayClients}
-            handleChange={handleChange}
-            handleToggle={handleToggle}
-            handleSelectClient={handleSelectClient}
-            handleClearSelected={handleClearSelected}
-          />
-        </CustomContainer>
-        <CustomContainer scss={filterFieldScss} width={33} label="Taxable Month Range">
-          <DatePicker
-            placeholder="Month - Year From"
-            picker="month"
-            value={doc.taxable_month_from}
-            onChange={(date) => handleDateChange(date, 'taxable_month_from')}
-          />
-          &nbsp;&nbsp;
-          <DatePicker
-            placeholder="Month - Year To"
-            picker="month"
-            disabled={!doc.taxable_month_from}
-            value={doc.taxable_month_to}
-            onChange={(date) => handleDateChange(date, 'taxable_month_to')}
-          />
-        </CustomContainer>
-      </FilterBar>
+      <ActiveFilterChips
+        chips={[
+          ...(appliedFilters.clientId ? [{
+            key: 'client',
+            label: `Client: ${doc.client.registered_name || [doc.client.first_name, doc.client.last_name].filter(Boolean).join(' ')}`,
+            onClear: () => handleClearSelected('client'),
+          }] : []),
+          ...(appliedFilters.taxableMonthFrom ? [{
+            key: 'taxable_month',
+            label: `Taxable Month: ${appliedFilters.taxableMonthFrom}${appliedFilters.taxableMonthTo ? ` – ${appliedFilters.taxableMonthTo}` : ''}`,
+            onClear: () => handleClearSelected('taxable_month'),
+          }] : []),
+          ...(appliedFilters.invoiceDateFrom ? [{
+            key: 'invoice_date',
+            label: `Invoice Date: ${appliedFilters.invoiceDateFrom}${appliedFilters.invoiceDateTo ? ` – ${appliedFilters.invoiceDateTo}` : ''}`,
+            onClear: () => handleClearSelected('invoice_date'),
+          }] : []),
+          ...(appliedFilters.status ? [{
+            key: 'status',
+            label: `Status: ${appliedFilters.status.charAt(0).toUpperCase() + appliedFilters.status.slice(1)}`,
+            onClear: () => handleClearSelected('status'),
+          }] : []),
+          ...(appliedFilters.tin ? [{
+            key: 'tin',
+            label: `TIN: ${appliedFilters.tin}`,
+            onClear: () => handleClearSelected('tin'),
+          }] : []),
+        ]}
+      />
 
       <ListToolbar
         action={
@@ -214,6 +235,105 @@ const SalesManual_V: NextPageWithLayout = () => {
           onKeyUp: handleBlur,
           onSubmit: handleSubmitSearch,
         }}
+        extra={
+          <>
+            <FilterPopoverButton
+              active={!!(appliedFilters.clientId || appliedFilters.taxableMonthFrom || appliedFilters.invoiceDateFrom || appliedFilters.status || appliedFilters.tin)}
+              onSearch={handleApplyFilters}
+              onClear={() => {
+                handleClearSelected('client')
+                handleClearSelected('taxable_month')
+                handleClearSelected('invoice_date')
+                handleClearSelected('status')
+                handleClearSelected('tin')
+              }}
+            >
+              <div className={filterPopoverScss.fieldRow}>
+                <span className={filterPopoverScss.fieldLabel}>Client</span>
+                <div className={filterPopoverScss.fieldValue}>
+                  <ClientsDropdown
+                    doc={doc}
+                    clients={clientArr}
+                    loader={clientLoader}
+                    displayClients={displayClients}
+                    setDisplayClients={setDisplayClients}
+                    handleChange={handleChange}
+                    handleToggle={handleToggle}
+                    handleSelectClient={handleSelectClient}
+                    handleClearSelected={handleClearSelected}
+                  />
+                </div>
+              </div>
+              <div className={filterPopoverScss.fieldRow}>
+                <span className={filterPopoverScss.fieldLabel}>Status</span>
+                <div className={filterPopoverScss.fieldValue}>
+                  <select
+                    name="status"
+                    value={doc.status}
+                    onChange={handleChange}
+                    className={filterPopoverScss.select}
+                  >
+                    <option value="">All</option>
+                    <option value="draft">Draft</option>
+                    <option value="posted">Posted</option>
+                  </select>
+                </div>
+              </div>
+              <div className={filterPopoverScss.fieldRow}>
+                <span className={filterPopoverScss.fieldLabel}>TIN</span>
+                <div className={filterPopoverScss.fieldValue}>
+                  <input
+                    type="text"
+                    name="tin"
+                    placeholder="000-000-000"
+                    value={doc.tin}
+                    onChange={handleChange}
+                    className={filterPopoverScss.textInput}
+                  />
+                </div>
+              </div>
+              <div className={filterPopoverScss.fieldRow}>
+                <span className={filterPopoverScss.fieldLabel}>Taxable Month</span>
+                <div className={filterPopoverScss.fieldValue}>
+                  <DatePicker
+                    placeholder="MM/YYYY"
+                    picker="month"
+                    value={doc.taxable_month_from}
+                    onChange={(date) => handleDateChange(date, 'taxable_month_from')}
+                  />
+                  <DatePicker
+                    placeholder="MM/YYYY"
+                    picker="month"
+                    disabled={!doc.taxable_month_from}
+                    value={doc.taxable_month_to}
+                    onChange={(date) => handleDateChange(date, 'taxable_month_to')}
+                  />
+                </div>
+              </div>
+              <div className={filterPopoverScss.fieldRow}>
+                <span className={filterPopoverScss.fieldLabel}>Invoice Date</span>
+                <div className={filterPopoverScss.fieldValue}>
+                  <DatePicker
+                    placeholder="Date From"
+                    value={doc.invoice_date_from}
+                    onChange={(date) => handleDateChange(date, 'invoice_date_from')}
+                  />
+                  <DatePicker
+                    placeholder="Date To"
+                    disabled={!doc.invoice_date_from}
+                    value={doc.invoice_date_to}
+                    onChange={(date) => handleDateChange(date, 'invoice_date_to')}
+                  />
+                </div>
+              </div>
+            </FilterPopoverButton>
+            <ColumnsDropdownButton
+              options={columns.filter(c => c.optional).map(c => ({ key: c.key, title: c.title }))}
+              selectedKeys={selectedOptionalKeys}
+              onToggle={toggleOptionalColumn}
+            />
+          </>
+        }
       />
 
       <ColumnFilterTable
@@ -222,6 +342,10 @@ const SalesManual_V: NextPageWithLayout = () => {
         dataSource={dataSource}
         loading={salesLoader}
         width={tableWidth || undefined}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+        onSortChange={handleSortChange}
+        selectedOptionalKeys={selectedOptionalKeys}
         pagination={{
           current: currentPage,
           pageSize: recordsLimit,
