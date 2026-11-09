@@ -11,26 +11,34 @@ interface PropsDefinition {
     onKeyUp?: (e: KeyboardEvent<HTMLInputElement>) => void
     onSubmit: (e: FormEvent<HTMLFormElement>) => void
   }
+  /** Rendered after the search form, on the same row — e.g. a
+   * ColumnsDropdownButton, so it never wraps onto its own line separately
+   * from Add Record/Search. */
+  extra?: ReactNode
 }
 
-/** List-page toolbar row — primary action on the left, search on the right —
- * matching the Sales list's own .header/.searchComponent convention, but as
- * its own reusable component instead of depending on that page's stylesheet. */
-const ListToolbar = ({ action, search }: PropsDefinition) => (
+/** List-page toolbar row — primary action on the left, search (and any
+ * `extra` control) on the right — matching the Sales list's own
+ * .header/.searchComponent convention, but as its own reusable component
+ * instead of depending on that page's stylesheet. */
+const ListToolbar = ({ action, search, extra }: PropsDefinition) => (
   <div className={scss.toolbar}>
     {action && <div className={scss.action}>{action}</div>}
-    {search && (
-      <form className={scss.searchForm} onSubmit={search.onSubmit}>
-        <input
-          type="text"
-          placeholder={search.placeholder || 'Search...'}
-          value={search.value}
-          onChange={search.onChange}
-          onKeyUp={search.onKeyUp}
-        />
-        <button type="submit">Search</button>
-      </form>
-    )}
+    <div className={scss.right}>
+      {search && (
+        <form className={scss.searchForm} onSubmit={search.onSubmit}>
+          <input
+            type="text"
+            placeholder={search.placeholder || 'Search...'}
+            value={search.value}
+            onChange={search.onChange}
+            onKeyUp={search.onKeyUp}
+          />
+          <button type="submit">Search</button>
+        </form>
+      )}
+      {extra}
+    </div>
   </div>
 )
 
