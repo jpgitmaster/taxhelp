@@ -378,6 +378,9 @@ const Sales_V = () => {
           <Link href='/bookkeeper/books_of_accounts/sales/add' className={scss.button+' '+scss.btnblue}>
             Add Record
           </Link>
+          <Link href='/bookkeeper/books_of_accounts/sales/manual' className={scss.button+' '+scss.btngreen}>
+            Manual Entries
+          </Link>
           <button
               type='button'
               className={scss.button + ' ' + scss.btnred}
