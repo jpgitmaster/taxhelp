@@ -17,19 +17,24 @@ const formatCurrency = (value: string | number) =>
   Number(value || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 const TaxDetailsStep = (props: {
+  doc: any
   sales: any
   options: VatOption[]
+  hasWithholding: boolean
   handleBlur: (e: KeyboardEvent<HTMLInputElement>) => void
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void
+  handleToggleWithholding: (checked: boolean) => void
 }) => {
-  const { sales, options, handleBlur, handleChange } = props
+  const { doc, sales, options, hasWithholding, handleBlur, handleChange, handleToggleWithholding } = props
   const { salesObj } = sales
+  const discountLabel = doc.selectedDiscount?.value ? doc.selectedDiscount?.label : ''
 
   return (
     <>
       <div className={scss.summaryCard}>
         <Collapse
           ghost
+          expandIconPosition="end"
           items={[
             {
               key: '1',
@@ -47,13 +52,13 @@ const TaxDetailsStep = (props: {
               ),
               children: (
                 <>
-                  <div className={scss.summaryGrid}>
-                    <div className={scss.field}><small>Taxable Month</small><span>{salesObj.taxable_month ? dayjs(salesObj.taxable_month).format('MM-YYYY') : '—'}</span></div>
-                    <div className={scss.field}><small>Invoice Date</small><span>{salesObj.invoice_date || '—'}</span></div>
-                    <div className={scss.field}><small>Terms</small><span>{salesObj.terms || '—'}</span></div>
-                    <div className={scss.field}><small>Account Name</small><span>{salesObj.account_name || '—'}</span></div>
+                  <div className={scss.summaryList}>
+                    <div className={scss.summaryRow}><small>Taxable Month</small><span>{salesObj.taxable_month ? dayjs(salesObj.taxable_month).format('MM-YYYY') : '—'}</span></div>
+                    <div className={scss.summaryRow}><small>Invoice Date</small><span>{salesObj.invoice_date || '—'}</span></div>
+                    <div className={scss.summaryRow}><small>Terms</small><span>{salesObj.terms || '—'}</span></div>
+                    <div className={scss.summaryRow}><small>Account Name</small><span>{salesObj.account_name || '—'}</span></div>
                   </div>
-                  <hr className={scss.summaryDivider} />
+                  <hr className={scss.divider} style={{ margin: '14px 0' }} />
                   <table className={scss.summaryTable}>
                     <thead>
                       <tr>
@@ -232,48 +237,89 @@ const TaxDetailsStep = (props: {
           </WizardField>
         </div>
 
+        {!!discountLabel && (
+          <>
+            <hr className={scss.divider} />
+            <SectionHeader title="Discount" />
+            <div className={scss.fieldGrid}>
+              <WizardField span={4} label="Discount Type">
+                <input readOnly type="text" value={discountLabel} />
+              </WizardField>
+              <WizardField span={4} label="Discount Rate">
+                <input readOnly type="text" value={salesObj.discount_rate || ''} />
+              </WizardField>
+              <WizardField span={4} label="Discount Amount">
+                <input readOnly type="text" placeholder="0.00" value={salesObj.discount_amount || ''} />
+              </WizardField>
+              <WizardField span={12} label="Net Amount Due">
+                <input readOnly type="text" placeholder="0.00" value={salesObj.net_amount_due || ''} />
+              </WizardField>
+            </div>
+          </>
+        )}
+
         <hr className={scss.divider} />
 
-        <SectionHeader title="Withholding Tax" />
-        <div className={scss.fieldGrid}>
-          <WizardField span={4} label="ATC" htmlFor="atc" required err={sales.salesErr.atc as string}>
-            <input
-              id="atc"
-              name="atc"
-              type="text"
-              maxLength={10}
-              autoComplete="off"
-              onKeyUp={handleBlur}
-              onChange={handleChange}
-              value={salesObj.atc}
-            />
-          </WizardField>
-          <WizardField span={4} label="Withholding Tax Rate" htmlFor="ewt_rate" required err={sales.salesErr.ewt_rate as string}>
-            <input
-              type="text"
-              maxLength={20}
-              autoComplete="off"
-              id="ewt_rate"
-              name="ewt_rate"
-              value={salesObj.ewt_rate}
-              onKeyUp={handleBlur}
-              onChange={handleChange}
-            />
-          </WizardField>
-          <WizardField span={4} label="Withholding Tax Amount" htmlFor="tax_amount" required err={sales.salesErr.tax_amount as string}>
-            <input
-              readOnly
-              type="text"
-              maxLength={20}
-              id="tax_amount"
-              name="tax_amount"
-              autoComplete="off"
-              placeholder="0.00"
-              value={salesObj.tax_amount}
-              onChange={handleChange}
-            />
-          </WizardField>
-        </div>
+        <SectionHeader
+          title="Withholding Tax"
+          action={
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', fontWeight: 'normal', textTransform: 'none' }}>
+              <input
+                type="checkbox"
+                checked={hasWithholding}
+                onChange={(e) => handleToggleWithholding(e.target.checked)}
+              />
+              Customer is a withholding agent
+            </label>
+          }
+        />
+        {hasWithholding ? (
+          <div className={scss.fieldGrid}>
+            <WizardField span={4} label="ATC" htmlFor="atc" required err={sales.salesErr.atc as string}>
+              <input
+                id="atc"
+                name="atc"
+                type="text"
+                maxLength={10}
+                autoComplete="off"
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+                value={salesObj.atc}
+              />
+            </WizardField>
+            <WizardField span={4} label="Withholding Tax Rate" htmlFor="ewt_rate" required err={sales.salesErr.ewt_rate as string}>
+              <input
+                type="text"
+                maxLength={20}
+                autoComplete="off"
+                id="ewt_rate"
+                name="ewt_rate"
+                value={salesObj.ewt_rate}
+                onKeyUp={handleBlur}
+                onChange={handleChange}
+              />
+            </WizardField>
+            <WizardField span={4} label="Withholding Tax Amount" htmlFor="tax_amount">
+              <input
+                readOnly
+                type="text"
+                maxLength={20}
+                id="tax_amount"
+                name="tax_amount"
+                autoComplete="off"
+                placeholder="0.00"
+                value={salesObj.tax_amount}
+                onChange={handleChange}
+              />
+            </WizardField>
+          </div>
+        ) : (
+          <p style={{ color: 'var(--darkgray, #6b7280)', fontSize: 12, marginTop: -8 }}>
+            Withholding tax only applies when the customer withholds on their purchases
+            (government agencies, top withholding agents, large taxpayers). Not applicable
+            for an ordinary sale.
+          </p>
+        )}
       </div>
     </>
   )

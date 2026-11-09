@@ -58,6 +58,7 @@ const SalesDetailsStep = (props: {
       <div className={scss.summaryCard}>
         <Collapse
           ghost
+          expandIconPosition="end"
           items={[
             {
               key: '1',
@@ -71,13 +72,13 @@ const SalesDetailsStep = (props: {
                 </div>
               ),
               children: (
-                <div className={scss.summaryGrid}>
-                  <div className={scss.field}><small>Classification</small><span>{customer?.classification?.toLowerCase() || '—'}</span></div>
-                  <div className={scss.field}><small>TIN No.</small><span>{customer?.tin || '—'}</span></div>
-                  <div className={scss.field}><small>Trade Name</small><span>{customer?.trade_name || '—'}</span></div>
-                  <div className={scss.field}><small>Phone</small><span>{customer?.phone_number || '—'}</span></div>
-                  <div className={scss.field}><small>First Address</small><span>{customer?.first_address || '—'}</span></div>
-                  <div className={scss.field}><small>Second Address</small><span>{customer?.second_address || '—'}</span></div>
+                <div className={scss.summaryList}>
+                  <div className={scss.summaryRow}><small>Classification</small><span>{customer?.classification?.toLowerCase() || '—'}</span></div>
+                  <div className={scss.summaryRow}><small>TIN No.</small><span>{customer?.tin || '—'}</span></div>
+                  <div className={scss.summaryRow}><small>Trade Name</small><span>{customer?.trade_name || '—'}</span></div>
+                  <div className={scss.summaryRow}><small>Phone</small><span>{customer?.phone_number || '—'}</span></div>
+                  <div className={scss.summaryRow}><small>First Address</small><span>{customer?.first_address || '—'}</span></div>
+                  <div className={scss.summaryRow}><small>Second Address</small><span>{customer?.second_address || '—'}</span></div>
                 </div>
               ),
             },
@@ -128,7 +129,7 @@ const SalesDetailsStep = (props: {
         </div>
 
         <div className={scss.fieldGrid}>
-          <WizardField span={3} label="Terms" htmlFor="terms" required err={sales.salesErr.terms as string}>
+          <WizardField span={doc.selectedDiscount?.value ? 3 : 4} label="Terms" htmlFor="terms" required err={sales.salesErr.terms as string}>
             <TermsDropdown
               doc={doc}
               options={[
@@ -141,10 +142,11 @@ const SalesDetailsStep = (props: {
               handleSelectTerms={handleSelectTerms}
             />
           </WizardField>
-          <WizardField span={5} label="Discount Type" htmlFor="discount_type" required err={sales.salesErr.terms as string}>
+          <WizardField span={doc.selectedDiscount?.value ? 5 : 8} label="Discount Type" htmlFor="discount_type" required err={sales.salesErr.terms as string}>
             <DiscountsDropdown
               doc={doc}
               options={[
+                { label: 'No Discount', value: '' },
                 { label: 'Senior Citizen', value: 'SC' },
                 { label: 'Person with Disability', value: 'PWD' },
                 { label: 'Medal of Valor', value: 'MOV' },
@@ -157,17 +159,19 @@ const SalesDetailsStep = (props: {
               handleSelectDiscount={handleSelectDiscount}
             />
           </WizardField>
-          <WizardField span={4} label={(doc.selectedDiscount?.value ?? '') + ' ID No.'} htmlFor="id_number" required err={sales.salesErr.id_number as string}>
-            <input
-              type="text"
-              name="id_number"
-              autoComplete="off"
-              onKeyUp={handleBlur}
-              placeholder="0000000"
-              value={sales.salesObj.id_number}
-              onChange={handleChange}
-            />
-          </WizardField>
+          {!!doc.selectedDiscount?.value && (
+            <WizardField span={4} label={doc.selectedDiscount.value + ' ID No.'} htmlFor="id_number" required err={sales.salesErr.id_number as string}>
+              <input
+                type="text"
+                name="id_number"
+                autoComplete="off"
+                onKeyUp={handleBlur}
+                placeholder="0000000"
+                value={sales.salesObj.id_number}
+                onChange={handleChange}
+              />
+            </WizardField>
+          )}
         </div>
 
         <div className={scss.fieldGrid}>

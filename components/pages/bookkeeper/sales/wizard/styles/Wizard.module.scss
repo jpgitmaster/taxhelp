@@ -159,32 +159,32 @@
 }
 
 // ============ Summary accordion (Step 2 / Step 3) ============
+// Receipt-style review card — white surface matching .panel (not a flat color
+// fill), icon badge + chevron-on-the-right header (the chevron-on-the-left
+// pattern read as an afterthought), and label/value *rows* instead of boxed
+// grid cells once expanded, echoing how an actual OR/invoice is laid out.
 .summaryCard {
   background-color: $white;
-  border: 1px solid rgba($gray, .6);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .03);
-  @apply rounded-[14px] mb-6 overflow-hidden;
+  border: 1px solid rgba($gray, .7);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .04);
+  @apply rounded-[18px] mb-5 overflow-hidden;
 
   :global(.ant-collapse-item) {
     border: none !important;
   }
   :global(.ant-collapse-header) {
-    background: linear-gradient(180deg, rgba($lightBlue, .06), rgba($lightBlue, .02));
-    border-bottom: 1px solid rgba($gray, .5);
-    @apply px-4! py-3! items-center!;
-  }
-  :global(.ant-collapse-item-active .ant-collapse-header) {
-    border-bottom: 1px solid rgba($gray, .6);
+    @apply px-5! py-4! items-center!;
   }
   :global(.ant-collapse-content) {
     border-top: none !important;
   }
   :global(.ant-collapse-content-box) {
     background-color: $white;
+    border-top: 1px dashed rgba($gray, 1.2);
     @apply px-5! pt-4! pb-4!;
   }
   :global(.ant-collapse-expand-icon) {
-    color: $blue;
+    color: $darkgray;
   }
 }
 
@@ -192,10 +192,9 @@
   @apply flex flex-row items-center gap-3;
 
   .summaryIcon {
-    background-color: $white;
-    border: 1px solid rgba($lightBlue, .4);
+    background-color: rgba($lightBlue, .1);
     color: $blue;
-    @apply w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold flex-shrink-0;
+    @apply w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold flex-shrink-0;
   }
 
   strong {
@@ -208,45 +207,43 @@
   }
 }
 
-.summaryGrid {
-  @apply grid gap-x-6 gap-y-3;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+// Label-left / value-right rows with hairline dividers, like a receipt —
+// replaces the old boxed 2-col grid.
+.summaryList {
+  @apply flex flex-col;
 
-  .field {
-    border-left: 2px solid rgba($lightBlue, .35);
-    @apply pl-3;
+  .summaryRow {
+    border-bottom: 1px solid rgba($gray, .4);
+    @apply flex flex-row items-baseline justify-between gap-4 py-2;
+
+    &:last-child {
+      border-bottom: none;
+    }
 
     small {
       color: $darkgray;
-      @apply block text-[10px] uppercase tracking-wide;
+      @apply text-[11px] uppercase tracking-wide flex-shrink-0;
     }
     span {
       color: $lightBlack;
-      @apply text-[13px] font-medium;
+      @apply text-[13px] font-medium text-right;
     }
   }
 }
 
-.summaryDivider {
-  border: none;
-  border-top: 1px solid rgba($gray, .5);
-  @apply my-4;
-}
-
 .summaryTable {
-  background-color: $lightGray;
-  @apply w-full mt-1 text-[12px] border-collapse rounded-[10px] overflow-hidden;
+  @apply w-full mt-1 text-[12px] border-collapse;
 
   th, td {
-    @apply text-left py-2 px-3;
+    @apply text-left py-2;
   }
   th {
-    background-color: rgba($gray, .3);
+    border-bottom: 1px solid rgba($gray, .8);
     color: $darkgray;
     @apply text-[10px] uppercase tracking-wide font-bold;
   }
   tbody tr {
-    border-top: 1px solid rgba($gray, .6);
+    border-bottom: 1px solid rgba($gray, .4);
   }
   td {
     color: $lightBlack;
@@ -256,13 +253,10 @@
   }
   tfoot td {
     border-top: 1.5px solid rgba($darkgray, .5);
+    border-bottom: none;
     color: $lightBlack;
-    @apply font-bold;
+    @apply font-bold pt-2.5;
   }
-}
-
-@media (max-width: 768px) {
-  .summaryGrid { grid-template-columns: 1fr; }
 }
 
 // ============ Field grid (used by every step) ============
@@ -408,6 +402,5 @@
   .fieldGrid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .col3, .col4 { grid-column: span 3; }
   .col6, .col8, .col12 { grid-column: span 6; }
-  .summaryGrid { grid-template-columns: 1fr; }
   .vatTypes { @apply grid-cols-1; }
 }

@@ -16,6 +16,20 @@ import { useState, useEffect, useRef, useCallback, ChangeEvent, SyntheticEvent }
 const AUTOSAVE_DEBOUNCE_MS = 1200
 const HEARTBEAT_INTERVAL_MS = 20000
 
+// BIR discount rules actually tied to law, keyed by DiscountsDropdown's option
+// values. SC/PWD (RA 9994 / RA 10754) grant a straight 20% discount AND full
+// VAT exemption on the covered sale. Medal of Valor (RA 9049) and National
+// Athletes & Coaches (RA 10699) awardees are extended the *same* privilege —
+// 20% + VAT-exempt — under their respective IRRs. Solo Parent (RA 11861) is
+// different: a 10% discount on specific covered goods, with no VAT exemption.
+const DISCOUNT_RULES: Record<string, { rate: number, vatExempt: boolean }> = {
+    SC: { rate: 0.20, vatExempt: true },
+    PWD: { rate: 0.20, vatExempt: true },
+    MOV: { rate: 0.20, vatExempt: true },
+    NAAC: { rate: 0.20, vatExempt: true },
+    SP: { rate: 0.10, vatExempt: false },
+}
+
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
 // Which fieldValidations keys belong to which wizard step — used to scope
@@ -32,7 +46,7 @@ const STEP_FIELDS: Record<number, string[]> = {
     ],
     3: [
         'atc', 'ewt_rate', 'vat_amount', 'exempt_sales', 'gross_amount', 'gross_taxable',
-        'vatable_sales', 'zero_rated_sales', 'tax_amount', 'total_gross_amount',
+        'vatable_sales', 'zero_rated_sales', 'total_gross_amount',
     ],
 }
 
@@ -74,6 +88,11 @@ const useSaveSales = () => {
         useGetCustomers
     } = useQueryCustomers()
     const [editCustomer, setEditCustomer] = useState(false)
+    // Expanded Withholding Tax only applies when the customer is a withholding
+    // agent (government, top withholding agents, large taxpayers per RR 2-98
+    // as amended) — not every sale. ATC/EWT Rate are only required, and the
+    // withholding fields only shown, when this is on.
+    const [hasWithholding, setHasWithholding] = useState(false)
     const [displayTerms, setDisplayTerms] = useState(false)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayDiscounts, setDisplayDiscounts] = useState(false)
@@ -162,8 +181,8 @@ const useSaveSales = () => {
             label: 'Cash'
         },
         selectedDiscount: {
-            value: 'SC',
-            label: 'Senior Citizen'
+            value: '',
+            label: 'No Discount'
         },
         period: null,
     })
@@ -220,6 +239,8 @@ const useSaveSales = () => {
                 : prev.selectedDiscount,
         }))
 
+        setHasWithholding(!!(existingDraft.atc || existingDraft.ewt_rate))
+
         setSales(prev => ({
             ...prev,
             salesObj: {
@@ -271,7 +292,7 @@ const useSaveSales = () => {
     }, [draftIdFromQuery, existingDraft, draftClient])
 
     const fieldValidations = {
-        atc: { usename: 'ATC', required: true },
+        atc: { usename: 'ATC', ifCondition: { condition: hasWithholding, required: true } },
         tin: { usename: 'TIN No.', required: true },
         client: { usename: 'Client', required: true },
         customer: { usename: 'Customer', required: true },
@@ -287,9 +308,8 @@ const useSaveSales = () => {
         invoice_number: { usename: 'Invoice Number', required: true },
         second_address: { usename: 'Second Address', required: true },
         classification: { usename: 'Classification', required: true },
-        ewt_rate: { usename: 'Withholding Tax Rate', required: true },
+        ewt_rate: { usename: 'Withholding Tax Rate', ifCondition: { condition: hasWithholding, required: true } },
         zero_rated_sales: { usename: 'Zero Rated Sales', required: true },
-        tax_amount: { usename: 'Withholding Tax Amount', required: true },
         total_gross_amount: { usename: 'Total Gross Amount', required: true },
         first_name: { usename: 'First Name', ifCondition: {
             condition: sales.salesObj.customer?.classification === 'INDIVIDUAL',
@@ -310,23 +330,33 @@ const useSaveSales = () => {
             description: { usename: 'Item Description / Service Nature', required: true },
         })),
     }
-    const recalcSales = (salesObj: any) => {
+    /** discountTypeOverride lets handleSelectDiscount recompute immediately with
+     * the just-picked value, since `doc` state hasn't re-rendered yet at that
+     * point — every other call site falls back to doc.selectedDiscount. */
+    const recalcSales = (salesObj: any, overrides?: { discountType?: string, hasWithholding?: boolean }) => {
         const VAT_RATE = 0.12
         const toNumber = (val: any) => parseFloat(val) || 0
 
-        const exempt = toNumber(salesObj.exempt_sales)
+        const discountType = overrides?.discountType ?? doc.selectedDiscount?.value ?? ''
+        const withholdingActive = overrides?.hasWithholding ?? hasWithholding
+        const discountRule = DISCOUNT_RULES[discountType]
+
+        const manualExempt = toNumber(salesObj.exempt_sales)
         const zeroRated = toNumber(salesObj.zero_rated_sales)
         const vatType = salesObj.vat_type || 'EXCLUSIVE'
 
-        const grossInput = toNumber(salesObj.gross_taxable)
+        const hasAnyAmount = !!(
+            salesObj.gross_taxable || salesObj.vatable_sales ||
+            salesObj.exempt_sales || salesObj.zero_rated_sales
+        )
 
+        // Base price/VAT split (BIR convention), independent of discount —
+        // Inclusive: Net = Gross / 1.12, VAT = Gross - Net.
+        // Exclusive: VAT = Net * 0.12, Gross = Net + VAT.
         let netVatable = 0
         let vatAmount = 0
-
-        // =========================
-        // VAT NORMALIZATION
-        // =========================
         if (vatType === 'INCLUSIVE') {
+            const grossInput = toNumber(salesObj.gross_taxable)
             netVatable = grossInput / (1 + VAT_RATE)
             vatAmount = grossInput - netVatable
         } else {
@@ -334,33 +364,67 @@ const useSaveSales = () => {
             vatAmount = netVatable * VAT_RATE
         }
 
-        const netSalesTotal = exempt + zeroRated + netVatable
-        const totalGrossAmount = netSalesTotal + vatAmount
+        // Discount layered on top of the base split — see DISCOUNT_RULES for
+        // the legal basis per type.
+        let discountAmount = 0
+        let effectiveExempt = manualExempt
+        let effectiveVatable = netVatable
+        let effectiveVat = vatAmount
 
+        if (discountRule) {
+            discountAmount = netVatable * discountRule.rate
+
+            if (discountRule.vatExempt) {
+                // Entire covered sale moves from vatable to exempt; no VAT at all.
+                effectiveExempt = manualExempt + netVatable
+                effectiveVatable = 0
+                effectiveVat = 0
+            } else {
+                // Solo Parent: discount on the net price, sale stays vatable.
+                effectiveVatable = netVatable - discountAmount
+                effectiveVat = effectiveVatable * VAT_RATE
+            }
+        }
+
+        const netSalesTotal = effectiveExempt + zeroRated + effectiveVatable
+        const totalGrossAmount = netSalesTotal + effectiveVat
+        // VAT-exempt discounts (SC/PWD/MOV/NAAC) still deduct the discount from
+        // the amount actually due; Solo Parent's discount is already baked into
+        // effectiveVatable above, so totalGrossAmount is already net.
+        const netAmountDue = totalGrossAmount - (discountRule?.vatExempt ? discountAmount : 0)
+
+        // EWT only applies to the taxable (vatable) base, and only when the
+        // customer is a withholding agent — gated by hasWithholding in the UI,
+        // so ewt_rate being blank already keeps this at ''.
         const ewtRate = toNumber(salesObj.ewt_rate) / 100
-        const taxAmount = netVatable * ewtRate
+        const taxAmount = effectiveVatable * ewtRate
 
         return {
             ...salesObj,
 
             vat_rate: '12%',
 
-            vat_amount: vatAmount ? Number(vatAmount).toFixed(2) : '',
+            // The raw/editable field per mode (gross_taxable when Inclusive,
+            // vatable_sales when Exclusive) is left untouched; only the
+            // complementary *computed* read-only field is filled in here.
+            gross_taxable: vatType === 'INCLUSIVE'
+                ? salesObj.gross_taxable
+                : (hasAnyAmount ? Number(netVatable + vatAmount).toFixed(2) : ''),
+            vatable_sales: vatType === 'EXCLUSIVE'
+                ? salesObj.vatable_sales
+                : (hasAnyAmount ? Number(netVatable).toFixed(2) : ''),
 
-            gross_amount:
-                (salesObj.exempt_sales || salesObj.zero_rated_sales || salesObj.vatable_sales)
-                    ? Number(netSalesTotal).toFixed(2)
-                    : '',
+            vat_amount: hasAnyAmount ? Number(vatAmount).toFixed(2) : '',
+            gross_amount: hasAnyAmount ? Number(netSalesTotal).toFixed(2) : '',
+            total_gross_amount: hasAnyAmount ? Number(totalGrossAmount).toFixed(2) : '',
 
-            total_gross_amount:
-                (salesObj.exempt_sales || salesObj.zero_rated_sales || salesObj.vatable_sales)
-                    ? Number(totalGrossAmount).toFixed(2)
-                    : '',
+            discount_rate: discountRule ? `${discountRule.rate * 100}%` : '',
+            discount_amount: discountRule && hasAnyAmount ? Number(discountAmount).toFixed(2) : '',
+            net_amount_due: hasAnyAmount ? Number(netAmountDue).toFixed(2) : '',
 
-            tax_amount:
-                salesObj.ewt_rate && salesObj.vatable_sales
-                    ? Number(taxAmount).toFixed(2)
-                    : ''
+            tax_amount: withholdingActive && salesObj.ewt_rate && hasAnyAmount
+                ? Number(taxAmount).toFixed(2)
+                : ''
         }
     }
     // Particulars is the source of truth for the taxable amount — keep Tax
@@ -388,6 +452,20 @@ const useSaveSales = () => {
 
     const handleEditCustomer = (edit: boolean) => {
         setEditCustomer(edit)
+    }
+
+    const handleToggleWithholding = (checked: boolean) => {
+        setHasWithholding(checked)
+        setSales(prev => {
+            const salesObj = checked
+                ? prev.salesObj
+                : { ...prev.salesObj, atc: '', ewt_rate: '' }
+            return { ...prev, salesObj: recalcSales(salesObj, { hasWithholding: checked }) }
+        })
+        if (!checked) {
+            handleRemoveErr(sales.salesErr, 'atc')
+            handleRemoveErr(sales.salesErr, 'ewt_rate')
+        }
     }
 
     const handleToggle = (dropdown: string) => {
@@ -426,6 +504,12 @@ const useSaveSales = () => {
             ...doc,
             selectedDiscount: selectedDiscount
         })
+        // doc hasn't re-rendered yet, so pass the new value explicitly instead
+        // of relying on recalcSales' doc.selectedDiscount fallback.
+        setSales(prev => ({
+            ...prev,
+            salesObj: recalcSales(prev.salesObj, { discountType: selectedDiscount.value })
+        }))
     }
 
     const handleSelectClient = (client: Partial<ClientObj> & { id: number | null }) => {
@@ -817,7 +901,7 @@ const useSaveSales = () => {
             atc: rest.atc || undefined,
             ewt_rate: rest.ewt_rate ? Number(rest.ewt_rate) : undefined,
 
-            discount_type: doc.selectedDiscount?.value,
+            discount_type: doc.selectedDiscount?.value || undefined,
             discount_id_number: rest.id_number || undefined,
 
             vat_type: rest.vat_type || undefined,
@@ -1092,6 +1176,7 @@ const useSaveSales = () => {
         clientArr,
         customerArr,
         editCustomer,
+        hasWithholding,
         displayTerms,
         displayClients,
         displayDiscounts,
@@ -1127,6 +1212,7 @@ const useSaveSales = () => {
         handleSelectDiscount,
         handleRemoveParticular,
         handleParticularChange,
+        handleToggleWithholding,
     }
 }
 

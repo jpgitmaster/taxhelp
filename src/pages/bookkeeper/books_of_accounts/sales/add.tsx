@@ -32,6 +32,7 @@ const AddSalesRecord_V = () => {
     displayTerms,
     displayClients,
     editCustomer,
+    hasWithholding,
     customerLoader,
     displayCustomers,
     displayDiscounts,
@@ -60,6 +61,7 @@ const AddSalesRecord_V = () => {
     handleEditCustomer,
     handleRemoveParticular,
     handleParticularChange,
+    handleToggleWithholding,
   } = useSaveSales()
   const { loader } = status
 
@@ -207,10 +209,13 @@ const AddSalesRecord_V = () => {
 
         {step === 3 && (
           <TaxDetailsStep
+            doc={doc}
             sales={sales}
             options={options}
+            hasWithholding={hasWithholding}
             handleBlur={handleBlur}
             handleChange={handleChange}
+            handleToggleWithholding={handleToggleWithholding}
           />
         )}
       </fieldset>
