@@ -75,8 +75,17 @@ const SalesDetailsStep = (props: {
               children: (
                 <div className={scss.summaryList}>
                   <div className={scss.summaryRow}><small>Classification</small><span>{titleCase(customer?.classification) || '—'}</span></div>
-                  <div className={scss.summaryRow}><small>TIN No.</small><span>{customer?.tin || '—'}</span></div>
                   <div className={scss.summaryRow}><small>Trade Name</small><span>{customer?.trade_name || '—'}</span></div>
+                  <div className={scss.summaryRow}><small>TIN No.</small><span>{customer?.tin || '—'}</span></div>
+                  {customer?.classification === 'NON-INDIVIDUAL' ? (
+                    <div className={scss.summaryRow}><small>Registered Name</small><span>{customer?.registered_name || '—'}</span></div>
+                  ) : (
+                    <>
+                      <div className={scss.summaryRow}><small>First Name</small><span>{customer?.first_name || '—'}</span></div>
+                      <div className={scss.summaryRow}><small>Middle Name</small><span>{customer?.middle_name || '—'}</span></div>
+                      <div className={scss.summaryRow}><small>Last Name</small><span>{customer?.last_name || '—'}</span></div>
+                    </>
+                  )}
                   <div className={scss.summaryRow}><small>Phone</small><span>{customer?.phone_number || '—'}</span></div>
                   <div className={scss.summaryRow}><small>First Address</small><span>{customer?.first_address || '—'}</span></div>
                   <div className={scss.summaryRow}><small>Second Address</small><span>{customer?.second_address || '—'}</span></div>

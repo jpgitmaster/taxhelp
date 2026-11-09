@@ -56,7 +56,7 @@ const ClientCustomerStep = (props: {
     <div className={scss.panel}>
       <SectionHeader title="Client Details" />
       <div className={scss.fieldGrid}>
-        <WizardField span={8} label="Client" htmlFor="client" required err={sales.salesErr.client as string}>
+        <WizardField span={hasSelectedClient ? 8 : 12} label="Client" htmlFor="client" required err={sales.salesErr.client as string}>
           <div
             style={draftId ? { pointerEvents: 'none', opacity: 0.6 } : undefined}
             title={draftId ? 'Client is locked once this draft starts saving. Start a new entry to pick a different client.' : undefined}
@@ -74,29 +74,33 @@ const ClientCustomerStep = (props: {
             />
           </div>
         </WizardField>
+        {hasSelectedClient && (
+          <WizardField span={4} label="Classification">
+            <input readOnly disabled type="text" value={client.classification ? client.classification.charAt(0) + client.classification.slice(1).toLowerCase() : ''} />
+          </WizardField>
+        )}
       </div>
 
       {hasSelectedClient && (
         <>
           <div className={scss.fieldGrid}>
-            <WizardField span={4} label="Classification">
-              <input readOnly disabled type="text" value={client.classification ? client.classification.charAt(0) + client.classification.slice(1).toLowerCase() : ''} />
-            </WizardField>
             <WizardField span={4} label="TIN No.">
               <input readOnly disabled type="text" value={client.tin || ''} />
             </WizardField>
-            <WizardField span={2} label="RDO Code">
-              <input readOnly disabled type="text" value={client.rdo_code || ''} />
-            </WizardField>
-            <WizardField span={2} label="Branch Code">
+            <WizardField span={4} label="Branch Code">
               <input readOnly disabled type="text" value={client.branch_code || ''} />
+            </WizardField>
+            <WizardField span={4} label="RDO Code">
+              <input readOnly disabled type="text" value={client.rdo_code || ''} />
             </WizardField>
           </div>
           <div className={scss.fieldGrid}>
-            <WizardField span={6} label="First Address">
+            <WizardField span={12} label="First Address">
               <input readOnly disabled type="text" value={client.first_address || ''} />
             </WizardField>
-            <WizardField span={6} label="Second Address">
+          </div>
+          <div className={scss.fieldGrid}>
+            <WizardField span={12} label="Second Address">
               <input readOnly disabled type="text" value={client.second_address || ''} />
             </WizardField>
           </div>
@@ -148,39 +152,46 @@ const ClientCustomerStep = (props: {
       </div>
 
       <div className={scss.fieldGrid}>
+        <WizardField span={8} label="Trade Name" htmlFor="trade_name" err={sales.salesErr.trade_name as string}>
+          <input
+            readOnly={!isCustomerEditable} disabled={!isCustomerEditable}
+            type="text" maxLength={100} id="trade_name" name="trade_name" autoComplete="off"
+            onKeyUp={handleBlur} onChange={handleChange} value={sales.salesObj.customer?.trade_name}
+          />
+        </WizardField>
+        <WizardField span={4} label="TIN No." htmlFor="tin" required={isCustomerEditable} err={sales.salesErr.tin as string}>
+          <input
+            readOnly={!isCustomerEditable} disabled={!isCustomerEditable}
+            id="tin" type="text" name="tin" maxLength={30} autoComplete="off"
+            onKeyUp={handleBlur} onChange={handleChange} placeholder="000-000-000"
+            value={sales.salesObj.customer?.tin}
+          />
+        </WizardField>
+      </div>
+
+      <div className={scss.fieldGrid}>
         {classification === 'NON-INDIVIDUAL' ? (
-          <>
-            <WizardField span={4} label="TIN No." htmlFor="tin" required={isCustomerEditable} err={sales.salesErr.tin as string}>
-              <input
-                readOnly={!isCustomerEditable} disabled={!isCustomerEditable}
-                id="tin" type="text" name="tin" maxLength={30} autoComplete="off"
-                onKeyUp={handleBlur} onChange={handleChange} placeholder="000-000-000"
-                value={sales.salesObj.customer?.tin}
-              />
-            </WizardField>
-            <WizardField span={8} label="Registered Name" htmlFor="registered_name" required={isCustomerEditable} err={sales.salesErr.registered_name as string}>
-              <input
-                readOnly={!isCustomerEditable} disabled={!isCustomerEditable}
-                type="text" maxLength={100} autoComplete="off" id="registered_name" name="registered_name"
-                onKeyUp={handleBlur} onChange={handleChange} value={sales.salesObj.customer?.registered_name}
-              />
-            </WizardField>
-          </>
+          <WizardField span={12} label="Registered Name" htmlFor="registered_name" required={isCustomerEditable} err={sales.salesErr.registered_name as string}>
+            <input
+              readOnly={!isCustomerEditable} disabled={!isCustomerEditable}
+              type="text" maxLength={100} autoComplete="off" id="registered_name" name="registered_name"
+              onKeyUp={handleBlur} onChange={handleChange} value={sales.salesObj.customer?.registered_name}
+            />
+          </WizardField>
         ) : (
           <>
-            <WizardField span={4} label="TIN No." htmlFor="tin" required={isCustomerEditable} err={sales.salesErr.tin as string}>
-              <input
-                readOnly={!isCustomerEditable} disabled={!isCustomerEditable}
-                id="tin" type="text" name="tin" maxLength={30} autoComplete="off"
-                onKeyUp={handleBlur} onChange={handleChange} placeholder="000-000-000"
-                value={sales.salesObj.customer?.tin}
-              />
-            </WizardField>
             <WizardField span={4} label="First Name" htmlFor="first_name" required={isCustomerEditable} err={sales.salesErr.first_name as string}>
               <input
                 readOnly={!isCustomerEditable} disabled={!isCustomerEditable}
                 type="text" maxLength={20} id="first_name" name="first_name" autoComplete="off"
                 onKeyUp={handleBlur} onChange={handleChange} value={sales.salesObj.customer?.first_name}
+              />
+            </WizardField>
+            <WizardField span={4} label="Middle Name" htmlFor="middle_name" err={sales.salesErr.middle_name as string}>
+              <input
+                readOnly={!isCustomerEditable} disabled={!isCustomerEditable}
+                type="text" maxLength={20} id="middle_name" name="middle_name" autoComplete="off"
+                onKeyUp={handleBlur} onChange={handleChange} value={sales.salesObj.customer?.middle_name}
               />
             </WizardField>
             <WizardField span={4} label="Last Name" htmlFor="last_name" required={isCustomerEditable} err={sales.salesErr.last_name as string}>
@@ -192,25 +203,6 @@ const ClientCustomerStep = (props: {
             </WizardField>
           </>
         )}
-      </div>
-
-      <div className={scss.fieldGrid}>
-        {classification === 'INDIVIDUAL' && (
-          <WizardField span={4} label="Middle Name" htmlFor="middle_name" err={sales.salesErr.middle_name as string}>
-            <input
-              readOnly={!isCustomerEditable} disabled={!isCustomerEditable}
-              type="text" maxLength={20} id="middle_name" name="middle_name" autoComplete="off"
-              onKeyUp={handleBlur} onChange={handleChange} value={sales.salesObj.customer?.middle_name}
-            />
-          </WizardField>
-        )}
-        <WizardField span={classification === 'INDIVIDUAL' ? 8 : 12} label="Trade Name" htmlFor="trade_name" err={sales.salesErr.trade_name as string}>
-          <input
-            readOnly={!isCustomerEditable} disabled={!isCustomerEditable}
-            type="text" maxLength={100} id="trade_name" name="trade_name" autoComplete="off"
-            onKeyUp={handleBlur} onChange={handleChange} value={sales.salesObj.customer?.trade_name}
-          />
-        </WizardField>
       </div>
 
       <div className={scss.fieldGrid}>
@@ -240,7 +232,7 @@ const ClientCustomerStep = (props: {
       </div>
 
       <div className={scss.fieldGrid}>
-        <WizardField span={6} label="First Address" htmlFor="first_address" required={isCustomerEditable} err={sales.salesErr.first_address as string}>
+        <WizardField span={12} label="First Address" htmlFor="first_address" required={isCustomerEditable} err={sales.salesErr.first_address as string}>
           <input
             readOnly={!isCustomerEditable} disabled={!isCustomerEditable}
             type="text" maxLength={50} autoComplete="off" id="first_address" name="first_address"
@@ -248,7 +240,9 @@ const ClientCustomerStep = (props: {
             value={sales.salesObj.customer?.first_address}
           />
         </WizardField>
-        <WizardField span={6} label="Second Address" htmlFor="second_address" required={isCustomerEditable} err={sales.salesErr.second_address as string}>
+      </div>
+      <div className={scss.fieldGrid}>
+        <WizardField span={12} label="Second Address" htmlFor="second_address" required={isCustomerEditable} err={sales.salesErr.second_address as string}>
           <input
             readOnly={!isCustomerEditable} disabled={!isCustomerEditable}
             id="second_address" type="text" name="second_address" maxLength={50} autoComplete="off"
