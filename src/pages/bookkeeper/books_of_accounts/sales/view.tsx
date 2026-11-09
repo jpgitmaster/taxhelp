@@ -29,7 +29,22 @@ const ViewSalesRecord_V: NextPageWithLayout = () => {
   const { getClient } = useQueryClients()
 
   const { data: sale, isLoading: saleLoading } = useGetSalesManualById(id)
-  const { data: client, isLoading: clientLoading } = getClient(Number(sale?.client_id))
+  // getClient's hook signature claims a Client wrapper type, but its
+  // queryFn actually returns the raw client record (res.data.client) — the
+  // existing type annotation elsewhere in the codebase doesn't match its
+  // runtime shape, so read it as the raw fields it really returns.
+  const { data: clientData, isLoading: clientLoading } = getClient(Number(sale?.client_id))
+  const client = clientData as unknown as {
+    registered_name?: string
+    first_name?: string
+    last_name?: string
+    classification?: string
+    tin?: string
+    branch_code?: string
+    rdo_code?: string
+    first_address?: string
+    second_address?: string
+  } | undefined
 
   const loading = saleLoading || (!!sale?.client_id && clientLoading)
   const customer = (sale?.customer || {}) as Record<string, string | undefined>

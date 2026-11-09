@@ -6,7 +6,7 @@ interface PropsDefinition {
   value?: ReactNode
   /** Grid span out of 12 columns, matching the wizard's own .col2/.col3/etc
    * convention. Defaults to 4 (3 fields per row). */
-  span?: 2 | 3 | 4 | 6 | 8 | 12
+  span?: 2 | 3 | 4 | 5 | 6 | 8 | 12
 }
 
 /** A single label + underline value pair for read-only record displays —

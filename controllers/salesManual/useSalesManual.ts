@@ -131,7 +131,7 @@ const useSalesManual = () => {
         if (dropdown === 'clients') setDisplayClients(prev => !prev)
     }
 
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target
         if (name === 'clientSearch') {
             clientSetFilter(prev => ({ ...prev, search: value, currentPage: 1 }))
