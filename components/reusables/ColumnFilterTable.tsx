@@ -1,6 +1,7 @@
 import { ReactNode, useMemo, useState } from 'react'
-import { Table, Pagination, Dropdown, Input } from 'antd'
+import { Table, Dropdown, Input } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import DataPagination from './DataPagination'
 import scss from './styles/ColumnFilterTable.module.scss'
 
 export interface ColumnFilterTableColumn<T> {
@@ -16,6 +17,9 @@ export interface ColumnFilterTableColumn<T> {
    * Columns dropdown. Columns are appended to the table in click order,
    * not the dropdown's (alphabetical) list order. */
   optional?: boolean
+  /** Enables the column's sort arrows. Pass a compare function for custom
+   * sorting, or `true` to sort by the raw dataIndex value. */
+  sorter?: boolean | ((a: T, b: T) => number)
 }
 
 interface PropsDefinition<T> {
@@ -34,6 +38,7 @@ interface PropsDefinition<T> {
     pageSize: number
     total: number
     onChange: (page: number) => void
+    onPageSizeChange?: (pageSize: number) => void
   }
 }
 
@@ -94,15 +99,19 @@ function ColumnFilterTable<T extends Record<string, any>>({
       width: c.width,
       align: c.align,
       fixed: c.frozen,
+      sorter: c.sorter === true
+        ? (a: T, b: T) => {
+          const av = c.dataIndex ? a[c.dataIndex] : ''
+          const bv = c.dataIndex ? b[c.dataIndex] : ''
+          return String(av ?? '').localeCompare(String(bv ?? ''), undefined, { numeric: true })
+        }
+        : c.sorter,
     }))
     return antdColumns
   }, [columns, selectedOptionalKeys, optionalColumns])
 
-  const rangeStart = pagination ? (pagination.total === 0 ? 0 : (pagination.current - 1) * pagination.pageSize + 1) : 0
-  const rangeEnd = pagination ? Math.min(pagination.current * pagination.pageSize, pagination.total) : 0
-
   return (
-    <div className={scss.wrapper} style={width ? { width: `${width}px` } : undefined}>
+    <div className={scss.wrapper} style={width ? { width: `${width}px`, maxWidth: `${width}px` } : undefined}>
       {!!optionalColumns.length && (
         <div className={scss.columnsRow}>
           <Dropdown
@@ -157,20 +166,13 @@ function ColumnFilterTable<T extends Record<string, any>>({
       </div>
 
       {pagination && (
-        <div className={scss.paginationRow}>
-          <span className={scss.rangeLabel}>
-            {pagination.total
-              ? `Showing ${rangeStart}–${rangeEnd} of ${pagination.total}`
-              : 'No records'}
-          </span>
-          <Pagination
-            current={pagination.current}
-            pageSize={pagination.pageSize}
-            total={pagination.total}
-            onChange={pagination.onChange}
-            showSizeChanger={false}
-          />
-        </div>
+        <DataPagination
+          current={pagination.current}
+          pageSize={pagination.pageSize}
+          total={pagination.total}
+          onChange={pagination.onChange}
+          onPageSizeChange={pagination.onPageSizeChange}
+        />
       )}
     </div>
   )

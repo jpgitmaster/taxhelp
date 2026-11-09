@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState } from 'react'
 import { Dropdown, Popconfirm } from 'antd'
 import scss from './styles/RowActionsMenu.module.scss'
@@ -9,13 +10,15 @@ export interface RowAction {
   onClick?: () => void
   confirm?: { title: string, description: string }
   danger?: boolean
+  /** Path under /public, e.g. "/svgs/edit.svg" */
+  icon?: string
 }
 
 interface PropsDefinition {
   actions: RowAction[]
 }
 
-/** Per-row kebab (⋯) menu — collapses a table row's action buttons behind
+/** Per-row kebab (⋮) menu — collapses a table row's action buttons behind
  * one trigger instead of spelling every action out inline, which gets
  * cluttered once a row has more than one or two actions. Reusable by any
  * table that needs row-level actions (Resume/Delete here, but generic). */
@@ -23,17 +26,34 @@ const RowActionsMenu = ({ actions }: PropsDefinition) => {
   const [open, setOpen] = useState(false)
 
   const renderAction = (action: RowAction) => {
-    const content = action.href ? (
-      <Link href={action.href} className={scss.item + (action.danger ? ' ' + scss.danger : '')}>
+    const itemClass = scss.item + (action.danger ? ' ' + scss.danger : '')
+    const inner = (
+      <>
+        {action.icon && (
+          <Image
+            src={action.icon}
+            alt=""
+            width={14}
+            height={14}
+            unoptimized
+            className={scss.icon}
+          />
+        )}
         {action.label}
+      </>
+    )
+
+    const content = action.href ? (
+      <Link href={action.href} className={itemClass}>
+        {inner}
       </Link>
     ) : (
       <button
         type="button"
-        className={scss.item + (action.danger ? ' ' + scss.danger : '')}
+        className={itemClass}
         onClick={() => { action.onClick?.(); setOpen(false) }}
       >
-        {action.label}
+        {inner}
       </button>
     )
 
@@ -48,8 +68,8 @@ const RowActionsMenu = ({ actions }: PropsDefinition) => {
         okText="Yes"
         cancelText="No"
       >
-        <button type="button" className={scss.item + (action.danger ? ' ' + scss.danger : '')}>
-          {action.label}
+        <button type="button" className={itemClass}>
+          {inner}
         </button>
       </Popconfirm>
     )
@@ -69,7 +89,11 @@ const RowActionsMenu = ({ actions }: PropsDefinition) => {
       )}
     >
       <button type="button" className={scss.trigger} aria-label="Row actions">
-        &#8942;
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="3" r="1.4" fill="currentColor" />
+          <circle cx="8" cy="8" r="1.4" fill="currentColor" />
+          <circle cx="8" cy="13" r="1.4" fill="currentColor" />
+        </svg>
       </button>
     </Dropdown>
   )

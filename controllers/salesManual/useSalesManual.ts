@@ -19,7 +19,7 @@ const useSalesManual = () => {
     const [message, setMessage] = useState('')
     const [tableWidth, setTableWidth] = useState(0)
     const [displayClients, setDisplayClients] = useState(false)
-    const recordsLimit = 10
+    const [recordsLimit, setRecordsLimit] = useState(10)
 
     const [doc, setDoc] = useState<{
         clientSearch: string
@@ -51,15 +51,22 @@ const useSalesManual = () => {
     )
 
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            setTableWidth(window.innerWidth - 240)
-        }
+        if (typeof window === 'undefined') return
+
+        const updateTableWidth = () => setTableWidth(window.innerWidth - 240)
+        updateTableWidth()
+        // Recompute on resize — it was only set once on mount before, so a
+        // maximized/resized window after load left it stale (table wouldn't
+        // know it had more room, or would stay too wide to need scrolling).
+        window.addEventListener('resize', updateTableWidth)
 
         const stored = sessionStorage.getItem('successMessage')
         if (stored) {
             setMessage(stored)
             sessionStorage.removeItem('successMessage')
         }
+
+        return () => window.removeEventListener('resize', updateTableWidth)
     }, [])
 
     const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
@@ -74,6 +81,11 @@ const useSalesManual = () => {
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page)
+    }
+
+    const handlePageSizeChange = (pageSize: number) => {
+        setRecordsLimit(pageSize)
+        setCurrentPage(1)
     }
 
     const handleDeleteRecord = (id: number) => {
@@ -141,6 +153,7 @@ const useSalesManual = () => {
         handleSearch,
         handleDateChange,
         handlePageChange,
+        handlePageSizeChange,
         handleDeleteRecord,
         handleSelectClient,
         handleSubmitSearch,

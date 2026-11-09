@@ -1,0 +1,66 @@
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+.pagination {
+  @apply flex flex-row items-center justify-between gap-4 flex-wrap mt-4;
+}
+
+.pageJump {
+  color: $lightBlack;
+  @apply flex flex-row items-center gap-2 text-[13px];
+}
+
+.pageBox {
+  background-color: $white;
+  border: 1px solid rgba($gray, .9);
+  color: $lightBlack;
+  @apply rounded-[8px] px-3 py-1 text-[13px] font-semibold min-w-9 text-center;
+}
+
+.controls {
+  @apply flex flex-row items-center gap-1.5 flex-wrap;
+}
+
+.btn {
+  background-color: $white;
+  border: 1px solid rgba($gray, .9);
+  color: $lightBlack;
+  @apply rounded-[8px] w-8 h-8 text-[13px] font-semibold cursor-pointer transition-colors;
+
+  &:hover:not(:disabled) {
+    border-color: $blue;
+    color: $blue;
+  }
+  &:disabled {
+    color: rgba($darkgray, .5);
+    border-color: rgba($gray, .6);
+    cursor: not-allowed;
+  }
+  &.active {
+    background-color: rgba($gray, .3);
+    border-color: rgba($gray, 1.1);
+    color: $lightBlack;
+  }
+}
+
+.ellipsis {
+  color: $darkgray;
+  @apply w-8 text-center text-[13px];
+}
+
+.pageSize {
+  color: $lightBlack;
+  @apply flex flex-row items-center gap-2 text-[13px];
+
+  select {
+    background-color: $white;
+    border: 1px solid rgba($gray, .9);
+    color: $lightBlack;
+    @apply rounded-[8px] px-2.5 py-1 text-[13px] font-semibold cursor-pointer;
+
+    &:focus {
+      outline: none;
+      border-color: $blue;
+    }
+  }
+}

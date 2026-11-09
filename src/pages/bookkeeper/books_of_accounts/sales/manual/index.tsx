@@ -54,6 +54,7 @@ const SalesManual_V = () => {
     handleSearch,
     handleDateChange,
     handlePageChange,
+    handlePageSizeChange,
     handleDeleteRecord,
     handleSelectClient,
     handleSubmitSearch,
@@ -88,14 +89,26 @@ const SalesManual_V = () => {
   // pinning doesn't eat into the scrollable width for no reason. Taxable
   // Month/Terms/TIN/Vatable Sales/VAT Amount/Total Gross Amount are hidden
   // until picked from the Columns dropdown, appended in the order clicked.
+  // Every column gets an explicit width so adding an optional column never
+  // shrinks the existing ones — the table just gets wider and scrolls.
   const columns: ColumnFilterTableColumn<ManualSalesRow>[] = [
-    { key: 'invoice_number', title: 'Invoice No.', dataIndex: 'invoice_number', frozen: 'left' },
-    { key: 'invoice_date', title: 'Invoice Date', dataIndex: 'invoice_date' },
-    { key: 'customer_name', title: 'Customer', dataIndex: 'customer_name' },
+    { key: 'invoice_number', title: 'Invoice No.', dataIndex: 'invoice_number', width: 110, frozen: 'left', sorter: true },
+    { key: 'invoice_date', title: 'Invoice Date', dataIndex: 'invoice_date', width: 120, sorter: true },
+    { key: 'customer_name', title: 'Customer', dataIndex: 'customer_name', width: 260, sorter: true },
+    {
+      key: 'classification',
+      title: 'Classification',
+      dataIndex: 'classification',
+      width: 130,
+      sorter: true,
+      render: (value: string) => value ? value.charAt(0) + value.slice(1).toLowerCase() : '',
+    },
     {
       key: 'status',
       title: 'Status',
       dataIndex: 'status',
+      width: 110,
+      sorter: true,
       render: (value: 'draft' | 'posted') => (
         <span style={{
           display: 'inline-block',
@@ -112,19 +125,13 @@ const SalesManual_V = () => {
         </span>
       ),
     },
-    {
-      key: 'classification',
-      title: 'Classification',
-      dataIndex: 'classification',
-      render: (value: string) => value ? value.charAt(0) + value.slice(1).toLowerCase() : '',
-    },
 
-    { key: 'taxable_month', title: 'Taxable Month', dataIndex: 'taxable_month', optional: true },
-    { key: 'terms', title: 'Terms', dataIndex: 'terms', optional: true },
-    { key: 'tin', title: 'TIN', dataIndex: 'tin', optional: true },
-    { key: 'gross_taxable', title: 'Vatable Sales', dataIndex: 'gross_taxable', render: formatNumber, optional: true },
-    { key: 'vat_amount', title: 'VAT Amount', dataIndex: 'vat_amount', render: formatNumber, optional: true },
-    { key: 'total_gross_amount', title: 'Total Gross Amount', dataIndex: 'total_gross_amount', render: formatNumber, optional: true },
+    { key: 'taxable_month', title: 'Taxable Month', dataIndex: 'taxable_month', width: 130, optional: true },
+    { key: 'terms', title: 'Terms', dataIndex: 'terms', width: 100, optional: true },
+    { key: 'tin', title: 'TIN', dataIndex: 'tin', width: 140, optional: true },
+    { key: 'gross_taxable', title: 'Vatable Sales', dataIndex: 'gross_taxable', width: 140, render: formatNumber, optional: true },
+    { key: 'vat_amount', title: 'VAT Amount', dataIndex: 'vat_amount', width: 130, render: formatNumber, optional: true },
+    { key: 'total_gross_amount', title: 'Total Gross Amount', dataIndex: 'total_gross_amount', width: 160, render: formatNumber, optional: true },
 
     {
       key: 'actions',
@@ -137,10 +144,12 @@ const SalesManual_V = () => {
           actions={[
             ...(record.status === 'draft' ? [{
               label: 'Resume',
+              icon: '/svgs/edit.svg',
               href: `/bookkeeper/books_of_accounts/sales/add?draft=${record.id}`,
             }] : []),
             {
               label: 'Delete',
+              icon: '/svgs/delete.svg',
               danger: true,
               onClick: () => handleDeleteRecord(record.id),
               confirm: {
@@ -215,6 +224,7 @@ const SalesManual_V = () => {
           pageSize: recordsLimit,
           total: totalSales,
           onChange: handlePageChange,
+          onPageSizeChange: handlePageSizeChange,
         }}
       />
     </div>
