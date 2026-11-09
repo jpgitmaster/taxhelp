@@ -3,12 +3,12 @@
 @use '@/styles/colors' as *;
 @reference 'tailwindcss';
 body, html{
-    overflow-x: hidden;
+    overflow: hidden;
 }
 .app{
-    @apply min-h-screen flex flex-row;
+    @apply h-screen flex flex-row overflow-hidden;
     .appSidebar{
-        @apply w-52 bg-app-blue relative px-2.5;
+        @apply w-52 bg-app-blue relative px-2.5 h-full shrink-0 flex flex-col;
         img{
             filter: invert(97%) sepia(15%) saturate(303%) hue-rotate(250deg) brightness(119%) contrast(100%);
         }
@@ -134,7 +134,7 @@ body, html{
             }
         }
         .appSidebarLinks{
-            @apply my-18;
+            @apply my-18 flex-1 overflow-y-auto overflow-x-hidden;
             .links{
                 li{
                     @apply relative mb-1.5;
@@ -232,11 +232,11 @@ body, html{
     }
     .appContent{
         background-color: $white;
-        @apply flex-1;
+        @apply flex-1 flex flex-col h-full overflow-hidden;
         .appHeader{
             background-color: $white;
             border-bottom: .5px solid rgba($gray, .8);
-            @apply px-5 pt-2.5 pb-1.25 min-h-17.5 justify-between flex flex-row items-center w-full;
+            @apply px-5 pt-2.5 pb-1.25 min-h-17.5 justify-between flex flex-row items-center w-full shrink-0;
             .logo{
                 @apply w-45 m-1 block float-left;
                 img{
@@ -317,44 +317,44 @@ body, html{
                 }
             }
         }
+        .breadcrumbs{
+            @apply px-5 pt-2.5 shrink-0;
+            ol{
+                @apply flex flex-row flex-wrap;
+                li{
+                    list-style: none;
+                    &::before {
+                        @apply inline-block mx-1 text-[10px];
+                        content: '/';
+                    }
+                    &:nth-child(1){
+                        &::before {
+                            content: '';
+                            @apply hidden;
+                        }
+                        a{
+                            @apply pl-0;
+                        }
+                    }
+                    &.active{
+                        a{
+                            color: $darkgray;
+                            cursor: not-allowed;
+                            pointer-events: none;
+                        }
+                    }
+                    a{
+                        color: $blue;
+                        @apply text-[11px] p-1.25 uppercase no-underline;
+                    }
+                }
+            }
+        }
         .appBody{
-            @apply p-5 pt-2.5;
+            @apply p-5 pt-2.5 flex-1 overflow-y-auto overflow-x-hidden;
 
             &.appBodySpacious{
                 @apply pt-5 pb-15;
-            }
-            .breadcrumbs{
-                @apply mb-6.25;
-                ol{
-                    @apply flex flex-row flex-wrap;
-                    li{
-                        list-style: none;
-                        &::before {
-                            @apply inline-block mx-1 text-[10px];
-                            content: '/';
-                        }
-                        &:nth-child(1){
-                            &::before {
-                                content: '';
-                                @apply hidden;
-                            }
-                            a{
-                                @apply pl-0;
-                            }
-                        }
-                        &.active{
-                            a{
-                                color: $darkgray;
-                                cursor: not-allowed;
-                                pointer-events: none;
-                            }
-                        }
-                        a{
-                            color: $blue;
-                            @apply text-[11px] p-1.25 uppercase no-underline;
-                        }
-                    }
-                }
             }
         }
         .cards{
@@ -459,9 +459,9 @@ body, html{
         }
     }
     .appContent{
-        @apply w-full overflow-auto;
+        @apply w-full;
         .appHeader{
-            @apply flex-col min-h-auto px-4;
+            @apply flex-col min-h-auto px-4 shrink-0;
             .logo{
                 @apply w-50 h-18 mt-2;
             }

@@ -259,8 +259,8 @@ const CMS_Layout: FC<MasterProps> = ({ children, spacious }) => {
             </div>
           </div>
         </div>
+        <Breadcrumbs scss={scss} />
         <div className={scss.appBody + (spacious ? ' ' + scss.appBodySpacious : '')}>
-          <Breadcrumbs scss={scss} />
           {children}
         </div>
       </main>
