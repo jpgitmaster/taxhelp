@@ -3,21 +3,12 @@ import { Dropdown } from 'antd'
 import scss from './styles/FilterPopoverButton.module.scss'
 
 interface PropsDefinition {
-  /** The filter fields, rendered inside the popover panel. */
   children: ReactNode
-  /** Fired when "Search" is clicked — close the popover and apply the
-   * already-live filter state (fields update their own state as the user
-   * types/picks, same as before; this button is just "done editing"). */
   onSearch: () => void
   onClear?: () => void
-  /** Shows a filled/active ring around the trigger when any filter is set,
-   * same as Gmail dimming the funnel icon once a search has criteria. */
   active?: boolean
 }
 
-/** Collapsed Gmail-style filter trigger — a round icon button that opens a
- * popover with the filter fields (hidden by default) instead of always
- * showing them expanded in their own row. */
 const FilterPopoverButton = ({ children, onSearch, onClear, active }: PropsDefinition) => {
   const [open, setOpen] = useState(false)
 

@@ -13,10 +13,6 @@ interface PropsDefinition {
   onToggle: (key: string) => void
 }
 
-/** The "Columns" trigger + searchable checkbox panel used by
- * ColumnFilterTable, split out as its own component so it can be rendered
- * inline in a toolbar (next to Add Record/Search) instead of always
- * sitting in its own row above the table. */
 const ColumnsDropdownButton = ({ options, selectedKeys, onToggle }: PropsDefinition) => {
   const [search, setSearch] = useState('')
   const [open, setOpen] = useState(false)

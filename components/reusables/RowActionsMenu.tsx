@@ -10,7 +10,6 @@ export interface RowAction {
   onClick?: () => void
   confirm?: { title: string, description: string }
   danger?: boolean
-  /** Path under /public, e.g. "/svgs/edit.svg" */
   icon?: string
 }
 
@@ -18,10 +17,6 @@ interface PropsDefinition {
   actions: RowAction[]
 }
 
-/** Per-row kebab (⋮) menu — collapses a table row's action buttons behind
- * one trigger instead of spelling every action out inline, which gets
- * cluttered once a row has more than one or two actions. Reusable by any
- * table that needs row-level actions (Resume/Delete here, but generic). */
 const RowActionsMenu = ({ actions }: PropsDefinition) => {
   const [open, setOpen] = useState(false)
 

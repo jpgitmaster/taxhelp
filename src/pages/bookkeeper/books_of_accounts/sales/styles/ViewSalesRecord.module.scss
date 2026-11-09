@@ -57,19 +57,12 @@
   @apply my-5;
 }
 
-// Mirrors the Add form's own ParticularsTable (same grid columns, same
-// head/subtotal row treatment) so a posted record's line items look like
-// the same table the user typed them into, just without inputs.
 .particularsCard {
   background-color: $white;
   border: 1px solid rgba($gray, .8);
   @apply rounded-[14px] overflow-hidden;
 }
 
-// Header/data/subtotal rows were each sizing to their own font/padding
-// combo (35px/45px/48px) instead of a shared height — fixed with one
-// min-height all three share, rather than trying to balance padding
-// against three different font sizes.
 .particularsRow {
   @apply grid items-center gap-3 px-4 py-3 text-[13px] min-h-11;
   grid-template-columns: minmax(0, 1fr) 90px 130px 130px;

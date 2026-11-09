@@ -6,17 +6,12 @@
   @apply relative;
 }
 
-// ============ Columns filter trigger ============
 .columnsRow {
   @apply flex flex-row justify-end mb-2;
 }
 
 .columnsBtn {
   background-color: rgba($lightBlue, .12);
-  // Search/Add Record have a real 1px border, which adds to the box's
-  // total height under border-box sizing — `border: none` here left this
-  // button a few px shorter even with identical padding. A transparent
-  // border of the same width equalizes the box model exactly.
   border: 1px solid transparent;
   color: $blue;
   @apply flex flex-row items-center gap-1.5 rounded-[10px] text-[12px] font-bold px-4 py-2 cursor-pointer transition-colors whitespace-nowrap;
@@ -26,10 +21,6 @@
     background-image: url('/svgs/arrowDown.svg');
     background-repeat: no-repeat;
     background-size: contain;
-    // The source SVG is 15x8 (not square) — forcing it into a square box
-    // with no background-position left it scaled down and stuck in the
-    // box's top-left corner (the default position) instead of centered,
-    // which read as "not centered" and "too close" to the text.
     background-position: center;
     filter: invert(27%) sepia(89%) saturate(1942%) hue-rotate(185deg) brightness(96%) contrast(101%);
     @apply w-2.5 h-1.5 ml-0.5;
@@ -77,10 +68,6 @@
   }
 }
 
-// ============ Table — borderless, sits flat on the page ============
-// Reference: flat white table with no card/border/shadow, plain bold black
-// header text (no tinted background), no zebra striping, generous row
-// padding, hairline separation only — not a boxed-in panel.
 .tableWrap {
   background-color: $white;
   box-shadow: 0 1px 3px rgba(15, 23, 42, .08), 0 1px 2px rgba(15, 23, 42, .06);
@@ -89,10 +76,6 @@
   :global(.ant-table) {
     background: transparent;
   }
-  // macOS hides overlay scrollbars until actively scrolling, which made a
-  // horizontally-scrollable table (it works — scrollWidth > clientWidth)
-  // *look* broken since there's no visible affordance. Force a persistent,
-  // visibly-styled scrollbar instead of relying on the OS default.
   :global(.ant-table-content) {
     scrollbar-width: thin;
     scrollbar-color: rgba($gray, 1.3) transparent;
@@ -123,12 +106,6 @@
       display: none !important;
     }
   }
-  // The icon's position must never depend on the title's text width — any
-  // per-column width tuning to "make room" breaks again the moment a
-  // longer title or a narrower column shows up. Instead pin the icon to a
-  // fixed slot at the cell's right edge and let the title truncate with an
-  // ellipsis behind it if it doesn't fit, so collisions are structurally
-  // impossible regardless of column width or title length.
   :global(.ant-table-column-sorters) {
     position: relative;
     display: block !important;
@@ -156,9 +133,6 @@
     color: $lightBlack;
     @apply text-[13px] py-2.5! px-4!;
   }
-  // antd's hidden row for measuring column widths when scroll.x is set —
-  // needs to win over the !important cell padding above so it stays
-  // invisible instead of rendering as a blank row under the header.
   :global(tr.ant-table-measure-row td) {
     padding: 0 !important;
     height: 0 !important;
@@ -173,11 +147,6 @@
   :global(.ant-table-tbody > tr:hover > td) {
     background-color: rgba($lightBlue, .06) !important;
   }
-  // This antd version renders sticky columns with -start/-end suffixes
-  // (not -left/-right, which matched nothing and silently no-opped —
-  // leaving these cells fully transparent so the column scrolled
-  // underneath showed through, which looked like the two columns
-  // overlapping each other).
   :global(.ant-table-tbody .ant-table-cell-fix-left),
   :global(.ant-table-tbody .ant-table-cell-fix-right),
   :global(.ant-table-tbody .ant-table-cell-fix-start),
@@ -188,8 +157,6 @@
   :global(.ant-table-thead .ant-table-cell-fix-right),
   :global(.ant-table-thead .ant-table-cell-fix-start),
   :global(.ant-table-thead .ant-table-cell-fix-end) {
-    // Must be fully opaque — this cell is sticky-positioned on top of
-    // whatever column is currently scrolled underneath it.
     background-color: #e8f3fd !important;
   }
   :global(.ant-table-tbody > tr:hover .ant-table-cell-fix-left),
@@ -203,7 +170,6 @@
   }
 }
 
-// ============ Pagination row ============
 .paginationRow {
   @apply flex flex-row items-center justify-between gap-3 flex-wrap mt-4;
 }
@@ -213,8 +179,6 @@
   @apply text-[12px] font-medium;
 }
 
-// Rounded pill pager instead of antd's default square-ish boxes — bigger,
-// friendlier touch targets with a clear filled-blue active state.
 .paginationRow {
   :global(.ant-pagination-item) {
     border: 1px solid rgba($gray, .9) !important;

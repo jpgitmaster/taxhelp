@@ -16,11 +16,6 @@ import scss from './styles/ViewSalesRecord.module.scss'
 const formatNumber = (value: number | string | undefined) =>
   Number(value || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
-/** Read-only display of a posted (or otherwise non-draft) manual sale
- * record — a separate page from the editable wizard (add.tsx) rather than
- * that wizard rendered disabled, since a greyed-out input box still reads
- * as "this field should be editable" where a plain label+underline reads
- * as "this is just a fact". */
 const ViewSalesRecord_V: NextPageWithLayout = () => {
   const router = useRouter()
   const id = router.query.id ? Number(router.query.id) : null
@@ -29,10 +24,6 @@ const ViewSalesRecord_V: NextPageWithLayout = () => {
   const { getClient } = useQueryClients()
 
   const { data: sale, isLoading: saleLoading } = useGetSalesManualById(id)
-  // getClient's hook signature claims a Client wrapper type, but its
-  // queryFn actually returns the raw client record (res.data.client) — the
-  // existing type annotation elsewhere in the codebase doesn't match its
-  // runtime shape, so read it as the raw fields it really returns.
   const { data: clientData, isLoading: clientLoading } = getClient(Number(sale?.client_id))
   const client = clientData as unknown as {
     registered_name?: string

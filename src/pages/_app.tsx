@@ -12,10 +12,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
 
-// Standard Next.js (pages router) per-page-layout pattern — most pages don't
-// need it and get the default <CMS_Layout> wrap below unchanged; a page can
-// opt into a customized layout (e.g. extra spacing) by exporting its own
-// getLayout, without every other page having to care.
 export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
 }

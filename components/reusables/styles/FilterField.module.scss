@@ -3,19 +3,10 @@
 @use '@/styles/colors' as *;
 @reference 'tailwindcss';
 
-// Pulls in the shared .npt/.card/.w33 etc. field styles (same ones the
-// Sales list's own filter box uses) so CustomContainer renders identically
-// here without this component depending on any one page's stylesheet.
 :global(.ant-picker) {
   border: 1px solid $gray;
   background-color: $white;
 }
-// globals.scss pins .ant-picker-suffix with position:absolute at the
-// input's right edge but never reserves padding-right on the input for
-// it — so a placeholder long enough to reach that edge renders its text
-// (and ellipsis) directly underneath the icon instead of stopping short
-// of it. Scoped here rather than fixed in globals.scss to avoid touching
-// every other date picker in the app.
 :global(.ant-picker-input input) {
   padding-right: 20px;
 }

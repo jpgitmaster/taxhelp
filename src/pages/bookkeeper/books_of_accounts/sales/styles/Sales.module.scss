@@ -73,9 +73,6 @@
     font-weight: 600;
     @apply text-[18px] mb-3;
   }
-  // Override the app-wide dashed-underline "view mode" look — on an empty draft
-  // it reads as a broken/unstyled input. Real bordered box instead, scoped to
-  // this page only.
   input[type=text].lblContent{
     border: 1px solid rgba($gray, .9) !important;
     background-color: $white !important;

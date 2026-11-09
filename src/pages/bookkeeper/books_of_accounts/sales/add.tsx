@@ -72,10 +72,6 @@ const AddSalesRecord_V: NextPageWithLayout = () => {
     validateStep,
   })
 
-  // After a failed final submit, jump to whichever step holds the first
-  // invalid field — errors set on a step the user isn't viewing would
-  // otherwise be invisible. (Continue already blocks advancing past an
-  // incomplete step, so this is mainly a safety net for the last step.)
   useEffect(() => {
     const erroredFields = Object.keys(sales.salesErr)
     if (!erroredFields.length) return
@@ -132,11 +128,6 @@ const AddSalesRecord_V: NextPageWithLayout = () => {
     <form
       onSubmit={handleSubmit}
       className={wizardScss.wizard}
-      // Pressing Enter in any field would otherwise submit the whole form the
-      // moment a submit-type button exists anywhere inside it (the final
-      // step's button) — even while still on Step 1 or 2. That ran full
-      // validation against fields the user hasn't reached yet and left them
-      // marked invalid. Only allow Enter to submit on the actual last step.
       onKeyDown={(e) => {
         if (e.key === 'Enter' && !isLastStep) e.preventDefault()
       }}

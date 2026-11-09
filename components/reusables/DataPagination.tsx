@@ -11,9 +11,6 @@ interface PropsDefinition {
   onPageSizeChange?: (pageSize: number) => void
 }
 
-/** "Showing page X of Y" + first/prev/numbered/next/last + rows-per-page —
- * a fuller pagination control than antd's default Pagination gives us, so
- * built as its own reusable component rather than fighting antd's API. */
 const DataPagination = ({
   current,
   pageSize,

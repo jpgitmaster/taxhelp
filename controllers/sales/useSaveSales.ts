@@ -16,12 +16,6 @@ import { useState, useEffect, useRef, useCallback, ChangeEvent, SyntheticEvent }
 const AUTOSAVE_DEBOUNCE_MS = 1200
 const HEARTBEAT_INTERVAL_MS = 20000
 
-// BIR discount rules actually tied to law, keyed by DiscountsDropdown's option
-// values. SC/PWD (RA 9994 / RA 10754) grant a straight 20% discount AND full
-// VAT exemption on the covered sale. Medal of Valor (RA 9049) and National
-// Athletes & Coaches (RA 10699) awardees are extended the *same* privilege —
-// 20% + VAT-exempt — under their respective IRRs. Solo Parent (RA 11861) is
-// different: a 10% discount on specific covered goods, with no VAT exemption.
 const DISCOUNT_RULES: Record<string, { rate: number, vatExempt: boolean }> = {
     SC: { rate: 0.20, vatExempt: true },
     PWD: { rate: 0.20, vatExempt: true },
@@ -32,10 +26,6 @@ const DISCOUNT_RULES: Record<string, { rate: number, vatExempt: boolean }> = {
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
-// Which fieldValidations keys belong to which wizard step — used to scope
-// validation (and therefore which fields light up red) to just the step
-// the user is currently trying to leave, instead of validating the whole
-// form (and marking steps the user hasn't reached yet as already invalid).
 const STEP_FIELDS: Record<number, string[]> = {
     1: [
         'client', 'customer', 'tin', 'classification', 'registered_name',
@@ -88,10 +78,6 @@ const useSaveSales = () => {
         useGetCustomers
     } = useQueryCustomers()
     const [editCustomer, setEditCustomer] = useState(false)
-    // Expanded Withholding Tax only applies when the customer is a withholding
-    // agent (government, top withholding agents, large taxpayers per RR 2-98
-    // as amended) — not every sale. ATC/EWT Rate are only required, and the
-    // withholding fields only shown, when this is on.
     const [hasWithholding, setHasWithholding] = useState(false)
     const [displayTerms, setDisplayTerms] = useState(false)
     const [displayClients, setDisplayClients] = useState(false)
@@ -99,7 +85,6 @@ const useSaveSales = () => {
     const [displayCustomers, setDisplayCustomers] = useState(false)
     const [errArr, setErrArr] = useState(sales.salesObj.particulars)
 
-    // DRAFT / AUTOSAVE / LOCKING
     const [draftId, setDraftId] = useState<number | null>(draftIdFromQuery)
     const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle')
     const [lockConflict, setLockConflict] = useState<{ locked: boolean, message: string | null }>({ locked: false, message: null })
@@ -187,7 +172,6 @@ const useSaveSales = () => {
         period: null,
     })
 
-    // Hydrate from an existing draft (?draft=<id>) once its record and client have loaded.
     useEffect(() => {
         if (!draftIdFromQuery || hasHydratedRef.current) return
         if (!existingDraft || !draftClient) return
@@ -196,8 +180,6 @@ const useSaveSales = () => {
         skipNextAutosaveRef.current = true
 
         const rawCustomer = (existingDraft.customer || {}) as unknown as Partial<CustomerObj>
-        // Controlled inputs can't take null (React warns and drops back to uncontrolled) —
-        // the backend returns nulls for unset text fields, so coerce them to ''.
         const customer: CustomerObj = {
             id: rawCustomer.id ?? null,
             tin: rawCustomer.tin || '',
@@ -330,9 +312,6 @@ const useSaveSales = () => {
             description: { usename: 'Item Description / Service Nature', required: true },
         })),
     }
-    /** discountTypeOverride lets handleSelectDiscount recompute immediately with
-     * the just-picked value, since `doc` state hasn't re-rendered yet at that
-     * point — every other call site falls back to doc.selectedDiscount. */
     const recalcSales = (salesObj: any, overrides?: { discountType?: string, hasWithholding?: boolean }) => {
         const VAT_RATE = 0.12
         const toNumber = (val: any) => parseFloat(val) || 0
@@ -350,9 +329,6 @@ const useSaveSales = () => {
             salesObj.exempt_sales || salesObj.zero_rated_sales
         )
 
-        // Base price/VAT split (BIR convention), independent of discount —
-        // Inclusive: Net = Gross / 1.12, VAT = Gross - Net.
-        // Exclusive: VAT = Net * 0.12, Gross = Net + VAT.
         let netVatable = 0
         let vatAmount = 0
         if (vatType === 'INCLUSIVE') {
@@ -364,8 +340,6 @@ const useSaveSales = () => {
             vatAmount = netVatable * VAT_RATE
         }
 
-        // Discount layered on top of the base split — see DISCOUNT_RULES for
-        // the legal basis per type.
         let discountAmount = 0
         let effectiveExempt = manualExempt
         let effectiveVatable = netVatable
@@ -375,12 +349,10 @@ const useSaveSales = () => {
             discountAmount = netVatable * discountRule.rate
 
             if (discountRule.vatExempt) {
-                // Entire covered sale moves from vatable to exempt; no VAT at all.
                 effectiveExempt = manualExempt + netVatable
                 effectiveVatable = 0
                 effectiveVat = 0
             } else {
-                // Solo Parent: discount on the net price, sale stays vatable.
                 effectiveVatable = netVatable - discountAmount
                 effectiveVat = effectiveVatable * VAT_RATE
             }
@@ -389,23 +361,10 @@ const useSaveSales = () => {
         const netSalesTotal = effectiveExempt + zeroRated + effectiveVatable
         const totalGrossAmount = netSalesTotal + effectiveVat
 
-        // EWT only applies to the taxable (vatable) base, and only when the
-        // customer is a withholding agent — gated by hasWithholding in the UI,
-        // so ewt_rate being blank already keeps this at ''.
         const ewtRate = toNumber(salesObj.ewt_rate) / 100
         const taxAmount = effectiveVatable * ewtRate
         const hasWithholdingAmount = withholdingActive && !!salesObj.ewt_rate && hasAnyAmount
 
-        // A BIR-compliant invoice always ends in a final Amount Due line —
-        // Total Gross Amount, less any discount, less any withholding — even
-        // when neither applies (it just equals Total Gross Amount then).
-        // VAT-exempt discounts (SC/PWD/MOV/NAAC) deduct from the amount due;
-        // Solo Parent's discount is already baked into effectiveVatable above.
-        // Withholding tax never reduces the invoiced sale itself (Total Gross
-        // Amount is unaffected per RR 2-98) — it only reduces the cash
-        // actually collected, since the buyer remits the withheld amount to
-        // the BIR directly and the seller gets it back later as a tax credit
-        // via the buyer's Form 2307 — so it's deducted here, same as discount.
         const netAmountDue = totalGrossAmount
             - (discountRule?.vatExempt ? discountAmount : 0)
             - (hasWithholdingAmount ? taxAmount : 0)
@@ -415,9 +374,6 @@ const useSaveSales = () => {
 
             vat_rate: '12%',
 
-            // The raw/editable field per mode (gross_taxable when Inclusive,
-            // vatable_sales when Exclusive) is left untouched; only the
-            // complementary *computed* read-only field is filled in here.
             gross_taxable: vatType === 'INCLUSIVE'
                 ? salesObj.gross_taxable
                 : (hasAnyAmount ? Number(netVatable + vatAmount).toFixed(2) : ''),
@@ -436,12 +392,6 @@ const useSaveSales = () => {
             tax_amount: hasWithholdingAmount ? Number(taxAmount).toFixed(2) : ''
         }
     }
-    // Particulars is the source of truth for the taxable amount — keep Tax
-    // Details' Gross Taxable (VAT Inclusive) / Vatable Sales (VAT Exclusive) in
-    // sync with the particulars subtotal instead of making the user retype the
-    // same total a second time. Re-syncs whenever particulars or the VAT type
-    // itself changes; manual edits made directly in Tax Details afterward are
-    // left alone until the particulars change again.
     useEffect(() => {
         const subtotal = sales.salesObj.particulars.reduce(
             (sum, p) => sum + (parseFloat(p.amount) || 0), 0
@@ -507,14 +457,10 @@ const useSaveSales = () => {
     }
 
     const handleSelectDiscount = (selectedDiscount: { value: string, label: string }) => {
-        // discount_type is read from doc.selectedDiscount (see buildDraftPayload) —
-        // salesObj.terms is a different field (Cash/Charge) and must stay untouched.
         setDoc({
             ...doc,
             selectedDiscount: selectedDiscount
         })
-        // doc hasn't re-rendered yet, so pass the new value explicitly instead
-        // of relying on recalcSales' doc.selectedDiscount fallback.
         setSales(prev => ({
             ...prev,
             salesObj: recalcSales(prev.salesObj, { discountType: selectedDiscount.value })
@@ -545,9 +491,6 @@ const useSaveSales = () => {
             }
         }))
         handleRemoveErr(sales.salesErr, 'client')
-        // A draft isn't created yet — picking a client alone shouldn't leave a row
-        // behind. The autosave effect below creates one lazily on the first real
-        // field change.
     }
 
     const handleSelectCustomer = (customer: CustomerObj) => {
@@ -599,9 +542,6 @@ const useSaveSales = () => {
                 ]
             }
         }))
-        // Keep errArr's length/index alignment with particulars — otherwise a
-        // newly added row inherits whatever error happened to sit at that
-        // index before (e.g. a since-removed row's stale error).
         setErrArr(prev => [...prev, { description: '', quantity: '', unit_price: '', amount: '' }])
     }
 
@@ -677,8 +617,6 @@ const useSaveSales = () => {
             }
         })
 
-        // Particulars errors live in errArr (one entry per row), not sales.salesErr —
-        // clear just this row's field as the user corrects it.
         setErrArr(prev => prev.map((err, i) => i === index ? { ...err, [name]: '' } : err))
     }
     const handleChange = (
@@ -936,9 +874,6 @@ const useSaveSales = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sales.salesObj, doc.selectedDiscount])
 
-    // terms/vat_type/discount_type all default to a pre-selected value from mount
-    // (Cash/Inclusive/Senior Citizen) — they're not evidence the user typed anything,
-    // so they're deliberately excluded here.
     const isDraftPayloadEmpty = (payload: SalesManualDraftPayload) =>
         !payload.tin && !payload.registered_name && !payload.first_name && !payload.last_name &&
         !payload.first_address && !payload.second_address &&
@@ -947,10 +882,6 @@ const useSaveSales = () => {
         !payload.exempt_sales && !payload.zero_rated_sales && !payload.vatable_sales && !payload.gross_taxable &&
         (!payload.particulars || payload.particulars.length === 0)
 
-    // DEBOUNCED AUTOSAVE — fires a bit after the user stops typing/changing anything.
-    // No draft exists yet until there's something worth saving (picking a client
-    // alone doesn't create one); once real content shows up, the draft is created
-    // lazily and the same change is saved into it in one go.
     useEffect(() => {
         if (!doc.client?.id || isHydrating || lockConflict.locked) return
 
@@ -982,13 +913,6 @@ const useSaveSales = () => {
                 useCreateDraft.mutate({ client_id: doc.client!.id! }, {
                     onSuccess: (created) => {
                         setDraftId(created.id)
-                        // Stamp the draft id into the URL (shallow — no reload, no
-                        // refetch) so a refresh/crash reopens *this* draft instead of
-                        // a blank form, the same way a Google Doc's URL always points
-                        // at the doc you're editing. The URL update makes draftIdFromQuery
-                        // go truthy on the next render — mark hydration as already done
-                        // so that doesn't re-trigger the ?draft= hydration effect and
-                        // clobber the form with a GET of the draft we just created.
                         hasHydratedRef.current = true
                         router.replace(
                             { pathname: router.pathname, query: { ...router.query, draft: created.id } },
@@ -1029,8 +953,6 @@ const useSaveSales = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sales.salesObj, doc.client?.id, doc.selectedDiscount, draftId, isHydrating, lockConflict.locked])
 
-    // HEARTBEAT — refreshes the lock every HEARTBEAT_INTERVAL_MS even if nothing changed,
-    // so a tab that's just sitting open (no edits) doesn't lose its lock to staleness.
     useEffect(() => {
         if (!draftId || lockConflict.locked) return
 
@@ -1048,7 +970,6 @@ const useSaveSales = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [draftId, lockConflict.locked])
 
-    // Best-effort lock release on unmount (SPA navigation) and tab close.
     useEffect(() => {
         if (!draftId) return
 
@@ -1103,11 +1024,6 @@ const useSaveSales = () => {
         })),
     })
 
-    /** Validate only the given fieldValidations keys (defaults to all), surfacing
-     * errors for just those fields via sales.salesErr/errArr. Returns whether it
-     * passed. Used both by the final submit (all fields) and by per-step "Continue"
-     * checks (just that step's fields), so navigating forward doesn't light up
-     * fields on steps the user hasn't reached yet. */
     const validateFields = (fieldNames?: string[]) => {
         const scopedValidations = fieldNames
             ? Object.fromEntries(Object.entries(fieldValidations).filter(([key]) => fieldNames.includes(key)))
@@ -1134,7 +1050,6 @@ const useSaveSales = () => {
         return !validation_has_error
     }
 
-    /** Validate just one wizard step's fields — used by the "Continue" button. */
     const validateStep = (step: number) => validateFields(STEP_FIELDS[step])
 
     const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
@@ -1168,8 +1083,6 @@ const useSaveSales = () => {
         }
 
         if (!draftId) {
-            // Passed validation fast enough that the debounced autosave never got a
-            // chance to create the draft — create it now, then finalize straight away.
             if (!doc.client?.id) {
                 setStatus(prev => ({ ...prev, loader: false, message: 'Select a client first.' }))
                 return
@@ -1217,7 +1130,6 @@ const useSaveSales = () => {
         clientLoader: isLoadingClients || isFetchingClients,
         customerLoader: isLoadingCustomers || isFetchingCustomers,
 
-        // DRAFT / AUTOSAVE / LOCKING
         draftId,
         saveStatus,
         lockConflict,

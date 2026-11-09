@@ -49,7 +49,6 @@ interface DraftParticularPayload {
     amount?: number | string
 }
 
-/** Every field optional — used for autosave/finalize partial PATCH bodies. */
 type SalesManualDraftPayload = Partial<Omit<SalesManualCreatePayload, 'particulars' | 'client_id'>> & {
     particulars?: DraftParticularPayload[]
 }

@@ -10,10 +10,6 @@ interface PropsDefinition {
   chips: ActiveFilterChip[]
 }
 
-/** Removable chips showing which filters are currently applied — a
- * standard SaaS filter-bar pattern (applied filters stay visible as
- * dismissable tags so a glance tells you what's being filtered without
- * re-opening each field). Renders nothing when no filters are active. */
 const ActiveFilterChips = ({ chips }: PropsDefinition) => {
   if (!chips.length) return null
 

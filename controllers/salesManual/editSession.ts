@@ -1,10 +1,5 @@
 const STORAGE_KEY = 'salesManualEditSessionId'
 
-/**
- * One random id per browser tab, used so the backend can tell two tabs
- * editing the same draft apart (sessionStorage is per-tab, unlike
- * localStorage, and survives a reload of that same tab).
- */
 const getEditSessionId = (): string => {
     if (typeof window === 'undefined') return ''
 

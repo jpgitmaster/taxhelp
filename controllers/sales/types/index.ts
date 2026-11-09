@@ -31,9 +31,6 @@ interface SalesObj{
     total_gross_amount: string
     created_at?: Dayjs | null
     taxable_month: Dayjs | null
-    // Derived/display-only — computed by recalcSales, never sent in the draft
-    // payload (the inputs that produce them, e.g. exempt_sales/discount_type,
-    // already are).
     discount_rate?: string
     discount_amount?: string
     net_amount_due?: string

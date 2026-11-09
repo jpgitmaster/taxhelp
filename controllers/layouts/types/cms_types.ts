@@ -1,8 +1,6 @@
 import { ReactNode } from 'react'
 interface MasterProps {
   children: ReactNode
-  /** Extra top/bottom breathing room in the content area — opt in per page
-   * via `Component.getLayout` instead of changing every page's spacing. */
   spacious?: boolean
 }
 interface SessionUser{

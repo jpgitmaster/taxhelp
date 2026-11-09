@@ -7,9 +7,6 @@
   transform-origin: center center;
   backface-visibility: hidden;
   perspective: 1000px;
-  // Anchored bottom-right (the standard toast corner) instead of top-29/
-  // right-5 — that position sat right on top of each page's own search bar
-  // / header controls and got visually clipped by whatever sat there.
   @apply flex flex-row fixed z-50 right-5 bottom-5 rounded-[10px] py-2.5 px-4 max-w-100 items-center shadow-lg;
 
   /* Sequence: flip bounce → pause → slide out */

@@ -34,9 +34,6 @@ interface ManualSalesRow {
 }
 
 const SalesManual_V: NextPageWithLayout = () => {
-  // Lifted up (rather than owned inside ColumnFilterTable) so the "Columns"
-  // picker can render inline in the toolbar, next to Add Record/Search,
-  // instead of wrapping onto its own row below them.
   const [selectedOptionalKeys, setSelectedOptionalKeys] = useState<string[]>([])
   const toggleOptionalColumn = (key: string) => {
     setSelectedOptionalKeys(prev =>
@@ -103,13 +100,6 @@ const SalesManual_V: NextPageWithLayout = () => {
     gross_taxable: Number(sale.gross_taxable || 0),
   })) : []
 
-  // Only Invoice No. is pinned left and Actions pinned right — everything
-  // else (including the other always-shown columns) scrolls normally, so
-  // pinning doesn't eat into the scrollable width for no reason. Taxable
-  // Month/Terms/TIN/Vatable Sales/VAT Amount/Total Gross Amount are hidden
-  // until picked from the Columns dropdown, appended in the order clicked.
-  // Every column gets an explicit width so adding an optional column never
-  // shrinks the existing ones — the table just gets wider and scrolls.
   const columns: ColumnFilterTableColumn<ManualSalesRow>[] = [
     { key: 'invoice_number', title: 'Invoice No.', dataIndex: 'invoice_number', flexible: true, minWidth: 130, frozen: 'left', sorter: true },
     { key: 'invoice_date', title: 'Invoice Date', dataIndex: 'invoice_date', flexible: true, minWidth: 150, sorter: true },

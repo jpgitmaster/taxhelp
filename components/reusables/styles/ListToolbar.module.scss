@@ -25,11 +25,6 @@
 }
 
 .searchForm {
-  // Fixed height on both children instead of letting the button
-  // flex-stretch to whatever height the input's padding happens to
-  // produce — that implicit sizing drifted a px or two from the other
-  // toolbar controls (Add Record, Columns), which size via explicit
-  // padding instead. One explicit height keeps every control pixel-equal.
   @apply flex flex-row w-95 h-9;
 
   input[type=text] {

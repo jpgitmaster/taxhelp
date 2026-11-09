@@ -11,7 +11,6 @@ export class LockConflictError extends Error {
     }
 }
 
-/** The draft has already been posted (or otherwise can't be edited as a draft anymore) — e.g. a stale ?draft= link, or finalized by another tab mid-edit. */
 export class DraftNotEditableError extends Error {
     constructor(message: string) {
         super(message)

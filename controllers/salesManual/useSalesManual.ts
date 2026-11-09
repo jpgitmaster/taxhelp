@@ -22,10 +22,6 @@ const useSalesManual = () => {
     const [recordsLimit, setRecordsLimit] = useState(10)
     const [sortBy, setSortBy] = useState<string | null>(null)
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
-    // The popover's fields edit `doc` live (so inputs stay responsive/
-    // controlled as the user picks), but the query only reads from this —
-    // it's only synced from `doc` when "Search" is clicked, so picking a
-    // date doesn't refire the API on every keystroke/selection.
     const [appliedFilters, setAppliedFilters] = useState({
         clientId: null as number | null,
         taxableMonthFrom: null as string | null,
@@ -84,9 +80,6 @@ const useSalesManual = () => {
 
         const updateTableWidth = () => setTableWidth(window.innerWidth - 240)
         updateTableWidth()
-        // Recompute on resize — it was only set once on mount before, so a
-        // maximized/resized window after load left it stale (table wouldn't
-        // know it had more room, or would stay too wide to need scrolling).
         window.addEventListener('resize', updateTableWidth)
 
         const stored = sessionStorage.getItem('successMessage')
@@ -139,15 +132,10 @@ const useSalesManual = () => {
         setDoc(prev => ({ ...prev, [name]: value }))
     }
 
-    // Only edits the draft `doc` — doesn't touch the query. Query only
-    // updates once handleApplyFilters runs (Search button click).
     const handleSelectClient = (client: { id: number | null, last_name: string, first_name: string, trade_name: string, registered_name: string }) => {
         setDoc(prev => ({ ...prev, client }))
     }
 
-    // Clearing is an immediate action (not a draft edit) — resets both the
-    // visible field and the actual query right away, same as Gmail's
-    // "Clear filters" doesn't wait for a separate Search click.
     const handleClearSelected = (dropdown: string) => {
         if (dropdown === 'client') {
             setDoc(prev => ({
@@ -191,8 +179,6 @@ const useSalesManual = () => {
         })
     }
 
-    // Commits the draft `doc` filter fields into the query — called when
-    // the filter popover's Search button is clicked.
     const handleApplyFilters = () => {
         setAppliedFilters({
             clientId: doc.client.id,

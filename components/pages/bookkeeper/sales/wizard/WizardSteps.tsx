@@ -9,14 +9,10 @@ export interface WizardStepDefinition {
 interface PropsDefinition {
   steps: WizardStepDefinition[]
   current: number
-  /** A step is reachable once every step before it is complete. Pass one
-   * boolean per step index (1-based) — e.g. [stepOneComplete, stepTwoComplete]. */
   completedSteps: boolean[]
   onStepClick: (step: number) => void
 }
 
-/** Clickable step indicator for a wizard flow — reusable by any multi-step
- * form, not just Sales. Steps ahead of the first incomplete one are disabled. */
 const WizardSteps = ({ steps, current, completedSteps, onStepClick }: PropsDefinition) => {
   const firstIncomplete = completedSteps.findIndex(complete => !complete) + 1 || steps.length + 1
 

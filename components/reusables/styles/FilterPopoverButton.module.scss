@@ -1,10 +1,6 @@
 @use '@/styles/colors' as *;
 @reference 'tailwindcss';
 
-// Matches .columnsBtn (ColumnFilterTable.module.scss) exactly — same pill
-// shape/colors/height as the Columns dropdown trigger, so the two sit
-// consistently side by side in the toolbar instead of looking like two
-// different kinds of controls.
 .trigger {
   background-color: rgba($lightBlue, .12);
   border: 1px solid transparent;
@@ -51,9 +47,6 @@
     @apply px-0!;
   }
 
-  // globals.scss sets .ant-picker { width: 100% }, which made each of the
-  // two From/To pickers claim the full row width and pushed the second
-  // one onto its own line below instead of sitting beside the first.
   :global(.ant-picker) {
     width: auto !important;
     flex: 1 1 0;

@@ -1,7 +1,6 @@
 @use '@/styles/colors' as *;
 @reference 'tailwindcss';
 
-// ============ Shell ============
 .wizard {
   @apply w-220 mx-auto relative;
 }
@@ -37,7 +36,6 @@
   @apply rounded-[12px] px-4 py-3 mb-4 text-[13px];
 }
 
-// ============ Step indicator ============
 .steps {
   background-color: $white;
   border: 1px solid rgba($gray, .7);
@@ -98,7 +96,6 @@
   }
 }
 
-// ============ Panel ============
 .panel {
   background-color: $white;
   border: 1px solid rgba($gray, .7);
@@ -158,11 +155,6 @@
   .clientSummary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-// ============ Summary accordion (Step 2 / Step 3) ============
-// Receipt-style review card — white surface matching .panel (not a flat color
-// fill), icon badge + chevron-on-the-right header (the chevron-on-the-left
-// pattern read as an afterthought), and label/value *rows* instead of boxed
-// grid cells once expanded, echoing how an actual OR/invoice is laid out.
 .summaryCard {
   background-color: $white;
   border: 1px solid rgba($gray, .7);
@@ -207,8 +199,6 @@
   }
 }
 
-// Label-left / value-right rows with hairline dividers, like a receipt —
-// replaces the old boxed 2-col grid.
 .summaryList {
   @apply flex flex-col;
 
@@ -259,7 +249,6 @@
   }
 }
 
-// ============ Field grid (used by every step) ============
 .fieldGrid {
   @apply grid gap-x-5 gap-y-5 mb-5;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -288,9 +277,6 @@
   input[type=text], select {
     border: 1px solid rgba($gray, .9);
     background-color: $white;
-    // Native <select> chrome (esp. macOS Safari) ignores background-color
-    // without this — it was rendering its own gray control background
-    // instead of matching the text inputs.
     appearance: none;
     -webkit-appearance: none;
     @apply rounded-[10px] px-3 py-2.5 text-[13px] w-full;
@@ -309,10 +295,6 @@
     }
   }
 
-  // Scoped to input[type=text] only — a bare :read-only would also match
-  // <select>, which the spec treats as "not read-write" (no editable state)
-  // regardless of whether it's actually interactive, graying out every
-  // editable dropdown along with genuinely read-only text fields.
   input[type=text]:read-only {
     background-color: $lightGray;
     color: $lightBlack;
@@ -345,7 +327,6 @@
   }
 }
 
-// ============ VAT type cards ============
 .vatTypes {
   @apply grid grid-cols-2 gap-3 mb-5;
 
@@ -383,7 +364,6 @@
   }
 }
 
-// ============ Nav buttons ============
 .navRow {
   @apply flex flex-row items-center justify-between mt-6;
 }
