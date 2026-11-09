@@ -30,11 +30,16 @@ const AddSalesRecord_V = () => {
     displayCustomers,
     displayDiscounts,
 
+    draftId,
+    saveStatus,
+    lockConflict,
+    isHydrating,
+
     setDisplayTerms,
     setDisplayClients,
     setDisplayCustomers,
     setDisplayDiscounts,
-    
+
     handleBlur,
     handleDate,
     handleChange,
@@ -52,9 +57,42 @@ const AddSalesRecord_V = () => {
   } = useSaveSales()
   const { loader } = status
   const dateFormat = 'MM/DD/YYYY'
+  const saveStatusLabel = {
+    idle: '',
+    saving: 'Saving…',
+    saved: 'Saved',
+    error: 'Could not save — will retry on your next change',
+  }[saveStatus]
   return (
       <form onSubmit={handleSubmit} className={scss.addClient}>
-        { loader && <Loader scss={scss} position='absolute' />}
+        { (loader || isHydrating) && <Loader scss={scss} position='absolute' />}
+        {
+          draftId && !lockConflict.locked &&
+          <div style={{
+            textAlign: 'right',
+            fontSize: '12px',
+            color: saveStatus === 'error' ? '#d4380d' : '#888',
+            padding: '0 10px',
+            marginBottom: '-8px',
+          }}>
+            {saveStatusLabel}
+          </div>
+        }
+        {
+          lockConflict.locked &&
+          <div style={{
+            background: '#fff1f0',
+            border: '1px solid #ffa39e',
+            color: '#a8071a',
+            borderRadius: '6px',
+            padding: '10px 14px',
+            margin: '0 10px 15px',
+            fontSize: '13px',
+          }}>
+            {lockConflict.message || 'This draft is currently being edited elsewhere.'} Changes here will not be saved.
+          </div>
+        }
+        <fieldset disabled={lockConflict.locked} style={{ border: 'none', margin: 0, padding: 0 }}>
         <div className={scss.box+' '+scss.view}>
           <div className={scss.cards} style={{marginBottom: 0}}>
             <CustomContainer
@@ -65,18 +103,20 @@ const AddSalesRecord_V = () => {
               labelFor='client'
               err={sales.salesErr.client as string}
             >
-              <ClientsDropdown
-                doc={doc}
-                clients={clientArr}
-                loader={clientLoader}
-                displayClients={displayClients}
-                err={sales.salesErr.client as string}
-                setDisplayClients={setDisplayClients}
+              <div style={draftId ? { pointerEvents: 'none', opacity: 0.6 } : undefined} title={draftId ? 'Client is locked once a draft has started saving. Start a new entry to pick a different client.' : undefined}>
+                <ClientsDropdown
+                  doc={doc}
+                  clients={clientArr}
+                  loader={clientLoader}
+                  displayClients={displayClients}
+                  err={sales.salesErr.client as string}
+                  setDisplayClients={setDisplayClients}
 
-                handleChange={handleChange}
-                handleToggle={handleToggle}
-                handleSelectClient={handleSelectClient}
-              />
+                  handleChange={handleChange}
+                  handleToggle={handleToggle}
+                  handleSelectClient={handleSelectClient}
+                />
+              </div>
             </CustomContainer>
           </div>
         </div>
@@ -1094,8 +1134,9 @@ const AddSalesRecord_V = () => {
             </CustomContainer>
           </div>
         </div>
-        <button type='submit' className={scss.button+' '+scss.btnblue} style={{display: 'block', maxWidth: '300px', margin: '30px auto'}} onKeyDown={handleResubmit}>
-          Add Sales Record
+        </fieldset>
+        <button type='submit' disabled={lockConflict.locked} className={scss.button+' '+scss.btnblue} style={{display: 'block', maxWidth: '300px', margin: '30px auto'}} onKeyDown={handleResubmit}>
+          {draftId ? 'Post Sales Record' : 'Add Sales Record'}
         </button>
       </form>
   )
