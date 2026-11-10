@@ -20,6 +20,9 @@ const initSalesObj = {
     invoice_number: '',
     zero_rated_sales: '',
     total_gross_amount: '',
+    discount_rate: '',
+    discount_amount: '',
+    net_amount_due: '',
     particulars: [
         {
             amount: '',
@@ -30,7 +33,7 @@ const initSalesObj = {
     ],
     customer: {
         ...initCustomerObj,
-        classification: ''
+        classification: 'NON-INDIVIDUAL'
     }
 }
 const initSales = {

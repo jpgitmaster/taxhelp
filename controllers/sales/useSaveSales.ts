@@ -1,14 +1,56 @@
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import useSalesAPI from "./api"
+import { useRouter } from 'next/router';
 import { Particular, SalesErr } from './types'
 import useQueryClients from '../clients/api/queries';
 import useGlobal from '@/controllers/global/useGlobal';
 import useQueryCustomers from '../customers/api/queries';
+import { ClientObj } from '@/controllers/clients/types'
 import { CustomerObj } from '@/controllers/customers/types'
-import { useState, ChangeEvent, SyntheticEvent } from "react";
 import { initCustomerObj } from '@/controllers/customers/states';
 import ValidatorV3 from '@/components/reusables/validation/ValidatorV3';
+import useSalesManualAPI, { LockConflictError, DraftNotEditableError } from '../salesManual/api';
+import { SalesManualDraftPayload, SalesManualRecord } from '../salesManual/types';
+import { useState, useEffect, useRef, useCallback, ChangeEvent, SyntheticEvent } from "react";
+
+const AUTOSAVE_DEBOUNCE_MS = 1200
+const HEARTBEAT_INTERVAL_MS = 20000
+
+const DISCOUNT_RULES: Record<string, { rate: number, vatExempt: boolean }> = {
+    SC: { rate: 0.20, vatExempt: true },
+    PWD: { rate: 0.20, vatExempt: true },
+    MOV: { rate: 0.20, vatExempt: true },
+    NAAC: { rate: 0.20, vatExempt: true },
+    SP: { rate: 0.10, vatExempt: false },
+}
+
+type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
+
+const STEP_FIELDS: Record<number, string[]> = {
+    1: [
+        'client', 'customer', 'tin', 'classification', 'registered_name',
+        'first_name', 'last_name', 'first_address', 'second_address',
+    ],
+    2: [
+        'taxable_month', 'invoice_date', 'invoice_number', 'terms', 'account_name', 'particulars',
+    ],
+    3: [
+        'atc', 'ewt_rate', 'vat_amount', 'exempt_sales', 'gross_amount', 'gross_taxable',
+        'vatable_sales', 'zero_rated_sales', 'total_gross_amount',
+    ],
+}
+
 const useSaveSales = () => {
+    const router = useRouter()
+    const draftIdFromQuery = router.query.draft ? Number(router.query.draft) : null
+    const {
+        useGetSalesManualById,
+        useCreateDraft,
+        useAutosaveDraft,
+        useLockDraft,
+        useUnlockDraft,
+        useFinalizeDraft,
+    } = useSalesManualAPI()
     const {
         handleBlur,
         handleResubmit,
@@ -17,15 +59,16 @@ const useSaveSales = () => {
     const {
         sales,
         status,
-        
+
         setSales,
         setStatus,
     } = useSalesAPI()
-    
+
     const {
         filter: clientFilter,
         setFilter: clientSetFilter,
 
+        getClient,
         getClients
     } = useQueryClients()
 
@@ -35,11 +78,24 @@ const useSaveSales = () => {
         useGetCustomers
     } = useQueryCustomers()
     const [editCustomer, setEditCustomer] = useState(false)
+    const [hasWithholding, setHasWithholding] = useState(false)
     const [displayTerms, setDisplayTerms] = useState(false)
     const [displayClients, setDisplayClients] = useState(false)
     const [displayDiscounts, setDisplayDiscounts] = useState(false)
     const [displayCustomers, setDisplayCustomers] = useState(false)
     const [errArr, setErrArr] = useState(sales.salesObj.particulars)
+
+    const [draftId, setDraftId] = useState<number | null>(draftIdFromQuery)
+    const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle')
+    const [lockConflict, setLockConflict] = useState<{ locked: boolean, message: string | null }>({ locked: false, message: null })
+    const [isHydrating, setIsHydrating] = useState(!!draftIdFromQuery)
+    const hasHydratedRef = useRef(false)
+    const skipNextAutosaveRef = useRef(false)
+    const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const lastSavedPayloadRef = useRef<string | null>(null)
+
+    const { data: existingDraft } = useGetSalesManualById(draftIdFromQuery)
+    const { data: draftClient } = getClient(Number(existingDraft?.client_id))
     const options = [
         {
             value: 'INCLUSIVE',
@@ -88,13 +144,7 @@ const useSaveSales = () => {
             value: string,
             label: string
         }
-        client: {
-            id: number | null,
-            last_name: string
-            first_name: string
-            trade_name: string
-            registered_name: string
-        },
+        client: Partial<ClientObj> & { id: number | null },
         customer: CustomerObj,
         period: Dayjs | null
     }>({
@@ -109,20 +159,122 @@ const useSaveSales = () => {
         },
         customer: {
             ...initCustomerObj,
-            classification: ''
+            classification: 'NON-INDIVIDUAL'
         },
         selectedTerms: {
             value: 'CASH',
             label: 'Cash'
         },
         selectedDiscount: {
-            value: 'SC',
-            label: 'Senior Citizen'
+            value: '',
+            label: 'No Discount'
         },
         period: null,
     })
+
+    useEffect(() => {
+        if (!draftIdFromQuery || hasHydratedRef.current) return
+        if (!existingDraft || !draftClient) return
+
+        hasHydratedRef.current = true
+        skipNextAutosaveRef.current = true
+
+        const rawCustomer = (existingDraft.customer || {}) as unknown as Partial<CustomerObj>
+        const customer: CustomerObj = {
+            id: rawCustomer.id ?? null,
+            tin: rawCustomer.tin || '',
+            email: rawCustomer.email || '',
+            last_name: rawCustomer.last_name || '',
+            trade_name: rawCustomer.trade_name || '',
+            first_name: rawCustomer.first_name || '',
+            middle_name: rawCustomer.middle_name || '',
+            postal_code: rawCustomer.postal_code || '',
+            phone_number: rawCustomer.phone_number || '',
+            first_address: rawCustomer.first_address || '',
+            second_address: rawCustomer.second_address || '',
+            classification: rawCustomer.classification || '',
+            registered_name: rawCustomer.registered_name || '',
+        }
+        const client = draftClient as unknown as {
+            id: number | null
+            last_name: string
+            first_name: string
+            trade_name: string
+            registered_name: string
+        }
+
+        setDoc(prev => ({
+            ...prev,
+            client: {
+                id: client.id ?? null,
+                last_name: client.last_name || '',
+                first_name: client.first_name || '',
+                trade_name: client.trade_name || '',
+                registered_name: client.registered_name || '',
+            },
+            customer,
+            selectedTerms: existingDraft.terms
+                ? { value: existingDraft.terms, label: existingDraft.terms === 'CASH' ? 'Cash' : 'Charge' }
+                : prev.selectedTerms,
+            selectedDiscount: existingDraft.discount_type
+                ? { value: existingDraft.discount_type, label: existingDraft.discount_type }
+                : prev.selectedDiscount,
+        }))
+
+        setHasWithholding(!!(existingDraft.atc || existingDraft.ewt_rate))
+
+        setSales(prev => ({
+            ...prev,
+            salesObj: {
+                ...prev.salesObj,
+                id: existingDraft.id,
+                atc: existingDraft.atc || '',
+                terms: existingDraft.terms || 'CASH',
+                id_number: existingDraft.discount_id_number || '',
+                vat_type: existingDraft.vat_type || 'INCLUSIVE',
+                ewt_rate: existingDraft.ewt_rate != null ? String(existingDraft.ewt_rate) : '',
+                vat_rate: '12%',
+                tax_amount: existingDraft.tax_amount != null ? String(existingDraft.tax_amount) : '',
+                vat_amount: existingDraft.vat_amount != null ? String(existingDraft.vat_amount) : '',
+                account_name: existingDraft.account_name || '',
+                gross_amount: existingDraft.gross_amount != null ? String(existingDraft.gross_amount) : '',
+                exempt_sales: existingDraft.exempt_sales != null ? String(existingDraft.exempt_sales) : '',
+                invoice_date: existingDraft.invoice_date ? dayjs(existingDraft.invoice_date).format('MM/DD/YYYY') : '',
+                gross_taxable: existingDraft.gross_taxable != null ? String(existingDraft.gross_taxable) : '',
+                vatable_sales: existingDraft.vatable_sales != null ? String(existingDraft.vatable_sales) : '',
+                taxable_month: existingDraft.taxable_month ? dayjs(existingDraft.taxable_month) : null,
+                invoice_number: existingDraft.invoice_number || '',
+                zero_rated_sales: existingDraft.zero_rated_sales != null ? String(existingDraft.zero_rated_sales) : '',
+                total_gross_amount: existingDraft.total_gross_amount != null ? String(existingDraft.total_gross_amount) : '',
+                particulars: existingDraft.particulars?.length ? existingDraft.particulars.map(p => ({
+                    description: p.description || '',
+                    quantity: p.quantity != null ? String(p.quantity) : '',
+                    unit_price: p.unit_price != null ? String(p.unit_price) : '',
+                    amount: p.amount != null ? String(p.amount) : '',
+                })) : prev.salesObj.particulars,
+                customer,
+            }
+        }))
+
+        setIsHydrating(false)
+
+        if (existingDraft.status !== 'draft') {
+            setLockConflict({ locked: true, message: 'This sale has already been posted and can no longer be edited here.' })
+        } else if (!existingDraft.lock_is_mine) {
+            useLockDraft.mutate(draftIdFromQuery, {
+                onError: (error) => {
+                    const message = (error instanceof LockConflictError || error instanceof DraftNotEditableError)
+                        ? error.message
+                        : 'This draft could not be opened for editing.'
+                    setLockConflict({ locked: true, message })
+                }
+            })
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [draftIdFromQuery, existingDraft, draftClient])
+
     const fieldValidations = {
-        atc: { usename: 'ATC', required: true },
+        atc: { usename: 'ATC', ifCondition: { condition: hasWithholding, required: true } },
         tin: { usename: 'TIN No.', required: true },
         client: { usename: 'Client', required: true },
         customer: { usename: 'Customer', required: true },
@@ -138,9 +290,8 @@ const useSaveSales = () => {
         invoice_number: { usename: 'Invoice Number', required: true },
         second_address: { usename: 'Second Address', required: true },
         classification: { usename: 'Classification', required: true },
-        ewt_rate: { usename: 'Withholding Tax Rate', required: true },
+        ewt_rate: { usename: 'Withholding Tax Rate', ifCondition: { condition: hasWithholding, required: true } },
         zero_rated_sales: { usename: 'Zero Rated Sales', required: true },
-        tax_amount: { usename: 'Withholding Tax Amount', required: true },
         total_gross_amount: { usename: 'Total Gross Amount', required: true },
         first_name: { usename: 'First Name', ifCondition: {
             condition: sales.salesObj.customer?.classification === 'INDIVIDUAL',
@@ -161,23 +312,27 @@ const useSaveSales = () => {
             description: { usename: 'Item Description / Service Nature', required: true },
         })),
     }
-    const recalcSales = (salesObj: any) => {
+    const recalcSales = (salesObj: any, overrides?: { discountType?: string, hasWithholding?: boolean }) => {
         const VAT_RATE = 0.12
         const toNumber = (val: any) => parseFloat(val) || 0
 
-        const exempt = toNumber(salesObj.exempt_sales)
+        const discountType = overrides?.discountType ?? doc.selectedDiscount?.value ?? ''
+        const withholdingActive = overrides?.hasWithholding ?? hasWithholding
+        const discountRule = DISCOUNT_RULES[discountType]
+
+        const manualExempt = toNumber(salesObj.exempt_sales)
         const zeroRated = toNumber(salesObj.zero_rated_sales)
         const vatType = salesObj.vat_type || 'EXCLUSIVE'
 
-        const grossInput = toNumber(salesObj.gross_taxable)
+        const hasAnyAmount = !!(
+            salesObj.gross_taxable || salesObj.vatable_sales ||
+            salesObj.exempt_sales || salesObj.zero_rated_sales
+        )
 
         let netVatable = 0
         let vatAmount = 0
-
-        // =========================
-        // VAT NORMALIZATION
-        // =========================
         if (vatType === 'INCLUSIVE') {
+            const grossInput = toNumber(salesObj.gross_taxable)
             netVatable = grossInput / (1 + VAT_RATE)
             vatAmount = grossInput - netVatable
         } else {
@@ -185,37 +340,91 @@ const useSaveSales = () => {
             vatAmount = netVatable * VAT_RATE
         }
 
-        const netSalesTotal = exempt + zeroRated + netVatable
-        const totalGrossAmount = netSalesTotal + vatAmount
+        let discountAmount = 0
+        let effectiveExempt = manualExempt
+        let effectiveVatable = netVatable
+        let effectiveVat = vatAmount
+
+        if (discountRule) {
+            discountAmount = netVatable * discountRule.rate
+
+            if (discountRule.vatExempt) {
+                effectiveExempt = manualExempt + netVatable
+                effectiveVatable = 0
+                effectiveVat = 0
+            } else {
+                effectiveVatable = netVatable - discountAmount
+                effectiveVat = effectiveVatable * VAT_RATE
+            }
+        }
+
+        const netSalesTotal = effectiveExempt + zeroRated + effectiveVatable
+        const totalGrossAmount = netSalesTotal + effectiveVat
 
         const ewtRate = toNumber(salesObj.ewt_rate) / 100
-        const taxAmount = netVatable * ewtRate
+        const taxAmount = effectiveVatable * ewtRate
+        const hasWithholdingAmount = withholdingActive && !!salesObj.ewt_rate && hasAnyAmount
+
+        const netAmountDue = totalGrossAmount
+            - (discountRule?.vatExempt ? discountAmount : 0)
+            - (hasWithholdingAmount ? taxAmount : 0)
 
         return {
             ...salesObj,
 
             vat_rate: '12%',
 
-            vat_amount: vatAmount ? Number(vatAmount).toFixed(2) : '',
+            gross_taxable: vatType === 'INCLUSIVE'
+                ? salesObj.gross_taxable
+                : (hasAnyAmount ? Number(netVatable + vatAmount).toFixed(2) : ''),
+            vatable_sales: vatType === 'EXCLUSIVE'
+                ? salesObj.vatable_sales
+                : (hasAnyAmount ? Number(netVatable).toFixed(2) : ''),
 
-            gross_amount:
-                (salesObj.exempt_sales || salesObj.zero_rated_sales || salesObj.vatable_sales)
-                    ? Number(netSalesTotal).toFixed(2)
-                    : '',
+            vat_amount: hasAnyAmount ? Number(vatAmount).toFixed(2) : '',
+            gross_amount: hasAnyAmount ? Number(netSalesTotal).toFixed(2) : '',
+            total_gross_amount: hasAnyAmount ? Number(totalGrossAmount).toFixed(2) : '',
 
-            total_gross_amount:
-                (salesObj.exempt_sales || salesObj.zero_rated_sales || salesObj.vatable_sales)
-                    ? Number(totalGrossAmount).toFixed(2)
-                    : '',
+            discount_rate: discountRule ? `${discountRule.rate * 100}%` : '',
+            discount_amount: discountRule && hasAnyAmount ? Number(discountAmount).toFixed(2) : '',
+            net_amount_due: hasAnyAmount ? Number(netAmountDue).toFixed(2) : '',
 
-            tax_amount:
-                salesObj.ewt_rate && salesObj.vatable_sales
-                    ? Number(taxAmount).toFixed(2)
-                    : ''
+            tax_amount: hasWithholdingAmount ? Number(taxAmount).toFixed(2) : ''
         }
     }
+    useEffect(() => {
+        const subtotal = sales.salesObj.particulars.reduce(
+            (sum, p) => sum + (parseFloat(p.amount) || 0), 0
+        )
+        const subtotalStr = subtotal ? subtotal.toFixed(2) : ''
+        const vatType = sales.salesObj.vat_type || 'INCLUSIVE'
+        const targetField = vatType === 'INCLUSIVE' ? 'gross_taxable' : 'vatable_sales'
+
+        if (sales.salesObj[targetField] === subtotalStr) return
+
+        setSales(prev => ({
+            ...prev,
+            salesObj: recalcSales({ ...prev.salesObj, [targetField]: subtotalStr })
+        }))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sales.salesObj.particulars, sales.salesObj.vat_type])
+
     const handleEditCustomer = (edit: boolean) => {
         setEditCustomer(edit)
+    }
+
+    const handleToggleWithholding = (checked: boolean) => {
+        setHasWithholding(checked)
+        setSales(prev => {
+            const salesObj = checked
+                ? prev.salesObj
+                : { ...prev.salesObj, atc: '', ewt_rate: '' }
+            return { ...prev, salesObj: recalcSales(salesObj, { hasWithholding: checked }) }
+        })
+        if (!checked) {
+            handleRemoveErr(sales.salesErr, 'atc')
+            handleRemoveErr(sales.salesErr, 'ewt_rate')
+        }
     }
 
     const handleToggle = (dropdown: string) => {
@@ -254,23 +463,11 @@ const useSaveSales = () => {
         })
         setSales(prev => ({
             ...prev,
-            salesObj: {
-                ...prev.salesObj,
-                terms: selectedDiscount.value
-            }
+            salesObj: recalcSales(prev.salesObj, { discountType: selectedDiscount.value })
         }))
     }
 
-    const handleSelectClient = (client: {
-        id: number | null,
-        tin: string
-        last_name: string
-        first_name: string
-        trade_name: string
-        middle_name: string
-        classification: string
-        registered_name: string
-    }) => {
+    const handleSelectClient = (client: Partial<ClientObj> & { id: number | null }) => {
         setDoc({
             ...doc,
             client: client
@@ -285,9 +482,9 @@ const useSaveSales = () => {
                     trade_name: client.trade_name,
                     first_name: client.first_name,
                     middle_name: client.middle_name,
-                    branch_code: '',
-                    first_address: '',
-                    second_address: '',
+                    branch_code: client.branch_code || '',
+                    first_address: client.first_address || '',
+                    second_address: client.second_address || '',
                     classification: client.classification,
                     registered_name: client.registered_name
                 }
@@ -345,6 +542,7 @@ const useSaveSales = () => {
                 ]
             }
         }))
+        setErrArr(prev => [...prev, { description: '', quantity: '', unit_price: '', amount: '' }])
     }
 
     const handleRemoveParticular = (index: number) => {
@@ -357,6 +555,7 @@ const useSaveSales = () => {
                 )
             }
         }))
+        setErrArr(prev => prev.filter((_, i) => i !== index))
     }
 
     const handleParticularChange = (
@@ -418,7 +617,7 @@ const useSaveSales = () => {
             }
         })
 
-        handleRemoveErr(sales.salesErr, `particulars.${index}.${name}`)
+        setErrArr(prev => prev.map((err, i) => i === index ? { ...err, [name]: '' } : err))
     }
     const handleChange = (
         event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -627,69 +826,292 @@ const useSaveSales = () => {
         handleRemoveErr(sales.salesErr, name)
     }
 
-    const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        setStatus({...status, loader: true})
-        console.log(sales.salesObj.particulars)
+    const buildDraftPayload = useCallback((): SalesManualDraftPayload => {
+        const { customer, taxable_month, invoice_date, ...rest } = sales.salesObj
+        const toNumber = (val: string) => val ? Number(val) : 0
+
+        return {
+            tin: customer?.tin || undefined,
+            classification: customer?.classification || undefined,
+            registered_name: customer?.registered_name,
+            first_name: customer?.first_name,
+            last_name: customer?.last_name,
+            middle_name: customer?.middle_name,
+            trade_name: customer?.trade_name,
+            phone_number: customer?.phone_number,
+            email: customer?.email,
+            first_address: customer?.first_address,
+            second_address: customer?.second_address,
+            postal_code: customer?.postal_code,
+
+            taxable_month: taxable_month ? dayjs(taxable_month).format('YYYY-MM-DD') : undefined,
+            invoice_date: invoice_date ? dayjs(invoice_date, 'MM/DD/YYYY').format('YYYY-MM-DD') : undefined,
+            invoice_number: rest.invoice_number || undefined,
+            terms: rest.terms || undefined,
+            account_name: rest.account_name || undefined,
+
+            atc: rest.atc || undefined,
+            ewt_rate: rest.ewt_rate ? Number(rest.ewt_rate) : undefined,
+
+            discount_type: doc.selectedDiscount?.value || undefined,
+            discount_id_number: rest.id_number || undefined,
+
+            vat_type: rest.vat_type || undefined,
+            exempt_sales: toNumber(rest.exempt_sales),
+            zero_rated_sales: toNumber(rest.zero_rated_sales),
+            vatable_sales: toNumber(rest.vatable_sales),
+            gross_taxable: toNumber(rest.gross_taxable),
+
+            particulars: rest.particulars
+                .filter(p => p.description || p.quantity || p.unit_price || p.amount)
+                .map(particular => ({
+                    description: particular.description || undefined,
+                    quantity: particular.quantity ? toNumber(particular.quantity) : undefined,
+                    unit_price: particular.unit_price ? toNumber(particular.unit_price) : undefined,
+                    amount: particular.amount ? toNumber(particular.amount) : undefined,
+                })),
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sales.salesObj, doc.selectedDiscount])
+
+    const isDraftPayloadEmpty = (payload: SalesManualDraftPayload) =>
+        !payload.tin && !payload.registered_name && !payload.first_name && !payload.last_name &&
+        !payload.first_address && !payload.second_address &&
+        !payload.taxable_month && !payload.invoice_date && !payload.invoice_number && !payload.account_name &&
+        !payload.atc && !payload.ewt_rate && !payload.discount_id_number &&
+        !payload.exempt_sales && !payload.zero_rated_sales && !payload.vatable_sales && !payload.gross_taxable &&
+        (!payload.particulars || payload.particulars.length === 0)
+
+    useEffect(() => {
+        if (!doc.client?.id || isHydrating || lockConflict.locked) return
+
+        if (skipNextAutosaveRef.current) {
+            skipNextAutosaveRef.current = false
+            return
+        }
+
+        if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
+
+        autosaveTimerRef.current = setTimeout(() => {
+            const payload = buildDraftPayload()
+            if (!draftId && isDraftPayloadEmpty(payload)) return
+
+            const payloadKey = JSON.stringify(payload)
+            if (payloadKey === lastSavedPayloadRef.current) return
+
+            const onSaveError = (error: unknown) => {
+                if (error instanceof LockConflictError || error instanceof DraftNotEditableError) {
+                    setLockConflict({ locked: true, message: error.message })
+                } else {
+                    setSaveStatus('error')
+                }
+            }
+
+            setSaveStatus('saving')
+
+            if (!draftId) {
+                useCreateDraft.mutate({ client_id: doc.client!.id! }, {
+                    onSuccess: (created) => {
+                        setDraftId(created.id)
+                        hasHydratedRef.current = true
+                        router.replace(
+                            { pathname: router.pathname, query: { ...router.query, draft: created.id } },
+                            undefined,
+                            { shallow: true }
+                        )
+                        useAutosaveDraft.mutate({ id: created.id, data: payload }, {
+                            onSuccess: () => {
+                                lastSavedPayloadRef.current = payloadKey
+                                setSaveStatus('saved')
+                            },
+                            onError: onSaveError,
+                        })
+                    },
+                    onError: () => {
+                        setSaveStatus('error')
+                        setStatus(prev => ({
+                            ...prev,
+                            message: 'Could not start a draft for this sale — your changes may not be saved. Please retry.',
+                        }))
+                    }
+                })
+                return
+            }
+
+            useAutosaveDraft.mutate({ id: draftId, data: payload }, {
+                onSuccess: () => {
+                    lastSavedPayloadRef.current = payloadKey
+                    setSaveStatus('saved')
+                },
+                onError: onSaveError,
+            })
+        }, AUTOSAVE_DEBOUNCE_MS)
+
+        return () => {
+            if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sales.salesObj, doc.client?.id, doc.selectedDiscount, draftId, isHydrating, lockConflict.locked])
+
+    useEffect(() => {
+        if (!draftId || lockConflict.locked) return
+
+        const interval = setInterval(() => {
+            useLockDraft.mutate(draftId, {
+                onError: (error) => {
+                    if ((error instanceof LockConflictError || error instanceof DraftNotEditableError)) {
+                        setLockConflict({ locked: true, message: error.message })
+                    }
+                }
+            })
+        }, HEARTBEAT_INTERVAL_MS)
+
+        return () => clearInterval(interval)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [draftId, lockConflict.locked])
+
+    useEffect(() => {
+        if (!draftId) return
+
+        const release = () => useUnlockDraft.mutate(draftId, { onError: () => undefined })
+        window.addEventListener('pagehide', release)
+
+        return () => {
+            window.removeEventListener('pagehide', release)
+            release()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [draftId])
+
+    const buildValidationData = () => ({
+        atc: sales.salesObj.atc || '',
+        ewt_rate: sales.salesObj.ewt_rate || '',
+        client: doc.client?.id ? String(doc.client?.id) : '',
+        customer: sales.salesObj.customer?.id ? String(sales.salesObj.customer?.id) : '',
+
+        tin: sales.salesObj.customer?.tin || '',
+        email: sales.salesObj.customer?.email || '',
+        last_name: sales.salesObj.customer?.last_name || '',
+        first_name: sales.salesObj.customer?.first_name || '',
+        middle_name: sales.salesObj.customer?.middle_name || '',
+        trade_name: sales.salesObj.customer?.trade_name || '',
+        postal_code: sales.salesObj.customer?.postal_code || '',
+        phone_number: sales.salesObj.customer?.phone_number || '',
+        first_address: sales.salesObj.customer?.first_address || '',
+        second_address: sales.salesObj.customer?.second_address || '',
+        classification: sales.salesObj.customer?.classification || '',
+        registered_name: sales.salesObj.customer?.registered_name || '',
+
+        terms: sales.salesObj.terms || '',
+        tax_amount: sales.salesObj.tax_amount || '',
+        vat_amount: sales.salesObj.vat_amount || '',
+        gross_amount: sales.salesObj.gross_amount || '',
+        exempt_sales: sales.salesObj.exempt_sales || '',
+        account_name: sales.salesObj.account_name || '',
+        invoice_date: sales.salesObj.invoice_date || '',
+        gross_taxable: sales.salesObj.gross_taxable || '',
+        vatable_sales: sales.salesObj.vatable_sales || '',
+        taxable_month: sales.salesObj.taxable_month || '',
+        invoice_number: sales.salesObj.invoice_number || '',
+        zero_rated_sales: sales.salesObj.zero_rated_sales || '',
+        total_gross_amount: sales.salesObj.total_gross_amount || '',
+
+        particulars: sales.salesObj.particulars?.map(particular => ({
+            amount: particular.amount ? particular.amount : '',
+            quantity: particular.quantity ? particular.quantity : '',
+            unit_price: particular.unit_price ? particular.unit_price : '',
+            description: particular.description ? particular.description : '',
+        })),
+    })
+
+    const validateFields = (fieldNames?: string[]) => {
+        const scopedValidations = fieldNames
+            ? Object.fromEntries(Object.entries(fieldValidations).filter(([key]) => fieldNames.includes(key)))
+            : fieldValidations
+
         const {
             validation_errors,
             validation_has_error,
             validation_errors_array
-        } = ValidatorV3(fieldValidations, {
-            atc: sales.salesObj.atc || '',
-            ewt_rate: sales.salesObj.ewt_rate || '',
-            client: doc.client?.id ? String(doc.client?.id) : '',
-            customer: sales.salesObj.customer?.id ? String(sales.salesObj.customer?.id) : '',
-            
-            tin: sales.salesObj.customer?.tin || '',
-            email: sales.salesObj.customer?.email || '',
-            last_name: sales.salesObj.customer?.last_name || '',
-            first_name: sales.salesObj.customer?.first_name || '',
-            middle_name: sales.salesObj.customer?.middle_name || '',
-            trade_name: sales.salesObj.customer?.trade_name || '',
-            postal_code: sales.salesObj.customer?.postal_code || '',
-            phone_number: sales.salesObj.customer?.phone_number || '',
-            first_address: sales.salesObj.customer?.first_address || '',
-            second_address: sales.salesObj.customer?.second_address || '',
-            classification: sales.salesObj.customer?.classification || '',
-            registered_name: sales.salesObj.customer?.registered_name || '',
+        } = ValidatorV3(scopedValidations, buildValidationData())
 
-            terms: sales.salesObj.terms || '',
-            tax_amount: sales.salesObj.tax_amount || '',
-            vat_amount: sales.salesObj.vat_amount || '',
-            gross_amount: sales.salesObj.gross_amount || '',
-            exempt_sales: sales.salesObj.exempt_sales || '',
-            account_name: sales.salesObj.account_name || '',
-            invoice_date: sales.salesObj.invoice_date || '',
-            gross_taxable: sales.salesObj.gross_taxable || '',
-            vatable_sales: sales.salesObj.vatable_sales || '',
-            taxable_month: sales.salesObj.taxable_month || '',
-            invoice_number: sales.salesObj.invoice_number || '',
-            zero_rated_sales: sales.salesObj.zero_rated_sales || '',
-            total_gross_amount: sales.salesObj.total_gross_amount || '',
-
-            particulars: sales.salesObj.particulars?.map(particular => ({
-                amount: particular.amount ? particular.amount : '',
-                quantity: particular.quantity ? particular.quantity : '',
-                unit_price: particular.unit_price ? particular.unit_price : '',
-                description: particular.description ? particular.description : '',
-            })),
+        setSales(prev => {
+            const nextErr = { ...prev.salesErr }
+            Object.keys(scopedValidations).forEach(key => delete nextErr[key])
+            return {
+                ...prev,
+                salesErr: { ...nextErr, ...validation_errors } as SalesErr
+            }
         })
-        console.log(validation_errors_array)
-        if (validation_has_error) {
-            const timer = setTimeout(() => {
-                setSales({
-                    ...sales,
-                    salesErr: validation_errors as SalesErr
-                })
-                setErrArr(validation_errors_array as Particular[])
-                setStatus({...status, loader: false})
-                return false
-            }, 500)
-            return () => clearTimeout(timer)
+        if (!fieldNames || fieldNames.includes('particulars')) {
+            setErrArr(validation_errors_array as Particular[])
         }
+
+        return !validation_has_error
     }
-    
+
+    const validateStep = (step: number) => validateFields(STEP_FIELDS[step])
+
+    const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setStatus({...status, loader: true})
+
+        if (!validateFields()) {
+            setStatus(prev => ({...prev, loader: false}))
+            return
+        }
+
+        if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
+
+        const finalizePayload = buildDraftPayload()
+        const onFinalizeSuccess = () => {
+            sessionStorage.setItem(
+                'successMessage',
+                'Your sale record has been posted.'
+            )
+            router.push('/bookkeeper/books_of_accounts/sales/manual')
+        }
+        const onFinalizeError = (error: unknown) => {
+            setStatus(prev => ({
+                ...prev,
+                loader: false,
+                message: (error instanceof LockConflictError || error instanceof DraftNotEditableError)
+                    ? error.message
+                    : (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+                        || 'Could not post this sale — please check the form and try again.',
+            }))
+        }
+
+        if (!draftId) {
+            if (!doc.client?.id) {
+                setStatus(prev => ({ ...prev, loader: false, message: 'Select a client first.' }))
+                return
+            }
+            useCreateDraft.mutate({ client_id: doc.client.id }, {
+                onSuccess: (created) => {
+                    setDraftId(created.id)
+                    hasHydratedRef.current = true
+                    router.replace(
+                        { pathname: router.pathname, query: { ...router.query, draft: created.id } },
+                        undefined,
+                        { shallow: true }
+                    )
+                    useFinalizeDraft.mutate({ id: created.id, data: finalizePayload }, {
+                        onSuccess: onFinalizeSuccess,
+                        onError: onFinalizeError,
+                    })
+                },
+                onError: onFinalizeError,
+            })
+            return
+        }
+
+        useFinalizeDraft.mutate({ id: draftId, data: finalizePayload }, {
+            onSuccess: onFinalizeSuccess,
+            onError: onFinalizeError,
+        })
+    }
+
     return {
         // STATES
         doc,
@@ -700,12 +1122,18 @@ const useSaveSales = () => {
         clientArr,
         customerArr,
         editCustomer,
+        hasWithholding,
         displayTerms,
         displayClients,
         displayDiscounts,
         displayCustomers,
         clientLoader: isLoadingClients || isFetchingClients,
         customerLoader: isLoadingCustomers || isFetchingCustomers,
+
+        draftId,
+        saveStatus,
+        lockConflict,
+        isHydrating,
 
         // SET STATES
         setDisplayTerms,
@@ -718,6 +1146,7 @@ const useSaveSales = () => {
         handleDate,
         handleSubmit,
         handleChange,
+        validateStep,
         handleToggle,
         handleResubmit,
         handleSelectTerms,
@@ -728,6 +1157,7 @@ const useSaveSales = () => {
         handleSelectDiscount,
         handleRemoveParticular,
         handleParticularChange,
+        handleToggleWithholding,
     }
 }
 

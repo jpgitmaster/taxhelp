@@ -1,0 +1,92 @@
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+.trigger {
+  background-color: rgba($lightBlue, .12);
+  border: 1px solid transparent;
+  color: $blue;
+  @apply flex flex-row items-center gap-1.5 rounded-[10px] text-[12px] font-bold px-4 py-2 cursor-pointer transition-colors whitespace-nowrap;
+
+  &:hover {
+    background-color: rgba($lightBlue, .22);
+  }
+
+  &.active {
+    background-color: rgba($lightBlue, .28);
+  }
+}
+
+.panel {
+  background-color: $white;
+  border: 1px solid rgba($gray, .7);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .12);
+  @apply rounded-[14px] p-5 w-110;
+}
+
+.fieldRow {
+  @apply flex flex-row items-center gap-4 py-2.5;
+
+  & + .fieldRow {
+    border-top: 1px solid rgba($gray, .4);
+  }
+}
+
+.fieldLabel {
+  color: $darkgray;
+  @apply w-28 shrink-0 text-[13px] font-medium;
+}
+
+.fieldValue {
+  @apply flex flex-row items-center gap-2 flex-1 min-w-0;
+
+  :global(.ant-picker),
+  :global(.ant-select-selector) {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    @apply px-0!;
+  }
+
+  :global(.ant-picker) {
+    width: auto !important;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+.select,
+.textInput {
+  color: $lightBlack;
+  background: transparent;
+  border: none;
+  outline: none;
+  @apply w-full text-[14px] py-1;
+}
+
+.actions {
+  border-top: 1px solid rgba($gray, .5);
+  @apply flex flex-row items-center justify-between mt-4 pt-4;
+}
+
+.clearBtn {
+  color: $darkgray;
+  background: transparent;
+  border: none;
+  @apply text-[13px] font-medium cursor-pointer;
+
+  &:hover {
+    color: $lightBlack;
+    text-decoration: underline;
+  }
+}
+
+.searchBtn {
+  background-color: $blue;
+  border: 1px solid $border_blue;
+  color: $white;
+  @apply rounded-full text-[13px] font-semibold px-5 py-1.5 cursor-pointer transition-colors ml-auto;
+
+  &:hover {
+    background-color: $darkBlue;
+  }
+}

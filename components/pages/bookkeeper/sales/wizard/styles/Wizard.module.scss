@@ -1,0 +1,408 @@
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+.wizard {
+  @apply w-220 mx-auto relative;
+}
+
+.statusRow {
+  @apply flex flex-row items-center justify-end gap-3 mb-2 px-1 text-[12px];
+
+  .saveStatus {
+    color: $darkgray;
+    @apply flex flex-row items-center gap-1.5;
+
+    &.saving .dot { background-color: $orange; animation: pulse 1s infinite; }
+    &.saved .dot { background-color: $green; }
+    &.error { color: #d4380d; }
+    &.error .dot { background-color: #d4380d; }
+
+    .dot {
+      background-color: $gray;
+      @apply w-1.5 h-1.5 rounded-full;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .35; }
+}
+
+.lockBanner {
+  background: #fff1f0;
+  border: 1px solid #ffa39e;
+  color: #a8071a;
+  @apply rounded-[12px] px-4 py-3 mb-4 text-[13px];
+}
+
+.steps {
+  background-color: $white;
+  border: 1px solid rgba($gray, .7);
+  @apply rounded-[18px] flex flex-row mb-5 overflow-hidden;
+}
+
+.step {
+  @apply flex-1 flex flex-row items-center gap-3 px-5 py-4 relative cursor-pointer transition-colors;
+  border-right: 1px solid rgba($gray, .5);
+
+  &:last-child {
+    border-right: none;
+  }
+
+  &:hover {
+    background-color: rgba($lightBlue, .05);
+  }
+
+  .bubble {
+    background-color: $lightGray;
+    color: $darkgray;
+    border: 2px solid rgba($gray, .9);
+    @apply w-9 h-9 flex-shrink-0 rounded-full flex items-center justify-center font-bold text-[14px];
+  }
+
+  .label {
+    @apply flex flex-col leading-tight;
+
+    small {
+      color: $darkgray;
+      @apply text-[10px] uppercase tracking-wide font-semibold;
+    }
+    span {
+      color: $lightBlack;
+      @apply text-[13px] font-semibold;
+    }
+  }
+
+  &.active {
+    background-color: rgba($lightBlue, .08);
+
+    .bubble {
+      background-color: $blue;
+      border-color: $blue;
+      color: $white;
+    }
+    .label span {
+      color: $blue;
+    }
+  }
+
+  &.complete {
+    .bubble {
+      background-color: $green;
+      border-color: $green;
+      color: $white;
+    }
+  }
+}
+
+.panel {
+  background-color: $white;
+  border: 1px solid rgba($gray, .7);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .04);
+  @apply rounded-[18px] p-6 mb-5;
+}
+
+.panelTitle {
+  color: $lightBlack;
+  @apply text-[16px] font-bold mb-4 flex flex-row items-center justify-between;
+
+  span {
+    color: $darkgray;
+    @apply text-[11px] font-normal uppercase tracking-wide;
+  }
+}
+
+.sectionLabel {
+  color: $darkgray;
+  @apply text-[11px] uppercase tracking-wide font-bold mb-3 mt-1 flex flex-row items-center justify-between;
+}
+
+.editToggle {
+  color: $blue;
+  @apply flex flex-row items-center gap-1 text-[11px] font-semibold uppercase tracking-wide cursor-pointer normal-case;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.divider {
+  border: none;
+  border-top: 1px dashed rgba($gray, 1.2);
+  @apply my-6;
+}
+
+.clientSummary {
+  background-color: $lightGray;
+  border: 1px solid rgba($gray, .6);
+  @apply rounded-[14px] p-4 grid gap-x-6 gap-y-2 mb-2;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  .field {
+    small {
+      color: $darkgray;
+      @apply block text-[10px] uppercase tracking-wide;
+    }
+    span {
+      color: $lightBlack;
+      @apply text-[13px];
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .clientSummary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.summaryCard {
+  background-color: $white;
+  border: 1px solid rgba($gray, .7);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .04);
+  @apply rounded-[18px] mb-5 overflow-hidden;
+
+  :global(.ant-collapse-item) {
+    border: none !important;
+  }
+  :global(.ant-collapse-header) {
+    @apply px-5! py-4! items-center!;
+  }
+  :global(.ant-collapse-content) {
+    border-top: none !important;
+  }
+  :global(.ant-collapse-content-box) {
+    background-color: $white;
+    border-top: 1px dashed rgba($gray, 1.2);
+    @apply px-5! pt-4! pb-4!;
+  }
+  :global(.ant-collapse-expand-icon) {
+    color: $darkgray;
+  }
+}
+
+.summaryHeader {
+  @apply flex flex-row items-center gap-3;
+
+  .summaryIcon {
+    background-color: rgba($lightBlue, .1);
+    color: $blue;
+    @apply w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold flex-shrink-0;
+  }
+
+  strong {
+    color: $lightBlack;
+    @apply text-[13px];
+  }
+  small {
+    color: $darkgray;
+    @apply text-[11px] block mt-0.5;
+  }
+}
+
+.summaryList {
+  @apply flex flex-col;
+
+  .summaryRow {
+    border-bottom: 1px solid rgba($gray, .4);
+    @apply flex flex-row items-baseline justify-between gap-4 py-2;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    small {
+      color: $darkgray;
+      @apply text-[11px] uppercase tracking-wide flex-shrink-0;
+    }
+    span {
+      color: $lightBlack;
+      @apply text-[13px] font-medium text-right;
+    }
+  }
+}
+
+.summaryTable {
+  @apply w-full mt-1 text-[12px] border-collapse;
+
+  th, td {
+    @apply text-left py-2;
+  }
+  th {
+    border-bottom: 1px solid rgba($gray, .8);
+    color: $darkgray;
+    @apply text-[10px] uppercase tracking-wide font-bold;
+  }
+  tbody tr {
+    border-bottom: 1px solid rgba($gray, .4);
+  }
+  td {
+    color: $lightBlack;
+  }
+  td.amount, th.amount {
+    @apply text-right;
+  }
+  tfoot td {
+    border-top: 1.5px solid rgba($darkgray, .5);
+    border-bottom: none;
+    color: $lightBlack;
+    @apply font-bold pt-2.5;
+  }
+}
+
+.fieldGrid {
+  @apply grid gap-x-5 gap-y-5 mb-5;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+.col2 { grid-column: span 2; }
+.col3 { grid-column: span 3; }
+.col4 { grid-column: span 4; }
+.col5 { grid-column: span 5; }
+.col6 { grid-column: span 6; }
+.col8 { grid-column: span 8; }
+.col12 { grid-column: span 12; }
+
+.field {
+  @apply flex flex-col gap-1.5 min-w-0;
+
+  label {
+    color: $lightBlack;
+    @apply text-[11px] uppercase tracking-wide font-semibold flex flex-row items-center gap-1;
+
+    em {
+      color: $red;
+      font-style: normal;
+    }
+  }
+
+  input[type=text], select {
+    border: 1px solid rgba($gray, .9);
+    background-color: $white;
+    appearance: none;
+    -webkit-appearance: none;
+    @apply rounded-[10px] px-3 py-2.5 text-[13px] w-full;
+
+    &:focus {
+      outline: none;
+      border-color: $lightBlue;
+      box-shadow: 0 0 0 2px rgba($lightBlue, .15);
+    }
+    &.readonly {
+      background-color: $lightGray;
+      color: $lightBlack;
+    }
+    &.invalid {
+      border-color: $red;
+    }
+  }
+
+  input[type=text]:read-only {
+    background-color: $lightGray;
+    color: $lightBlack;
+  }
+
+  select {
+    background-image: url('/svgs/arrowDown.svg');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 11px;
+    @apply pr-8;
+  }
+
+  &.hasError {
+    input[type=text], select {
+      border-color: $red !important;
+    }
+    :global(.ant-picker) {
+      border-color: $red !important;
+    }
+  }
+
+  :global(.ant-picker) {
+    @apply rounded-[10px]! w-full;
+  }
+
+  .errmsg {
+    color: $red;
+    @apply text-[11px];
+  }
+}
+
+.vatTypes {
+  @apply grid grid-cols-2 gap-3 mb-5;
+
+  .vatOption {
+    background-color: $white;
+    border: 1.5px solid rgba($darkgray, .4);
+    @apply flex flex-row items-start gap-3 rounded-[14px] p-4 cursor-pointer relative transition-colors;
+
+    img {
+      @apply w-9 mt-0.5;
+      filter: invert(73%) sepia(24%) saturate(13%) hue-rotate(344deg) brightness(106%) contrast(95%);
+    }
+    strong {
+      color: $lightBlack;
+      @apply text-[13px] block mb-0.5;
+    }
+    p {
+      color: $darkgray;
+      @apply text-[12px] leading-snug m-0;
+    }
+    input {
+      @apply absolute opacity-0 w-0 h-0;
+    }
+    &:hover {
+      border-color: $lightBlue;
+    }
+    &.checked {
+      border-color: $blue;
+      background-color: rgba($lightBlue, .07);
+
+      img {
+        filter: invert(45%) sepia(15%) saturate(6682%) hue-rotate(179deg) brightness(102%) contrast(106%);
+      }
+    }
+  }
+}
+
+.navRow {
+  @apply flex flex-row items-center justify-between mt-6;
+}
+
+.navBtn {
+  @apply rounded-[10px] text-[13px] font-semibold px-6 py-2.5 cursor-pointer border transition-colors;
+
+  &.secondary {
+    background-color: $white;
+    border-color: rgba($gray, .9);
+    color: $lightBlack;
+
+    &:hover {
+      border-color: $darkgray;
+    }
+  }
+  &.primary {
+    background-color: $blue;
+    border-color: $blue;
+    color: $white;
+
+    &:hover {
+      background-color: $darkBlue;
+    }
+    &:disabled {
+      background-color: $gray;
+      border-color: $gray;
+      cursor: not-allowed;
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .wizard { @apply w-full px-2; }
+  .steps { @apply flex-col; }
+  .step { border-right: none; border-bottom: 1px solid rgba($gray, .5); }
+  .step:last-child { border-bottom: none; }
+  .fieldGrid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .col3, .col4 { grid-column: span 3; }
+  .col6, .col8, .col12 { grid-column: span 6; }
+  .vatTypes { @apply grid-cols-1; }
+}

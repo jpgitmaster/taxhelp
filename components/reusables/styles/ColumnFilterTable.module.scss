@@ -1,0 +1,225 @@
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+.wrapper {
+  max-width: 100%;
+  @apply relative;
+}
+
+.columnsRow {
+  @apply flex flex-row justify-end mb-2;
+}
+
+.columnsBtn {
+  background-color: rgba($lightBlue, .12);
+  border: 1px solid transparent;
+  color: $blue;
+  @apply flex flex-row items-center gap-1.5 rounded-[10px] text-[12px] font-bold px-4 py-2 cursor-pointer transition-colors whitespace-nowrap;
+
+  &::after {
+    content: '';
+    background-image: url('/svgs/arrowDown.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    filter: invert(27%) sepia(89%) saturate(1942%) hue-rotate(185deg) brightness(96%) contrast(101%);
+    @apply w-2.5 h-1.5 ml-0.5;
+  }
+
+  &:hover {
+    background-color: rgba($lightBlue, .22);
+  }
+}
+
+.panel {
+  background-color: $white;
+  border: 1px solid rgba($gray, .7);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .08);
+  @apply rounded-[12px] p-3 w-64;
+}
+
+.columnSearch {
+  @apply mb-2 rounded-[8px]!;
+}
+
+.list {
+  @apply flex flex-col gap-0.5 max-h-60 overflow-y-auto m-0 p-0 list-none;
+
+  li {
+    @apply rounded-[8px];
+
+    label {
+      color: $lightBlack;
+      @apply flex flex-row items-center gap-2 text-[13px] px-2 py-1.5 cursor-pointer rounded-[8px] w-full;
+
+      &:hover {
+        background-color: rgba($lightBlue, .08);
+      }
+
+      input[type=checkbox] {
+        @apply w-3.5 h-3.5 cursor-pointer;
+      }
+    }
+  }
+
+  .empty {
+    color: $darkgray;
+    @apply text-[12px] text-center py-3;
+  }
+}
+
+.tableWrap {
+  background-color: $white;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, .08), 0 1px 2px rgba(15, 23, 42, .06);
+  @apply relative rounded-[10px] overflow-hidden;
+
+  :global(.ant-table) {
+    background: transparent;
+  }
+  :global(.ant-table-content) {
+    scrollbar-width: thin;
+    scrollbar-color: rgba($gray, 1.3) transparent;
+
+    &::-webkit-scrollbar {
+      height: 10px;
+    }
+    &::-webkit-scrollbar-track {
+      background: rgba($lightGray, .8);
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba($darkgray, .6);
+      border-radius: 10px;
+
+      &:hover {
+        background-color: $darkgray;
+      }
+    }
+  }
+  :global(.ant-table-thead > tr > th) {
+    background: linear-gradient(180deg, rgba($lightBlue, .14), rgba($lightBlue, .05)) !important;
+    border-bottom: 1.5px solid rgba($blue, .3) !important;
+    color: $blue;
+    white-space: nowrap;
+    @apply text-[13px] font-bold py-3! px-4!;
+
+    &::before {
+      display: none !important;
+    }
+  }
+  :global(.ant-table-column-sorters) {
+    position: relative;
+    display: block !important;
+    padding-right: 16px !important;
+    @apply py-0!;
+  }
+  :global(.ant-table-column-sorters .ant-table-column-title) {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  :global(.ant-table-column-sorter) {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    color: rgba($blue, .55);
+  }
+  :global(.ant-table-column-sorter-up.active),
+  :global(.ant-table-column-sorter-down.active) {
+    color: $blue !important;
+  }
+  :global(.ant-table-tbody > tr > td) {
+    border-bottom: 1px solid rgba($gray, .5) !important;
+    color: $lightBlack;
+    @apply text-[13px] py-2.5! px-4!;
+  }
+  :global(tr.ant-table-measure-row td) {
+    padding: 0 !important;
+    height: 0 !important;
+    border: none !important;
+  }
+  :global(.ant-table-tbody > tr:last-child > td) {
+    border-bottom: none !important;
+  }
+  :global(.ant-table-tbody > tr) {
+    transition: background-color .12s ease;
+  }
+  :global(.ant-table-tbody > tr:hover > td) {
+    background-color: rgba($lightBlue, .06) !important;
+  }
+  :global(.ant-table-tbody .ant-table-cell-fix-left),
+  :global(.ant-table-tbody .ant-table-cell-fix-right),
+  :global(.ant-table-tbody .ant-table-cell-fix-start),
+  :global(.ant-table-tbody .ant-table-cell-fix-end) {
+    background-color: $white !important;
+  }
+  :global(.ant-table-thead .ant-table-cell-fix-left),
+  :global(.ant-table-thead .ant-table-cell-fix-right),
+  :global(.ant-table-thead .ant-table-cell-fix-start),
+  :global(.ant-table-thead .ant-table-cell-fix-end) {
+    background-color: #e8f3fd !important;
+  }
+  :global(.ant-table-tbody > tr:hover .ant-table-cell-fix-left),
+  :global(.ant-table-tbody > tr:hover .ant-table-cell-fix-right),
+  :global(.ant-table-tbody > tr:hover .ant-table-cell-fix-start),
+  :global(.ant-table-tbody > tr:hover .ant-table-cell-fix-end) {
+    background-color: #f5fafe !important;
+  }
+  :global(.ant-table-placeholder .ant-table-cell) {
+    @apply py-12!;
+  }
+}
+
+.paginationRow {
+  @apply flex flex-row items-center justify-between gap-3 flex-wrap mt-4;
+}
+
+.rangeLabel {
+  color: $darkgray;
+  @apply text-[12px] font-medium;
+}
+
+.paginationRow {
+  :global(.ant-pagination-item) {
+    border: 1px solid rgba($gray, .9) !important;
+    background-color: $white !important;
+    @apply rounded-full! min-w-8! h-8! leading-7.5!;
+
+    a {
+      color: $lightBlack !important;
+      @apply text-[12px] font-semibold;
+    }
+
+    &:hover {
+      border-color: $blue !important;
+
+      a { color: $blue !important; }
+    }
+  }
+  :global(.ant-pagination-item-active) {
+    background-color: $blue !important;
+    border-color: $blue !important;
+
+    a {
+      color: $white !important;
+    }
+    &:hover a {
+      color: $white !important;
+    }
+  }
+  :global(.ant-pagination-prev .ant-pagination-item-link),
+  :global(.ant-pagination-next .ant-pagination-item-link) {
+    border: 1px solid rgba($gray, .9) !important;
+    background-color: $white !important;
+    color: $darkgray !important;
+    @apply rounded-full! min-w-8! h-8!;
+
+    &:hover {
+      border-color: $blue !important;
+      color: $blue !important;
+    }
+  }
+  :global(.ant-pagination-disabled .ant-pagination-item-link) {
+    opacity: .4;
+  }
+}

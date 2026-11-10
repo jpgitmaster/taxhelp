@@ -3,11 +3,11 @@
 @reference 'tailwindcss';
 
 .success {
-  background-color: rgba($black, .7);
+  background-color: rgba($black, .85);
   transform-origin: center center;
   backface-visibility: hidden;
   perspective: 1000px;
-  @apply flex flex-row fixed z-1 right-5 top-29 rounded-[10px] py-2 px-3;
+  @apply flex flex-row fixed z-50 right-5 bottom-5 rounded-[10px] py-2.5 px-4 max-w-100 items-center shadow-lg;
 
   /* Sequence: flip bounce → pause → slide out */
   animation:
@@ -54,7 +54,7 @@
 
   .successMessage {
     color: $white;
-    @apply text-[14px] mt-0.5;
+    @apply text-[14px];
   }
 }
 

@@ -31,6 +31,9 @@ interface SalesObj{
     total_gross_amount: string
     created_at?: Dayjs | null
     taxable_month: Dayjs | null
+    discount_rate?: string
+    discount_amount?: string
+    net_amount_due?: string
 }
 type SalesErr = {
     client: string

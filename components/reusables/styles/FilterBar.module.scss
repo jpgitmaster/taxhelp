@@ -1,0 +1,12 @@
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+.filterBar {
+  background-color: $lightGray;
+  border: 1px solid rgba($gray, .5);
+  @apply rounded-[20px] p-3.5 pb-1 w-full mb-4;
+}
+
+.grid {
+  @apply flex flex-row flex-wrap items-start;
+}

@@ -1,0 +1,12 @@
+@use '@/styles/forms';
+@use '@/styles/helpers';
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+:global(.ant-picker) {
+  border: 1px solid $gray;
+  background-color: $white;
+}
+:global(.ant-picker-input input) {
+  padding-right: 20px;
+}

@@ -30,7 +30,7 @@ const SidebarSkeleton = () => {
     </>
   )
 }
-const CMS_Layout: FC<MasterProps> = ({ children }) => {
+const CMS_Layout: FC<MasterProps> = ({ children, spacious }) => {
   const {
     ref,
     user,
@@ -259,8 +259,8 @@ const CMS_Layout: FC<MasterProps> = ({ children }) => {
             </div>
           </div>
         </div>
-        <div className={scss.appBody}>
-          <Breadcrumbs scss={scss} />
+        <Breadcrumbs scss={scss} />
+        <div className={scss.appBody + (spacious ? ' ' + scss.appBodySpacious : '')}>
           {children}
         </div>
       </main>

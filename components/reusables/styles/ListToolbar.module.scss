@@ -1,0 +1,56 @@
+@use '@/styles/forms';
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+.toolbar {
+  @apply flex flex-row items-center justify-between gap-3 flex-wrap w-full my-3;
+}
+
+.action {
+  :global(a), button {
+    background-color: $blue;
+    border: 1px solid $border_blue;
+    color: $white;
+    text-decoration: none;
+    @apply inline-flex items-center rounded-[10px] text-[12px] uppercase font-semibold cursor-pointer px-4 py-2 transition-colors;
+
+    &:hover {
+      background-color: $darkBlue;
+    }
+  }
+}
+
+.right {
+  @apply flex flex-row items-center gap-3 flex-wrap justify-end;
+}
+
+.searchForm {
+  @apply flex flex-row w-95 h-9;
+
+  input[type=text] {
+    color: $lightBlack;
+    border: 1px solid $gray;
+    border-right: 0;
+    @apply px-3 text-[13px] outline-none rounded-l-[10px] w-full h-full;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  button {
+    background-color: $blue;
+    border: 1px solid $border_blue;
+    color: $white;
+    letter-spacing: .5px;
+    @apply rounded-r-[10px] text-[12px] uppercase font-semibold cursor-pointer px-4 transition-colors h-full;
+
+    &:hover {
+      background-color: $darkBlue;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .searchForm { @apply w-full; }
+}

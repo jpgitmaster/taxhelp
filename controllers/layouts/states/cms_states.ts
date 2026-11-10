@@ -89,7 +89,7 @@ const initCustomLinks: NavLink[] = [
                 active: false,
                 key: 'sales',
                 name: 'Sales',
-                url: '/bookkeeper/books_of_accounts/sales',
+                url: '/bookkeeper/books_of_accounts/sales/manual',
             },
             {
                 active: false,

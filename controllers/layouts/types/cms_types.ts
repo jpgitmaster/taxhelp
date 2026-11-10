@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 interface MasterProps {
   children: ReactNode
+  spacious?: boolean
 }
 interface SessionUser{
   id: string

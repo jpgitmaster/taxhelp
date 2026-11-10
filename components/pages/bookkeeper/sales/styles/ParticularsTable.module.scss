@@ -1,0 +1,137 @@
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+.particularsSection {
+  @apply mt-6 mb-5;
+}
+
+.addLine {
+  color: $blue;
+  background-color: $white;
+  border: 1px solid $blue;
+  @apply flex flex-row items-center gap-1.5 text-[12px] font-semibold px-3.5 py-1.5 rounded-full cursor-pointer transition-colors;
+
+  &:hover {
+    background-color: $blue;
+    color: $white;
+  }
+
+  .plus {
+    @apply text-[15px] leading-none -mt-0.5;
+  }
+}
+
+.table {
+  background-color: $white;
+  border: 1px solid rgba($gray, 0.8);
+  @apply rounded-[14px] overflow-hidden;
+}
+
+.row {
+  @apply grid items-start gap-3 px-4 py-3;
+  grid-template-columns: minmax(0, 1fr) 90px 130px 130px 36px;
+
+  & + .row {
+    border-top: 1px solid rgba($gray, 0.5);
+  }
+}
+
+.headRow {
+  background-color: $lightGray;
+  @apply py-2.5;
+
+  span {
+    color: $darkgray;
+    @apply text-[10px] font-bold uppercase tracking-wide;
+  }
+}
+
+.cell {
+  @apply flex flex-col gap-1 min-w-0;
+
+  input {
+    border: 1px solid rgba($gray, 0.9);
+    background-color: $white;
+    @apply w-full rounded-[8px] px-2.5 py-2 text-[13px];
+
+    &:focus {
+      border-color: $lightBlue;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba($lightBlue, 0.15);
+    }
+
+    &.invalid {
+      border-color: $red;
+    }
+  }
+}
+
+.amountField {
+  background-color: $lightGray !important;
+  color: $lightBlack;
+  font-weight: 600;
+  cursor: default;
+}
+
+.errmsg {
+  color: $red;
+  @apply text-[10px] leading-tight;
+}
+
+.removeCell {
+  @apply items-center justify-center pt-1;
+}
+
+.removeBtn {
+  @apply w-7 h-7 flex items-center justify-center rounded-full cursor-pointer transition-colors;
+
+  &:hover {
+    background-color: rgba($red, 0.1);
+  }
+
+  img {
+    filter: invert(24%) sepia(69%) saturate(6154%) hue-rotate(353deg) brightness(91%) contrast(127%);
+  }
+}
+
+.subtotalRow {
+  background-color: $lightGray;
+  @apply flex flex-row items-center justify-end gap-3 px-4 py-3;
+
+  span {
+    color: $darkgray;
+    @apply text-[11px] uppercase font-semibold;
+  }
+
+  strong {
+    color: $lightBlack;
+    @apply text-[15px];
+  }
+}
+
+@media (max-width: 768px) {
+  .row {
+    grid-template-columns: minmax(0, 1fr) 70px 100px 100px 32px;
+  }
+}
+
+@media (max-width: 600px) {
+  .headRow {
+    display: none;
+  }
+
+  .row {
+    grid-template-columns: 1fr 1fr;
+    @apply gap-2;
+
+    &:not(.headRow) {
+      .cell:first-child {
+        grid-column: 1 / -1;
+      }
+    }
+  }
+
+  .removeCell {
+    @apply justify-start;
+  }
+}

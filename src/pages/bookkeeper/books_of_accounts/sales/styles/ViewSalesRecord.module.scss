@@ -1,0 +1,108 @@
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+.wizard {
+  @apply max-w-5xl mx-auto;
+}
+
+.header {
+  @apply flex flex-row items-center justify-between mb-5;
+
+  h1 {
+    color: $lightBlack;
+    @apply text-[20px] font-bold m-0 inline-block mr-3;
+  }
+}
+
+.statusBadge {
+  color: $white;
+  @apply text-[11px] font-bold uppercase tracking-wide rounded-full px-3 py-1 align-middle;
+
+  &.posted {
+    background-color: $green;
+  }
+  &.draft {
+    background-color: $orange;
+  }
+}
+
+.backLink {
+  color: $blue;
+  @apply text-[13px] font-semibold no-underline;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.loadingText {
+  color: $darkgray;
+  @apply text-[13px] py-10 text-center;
+}
+
+.panel {
+  background-color: $white;
+  border: 1px solid rgba($gray, .7);
+  @apply rounded-[14px] p-5 mb-5;
+}
+
+.fieldGrid {
+  @apply grid gap-x-5 gap-y-5 mb-5;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid rgba($gray, .6);
+  @apply my-5;
+}
+
+.particularsCard {
+  background-color: $white;
+  border: 1px solid rgba($gray, .8);
+  @apply rounded-[14px] overflow-hidden;
+}
+
+.particularsRow {
+  @apply grid items-center gap-3 px-4 py-3 text-[13px] min-h-11;
+  grid-template-columns: minmax(0, 1fr) 90px 130px 130px;
+
+  & + .particularsRow {
+    border-top: 1px solid rgba($gray, .5);
+  }
+
+  span:not(:first-child) {
+    @apply text-right;
+  }
+}
+
+.headRow {
+  background-color: $lightGray;
+  @apply py-0;
+
+  span {
+    color: $darkgray;
+    @apply text-[10px] font-bold uppercase tracking-wide;
+  }
+}
+
+.particularsEmpty {
+  color: $darkgray;
+  @apply text-center text-[13px] py-6;
+}
+
+.subtotalRow {
+  background-color: $lightGray;
+  border-top: 1px solid rgba($gray, .5);
+  @apply flex flex-row items-center justify-end gap-3 px-4 py-0 min-h-11;
+
+  span {
+    color: $darkgray;
+    @apply text-[11px] uppercase font-semibold;
+  }
+
+  strong {
+    color: $lightBlack;
+    @apply text-[15px];
+  }
+}
