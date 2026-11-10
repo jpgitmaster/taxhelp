@@ -309,7 +309,23 @@ const LandingPage = () => {
 
         {/* Footer */}
         <footer className={scss.footer}>
-          &copy; {new Date().getFullYear()} TaxHelp Accounting Firm. All rights reserved.
+          <p>
+            &copy; {new Date().getFullYear()} TaxHelp Accounting Firm. All rights reserved.
+          </p>
+
+          <div className={scss.footer_links}>
+            <Link href="/refund-policy">
+              Refund Policies
+            </Link>
+
+            <Link href="/terms-of-service">
+              Terms of Service
+            </Link>
+
+            <Link href="/privacy-policy">
+              Privacy Policies
+            </Link>
+          </div>
         </footer>
       </div>
       <Register_V

@@ -3,7 +3,7 @@
 @use '@/styles/colors' as *;
 @reference 'tailwindcss';
 body, html{
-    overflow: hidden;
+    overflow-x: hidden;
 }
 .app{
     @apply h-screen flex flex-row overflow-hidden;
