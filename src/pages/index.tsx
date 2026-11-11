@@ -11,6 +11,7 @@ import Login_V from '@/components/pages/landing/login';
 import Register_V from '@/components/pages/landing/register';
 import ContactUs_V from '@/components/pages/landing/contact_us';
 import SuccessMessage from '@/components/reusables/SuccessMessage';
+import SubscriptionPlans from '@/components/reusables/SubscriptionPlans';
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import ForgotPassword_V from '@/components/pages/landing/forgot_password';
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types';
@@ -265,8 +266,14 @@ const LandingPage = () => {
               </div>
             </div>
         </section>
+        {/* SUBSCRIPTION PLANS */}
+        <SubscriptionPlans
+            title="Simple Plans. Powerful Business Tools."
+            caption="Choose the right TaxHelp subscription for your business. Start for free and upgrade as your operations grow."
+            scss={scss}
+        />
         {/* Promotions Section */}
-        <section className={scss.promos}>
+        {/* <section className={scss.promos}>
           <h2 className={scss.promoTitle}>Special Offers</h2>
 
           <div className={scss.promoBox}>
@@ -288,7 +295,7 @@ const LandingPage = () => {
               <span>Best for Entrepreneurs</span>
             </div>
           </div>
-        </section>
+        </section> */}
         {/* Testimonials Section */}
         <section className={scss.testimonials}>
             <h2>What Our Clients Say</h2>
