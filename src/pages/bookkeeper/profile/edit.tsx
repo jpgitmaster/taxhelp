@@ -168,8 +168,7 @@ const EdtProfile_V = () => {
             <Modal
                 width={'70%'}
                 footer={null}
-                // open={openPlanModal}
-                open={true}
+                open={openPlanModal}
                 onCancel={() => {
                     setOpenPlanModal(false);
 
