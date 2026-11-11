@@ -1,0 +1,49 @@
+@use '@/styles/forms';
+@use '@/styles/colors' as *;
+
+@reference 'tailwindcss';
+
+.uploadModal {
+    @apply flex flex-col gap-4;
+
+    .hint {
+        color: $gray;
+        @apply text-[12px] leading-relaxed m-0;
+    }
+
+    .dragger {
+        :global(.ant-upload-drag) {
+            border: 1px dashed $gray;
+            background-color: rgba($lightBlue, .06);
+            @apply rounded-[12px];
+        }
+
+        :global(.ant-upload-drag:hover) {
+            border-color: $blue;
+        }
+
+        @apply block w-full;
+    }
+
+    .icon {
+        @apply text-3xl m-0 mb-2;
+    }
+
+    .title {
+        color: $lightBlack;
+        @apply text-[14px] font-semibold m-0 mb-1;
+    }
+
+    .subtitle {
+        color: $gray;
+        @apply text-[12px] m-0;
+    }
+
+    .actions {
+        @apply flex flex-row justify-end gap-3 mt-2;
+
+        .button {
+            @apply w-auto min-w-28;
+        }
+    }
+}

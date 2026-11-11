@@ -225,6 +225,14 @@ const initCustomLinks: NavLink[] = [
         iconWidth: 18,
         url: '/bookkeeper/audit_trail',
     },
+    {
+        active: false,
+        key: 'bir_validation',
+        name: 'BIR Validation',
+        icon: 'reports.svg',
+        iconWidth: 18,
+        url: '/bookkeeper/bir_validation',
+    },
 ]
 const initDatLinks: NavLink[] = [
     {
@@ -258,6 +266,14 @@ const initDatLinks: NavLink[] = [
         icon: 'audit_trail.svg',
         iconWidth: 20,
         url: '/bookkeeper/audit_trail',
+    },
+    {
+        active: false,
+        key: 'bir_validation',
+        name: 'BIR Validation',
+        icon: 'reports.svg',
+        iconWidth: 20,
+        url: '/bookkeeper/bir_validation',
     },
 ]
 export {
