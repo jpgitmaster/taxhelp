@@ -13,16 +13,21 @@ export default function PlanSummaryCard(props: {
     return (
         <div className={scss.card+' '+scss.w100}>
             <div className={scss.planbox+' '+scss.blue}>
-                <div className={scss.planHeader}>
-                    <div className={scss.planIcon} aria-hidden="true">{PLAN_ICON[subscription?.plan ?? 'basic']}</div>
-                    <div>
-                        <h2 style={{textTransform: 'capitalize'}}>
-                            {subscription?.plan} Plan
-                        </h2>
-                        <span className={scss.statusBadge+' '+(subscription?.status === 'active' ? scss.statusActive : scss.statusCancelled)}>
-                            {subscription?.status}
-                        </span>
+                <div className={scss.planHeaderRow}>
+                    <div className={scss.planHeader}>
+                        <div className={scss.planIcon} aria-hidden="true">{PLAN_ICON[subscription?.plan ?? 'basic']}</div>
+                        <div>
+                            <h2 style={{textTransform: 'capitalize'}}>
+                                {subscription?.plan} Plan
+                            </h2>
+                            <span className={scss.statusBadge+' '+(subscription?.status === 'active' ? scss.statusActive : scss.statusCancelled)}>
+                                {subscription?.status}
+                            </span>
+                        </div>
                     </div>
+                    <Link href='/bookkeeper/subscription/plans' className={scss.button+' '+scss.btnblue}>
+                        Change Plan
+                    </Link>
                 </div>
                 {isFree ? (
                     <p>Free plan</p>
@@ -51,9 +56,6 @@ export default function PlanSummaryCard(props: {
                         Downgrading to {subscription.pending_plan} on {formatDate(subscription.expires_at)}
                     </p>
                 )}
-                <Link href='/bookkeeper/subscription/plans' className={scss.button+' '+scss.btnblue}>
-                    Change Plan
-                </Link>
             </div>
         </div>
     )

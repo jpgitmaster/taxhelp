@@ -85,11 +85,14 @@
             color: $lightBlack;
             @apply text-[16px];
         }
-        .button{
-            @apply absolute top-5 right-5 w-45;
+        .planHeaderRow{
+            @apply flex items-start justify-between gap-4 flex-wrap mb-1;
+            .button{
+                @apply w-45 shrink-0;
+            }
         }
         .planHeader{
-            @apply flex items-center gap-3 mb-1;
+            @apply flex items-center gap-3;
         }
         .planIcon{
             background: linear-gradient(135deg, $lightBlue, $blue);
@@ -147,7 +150,8 @@
             }
         }
         .planStats{
-            @apply grid grid-cols-3 gap-10 mt-3 pt-3 w-full justify-items-center;
+            @apply grid gap-6 mt-3 pt-3 w-full;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             border-top: 1px solid rgba($gray, .5);
         }
         .planStat{
@@ -383,11 +387,8 @@
     }
     .cards.plantop{
         .planbox{
-            .button{
-                @apply static w-full mt-4 top-auto right-auto;
-            }
-            .planStats{
-                @apply grid-cols-1 gap-4;
+            .planHeaderRow .button{
+                @apply w-full;
             }
         }
     }
