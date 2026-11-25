@@ -14,7 +14,7 @@
 .box{
   border: 1px solid rgba($gray, .8);
   background-color: rgba($lightGray, .5);
-  @apply w-280 mx-auto relative h-full rounded-[20px] p-5 pt-8 flex flex-col mb-10;
+  @apply w-full max-w-280 mx-auto relative h-full rounded-[20px] p-5 pt-8 flex flex-col mb-10;
 }
 .boxTitle{
     @apply text-center;
@@ -26,6 +26,39 @@
         color: $lightBlack;
         @apply text-sm max-w-md mx-auto;
     }
+}
+.selectedPlan{
+    background-color: $white;
+    border: 1px solid $lightBlue;
+    @apply rounded-2xl w-160 mx-auto border p-6 flex flex-col justify-between transition hover:shadow-xl mt-6;
+    h3{
+        color: $blue;
+        @apply text-xl font-semibold mb-1;
+    }
+    .details{
+        @apply flex justify-between text-sm m-1;
+        span{
+            @apply capitalize;
+        }
+    }
+    .total{
+        border-color: $orange;
+        @apply border-t pt-3 mt-1 flex justify-between font-medium;
+        span{
+            color: $blue;
+        }
+    }
+    ol{
+        color: $black;
+        @apply text-sm space-y-1 list-decimal list-inside mt-2;
+    }
+}
+.note{
+    color: $black;
+    @apply text-xs mt-3 text-center italic;
+}
+.button{
+    @apply text-center;
 }
 
 .cards.plantop{
@@ -132,8 +165,11 @@
             color: $darkgray;
             @apply text-sm mt-3 italic;
         }
+        .billingTableWrapper{
+            @apply w-full overflow-x-auto mt-4;
+        }
         .billingTable{
-            @apply w-full text-sm mt-4 border-collapse;
+            @apply w-full min-w-150 text-sm border-collapse;
             thead{
                 color: $darkgray;
                 th{
@@ -190,7 +226,7 @@
 .plansContainer{
   border: 1px solid rgba($gray, .8);
   background-color: rgba($lightGray, .5);
-  @apply w-280 mx-auto relative h-full rounded-[20px] p-5 pt-8 flex flex-col mb-10;
+  @apply w-full max-w-280 mx-auto relative h-full rounded-[20px] p-5 pt-8 flex flex-col mb-10;
   .boxTitle{
     @apply text-center;
     h2{
@@ -280,39 +316,6 @@
             }
         }
     }
-    .selectedPlan{
-        background-color: $white;
-        border: 1px solid $lightBlue;
-        @apply rounded-2xl w-160 mx-auto border p-6 flex flex-col justify-between transition hover:shadow-xl mt-6;
-        h3{
-            color: $blue;
-            @apply text-xl font-semibold mb-1;
-        }
-        .details{
-            @apply flex justify-between text-sm m-1;
-            span{
-                @apply capitalize;
-            }
-        }
-        .total{
-            border-color: $orange;
-            @apply border-t pt-3 mt-1 flex justify-between font-medium;
-            span{
-                color: $blue;
-            }
-        }
-        ol{
-            color: $black;
-            @apply text-sm space-y-1 list-decimal list-inside mt-2;
-        }
-    }
-    .note{
-        color: $black;
-        @apply text-xs mt-3 text-center italic;
-    }
-    .button{
-        @apply text-center;
-    }
     .customSolutions{
         @apply max-w-5xl mx-auto px-4 mt-18 mb-12;
         .customSolution{
@@ -346,9 +349,7 @@
 
 
 @media (max-width: 1200px) {
-    .box{
-        @apply w-full;
-
+    .plansContainer{
         .plans{
             @apply flex flex-col max-w-300;
             .plan{
@@ -359,9 +360,11 @@
 }
 
 @media (max-width: 768px) {
-    .box{
+    .box, .plansContainer{
         background-color: $transparent;
         @apply border-0 py-0 px-2;
+    }
+    .plansContainer{
         .plans{
             @apply mt-5 px-0;
             .plan{
@@ -373,6 +376,19 @@
         @apply px-0! w-full mt-8!;
         .button.btnblue{
             @apply w-full!;
+        }
+    }
+    .selectedPlan{
+        @apply w-full;
+    }
+    .cards.plantop{
+        .planbox{
+            .button{
+                @apply static w-full mt-4 top-auto right-auto;
+            }
+            .planStats{
+                @apply grid-cols-1 gap-4;
+            }
         }
     }
 }
