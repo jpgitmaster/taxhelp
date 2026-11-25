@@ -65,7 +65,6 @@ const ManageSubscription_V = () => {
   }
 
   const handleCancel = () => {
-    if (!confirm('Cancel your subscription? You will keep access until your current billing period ends.')) return
     cancelSubscription.mutate()
   }
 
@@ -119,6 +118,8 @@ const ManageSubscription_V = () => {
           />
           {!isFree && (
             <CancelSubscriptionCard
+              plan={subscription?.plan}
+              expiresAt={subscription?.expires_at}
               pending={cancelSubscription.isPending}
               scss={scss}
               onCancel={handleCancel}

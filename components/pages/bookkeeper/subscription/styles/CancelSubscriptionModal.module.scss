@@ -1,0 +1,37 @@
+@use '@/styles/colors' as *;
+
+@reference 'tailwindcss';
+
+.cancelSubscriptionModal{
+    @apply relative;
+    .title{
+        color: $red;
+        font-weight: 600;
+        @apply text-xl mb-4;
+    }
+    .message{
+        color: $lightBlack;
+        @apply text-sm;
+    }
+    .actions{
+        @apply flex justify-end gap-3 mt-6;
+    }
+    .btn{
+        outline: none;
+        border: 1px solid;
+        @apply rounded-[10px] text-xs cursor-pointer uppercase py-2 px-5;
+        &:disabled{
+            @apply cursor-not-allowed opacity-60;
+        }
+    }
+    .btnKeep{
+        background-color: $white;
+        color: $lightBlack;
+        border-color: rgba($gray, .8);
+    }
+    .btnCancel{
+        background-color: $red;
+        color: $white;
+        border-color: $border_red;
+    }
+}
