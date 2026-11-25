@@ -1,0 +1,76 @@
+@use '@/styles/forms';
+@use '@/styles/helpers';
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+.verifyModal{
+  @apply flex flex-col items-center text-center px-4 py-6;
+
+  .logo{
+    @apply w-24 h-auto mb-5;
+  }
+
+  .logoLoader{
+    @apply flex items-center justify-center my-5 relative w-20 h-20;
+  }
+  .logoLoaderRing{
+    border: 3px solid #e3e9f1;
+    border-top-color: $btnBlue;
+    animation: spin 1s linear infinite;
+    @apply absolute inset-0 rounded-full;
+  }
+  .logoLoaderMark{
+    animation: pulse 1.6s ease-in-out infinite;
+    @apply w-9 h-9;
+  }
+
+  .title{
+    color: #071b3b;
+    letter-spacing: -.5px;
+    @apply text-xl font-extrabold;
+
+    &:after{
+      content: '';
+      background-color: $btnBlue;
+      @apply block w-10 h-1 rounded-full mt-2 mb-3 mx-auto;
+    }
+  }
+
+  .subtitle{
+    color: $darkgray;
+    @apply text-sm mb-6;
+  }
+
+  .progress{
+    background-color: #e3e9f1;
+    @apply w-full h-1.5 rounded-full overflow-hidden mb-3;
+
+    .bar{
+      background-color: $btnBlue;
+      width: 60%;
+      animation: progressMove 1.6s ease-in-out infinite;
+      @apply h-full rounded-full;
+    }
+  }
+
+  .footerText{
+    color: $gray;
+    @apply text-xs;
+  }
+}
+
+@keyframes progressMove {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(20%); }
+  100% { transform: translateX(120%); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.88); opacity: .7; }
+}
