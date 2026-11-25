@@ -1,11 +1,10 @@
-import { Modal } from 'antd';
 import Image from 'next/image';
 import scss from './styles/Register.module.scss';
 import PasswordCheckList from './PasswordCheckList';
+import LandingModal from '@/components/pages/landing/landing_modal';
 import { initStatus } from '@/controllers/global/states';
 import useRegister from '@/controllers/users/useRegister';
 import Loader from '@/components/reusables/RotatingLoader';
-import CustomContainer from '@/components/reusables/CustomContainer';
 interface PropsDefinition {
     displayModal: {
         registration: boolean
@@ -13,7 +12,7 @@ interface PropsDefinition {
     }
     toggleModal(modal: boolean, form: string): void
 }
-const Register_V = ({
+const LandingSignupModal = ({
     toggleModal,
     displayModal,
 }: PropsDefinition) => {
@@ -40,9 +39,9 @@ const Register_V = ({
     } = useRegister()
     const { loader, message, submessage } = status
     return (
-        <Modal
-            footer={null}
+        <LandingModal
             open={displayModal.registration}
+            width={460}
             onCancel={() => {
                 setUser(initUser)
                 setCheckedFeatures([])
@@ -61,22 +60,25 @@ const Register_V = ({
                     <div className={scss.successMessage}>
                         <h4>{message}</h4>
                         <p>{submessage}</p>
-                        <button className={`${scss.button} ${scss.btnblue}`} type='button' onClick={() => {
+                        <button className={scss.successClose} type='button' onClick={() => {
                             setUser(initUser)
                             setCheckedFeatures([])
                             setStatus(initStatus)
                             toggleModal(false, 'registration')
                         }}>
-                        Ok
+                        Close
                         </button>
                     </div>
                 </div>
                 :
                 <>
                     <div className={scss.modelTitle}>
-                        <strong>
-                            Select what you'll work on
-                        </strong>
+                        <div className={scss.modelTitleHeading}>
+                            <Image src='/images/logo.png' alt='TaxHelp Logo' width={20} height={20} unoptimized={true} className={scss.modelTitleLogo} />
+                            <strong>
+                                Select what you'll work on
+                            </strong>
+                        </div>
                         <p>
                             Select the records you'll be handling for your clients.
                         </p>
@@ -96,18 +98,17 @@ const Register_V = ({
                                         + (feature.disabled ? ' ' + scss.disabled : '')
                                     }
                                 >
-                                    <Image
-                                        src={'/svgs/' + feature.icon}
-                                        alt={feature.label}
-                                        width={20}
-                                        height={20}
-                                        unoptimized={true}
-                                    />
-
-                                    <div>
+                                    <div className={scss.featureHeader}>
+                                        <Image
+                                            src={'/svgs/' + feature.icon}
+                                            alt={feature.label}
+                                            width={20}
+                                            height={20}
+                                            unoptimized={true}
+                                        />
                                         <strong>{feature.label}</strong>
-                                        <p>{feature.description}</p>
                                     </div>
+                                    <p>{feature.description}</p>
 
                                     <input
                                         type="checkbox"
@@ -128,16 +129,9 @@ const Register_V = ({
                     </ul>
                     <form className={scss.registerUser} onSubmit={handleRegisterUser}>
                         { loader && <Loader scss={scss} position='absolute' />}
-                        <div className={scss.cards}>
-                            <CustomContainer
-                                width={100}
-                                scss={scss}
-                                required={true}
-                                label='Email'
-                                labelFor='registerEmail'
-                                disabled={!checkedFeatures?.length}
-                                err={user.userErr.email as string}
-                            >
+                        <div className={scss.registerFields}>
+                            <div className={scss.field + (user.userErr.email ? ' '+scss.err : '')}>
+                                <label htmlFor="registerEmail">Email</label>
                                 <input
                                     type='text'
                                     name='email'
@@ -145,40 +139,40 @@ const Register_V = ({
                                     id="registerEmail"
                                     autoComplete='off'
                                     value={user.userObj.email}
-                                    placeholder='johndoe@gmail.com'
+                                    placeholder='Enter Email'
+                                    disabled={!checkedFeatures?.length}
                                     onKeyUp={handleBlur}
                                     onChange={handleChange}
                                 />
-                            </CustomContainer>
-                            <CustomContainer
-                                width={50}
-                                scss={scss}
-                                required={true}
-                                label='Password'
-                                labelFor='registerPassword'
-                                disabled={!checkedFeatures?.length}
-                                err={user.userErr.password as string}
-                                className={
-                                    typeof user.userErr.password === 'string' && user.userErr.password.length > 50
-                                        ? scss.longErr
-                                        : ''
-                                    }>
+                                {
+                                    user.userErr.email &&
+                                    <small>{user.userErr.email as string}</small>
+                                }
+                            </div>
+
+                            <div className={scss.field + (user.userErr.password ? ' '+scss.err : '')}>
+                                <label htmlFor="registerPassword">Password</label>
                                 <input
                                     name='password'
                                     maxLength={20}
                                     autoComplete='off'
-                                    placeholder='*******'
+                                    placeholder='Enter Password'
                                     id="registerPassword"
                                     value={user.userObj.password}
                                     type={displayPassword ? 'text' : 'password'}
+                                    disabled={!checkedFeatures?.length}
                                     onKeyUp={handleBlur}
                                     onChange={handleChange}
                                     onFocus={() => setPasswordChecker(true)}
                                     onBlur={() => setPasswordChecker(false)}
                                 />
-                                <button type='button' className={scss.eyecon + (displayPassword ? ' '+scss.show : '')} onClick={() => setDisplayPassword(prevState => !prevState)}>
-                                    <Image src={'/svgs/'+(displayPassword ? 'eyecon_check.svg' : 'eyecon.svg')} alt='Show Password' priority width={250} height={160} />
+                                <button type='button' className={scss.eyecon} onClick={() => setDisplayPassword(prevState => !prevState)}>
+                                    <Image src={'/svgs/'+(displayPassword ? 'eyecon_check.svg' : 'eyecon.svg')} alt='Show Password' priority width={20} height={20} />
                                 </button>
+                                {
+                                    user.userErr.password &&
+                                    <small>{user.userErr.password as string}</small>
+                                }
                                 {
                                 passwordChecker &&
                                     <PasswordCheckList
@@ -186,31 +180,35 @@ const Register_V = ({
                                         value={String(user.userObj.password)}
                                     />
                                 }
-                            </CustomContainer>
-                            <CustomContainer
-                                width={50}
-                                scss={scss}
-                                required={true}
-                                label='Confirm Password'
-                                labelFor='confirmPassword'
-                                disabled={!checkedFeatures?.length}
-                                err={user.userErr.confirmPassword as string}
-                            >
+                            </div>
+
+                            <div className={scss.field + (user.userErr.confirmPassword ? ' '+scss.err : '')}>
+                                <label htmlFor="confirmPassword">Confirm Password</label>
                                 <input
                                     name='confirmPassword'
                                     maxLength={20}
                                     type='password'
                                     autoComplete='off'
-                                    placeholder='*******'
+                                    placeholder='Confirm Password'
                                     id="confirmPassword"
                                     value={user.userObj.confirmPassword}
+                                    disabled={!checkedFeatures?.length}
                                     onKeyUp={handleBlur}
                                     onChange={handleChange}
                                 />
-                            </CustomContainer>
-                            <div className={scss.card+' '+scss.w100}>
-                                <button type='submit' className={`${scss.button} ${scss.btnblue}`} disabled={!checkedFeatures?.length} onKeyDown={handleResubmit}>
-                                    Sign up
+                                {
+                                    user.userErr.confirmPassword &&
+                                    <small>{user.userErr.confirmPassword as string}</small>
+                                }
+                            </div>
+
+                            <button type='submit' className={scss.btnblue} disabled={!checkedFeatures?.length} onKeyDown={handleResubmit}>
+                                Sign up
+                            </button>
+
+                            <div className={scss.registerLinks}>
+                                <button type='button' onClick={() => toggleModal(true, 'login')}>
+                                    Already have an account? <span>Login</span>
                                 </button>
                             </div>
                         </div>
@@ -244,7 +242,7 @@ const Register_V = ({
                 </div>
             </li>
             </ul> */}
-        </Modal>
+        </LandingModal>
     )
 }
-export default Register_V;
+export default LandingSignupModal;
