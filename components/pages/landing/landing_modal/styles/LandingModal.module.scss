@@ -1,0 +1,24 @@
+@reference 'tailwindcss';
+
+.landingModalRoot{
+  :global(.ant-modal-content){
+    overflow: hidden;
+    outline: none;
+    @apply rounded-[22px] p-0!;
+  }
+  :global(.ant-modal-wrap), :global(.ant-modal){
+    outline: none;
+  }
+  :global(.ant-modal-close){
+    outline: none;
+    @apply top-3.5 right-3.5;
+
+    &:focus, &:focus-visible{
+      outline: none;
+      box-shadow: none;
+    }
+  }
+  :global(.ant-modal-body){
+    @apply pt-6;
+  }
+}

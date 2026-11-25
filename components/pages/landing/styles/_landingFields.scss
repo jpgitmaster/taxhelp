@@ -1,0 +1,80 @@
+@use '@/styles/colors' as *;
+@reference 'tailwindcss';
+
+// Label: matches the login modal's plain <label>Email</label> exactly
+@mixin landingLabel{
+  color: #071b3b;
+  @apply block text-xs font-semibold mb-1.5;
+}
+
+@mixin landingErrMsg{
+  color: #dc2626;
+}
+
+// Field: used inside standalone modals (login modal, signup modal, reset password modal)
+@mixin landingInput{
+  padding: 0 16px;
+  background-color: $white;
+  @apply w-full h-10 box-border rounded-lg border border-blue-100 text-gray-800 text-sm;
+}
+
+@mixin landingInputErr{
+  border-color: #dc2626;
+}
+
+// Button: used inside standalone modals (login modal, signup modal, reset password modal)
+@mixin landingButton{
+  background-color: $btnBlue;
+  transition: background-color .25s ease;
+  @apply cursor-pointer text-white font-semibold text-sm px-6 py-3 rounded-full shadow mt-8;
+
+  &:hover{
+    background-color: $btnBlueHover;
+  }
+  &:disabled{
+    @apply opacity-70 cursor-not-allowed;
+  }
+}
+
+// Eye icon: label sits in-flow above the input, so the icon needs a taller top offset
+@mixin landingEyeIcon{
+  @apply absolute top-8.5 right-3.5 cursor-pointer;
+  img{ @apply w-5 h-5; }
+}
+
+// Password requirements checklist: sits in normal flow right under the field (not floating/overlapping)
+@mixin landingPwdCheck{
+  background-color: $white;
+  border: 1px solid #e3e9f1;
+  box-shadow: 0 8px 20px rgba(7, 27, 59, .12);
+  @apply absolute left-0 right-0 top-full mt-2 p-3 rounded-xl z-10;
+
+  p {
+      color: #071b3b;
+      @apply text-xs font-semibold mb-1.5;
+  }
+
+  ul {
+      @apply space-y-1;
+      li {
+          color: $darkgray;
+          @apply text-xs flex items-center gap-2;
+
+          &:before{
+            content: '\2713';
+            color: $gray;
+            background-color: #f2f7ff;
+            font-size: 9px;
+            @apply w-4 h-4 rounded-full flex items-center justify-center font-bold shrink-0;
+          }
+
+          &.meet_requirement {
+              color: #071b3b;
+              &:before{
+                color: $white;
+                background-color: $border_green;
+              }
+          }
+      }
+  }
+}
