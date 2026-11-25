@@ -6,9 +6,12 @@ interface PropsDefinition {
     title: string;
     caption: string;
     scss: { [key: string]: string };
+    currentPlan?: string;
 }
 
-const SubscriptionPlans = ({ title, caption, scss }: PropsDefinition) => {
+const PLAN_RANK: Record<string, number> = { basic: 0, pro: 1, enterprise: 2 }
+
+const SubscriptionPlans = ({ title, caption, scss, currentPlan }: PropsDefinition) => {
     const [showModal, setShowModal] = useState(false)
     const [billing, setBilling] = useState<'monthly' | 'yearly'>('monthly')
     const plans = [
@@ -283,16 +286,26 @@ const SubscriptionPlans = ({ title, caption, scss }: PropsDefinition) => {
                             </p>
                         )}
                         {/* CTA */}
-                        <Link
-                            href={`/bookkeeper/subscription/plans/gcash_payment?plan=${plan.key}&price=${plan.price}&billing=${billing}`}
-                            className={scss.button + (
-                                plan.highlight
-                                    ? ' '+scss.btnorange
-                                    : ' '+scss.btnblue
-                            ) + ' mt-4'}
-                        >
-                            {plan.cta}
-                        </Link>
+                        {currentPlan && plan.key === currentPlan ? (
+                            <button
+                                type='button'
+                                disabled
+                                className={scss.button + ' ' + scss.disabled + ' mt-4'}
+                            >
+                                Current Plan
+                            </button>
+                        ) : (
+                            <Link
+                                href={`/bookkeeper/subscription/plans/gcash_payment?plan=${plan.key}&price=${plan.price}&billing=${billing}`}
+                                className={scss.button + (
+                                    plan.highlight
+                                        ? ' '+scss.btnorange
+                                        : ' '+scss.btnblue
+                                ) + ' mt-4'}
+                            >
+                                {currentPlan && PLAN_RANK[plan.key] < PLAN_RANK[currentPlan] ? 'Downgrade' : plan.cta}
+                            </Link>
+                        )}
                     </div>
                 ))}
             </div>
