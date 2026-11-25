@@ -81,6 +81,7 @@ export default function BillingHistoryCard(props: {
         <SubscriptionCard
             scss={scss}
             title='Billing History'
+            description='A record of your past payments and their status.'
         >
             <div ref={wrapperRef}>
                 {total > 0 ? (
