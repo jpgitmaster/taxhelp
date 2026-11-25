@@ -7,173 +7,369 @@
   --white: #FFF;
 }
 
+$pintekBlue: #1268f3;
+$pintekNavy: #071b3b;
+$pintekBgLight: #f2f7ff;
+$pintekBgLight2: #eaf2ff;
+
 :global(.slick-dots) {
-  @apply -bottom-12.5;
+  @apply -bottom-2;
   li{
-    @apply text-center;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 4px !important;
+    @apply text-center align-middle;
     button{
-      background-color: #ffad00;
-      @apply rounded-[50%] h-1 w-1 inline-block;
+      background-color: #c3cdeb !important;
+      width: 6px !important;
+      height: 6px !important;
+      padding: 0 !important;
+      border-radius: 999px !important;
+      transition: all .3s ease;
+      @apply inline-block;
       &:before{
         @apply hidden
       }
     }
     &:global(.slick-active) button {
-      background-color: $orange;
+      background-color: $btnBlue !important;
+      width: 18px !important;
     }
   }
 }
 
 .app{
-  @apply min-h-screen bg-linear-to-br from-blue-50 to-blue-200 flex flex-col;
+  @apply min-h-screen bg-white flex flex-col;
+  header{
+    @apply fixed top-0 left-0 w-full z-50;
+  }
   .topbar {
     background-color: var(--white);
-    @apply px-15 py-2 flex justify-between items-center;
+    border-bottom: 1px solid rgba($pintekNavy, .1);
+    box-shadow: 0 2px 10px rgba(7, 27, 59, .08);
+    @apply px-15 py-5 flex justify-between items-center;
 
     .logo {
-      @apply w-55 inline-block focus-visible:outline-none;
+      @apply w-32 inline-block focus-visible:outline-none;
       img {
         @apply w-full;
       }
     }
-  }
+    .loginTrigger{
+      background-color: $btnBlue;
+      transition: background-color .25s ease;
+      @apply cursor-pointer text-white font-semibold text-sm px-5 py-2 rounded-full shadow;
 
-  /* BANNERS */
-  .banners{
-    @apply bg-white/80 bg-linear-to-br from-blue-100/60 to-blue-300/40 pt-18 pb-28 px-20;
-    .banner{
-      @apply flex! flex-row relative items-center justify-between;
-      .bannerLeft{
-        @apply flex-1 z-10 pr-10 overflow-hidden;
-        
-        h1{
-          color: $taxhelpBlue;
-          @apply text-4xl md:text-5xl font-extrabold mb-6 leading-tight drop-shadow-sm;
-        }
-
-        p{
-          color: $taxhelpBlue;
-          @apply text-lg md:text-2xl mb-8 max-w-xl;
-        }
-        
-        a{
-          background-color: $taxhelpBlue;
-          @apply inline-block hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-lg shadow transition mb-4;
-        }
+      &:hover{
+        background-color: $btnBlueHover;
       }
+    }
+    .headerAuth{
+      @apply flex items-center gap-4;
+    }
+    .headerLoginLink{
+      color: $pintekNavy;
+      transition: color .2s ease;
+      @apply cursor-pointer font-semibold text-sm;
 
-      .bannerRight {
-        @apply flex justify-center mt-10 md:mt-0 z-10 overflow-hidden;
-        width: 450px; // 👈 ADD THIS
-        height: 300px; // 👈 ADD THIS
-
-        img {
-          @apply rounded-2xl w-full max-w-md object-cover h-full;
-        }
+      &:hover{
+        color: $btnBlue;
       }
     }
   }
 
+  .heroPanel{
+    background-color: $pintekBgLight;
+    margin-top: var(--header-height, 120px);
+    min-height: calc(100dvh - var(--header-height, 120px));
+    @apply flex flex-col justify-center;
+  }
+
+  /* BANNERS */
+  .banners{
+    background-color: $pintekBgLight;
+    padding-left: clamp(20px, 5.5vw, 80px);
+    padding-right: clamp(20px, 5.5vw, 80px);
+    padding-top: clamp(10px, 2vh, 32px);
+    padding-bottom: clamp(14px, 2.5vh, 24px);
+    @apply relative overflow-hidden;
+
+    .banner{
+      @apply flex! flex-row relative items-center justify-between max-w-7xl mx-auto pb-7;
+      .bannerLeft{
+        @apply flex-1 z-10 pr-10;
+
+        .eyebrow{
+          color: $btnBlue;
+          background-color: rgba($btnBlue, .07);
+          border: 1px solid rgba($btnBlue, .2);
+          margin-bottom: clamp(10px, 1.8vh, 16px);
+          @apply inline-block text-[11px] font-bold uppercase tracking-[1.5px] px-4 py-1.5 rounded-full;
+        }
+
+        h1{
+          color: $pintekNavy;
+          letter-spacing: -1.5px;
+          font-size: clamp(28px, min(3.6vw, 5.5vh), 48px);
+          margin-bottom: clamp(10px, 1.5vh, 12px);
+          min-height: 2.15em;
+          @apply font-extrabold leading-[1.05];
+
+          .highlight{
+            color: $btnBlue;
+          }
+        }
+
+        p{
+          color: #58708f;
+          font-size: clamp(15px, 1.2vw, 17px);
+          line-height: 1.5;
+          margin-bottom: clamp(14px, 2vh, 20px);
+          min-height: 3em;
+          @apply max-w-xl;
+        }
+
+        a{
+          background-color: $btnBlue;
+          box-shadow: 0 8px 18px rgba($btnBlue, .22);
+          @apply inline-flex items-center gap-2 text-white text-sm font-semibold px-6 py-2.5 rounded-full transition;
+
+          .ctaArrow{
+            transition: transform .25s ease;
+            @apply inline-block;
+          }
+
+          &:hover{
+            background-color: $btnBlueHover;
+            transform: translateY(-2px);
+            .ctaArrow{
+              transform: translateX(4px);
+            }
+          }
+        }
+      }
+
+      .bannerRight {
+        @apply flex justify-center mt-10 md:mt-0 z-10 relative;
+        width: 480px;
+        height: 270px;
+
+        &:before{
+          content: '';
+          background-image: radial-gradient(rgba($btnBlue, .28) 1.5px, transparent 1.5px);
+          background-size: 16px 16px;
+          @apply absolute -top-6 -right-6 w-36 h-36;
+        }
+
+        &:after{
+          content: '';
+          background-image: radial-gradient(rgba($btnBlue, .28) 1.5px, transparent 1.5px);
+          background-size: 16px 16px;
+          @apply absolute -bottom-6 -left-6 w-28 h-28;
+        }
+
+        img {
+          border-radius: 24px;
+          box-shadow: 0 12px 26px rgba(7, 27, 59, .1);
+          @apply w-full max-w-2xl object-cover h-full relative z-[1];
+        }
+      }
+    }
+  }
   /* ABOUT */
   .about{
-    @apply py-16 md:pt-15 px-6 md:px-20 bg-white;
+    min-height: 100dvh;
+    padding-top: clamp(24px, 4vh, 56px);
+    padding-bottom: clamp(24px, 4vh, 56px);
+    @apply px-6 md:px-20 bg-white flex flex-col justify-center;
     .about_box{
-      @apply max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-8;
+      gap: clamp(24px, 4vw, 48px);
+      @apply max-w-6xl mx-auto flex flex-col md:flex-row items-center;
       .about_img{
-          @apply rounded-xl shadow-lg w-full max-w-xs h-55 object-cover;
+          border-radius: 24px;
+          box-shadow: 0 12px 26px rgba(7, 27, 59, .1);
+          @apply w-full max-w-xs h-55 object-cover;
       }
       h2{
-        color: $taxhelpBlue;
-        @apply text-2xl md:text-3xl font-bold mb-4;
+        color: $pintekNavy;
+        letter-spacing: -1px;
+        font-size: clamp(22px, min(2.4vw, 3.5vh), 34px);
+        @apply font-extrabold mb-0;
+
+        .highlight{
+          color: $btnBlue;
+        }
+
+        &:after{
+          content: '';
+          background-color: $btnBlue;
+          margin: clamp(8px, 1.5vh, 12px) 0 clamp(14px, 2.5vh, 24px);
+          @apply block w-10 h-1 rounded-full;
+        }
       }
       p{
-        @apply text-gray-700 text-lg mb-4;
+        color: #58708f;
+        font-size: clamp(13px, 1vw, 15px);
+        margin-bottom: clamp(8px, 1.5vh, 16px);
+        @apply leading-6;
+
+        strong{
+          color: $pintekNavy;
+        }
       }
       ul{
         @apply list-disc pl-6 text-gray-600;
+      }
+      > div > img{
+        background-color: $pintekBgLight;
+        @apply rounded-2xl p-4 mt-2 max-w-full h-auto;
       }
     }
   }
 
   .video_wrapper {
-    width: 450px;
+    width: clamp(220px, 28vw, 420px);
+    @apply relative shrink-0;
+
+    &:before{
+      content: '';
+      background-image: radial-gradient(rgba($btnBlue, .28) 1.5px, transparent 1.5px);
+      background-size: 16px 16px;
+      @apply absolute -top-6 -left-6 w-32 h-32;
+    }
+
+    video{
+      border-radius: 24px;
+      box-shadow: 0 12px 26px rgba(7, 27, 59, .1);
+      @apply relative z-[1];
+    }
     .mute_button{
-      color: $orange;
+      color: $btnBlue;
       font-weight: 700;
-      @apply cursor-pointer uppercase text-[11px];
+      @apply cursor-pointer uppercase text-[11px] relative z-[1] mt-2 block;
     }
   }
-  
+
   /* SERVICES */
   .services{
-      @apply py-12 pb-18 px-6 bg-blue-50;
+      background-color: $pintekBgLight;
+      padding-top: clamp(24px, 4vh, 48px);
+      padding-bottom: clamp(20px, 2.5vh, 36px);
+      @apply px-6 flex flex-col justify-center;
       .serviceTitle{
-        color: $taxhelpBlue;
-        @apply text-2xl md:text-3xl font-bold mb-10 text-center;
+        color: $pintekNavy;
+        letter-spacing: -1px;
+        font-size: clamp(22px, min(2.4vw, 4vh), 32px);
+        @apply font-extrabold text-center mb-0;
+
+        &:after{
+          content: '';
+          background-color: $btnBlue;
+          margin-bottom: clamp(12px, 2vh, 20px);
+          @apply block w-10 h-1 rounded-full mx-auto mt-3;
+        }
       }
       .serviceBox{
-          @apply grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto;
+          @apply grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto;
           .service{
-              @apply bg-white rounded-xl shadow p-8 flex flex-col items-center text-center;
-              img{
-                  @apply w-16 h-16 mb-4;
+              background-color: $white;
+              border: 1px solid #e3e9f1;
+              transition: all .3s ease;
+              padding: clamp(16px, 2.2vh, 22px);
+              @apply rounded-[22px] flex flex-col items-start text-left relative overflow-hidden;
+
+              &:after{
+                content: '';
+                background: linear-gradient(90deg, $btnBlue, $btnBlueLight);
+                transition: width .35s ease;
+                @apply absolute bottom-0 left-0 h-[3px] w-0;
+              }
+
+              .serviceHeader{
+                margin-bottom: clamp(10px, 1.6vh, 14px);
+                @apply flex items-center gap-3 relative z-[1];
+              }
+              .serviceIcon{
+                background: linear-gradient(135deg, $btnBlue, $btnBlueLight);
+                box-shadow: 0 8px 18px rgba($btnBlue, .3);
+                width: clamp(38px, 5.5vh, 44px);
+                height: clamp(38px, 5.5vh, 44px);
+                @apply rounded-[14px] flex items-center justify-center shrink-0;
+                img{
+                  filter: brightness(0) invert(1);
+                }
               }
               h3{
-                color: $taxhelpBlue;
-                @apply font-semibold text-lg mb-2;
+                color: $pintekNavy;
+                @apply font-bold text-[17px] mb-0;
               }
               p{
-                  @apply text-gray-600;
+                  color: #687b94;
+                  @apply text-sm leading-6 relative z-[1] mb-3;
+              }
+              .serviceList{
+                border-top: 1px solid rgba($pintekNavy, .07);
+                @apply pt-3 w-full flex flex-col gap-1.5 relative z-[1];
+                li{
+                  color: #4a5e7a;
+                  @apply text-[13px] flex items-center gap-2;
+                  &:before{
+                    content: '\2713';
+                    color: $btnBlue;
+                    background-color: $pintekBgLight2;
+                    font-size: 10px;
+                    @apply w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold shrink-0;
+                  }
+                }
+              }
+              &:hover{
+                border-color: rgba($btnBlue, .35);
+                box-shadow: 0 22px 44px rgba(7, 27, 59, .09);
+                transform: translateY(-5px);
+                &:after{
+                  @apply w-full;
+                }
               }
           }
       }
   }
 
-  /* PROMOTIONS */
-  .promos {
-    @apply pt-14 pb-18 px-6 bg-white;
-    background: linear-gradient(135deg, #d4e7ff 0%, #70a5eb 100%);
-
-    .promoTitle {
-      @apply text-2xl md:text-3xl font-bold text-blue-800 mb-10 text-center;
-    }
-
-    .promoBox {
-      @apply grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto;
-    }
-
-    .promo {
-      @apply bg-blue-50 border border-blue-200 rounded-xl shadow p-8 text-center relative;
-
-      h3 {
-        @apply text-lg font-semibold text-blue-700 mb-3;
-      }
-
-      p {
-        @apply text-gray-600 mb-4;
-      }
-
-      span {
-        @apply inline-block text-xs font-semibold bg-blue-600 text-white px-3 py-1 rounded-full;
-      }
-    }
+  .closingPanel{
+    background-color: $white;
+    min-height: 100dvh;
+    @apply flex flex-col justify-center;
   }
 
   /* TESTIMONIALS */
   .testimonials{
-    @apply pt-14 pb-18 px-6 bg-blue-50;
+    padding-top: clamp(16px, 2.5vh, 32px);
+    padding-bottom: clamp(10px, 1.5vh, 20px);
+    @apply px-6;
     h2{
-      @apply text-2xl md:text-3xl font-bold text-blue-800 mb-10 text-center;
+      color: $pintekNavy;
+      letter-spacing: -1px;
+      font-size: clamp(20px, min(2.4vw, 3.2vh), 28px);
+      @apply font-extrabold text-center mb-0;
+
+      &:after{
+        content: '';
+        background-color: $btnBlue;
+        margin: clamp(8px, 1.3vh, 12px) auto clamp(12px, 2vh, 20px);
+        @apply block w-10 h-1 rounded-full;
+      }
     }
     .testimonial_boxes{
-      @apply max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8;
+      @apply max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5;
       .testimonial_box{
-        @apply bg-white rounded-xl shadow p-8;
+        background-color: $pintekBgLight;
+        padding: clamp(14px, 2vh, 24px);
+        @apply rounded-2xl;
         p{
-          @apply text-gray-700 mb-4;
+          @apply text-gray-600 mb-2 text-sm;
         }
         strong{
-          @apply font-semibold text-blue-700;
+          color: $btnBlue;
+          @apply font-semibold text-sm;
         }
       }
     }
@@ -181,23 +377,137 @@
 
   /* CONTACT US */
   .contact_us{
-    @apply pt-14 pb-18 px-6 bg-white;
-    .contact_us_box{
-      @apply max-w-3xl mx-auto text-center;
-      h2{
-        @apply text-2xl md:text-3xl font-bold text-blue-800 mb-6;
+    padding-top: clamp(10px, 1.5vh, 24px);
+    padding-bottom: clamp(16px, 2.5vh, 32px);
+    @apply px-6;
+    .contactTitle{
+      color: $pintekNavy;
+      letter-spacing: -1px;
+      font-size: clamp(20px, min(2.4vw, 3.2vh), 28px);
+      margin-top: clamp(16px, 2.5vh, 32px);
+      @apply font-extrabold text-center mb-0;
+
+      &:after{
+        content: '';
+        background-color: $btnBlue;
+        margin: clamp(8px, 1.3vh, 12px) auto clamp(12px, 2vh, 20px);
+        @apply block w-10 h-1 rounded-full;
+      }
+    }
+    .contact_us_columns{
+      gap: clamp(16px, 2.5vw, 32px);
+      @apply max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 items-stretch;
+    }
+    .needCustomBox{
+      background-color: $white;
+      border: 1px solid #e3e9f1;
+      box-shadow: 0 10px 30px rgba(7, 27, 59, .07);
+      padding: clamp(16px, 2.5vh, 28px);
+      @apply rounded-[22px] text-left h-full flex flex-col;
+      h3{
+        color: $pintekNavy;
+        letter-spacing: -1px;
+        font-size: clamp(18px, 1.8vw, 24px);
+        @apply font-extrabold mb-0;
+
+        &:after{
+          content: '';
+          background-color: $btnBlue;
+          margin: clamp(8px, 1.3vh, 12px) 0 clamp(10px, 1.6vh, 16px);
+          @apply block w-10 h-1 rounded-full;
+        }
       }
       p{
-        @apply text-gray-700 mb-8;
+        margin-bottom: clamp(12px, 2vh, 24px);
+        @apply text-gray-600 text-sm;
+      }
+      .needCustomHighlight{
+        list-style: none;
+        margin-bottom: clamp(10px, 1.6vh, 16px);
+        @apply text-sm;
+        li{
+          color: $lightBlack;
+          @apply flex items-center gap-2;
+          &:before{
+            content: '\2713';
+            color: $btnBlue;
+            background-color: $pintekBgLight2;
+            font-size: 10px;
+            @apply w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold shrink-0;
+          }
+        }
+      }
+      .needCustomFeatures{
+        margin-bottom: clamp(12px, 2vh, 24px);
+        @apply grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm;
+        ul{
+          list-style: none;
+          @apply space-y-2;
+          li{
+            color: $lightBlack;
+            @apply flex items-start gap-2;
+            &:before{
+              content: '\2713';
+              color: $btnBlue;
+              background-color: $pintekBgLight2;
+              font-size: 10px;
+              @apply w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold shrink-0 mt-0.5;
+            }
+          }
+        }
+      }
+      .needCustomFooter{
+        border-top: 1px solid #e3e9f1;
+        margin-top: auto;
+        padding-top: clamp(12px, 2vh, 20px);
+      }
+      .note{
+        @apply text-gray-500 text-sm italic mb-0;
+      }
+    }
+    .contact_us_box{
+      background-color: $white;
+      border: 1px solid #e3e9f1;
+      box-shadow: 0 10px 30px rgba(7, 27, 59, .07);
+      padding: clamp(16px, 2.5vh, 28px);
+      @apply rounded-[22px] text-left h-full;
+      h3{
+        color: $pintekNavy;
+        letter-spacing: -1px;
+        font-size: clamp(18px, 1.8vw, 24px);
+        @apply font-extrabold mb-0;
+
+        &:after{
+          content: '';
+          background-color: $btnBlue;
+          margin: clamp(8px, 1.3vh, 12px) 0 clamp(10px, 1.6vh, 16px);
+          @apply block w-10 h-1 rounded-full;
+        }
+      }
+      p{
+        margin-bottom: clamp(12px, 2vh, 24px);
+        @apply text-gray-600 text-sm;
       }
       form{
-        @apply grid grid-cols-1 gap-6;
+        gap: clamp(10px, 1.6vh, 20px);
+        @apply grid grid-cols-1;
         input, textarea{
-          @apply p-4 rounded-lg border border-blue-200 bg-blue-50 text-gray-800;
+          padding: clamp(10px, 1.6vh, 16px);
+          background-color: $white;
+          @apply rounded-xl border border-blue-100 text-gray-800 text-sm;
+        }
+        textarea{
+          min-height: clamp(70px, 10vh, 120px);
+          resize: none;
         }
         button{
-          background-color: $taxhelpBlue;
-          @apply hover:bg-blue-700 cursor-pointer text-white font-semibold px-8 py-4 rounded-lg shadow transition;
+          background-color: $btnBlue;
+          transition: background-color .25s ease;
+          @apply cursor-pointer text-white font-semibold text-sm px-6 py-3 rounded-full shadow justify-self-center;
+
+          &:hover{
+            background-color: $btnBlueHover;
+          }
         }
       }
     }
@@ -205,28 +515,45 @@
 
   /* FOOTER */
   .footer{
-    @apply py-8 text-center text-gray-500 bg-blue-50 border-t border-blue-100 text-sm
-    flex justify-between items-center px-10;
-    p {
-      @apply m-0 text-left;
+    background-color: $pintekBgLight2;
+    @apply text-sm px-10 py-10;
+
+    .footer_top{
+      gap: clamp(24px, 4vw, 48px);
+      @apply max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4;
     }
-    .footer_links {
-      @apply flex justify-end items-center gap-6;
-      
-      a {
+    .footer_brand{
+      @apply col-span-2;
+      .footer_logo{ @apply w-36 h-auto mb-3; }
+      p{
+        max-width: 320px;
+        @apply text-gray-500 m-0;
+      }
+      .footer_copyright{
+        max-width: none;
+        margin-top: clamp(16px, 2.5vh, 24px);
+        @apply text-gray-400 text-xs;
+      }
+    }
+    .footer_col{
+      h4{
+        color: $pintekNavy;
+        letter-spacing: .5px;
+        @apply text-xs font-bold uppercase mb-3;
+      }
+      a{
         color: inherit;
         text-decoration: none;
-        font-size: 14px;
         transition: color 0.3s ease;
+        @apply block text-gray-500 mb-2;
 
-        &:hover {
-          color: #4f8ef7;
-          text-decoration: underline;
+        &:hover{
+          color: $btnBlue;
         }
       }
     }
   }
-  
+
 }
 /* REFUND POLICY */
 .refund_policy {
@@ -524,15 +851,36 @@
   }
 }
 .plansContainer{
-  @apply w-280 mx-auto relative h-full rounded-[20px] p-5 pt-8 flex flex-col mb-10;
+  background-color: $pintekBgLight;
+  min-height: 100dvh;
+  padding-top: clamp(32px, 6vh, 64px);
+  padding-bottom: clamp(32px, 6vh, 64px);
+  @apply w-full relative flex flex-col justify-center;
+
+  > .boxTitle, > .note{
+    @apply max-w-280 mx-auto w-full;
+  }
+
+  :global(.btnorange), .btnorange{
+    background-color: $accentOrange !important;
+    border-color: $accentOrange !important;
+  }
   .boxTitle{
     @apply text-center;
     h2{
-        color: $orange;
-        @apply text-3xl font-semibold tracking-tight mb-2;
+        color: $pintekNavy;
+        letter-spacing: -1px;
+        font-size: clamp(24px, 2.4vw, 32px);
+        @apply font-extrabold mb-0;
+
+        &:after{
+          content: '';
+          background-color: $btnBlue;
+          @apply block w-10 h-1 rounded-full mx-auto mt-3 mb-4;
+        }
     }
     p{
-        color: $lightBlack;
+        color: #58708f;
         @apply text-sm max-w-md mx-auto;
     }
   }
@@ -540,14 +888,15 @@
     @apply flex justify-center mt-6;
     .toggle{
         background-color: $white;
-        @apply p-1 rounded-xl flex text-sm shadow-inner;
+        border: 1px solid #e3e9f1;
+        @apply p-1 rounded-full flex text-sm;
     }
     .btn{
-        color: $blue;
-        @apply px-5 py-2 rounded-lg transition cursor-pointer;
+        color: $btnBlue;
+        @apply px-5 py-2 rounded-full transition cursor-pointer;
         &.active{
             color: $white;
-            background-color: $blue;
+            background-color: $btnBlue;
             @apply shadow font-medium;
         }
     }
@@ -557,35 +906,35 @@
         @apply grid md:grid-cols-3 gap-8 max-w-6xl mx-auto px-4 mt-10;
         .plan{
             background-color: $white;
-            border: 1px solid $lightBlue;
-            @apply rounded-2xl border p-6 flex flex-col justify-between transition hover:shadow-xl;
+            box-shadow: 0 10px 30px rgba(7, 27, 59, .07);
+            @apply rounded-[22px] p-6 flex flex-col justify-between transition hover:shadow-xl hover:-translate-y-1;
             &.active{
-                border: 1px solid $orange;
-                @apply shadow-lg scale-105;
-                .planTopDetails h3{ color: $orange; }
+                box-shadow: 0 18px 40px rgba(7, 27, 59, .12);
+                @apply md:scale-105;
+                .planTopDetails h3{ color: $accentOrange; }
             }
             .popular{
                 color: $white;
-                background-color: $orange;
+                background-color: $accentOrange;
                 @apply text-xs font-semibold px-3 py-1 rounded-full w-fit mb-3;
             }
             .planTopDetails{
                 @apply space-y-2;
                 h3{
-                    color: $blue;
-                    @apply text-xl font-semibold m-0;
+                    color: $pintekNavy;
+                    @apply text-xl font-bold m-0;
                 }
                 p{
-                    color: $lightBlack;
+                    color: #687b94;
                     @apply text-sm;
                 }
             }
             .price{
-                color: $lightBlue;
-                @apply text-3xl font-bold mt-3;
+                color: $btnBlue;
+                @apply text-3xl font-extrabold mt-3;
                 span{
-                    color: $lightBlue;
-                    @apply text-sm;
+                    color: #687b94;
+                    @apply text-sm font-normal;
                 }
             }
             .features{
@@ -640,86 +989,160 @@
             @apply text-sm space-y-1 list-decimal list-inside mt-2;
         }
     }
-    .note{
-        color: $black;
-        @apply text-xs mt-3 text-center italic;
-    }
-    .button{
-        @apply text-center;
-    }
-    .customSolutions{
-        @apply max-w-5xl mx-auto px-4 mt-18 mb-12;
-        .customSolution{
-            border: 1px solid $lightBlue;
-            background-color: $white;
-            @apply rounded-2xl p-8 shadow-sm text-center;
-            h3{
-                color: $lightBlue;
-                @apply text-xl font-semibold mb-2;
+}
+.note{
+    color: $black;
+    @apply text-xs mt-3 text-center italic;
+}
+.button{
+    @apply text-center;
+}
+.customSolutions{
+    @apply w-full;
+    .customSolution{
+        background-color: $white;
+        border: 1px solid #e3e9f1;
+        box-shadow: 0 10px 30px rgba(7, 27, 59, .07);
+        @apply rounded-[22px] p-8 text-left h-full;
+        h3{
+            color: $pintekNavy;
+            letter-spacing: -1px;
+            @apply text-2xl font-extrabold mb-0;
+
+            &:after{
+                content: '';
+                background-color: $btnBlue;
+                @apply block w-10 h-1 rounded-full mt-3 mb-5;
             }
-            p{
+        }
+        p{
+            color: $lightBlack;
+            @apply text-sm mb-6;
+        }
+        .customFeaturesHighlight{
+            list-style: none;
+            @apply text-sm mb-2;
+            li{
                 color: $lightBlack;
-                @apply text-sm max-w-xl mx-auto mb-6;
+                @apply flex items-center gap-2;
+
+                &:before{
+                    content: '\2713';
+                    color: $btnBlue;
+                    background-color: $pintekBgLight2;
+                    font-size: 10px;
+                    @apply w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold shrink-0;
+                }
             }
-            .customFeatures{
-                @apply grid md:grid-cols-2 gap-4 text-sm my-6 text-left max-w-3xl mx-auto;
-                ul{
-                    list-style: disc;
-                    li{
-                        @apply py-0.5;
-                        color: $lightBlack;
+        }
+        .customFeatures{
+            @apply grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm mb-6;
+            ul{
+                list-style: none;
+                @apply space-y-2;
+                li{
+                    color: $lightBlack;
+                    @apply flex items-start gap-2;
+
+                    &:before{
+                        content: '\2713';
+                        color: $btnBlue;
+                        background-color: $pintekBgLight2;
+                        font-size: 10px;
+                        @apply w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold shrink-0 mt-0.5;
                     }
                 }
             }
-            .button{
-                @apply w-80;
-            }
+        }
+        .button{
+            @apply w-80;
         }
     }
 }
 @media (max-width: 1024px) {
   .app {
+    .heroPanel{
+      min-height: auto;
+    }
+    .about{
+      min-height: auto;
+    }
     .banners{
-      @apply pt-20 pb-15;
+      @apply pt-10 pb-12;
       .banner{
-        @apply flex-col-reverse;
         .bannerLeft{
-          @apply text-center p-0;
-          h1{
-            @apply text-center text-3xl;
-          }
-          p{
-            @apply mx-auto;
-          }
+          @apply pr-6;
         }
         .bannerRight{
-          @apply mb-8;
+          width: 400px;
+          height: 225px;
+
+          &:before, &:after{
+            @apply hidden;
+          }
         }
       }
     }
+    .services{
+      @apply pt-6;
+    }
   }
   :global(.slick-dots) {
-    @apply -bottom-4;
+    @apply -bottom-6;
   }
 }
 @media (max-width: 768px) {
   .app {
     .topbar {
-      @apply px-4 flex flex-col items-center text-center;
+      @apply px-4 flex flex-row items-center justify-between text-center;
 
       .logo {
-        @apply w-60 mx-auto block;
+        @apply w-32;
       }
     }
     .banners{
-      @apply pt-12 px-5;
-      .bannerLeft{
-        h1{
-          @apply text-2xl;
+      @apply pt-6 pb-10;
+      .banner{
+        @apply flex-col-reverse;
+        .bannerLeft{
+          @apply text-center p-0;
+          .eyebrow{
+            @apply mb-4;
+          }
+          h1{
+            font-size: 28px;
+            @apply text-center;
+          }
+          p{
+            @apply mx-auto mb-6;
+          }
+        }
+        .bannerRight{
+          width: 320px;
+          height: 180px;
+          @apply mt-0! mb-4 mx-auto;
         }
       }
-      .bannerRight{
-        @apply mt-0! rounded-[20px] w-full!;
+    }
+    .services{
+      @apply pt-6 pb-12 px-5;
+      .serviceBox{
+        @apply gap-4;
+        .service{
+          @apply p-6;
+        }
+      }
+    }
+    .about{
+      .about_box{
+        @apply text-center;
+        h2{
+          @apply text-center;
+
+          &:after{
+            @apply mx-auto;
+          }
+        }
       }
     }
   }
