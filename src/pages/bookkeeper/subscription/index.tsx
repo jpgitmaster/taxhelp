@@ -116,16 +116,16 @@ const ManageSubscription_V = () => {
             onDelete={handleDeleteAddress}
             onAddNew={startAddAddress}
           />
-          {!isFree && (
-            <CancelSubscriptionCard
-              plan={subscription?.plan}
-              expiresAt={subscription?.expires_at}
-              pending={cancelSubscription.isPending}
-              scss={scss}
-              onCancel={handleCancel}
-            />
-          )}
         </section>
+        {!isFree && (
+          <CancelSubscriptionCard
+            plan={subscription?.plan}
+            expiresAt={subscription?.expires_at}
+            pending={cancelSubscription.isPending}
+            scss={scss}
+            onCancel={handleCancel}
+          />
+        )}
         <BillingAddressModal
           open={editingAddressId !== null}
           mode={editingAddressId === 'new' ? 'new' : 'edit'}

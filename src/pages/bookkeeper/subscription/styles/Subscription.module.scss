@@ -61,6 +61,13 @@
     @apply text-center;
 }
 
+.cancelSubscriptionRow{
+    @apply flex justify-center mt-8 mb-4;
+    .button{
+        @apply w-60;
+    }
+}
+
 .cards.plantop{
     @apply justify-normal gap-5;
     .planbox{
@@ -70,12 +77,6 @@
         @apply p-5 rounded-2xl my-5 h-full relative;
         &.blue{
             border: 1px solid $lightBlue;
-        }
-        &.red{
-            border: 1px solid $red;
-            h2{
-                color: $red;
-            }
         }
         h2{
             color: $blue;

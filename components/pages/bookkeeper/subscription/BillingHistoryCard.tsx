@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import SubscriptionCard from './SubscriptionCard'
 import ColumnFilterTable, { ColumnFilterTableColumn } from '@/components/reusables/ColumnFilterTable'
 import { Payment } from '@/controllers/subscriptions/types'
@@ -49,13 +49,16 @@ export default function BillingHistoryCard(props: {
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize, setPageSize] = useState(10)
     const [tableWidth, setTableWidth] = useState(0)
+    const wrapperRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        if (typeof window === 'undefined') return
-        const updateWidth = () => setTableWidth(window.innerWidth - 400)
-        updateWidth()
-        window.addEventListener('resize', updateWidth)
-        return () => window.removeEventListener('resize', updateWidth)
+        const el = wrapperRef.current
+        if (!el) return
+        const observer = new ResizeObserver((entries) => {
+            setTableWidth(entries[0].contentRect.width)
+        })
+        observer.observe(el)
+        return () => observer.disconnect()
     }, [])
 
     const total = payments?.length ?? 0
@@ -79,26 +82,28 @@ export default function BillingHistoryCard(props: {
             scss={scss}
             title='Billing History'
         >
-            {total > 0 ? (
-                <ColumnFilterTable
-                    rowKey='id'
-                    columns={statusColumns}
-                    dataSource={pageData}
-                    width={tableWidth}
-                    pagination={{
-                        current: currentPage,
-                        pageSize,
-                        total,
-                        onChange: setCurrentPage,
-                        onPageSizeChange: (size) => {
-                            setPageSize(size)
-                            setCurrentPage(1)
-                        },
-                    }}
-                />
-            ) : (
-                <p className={scss.emptyState}>No billing history yet.</p>
-            )}
+            <div ref={wrapperRef}>
+                {total > 0 ? (
+                    <ColumnFilterTable
+                        rowKey='id'
+                        columns={statusColumns}
+                        dataSource={pageData}
+                        width={tableWidth}
+                        pagination={{
+                            current: currentPage,
+                            pageSize,
+                            total,
+                            onChange: setCurrentPage,
+                            onPageSizeChange: (size) => {
+                                setPageSize(size)
+                                setCurrentPage(1)
+                            },
+                        }}
+                    />
+                ) : (
+                    <p className={scss.emptyState}>No billing history yet.</p>
+                )}
+            </div>
         </SubscriptionCard>
     )
 }

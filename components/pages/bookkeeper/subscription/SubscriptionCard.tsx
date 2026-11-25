@@ -6,15 +6,14 @@ export default function SubscriptionCard(props: {
     badge?: ReactNode
     description?: ReactNode
     action?: ReactNode
-    variant?: 'blue' | 'red'
     scss: { [key: string]: string }
     children?: ReactNode
 }) {
-    const { icon, title, badge, description, action, variant = 'blue', scss, children } = props
+    const { icon, title, badge, description, action, scss, children } = props
 
     return (
         <div className={scss.card+' '+scss.w100}>
-            <div className={scss.planbox+' '+scss[variant]}>
+            <div className={scss.planbox+' '+scss.blue}>
                 <div className={scss.planHeaderRow}>
                     <div className={scss.planHeader}>
                         {icon && (

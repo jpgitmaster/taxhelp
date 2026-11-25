@@ -21,6 +21,7 @@ export default function PlanSummaryCard(props: {
                     {subscription?.status}
                 </span>
             }
+            description='Your current subscription plan and billing status.'
             action={
                 <Link href='/bookkeeper/subscription/plans' className={scss.button+' '+scss.btnblue}>
                     Change Plan
