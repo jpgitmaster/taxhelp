@@ -9,13 +9,14 @@ interface PropsDefinition {
     caption: string;
     scss: { [key: string]: string };
     currentPlan?: string;
+    hideCustomSolutions?: boolean;
 }
 
-const SubscriptionPlans = ({ title, caption, scss, currentPlan }: PropsDefinition) => {
+const SubscriptionPlans = ({ title, caption, scss, currentPlan, hideCustomSolutions }: PropsDefinition) => {
     const [billing, setBilling] = useState<'monthly' | 'yearly'>('monthly')
 
     return (
-        <div className={scss.box+' '+scss.plansContainer}>
+        <div id="pricing" className={scss.box+' '+scss.plansContainer}>
             {/* Header */}
             <div className={scss.boxTitle}>
                 <h2>
@@ -46,7 +47,7 @@ const SubscriptionPlans = ({ title, caption, scss, currentPlan }: PropsDefinitio
                 ))}
             </div>
 
-            <CustomSolutions scss={scss} />
+            {!hideCustomSolutions && <CustomSolutions scss={scss} />}
         </div>
     );
 };
