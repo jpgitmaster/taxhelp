@@ -19,17 +19,19 @@ export default function CancelSubscriptionCard(props: {
     return (
         <div className={scss.card+' '+scss.w100}>
             <div className={scss.planbox+' '+scss.red}>
-                <h2>
-                    Cancel Subscription
-                </h2>
-                <button
-                    type='button'
-                    onClick={() => setOpen(true)}
-                    disabled={pending}
-                    className={scss.button+' '+scss.btnred}
-                >
-                    {pending ? 'Cancelling...' : 'Cancel Subscription'}
-                </button>
+                <div className={scss.planHeaderRow}>
+                    <h2>
+                        Cancel Subscription
+                    </h2>
+                    <button
+                        type='button'
+                        onClick={() => setOpen(true)}
+                        disabled={pending}
+                        className={scss.button+' '+scss.btnred}
+                    >
+                        {pending ? 'Cancelling...' : 'Cancel Subscription'}
+                    </button>
+                </div>
             </div>
 
             <CancelSubscriptionModal

@@ -14,12 +14,23 @@ export default function BillingAddressesCard(props: {
     return (
         <div className={scss.card+' '+scss.w100}>
             <div className={scss.planbox+' '+scss.blue}>
-                <h2>
-                    Billing Addresses
-                </h2>
-                <p className={scss.billingAddressNote}>
-                    Used on your payment receipts. The default address is also sent to PayMongo at checkout.
-                </p>
+                <div className={scss.planHeaderRow}>
+                    <div>
+                        <h2>
+                            Billing Addresses
+                        </h2>
+                        <p className={scss.billingAddressNote}>
+                            Used on your payment receipts. The default address is also sent to PayMongo at checkout.
+                        </p>
+                    </div>
+                    <button
+                        type='button'
+                        onClick={onAddNew}
+                        className={scss.button+' '+scss.btnblue}
+                    >
+                        Add New Address
+                    </button>
+                </div>
 
                 {addresses && addresses.length > 0 ? (
                     <ul className={scss.addressList}>
@@ -68,14 +79,6 @@ export default function BillingAddressesCard(props: {
                 ) : (
                     <p className={scss.emptyState}>No billing address set.</p>
                 )}
-
-                <button
-                    type='button'
-                    onClick={onAddNew}
-                    className={scss.button+' '+scss.btnblue}
-                >
-                    Add New Address
-                </button>
             </div>
         </div>
     )
