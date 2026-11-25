@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import SubscriptionCard from './SubscriptionCard'
 import CancelSubscriptionModal from './CancelSubscriptionModal'
 
 export default function CancelSubscriptionCard(props: {
@@ -17,23 +18,21 @@ export default function CancelSubscriptionCard(props: {
     }
 
     return (
-        <div className={scss.card+' '+scss.w100}>
-            <div className={scss.planbox+' '+scss.red}>
-                <div className={scss.planHeaderRow}>
-                    <h2>
-                        Cancel Subscription
-                    </h2>
-                    <button
-                        type='button'
-                        onClick={() => setOpen(true)}
-                        disabled={pending}
-                        className={scss.button+' '+scss.btnred}
-                    >
-                        {pending ? 'Cancelling...' : 'Cancel Subscription'}
-                    </button>
-                </div>
-            </div>
-
+        <SubscriptionCard
+            scss={scss}
+            variant='red'
+            title='Cancel Subscription'
+            action={
+                <button
+                    type='button'
+                    onClick={() => setOpen(true)}
+                    disabled={pending}
+                    className={scss.button+' '+scss.btnred}
+                >
+                    {pending ? 'Cancelling...' : 'Cancel Subscription'}
+                </button>
+            }
+        >
             <CancelSubscriptionModal
                 open={open}
                 plan={plan}
@@ -42,6 +41,6 @@ export default function CancelSubscriptionCard(props: {
                 onConfirm={handleConfirm}
                 onCancel={() => setOpen(false)}
             />
-        </div>
+        </SubscriptionCard>
     )
 }

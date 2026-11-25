@@ -94,13 +94,25 @@
         .planHeader{
             @apply flex items-center gap-3;
         }
+        .titleRow{
+            @apply flex items-center gap-2;
+        }
+        .cardDescription{
+            color: $lightBlack;
+            @apply text-sm mt-1;
+        }
+        .cardDivider{
+            border: none;
+            border-top: 1px solid rgba($gray, .5);
+            @apply my-3;
+        }
         .planIcon{
             background: linear-gradient(135deg, $lightBlue, $blue);
             color: $white;
             @apply w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0 shadow-sm;
         }
         .statusBadge{
-            @apply inline-block text-xs font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full mt-1;
+            @apply inline-block text-xs font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full;
             &.statusActive{
                 color: $border_green;
                 background-color: rgba($green, .12);
@@ -117,10 +129,6 @@
                 color: $lightBlack;
                 @apply text-sm font-normal;
             }
-        }
-        .billingAddressNote{
-            color: $darkgray;
-            @apply text-xs mb-3;
         }
         .addressList{
             @apply flex flex-col gap-3 mt-2;
@@ -150,9 +158,8 @@
             }
         }
         .planStats{
-            @apply grid gap-6 mt-3 pt-3 w-full;
+            @apply grid gap-6 w-full;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            border-top: 1px solid rgba($gray, .5);
         }
         .planStat{
             @apply flex flex-col items-start text-left gap-1;
@@ -169,42 +176,19 @@
             color: $darkgray;
             @apply text-sm mt-3 italic;
         }
-        .billingTableWrapper{
-            @apply w-full overflow-x-auto mt-4;
-        }
-        .billingTable{
-            @apply w-full min-w-150 text-sm border-collapse;
-            thead{
-                color: $darkgray;
-                th{
-                    @apply text-left pb-2 font-medium text-xs uppercase tracking-wide;
-                }
+        .statusPill{
+            @apply inline-block text-xs font-semibold px-2 py-0.5 rounded-full;
+            &.status_paid{
+                color: $border_green;
+                background-color: rgba($green, .12);
             }
-            tbody{
-                tr{
-                    border-top: 1px solid rgba($gray, .5);
-                    &:hover{
-                        background-color: rgba($lightGray, .6);
-                    }
-                    td{
-                        @apply py-3;
-                    }
-                }
+            &.status_pending{
+                color: $border_yellow;
+                background-color: rgba($yellow, .15);
             }
-            .statusPill{
-                @apply inline-block text-xs font-semibold px-2 py-0.5 rounded-full;
-                &.status_paid{
-                    color: $border_green;
-                    background-color: rgba($green, .12);
-                }
-                &.status_pending{
-                    color: $border_yellow;
-                    background-color: rgba($yellow, .15);
-                }
-                &.status_failed, &.status_cancelled{
-                    color: $border_red;
-                    background-color: rgba($red, .1);
-                }
+            &.status_failed, &.status_cancelled{
+                color: $border_red;
+                background-color: rgba($red, .1);
             }
         }
     }
