@@ -84,18 +84,18 @@ const useRegister = () => {
 
     const handleRegisterUser = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
-        setStatus({...status, loader: true})
+        setStatus(prev => ({...prev, loader: true}))
         const {
             validation_errors,
             validation_has_error,
         } = ValidatorV3(fieldValidations, user.userObj)
         if (validation_has_error) {
             const timer = setTimeout(() => {
-                setUser({
-                    ...user,
+                setUser(prev => ({
+                    ...prev,
                     userErr: validation_errors
-                })
-                setStatus({...status, loader: false})
+                }))
+                setStatus(prev => ({...prev, loader: false}))
                 return false
             }, 500)
             return () => clearTimeout(timer)
@@ -119,11 +119,12 @@ const useRegister = () => {
             },
             onError: (err) => {
                 const backendErrors = err?.response?.data?.errors
+                const hasFieldError = backendErrors?.email || backendErrors?.password || backendErrors?.confirm_password
 
                 setUser(prev => ({
                     ...prev,
                     userErr: {
-                        email: backendErrors?.email || '',
+                        email: backendErrors?.email || (!hasFieldError ? 'Something went wrong. Please try again.' : ''),
                         password: backendErrors?.password || '',
                         confirmPassword: backendErrors?.confirm_password || '',
                     }

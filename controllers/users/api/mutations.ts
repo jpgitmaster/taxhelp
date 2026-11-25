@@ -99,7 +99,12 @@ const useMutationUsers = () => {
         },
     })
 
-    const verifyUserMutation = useMutation({
+    const verifyUserMutation = useMutation<
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        any,
+        AxiosError<{ message?: string }>,
+        string
+    >({
         mutationFn: async (token: string) => {
             const res = await api.post(`/api/${apiVersion}/auth/verify-email`, { token });
             return res.data;

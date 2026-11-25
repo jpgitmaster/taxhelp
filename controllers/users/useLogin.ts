@@ -41,18 +41,18 @@ const useLogin = () => {
     }
     const handleForgotPassword = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
-        setStatus({...status, loader: true})
+        setStatus(prev => ({...prev, loader: true}))
         const {
             validation_errors,
             validation_has_error,
         } = ValidatorV3(fieldValidations, user.userObj)
         if (validation_has_error) {
             const timer = setTimeout(() => {
-                setUser({
-                    ...user,
+                setUser(prev => ({
+                    ...prev,
                     userErr: validation_errors
-                })
-                setStatus({...status, loader: false})
+                }))
+                setStatus(prev => ({...prev, loader: false}))
                 return false
             }, 500)
             return () => clearTimeout(timer)
@@ -69,12 +69,22 @@ const useLogin = () => {
                     }));
                 }, 500)
             },
+            onError: () => {
+                setUser(prev => ({
+                    ...prev,
+                    userErr: {
+                        ...(prev.userErr || {}),
+                        email: 'We couldn’t find an account with that email'
+                    }
+                }))
+                setStatus(prev => ({...prev, loader: false}))
+            },
         })
     }
 
     const handleUserLogin = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
-        setStatus({...status, loader: true})
+        setStatus(prev => ({...prev, loader: true}))
         const {
             validation_errors,
             validation_has_error,
@@ -84,11 +94,11 @@ const useLogin = () => {
         }, user.userObj)
         if (validation_has_error) {
             const timer = setTimeout(() => {
-                setUser({
-                    ...user,
+                setUser(prev => ({
+                    ...prev,
                     userErr: validation_errors
-                })
-                setStatus({...status, loader: false})
+                }))
+                setStatus(prev => ({...prev, loader: false}))
                 return false
             }, 500)
             return () => clearTimeout(timer)
@@ -98,7 +108,7 @@ const useLogin = () => {
         loginUserMutation.mutate(user.userObj,{
             onSuccess: async (res) => {
                 const { id, email, token_type, access_token, expires_in, refresh_token } = res.user
-                await signIn('credentials', {
+                const result = await signIn('credentials', {
                     id: id,
                     email: email,
                     redirect: false,
@@ -108,20 +118,29 @@ const useLogin = () => {
                     accessToken: access_token,
                 });
 
+                if (!result?.ok) {
+                    setStatus(prev => ({
+                        ...prev,
+                        loader: false,
+                        message: 'Login failed',
+                        submessage: 'Something went wrong while signing you in. Please try again.'
+                    }))
+                    return
+                }
+
                 // optionally refetch user after login
                 router.push('/bookkeeper/dashboard');
             },
-            onError: (error) => {
-                console.log(error)
+            onError: () => {
                 setUser(prev => ({
                     ...prev,
                     userErr: {
                         ...(prev.userErr || {}),
                         email: 'Invalid email or password',
-                        password: 'Please contact TaxHelp Administrator'
+                        password: 'Invalid email or password'
                     }
                 }));
-                setStatus({...status, loader: false})
+                setStatus(prev => ({...prev, loader: false}))
             }
         })
     }
