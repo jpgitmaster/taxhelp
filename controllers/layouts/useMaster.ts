@@ -20,6 +20,7 @@ const useMaster = () => {
     const [expandedKey, setExpandedKey] = useState<string | null>(null)
     const [suppressDrawerTransition, setSuppressDrawerTransition] = useState(true)
     const wasMobileViewport = useRef(false)
+    const bodyRef = useRef<HTMLDivElement>(null)
 
     const activeLink = useMemo(
         () => pathname?.split('/') ?? [],
@@ -227,6 +228,11 @@ const useMaster = () => {
         setIsDrawerOpen(false)
     }, [pathname])
 
+    // Scroll the content area back to the top on every route change
+    useEffect(() => {
+        bodyRef.current?.scrollTo(0, 0)
+    }, [pathname])
+
     // Automatically expand the parent matching the current route
     useEffect(() => {
         if (!isUserReady) return
@@ -245,6 +251,7 @@ const useMaster = () => {
 
     return {
         ref,
+        bodyRef,
         user,
         appLinks,
         isCollapsed,

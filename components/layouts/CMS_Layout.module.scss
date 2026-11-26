@@ -391,6 +391,48 @@ body, html{
                 @apply pt-5 pb-15;
             }
         }
+        .appBodyContent{
+            @apply min-h-full;
+        }
+        .appFooter{
+            background-color: #eaf2ff;
+            @apply text-sm px-10 py-8 mt-10 -mx-5 -mb-5;
+            .appFooterTop{
+                gap: clamp(24px, 4vw, 48px);
+                @apply max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4;
+            }
+            .appFooterBrand{
+                @apply col-span-2;
+                .appFooterLogo{
+                    @apply w-36 h-auto mb-3;
+                }
+                p{
+                    max-width: 320px;
+                    @apply text-gray-500 m-0;
+                }
+                .appFooterCopyright{
+                    max-width: none;
+                    @apply text-gray-400 text-xs mt-4;
+                }
+            }
+            .appFooterCol{
+                @apply md:col-start-4;
+                h4{
+                    color: $pintekNavy;
+                    letter-spacing: .5px;
+                    @apply text-xs font-bold uppercase mb-3;
+                }
+                a{
+                    color: inherit;
+                    text-decoration: none;
+                    transition: color .2s ease;
+                    @apply block text-gray-500 mb-2;
+                    &:hover{
+                        color: $btnBlue;
+                    }
+                }
+            }
+        }
         .cards{
             .cardBox{
                 // border: 1px solid $blue;

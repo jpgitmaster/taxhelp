@@ -2,6 +2,7 @@ import { FC } from 'react'
 import scss from './CMS_Layout.module.scss'
 import SidebarNav from './SidebarNav'
 import AppHeader from './AppHeader'
+import AppFooter from './AppFooter'
 import SidebarBrand from './SidebarBrand'
 import useMaster from '@/controllers/layouts/useMaster'
 import { MasterProps } from '@/controllers/layouts/types/cms_types'
@@ -9,6 +10,7 @@ import { MasterProps } from '@/controllers/layouts/types/cms_types'
 const CMS_Layout: FC<MasterProps> = ({ children, spacious }) => {
   const {
     ref,
+    bodyRef,
     user,
     appLinks,
     isCollapsed,
@@ -59,8 +61,11 @@ const CMS_Layout: FC<MasterProps> = ({ children, spacious }) => {
           onToggleSidebar={handleExpand}
           onLogout={userLogout}
         />
-        <div className={scss.appBody + (spacious ? ' ' + scss.appBodySpacious : '')}>
-          {children}
+        <div ref={bodyRef} className={scss.appBody + (spacious ? ' ' + scss.appBodySpacious : '')}>
+          <div className={scss.appBodyContent}>
+            {children}
+          </div>
+          <AppFooter scss={scss} />
         </div>
       </main>
     </div>
