@@ -13,9 +13,13 @@ const useMaster = () => {
     const { data: user } = getUser()
     const isUserReady = !!user?.app_type
 
-    const [isMobile, setIsMobile] = useState(false)
+    const [isMobileViewport, setIsMobileViewport] = useState(false)
+    const [isCollapsed, setIsCollapsed] = useState(false)
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const [isPageLoad, setIsPageLoad] = useState(false)
     const [expandedKey, setExpandedKey] = useState<string | null>(null)
+    const [suppressDrawerTransition, setSuppressDrawerTransition] = useState(true)
+    const wasMobileViewport = useRef(false)
 
     const activeLink = useMemo(
         () => pathname?.split('/') ?? [],
@@ -27,18 +31,63 @@ const useMaster = () => {
         return pathname === url || pathname.startsWith(`${url}/`)
     }
 
+    const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+    const clearCloseTimer = () => {
+        if (closeTimer.current) {
+            clearTimeout(closeTimer.current)
+            closeTimer.current = null
+        }
+    }
+
     const handleExpand = () => {
-        setIsMobile(prev => !prev)
+        clearCloseTimer()
+        if (isMobileViewport) {
+            setIsDrawerOpen(prev => {
+                const next = !prev
+                if (!next) setExpandedKey(null)
+                return next
+            })
+        } else {
+            setIsCollapsed(prev => {
+                const next = !prev
+                if (next) setExpandedKey(null)
+                return next
+            })
+        }
+    }
+
+    const closeDrawer = () => {
+        clearCloseTimer()
+        setIsDrawerOpen(false)
+        setExpandedKey(null)
     }
 
     const handleShowSublinks = (
         nav: NavLink,
-        indx: number,
+        _indx: number,
         click?: string
     ) => {
-        if (!(isMobile || click === 'withoutLink')) return
+        if (click !== 'withoutLink') return
 
+        clearCloseTimer()
         setExpandedKey(prev => prev === nav.key ? null : nav.key)
+    }
+
+    const isIconRail = isCollapsed && !isMobileViewport
+
+    const handleSublinkMouseEnter = (nav: NavLink) => {
+        if (!isIconRail || !nav.children?.length) return
+        clearCloseTimer()
+        setExpandedKey(nav.key)
+    }
+
+    const handleSublinkMouseLeave = (nav: NavLink) => {
+        if (!isIconRail) return
+        clearCloseTimer()
+        closeTimer.current = setTimeout(() => {
+            setExpandedKey(prev => prev === nav.key ? null : prev)
+        }, 300)
     }
 
     const useOutsideClick = (callback: () => void) => {
@@ -93,14 +142,90 @@ const useMaster = () => {
         })
     }, [isUserReady, user?.app_type, pathname, expandedKey])
 
-    useEffect(() => {
-        if (typeof window !== 'undefined' && window.innerWidth < 800) {
-            setIsMobile(true)
+    const breadcrumb = useMemo(() => {
+        if (pathname?.startsWith('/bookkeeper/profile')) {
+            return {
+                icon: '/svgs/header/profile.svg',
+                items: [{ label: 'Profile', url: undefined }],
+            }
         }
 
-        const timer = setTimeout(() => setIsPageLoad(true), 100)
-        return () => clearTimeout(timer)
+        if (pathname?.startsWith('/bookkeeper/subscription')) {
+            return {
+                icon: '/svgs/header/subscription.svg',
+                items: [{ label: 'Subscription', url: undefined }],
+            }
+        }
+
+        const activeParent = appLinks.find(link => link.routeActive)
+        const activeChild = activeParent?.children?.find(child => child.active)
+
+        if (activeParent) {
+            const items = [
+                { label: activeParent.name, url: activeParent.url },
+                ...(activeChild ? [{ label: activeChild.name, url: activeChild.url }] : []),
+            ]
+            return { icon: `/svgs/master/${activeParent.icon}`, items }
+        }
+
+        const segments = (pathname ?? '').split('/').filter(Boolean)
+        const last = segments[segments.length - 1] ?? ''
+        const decoded = decodeURIComponent(last)
+        const clean = decoded.startsWith('[') && decoded.endsWith(']')
+            ? decoded.slice(1, -1)
+            : decoded
+
+        const label = clean
+            .replace(/_/g, ' ')
+            .replace(/-/g, ' ')
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ')
+
+        return { icon: undefined, items: [{ label, url: undefined }] }
+    }, [appLinks, pathname])
+
+    useEffect(() => {
+        return () => clearCloseTimer()
     }, [])
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return
+
+        const checkViewport = () => {
+            const mobile = window.innerWidth < 800
+
+            if (mobile && !wasMobileViewport.current) {
+                // Entering mobile: snap the drawer shut instantly, no slide animation.
+                setSuppressDrawerTransition(true)
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => setSuppressDrawerTransition(false))
+                })
+            }
+            wasMobileViewport.current = mobile
+
+            setIsMobileViewport(mobile)
+            if (mobile) {
+                setIsCollapsed(false)
+                setIsDrawerOpen(false)
+                setExpandedKey(null)
+                clearCloseTimer()
+            }
+        }
+        checkViewport()
+        window.addEventListener('resize', checkViewport)
+
+        const timer = setTimeout(() => setIsPageLoad(true), 100)
+        return () => {
+            window.removeEventListener('resize', checkViewport)
+            clearTimeout(timer)
+        }
+    }, [])
+
+    // Close the mobile drawer whenever the route changes
+    useEffect(() => {
+        setIsDrawerOpen(false)
+    }, [pathname])
 
     // Automatically expand the parent matching the current route
     useEffect(() => {
@@ -122,14 +247,21 @@ const useMaster = () => {
         ref,
         user,
         appLinks,
-        isMobile,
+        isCollapsed,
+        isDrawerOpen,
+        isMobileViewport,
+        suppressDrawerTransition,
+        breadcrumb,
         isPageLoad,
         activeLink,
         isUserReady,
         userLogout,
+        closeDrawer,
         handleExpand,
         handleHeaderClick,
         handleShowSublinks,
+        handleSublinkMouseEnter,
+        handleSublinkMouseLeave,
     }
 }
 
