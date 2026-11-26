@@ -2,12 +2,32 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useEffect, type ReactElement } from 'react';
 import { getSession } from 'next-auth/react';
 import scss from '@/styles/Landing.module.scss';
+import Footer_V from '@/components/pages/landing/footer';
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import type { NextPageWithLayout } from '@/pages/_app';
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types';
 
-const TermsOfService = () => {
+const TermsOfService: NextPageWithLayout<PageProps> = ({ session }) => {
+  const isLoggedIn = !!session?.user
+
+  useEffect(() => {
+    const header = document.querySelector('header')
+    if (!header) return
+
+    const setHeaderHeight = () => {
+      document.documentElement.style.setProperty('--header-height', `${header.getBoundingClientRect().height}px`)
+    }
+
+    setHeaderHeight()
+    const observer = new ResizeObserver(setHeaderHeight)
+    observer.observe(header)
+
+    return () => observer.disconnect()
+  }, []);
+
   return (
     <>
       <Head>
@@ -351,13 +371,6 @@ const TermsOfService = () => {
                   of Service, please contact our team
                   through our Contact Us page.
                 </p>
-
-                <Link
-                  href="/#contactus"
-                  className={scss.policy_contact_button}
-                >
-                  Contact TaxHelp →
-                </Link>
               </section>
 
             </div>
@@ -369,35 +382,15 @@ const TermsOfService = () => {
                 accounting and compliance needs.
               </p>
 
-              <Link href="/">
-                ← Return to Homepage
+              <Link href={isLoggedIn ? '/bookkeeper/dashboard' : '/'}>
+                ← Return to {isLoggedIn ? 'Dashboard' : 'Homepage'}
               </Link>
             </div>
 
           </div>
         </main>
 
-        {/* FOOTER */}
-        <footer className={scss.footer}>
-          <p>
-            &copy; {new Date().getFullYear()} TaxHelp Accounting Firm.
-            All rights reserved.
-          </p>
-
-          <div className={scss.footer_links}>
-            <Link href="/refund-policy">
-              Refund Policies
-            </Link>
-
-            <Link href="/terms-of-service">
-              Terms of Service
-            </Link>
-
-            <Link href="/privacy-policy">
-              Privacy Policies
-            </Link>
-          </div>
-        </footer>
+        <Footer_V scss={scss} hideCompany={isLoggedIn} />
 
       </div>
     </>
@@ -408,18 +401,11 @@ export const getServerSideProps: GetServerSideProps<PageProps> =
   async (context: GetServerSidePropsContext) => {
     const session = await getSession(context) as Session;
 
-    if (session?.user) {
-      return {
-        redirect: {
-          destination: '/bookkeeper/dashboard',
-          permanent: false,
-        },
-      };
-    }
-
     return {
       props: { session },
     };
   };
+
+TermsOfService.getLayout = (page: ReactElement) => page;
 
 export default TermsOfService;
