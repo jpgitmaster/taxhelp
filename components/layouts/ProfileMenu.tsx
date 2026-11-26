@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Dropdown } from 'antd'
@@ -37,11 +38,15 @@ const getFullName = (user?: ProfileUser | null) => {
 const ProfileMenu = ({ scss, user, onLogout }: PropsDefinition) => {
     const initials = getInitials(user)
     const fullName = getFullName(user)
+    const [open, setOpen] = useState(false)
+    const closeMenu = () => setOpen(false)
 
     return (
         <Dropdown
             placement='bottomRight'
             trigger={['click']}
+            open={open}
+            onOpenChange={setOpen}
             popupRender={() => (
                 <div className={scss.profileCard}>
                     <div className={scss.profileCardHeader}>
@@ -59,11 +64,11 @@ const ProfileMenu = ({ scss, user, onLogout }: PropsDefinition) => {
 
                     <hr className={scss.profileCardDivider} />
 
-                    <Link href='/bookkeeper/profile/edit' className={scss.profileCardItem}>
+                    <Link href='/bookkeeper/profile/edit' className={scss.profileCardItem} onClick={closeMenu}>
                         <Image src='/svgs/header/profile.svg' alt='' width={16} height={16} unoptimized={true} />
                         Profile
                     </Link>
-                    <Link href='/bookkeeper/subscription' className={scss.profileCardItem}>
+                    <Link href='/bookkeeper/subscription' className={scss.profileCardItem} onClick={closeMenu}>
                         <svg viewBox='0 0 24 24' width='16' height='16' fill='currentColor'>
                             <path d='M21 4H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H3v-6h18v6zm0-10H3V6h18v2z' />
                         </svg>
@@ -72,7 +77,14 @@ const ProfileMenu = ({ scss, user, onLogout }: PropsDefinition) => {
 
                     <hr className={scss.profileCardDivider} />
 
-                    <button type='button' className={scss.profileCardItem + ' ' + scss.logoutItem} onClick={onLogout}>
+                    <button
+                        type='button'
+                        className={scss.profileCardItem + ' ' + scss.logoutItem}
+                        onClick={() => {
+                            closeMenu()
+                            onLogout()
+                        }}
+                    >
                         <Image src='/svgs/header/logout.svg' alt='' width={16} height={16} unoptimized={true} />
                         Logout
                     </button>
