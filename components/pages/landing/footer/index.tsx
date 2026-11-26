@@ -3,9 +3,10 @@ import Image from 'next/image'
 
 interface PropsDefinition {
     scss: { [key: string]: string }
+    hideCompany?: boolean
 }
 
-const Footer_V = ({ scss }: PropsDefinition) => {
+const Footer_V = ({ scss, hideCompany }: PropsDefinition) => {
     return (
         <footer className={scss.footer}>
             <div className={scss.footer_top}>
@@ -19,15 +20,17 @@ const Footer_V = ({ scss }: PropsDefinition) => {
                     </p>
                 </div>
 
-                <div className={scss.footer_col}>
-                    <h4>Company</h4>
-                    <Link href="#about">About</Link>
-                    <Link href="#services">Services</Link>
-                    <Link href="#pricing">Pricing</Link>
-                    <Link href="#contactus">Contact Us</Link>
-                </div>
+                {!hideCompany && (
+                    <div className={scss.footer_col}>
+                        <h4>Company</h4>
+                        <Link href="#about">About</Link>
+                        <Link href="#services">Services</Link>
+                        <Link href="#pricing">Pricing</Link>
+                        <Link href="#contactus">Contact Us</Link>
+                    </div>
+                )}
 
-                <div className={scss.footer_col}>
+                <div className={scss.footer_col + (hideCompany ? ' ' + scss.footer_colPolicies : '')}>
                     <h4>Policies</h4>
                     <Link href="/refund-policy">Refund Policies</Link>
                     <Link href="/terms-of-service">Terms of Service</Link>

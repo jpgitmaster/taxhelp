@@ -552,12 +552,16 @@ $pintekBgLight2: #eaf2ff;
         }
       }
     }
+    .footer_colPolicies{
+      @apply md:col-start-4;
+    }
   }
 
 }
 /* REFUND POLICY */
 .refund_policy {
   @apply flex-1 py-12 md:py-16 px-5 md:px-10;
+  padding-top: calc(var(--header-height, 120px) + 3rem);
   background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
 
   .policy_container {
@@ -649,6 +653,7 @@ $pintekBgLight2: #eaf2ff;
 /* TERMS OF SERVICE */
 .terms_policy {
   @apply flex-1 py-12 md:py-16 px-5 md:px-10;
+  padding-top: calc(var(--header-height, 120px) + 3rem);
   background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
 
   .policy_container {
@@ -747,6 +752,7 @@ $pintekBgLight2: #eaf2ff;
 /* PRIVACY POLICY */
 .privacy_policy {
   @apply flex-1 py-12 md:py-16 px-5 md:px-10;
+  padding-top: calc(var(--header-height, 120px) + 3rem);
   background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
 
   .policy_container {
