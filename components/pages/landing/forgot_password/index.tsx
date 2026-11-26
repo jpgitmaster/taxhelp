@@ -1,10 +1,10 @@
 import Link from 'next/link';
-import { Modal } from 'antd';
+import Image from 'next/image';
 import useLogin from '@/controllers/users/useLogin';
 import scss from './styles/ForgotPassword.module.scss';
+import LandingModal from '@/components/pages/landing/landing_modal';
 import { initStatus } from '@/controllers/global/states';
 import Loader from '@/components/reusables/RotatingLoader';
-import CustomContainer from '@/components/reusables/CustomContainer';
 
 interface PropsDefinition {
     displayModal: {
@@ -13,7 +13,7 @@ interface PropsDefinition {
     }
     toggleModal(modal: boolean, form: string): void
 }
-const ForgotPassword_V = ({
+const LandingForgotPasswordModal = ({
     toggleModal,
     displayModal,
 }: PropsDefinition) => {
@@ -31,9 +31,9 @@ const ForgotPassword_V = ({
     } = useLogin()
     const { loader, message, submessage } = status
     return (
-        <Modal
-            footer={null}
+        <LandingModal
             open={displayModal.forgot_password}
+            width={460}
             onCancel={() => {
                 setUser(initUser)
                 toggleModal(false, 'forgot_password')
@@ -51,18 +51,19 @@ const ForgotPassword_V = ({
                     <div className={scss.successMessage}>
                         <h4>{message}</h4>
                         <p>{submessage}</p>
-                        <button className={`${scss.button} ${scss.btnblue}`} type='button' onClick={() => {
+                        <button className={scss.successClose} type='button' onClick={() => {
                             setUser(initUser)
                             setStatus(initStatus)
                             toggleModal(false, 'forgot_password')
                         }}>
-                        Ok
+                        Close
                         </button>
                     </div>
                 </div>
                 :
                 <>
                     <div className={scss.modelTitle}>
+                        <Image src='/images/logo.png' alt='TaxHelp Logo' width={20} height={20} unoptimized={true} className={scss.modelTitleLogo} />
                         <strong>
                             Reset your password
                         </strong>
@@ -72,36 +73,41 @@ const ForgotPassword_V = ({
                     </div>
                     <form className={scss.resetUserPassword} onSubmit={handleForgotPassword}>
                         { loader && <Loader scss={scss} position='absolute' />}
-                        <div className={scss.cards}>
-                            <CustomContainer
-                                scss={scss}
-                                width={100}
-                                required={true}
-                                label='Email'
-                                labelFor='email'
-                                err={user.userErr.email as string}
-                            >
-                                <input
-                                    type='text'
-                                    name='email'
-                                    maxLength={30}
-                                    autoComplete='off'
-                                    value={user.userObj.email}
-                                    onKeyUp={handleBlur}
-                                    onChange={handleChange}
-                                />
-                            </CustomContainer>
-                            <div className={scss.card+' '+scss.w100}>
-                                <button type='submit' className={`${scss.button} ${scss.btnblue}`}>
-                                    Reset Password
-                                </button>
-                            </div>
+                        <div className={scss.field + (user.userErr.email ? ' '+scss.err : '')}>
+                            <label htmlFor="email">Email</label>
+                            <input
+                                type='text'
+                                name='email'
+                                id='email'
+                                maxLength={30}
+                                autoComplete='off'
+                                placeholder='Enter Email'
+                                value={user.userObj.email}
+                                onKeyUp={handleBlur}
+                                onChange={handleChange}
+                            />
+                            {
+                                user.userErr.email &&
+                                <small>{user.userErr.email as string}</small>
+                            }
+                        </div>
+                        <button type='submit' className={scss.btnblue}>
+                            Reset Password
+                        </button>
+
+                        <div className={scss.resetLinks}>
+                            <button type='button' onClick={() => {
+                                setUser(initUser)
+                                toggleModal(true, 'login')
+                            }}>
+                                Already have an account? <span>Login</span>
+                            </button>
                         </div>
                     </form>
                 </>
             }
-            
-        </Modal>
+
+        </LandingModal>
     )
 }
-export default ForgotPassword_V;
+export default LandingForgotPasswordModal;

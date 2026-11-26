@@ -1,75 +1,55 @@
-import Link from 'next/link';
 import Head from 'next/head';
-import Image from 'next/image';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
+import { useRouter } from 'next/router';
+import { Manrope } from 'next/font/google';
 import { getSession } from 'next-auth/react';
-import 'slick-carousel/slick/slick-theme.css';
 import scss from '@/styles/Landing.module.scss';
-import { useState, useRef, useEffect } from 'react';
-import Login_V from '@/components/pages/landing/login';
-import Register_V from '@/components/pages/landing/register';
+import { useState, useEffect } from 'react';
+import Hero_V from '@/components/pages/landing/hero';
+import Header_V from '@/components/pages/landing/header';
+import About_V from '@/components/pages/landing/about';
+import Footer_V from '@/components/pages/landing/footer';
+import Services_V from '@/components/pages/landing/services';
 import ContactUs_V from '@/components/pages/landing/contact_us';
-import SuccessMessage from '@/components/reusables/SuccessMessage';
 import SubscriptionPlans from '@/components/reusables/SubscriptionPlans';
+import Testimonials_V from '@/components/pages/landing/testimonials';
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next';
-import ForgotPassword_V from '@/components/pages/landing/forgot_password';
+import LandingLoginModal from '@/components/pages/landing/login';
+import LandingSignupModal from '@/components/pages/landing/register';
+import LandingForgotPasswordModal from '@/components/pages/landing/forgot_password';
+import LandingChangePasswordModal from '@/components/pages/landing/change_password';
+import LandingEmailVerificationModal from '@/components/pages/landing/email_verification';
 import { Session, PageProps } from '@/controllers/layouts/types/cms_types';
 
+const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'] });
+
 const LandingPage = () => {
-  const sliderRef = useRef<Slider | null>(null)
+  const router = useRouter();
   const [displayModal, setDisplayModal] = useState({
+    login: false,
     registration: false,
-    forgot_password: false
+    forgot_password: false,
+    change_password: false
   })
   const [message, setMessage] = useState('');
-  const [isMuted, setIsMuted] = useState(true);
-  const [mounted, setMounted] = useState(false);
-  const [fadeTransition, setFadeTransition] = useState(false);
-  
-  const settings = {
-      dots: true,
-      speed: 800,
-      arrows: false,
-      infinite: true,
-      autoplay: true,
-      slidesToShow: 1,
-      slidesToScroll: 1,
-      autoplaySpeed: 5000,
-      fade: fadeTransition,
-  };
+
   const toggleModal = (modal: boolean, form: string) => {
-    setDisplayModal({
-      ...displayModal,
-      [form]: modal
-    })
-  };
-  const toggleMute = () => {
-    const video = videoRef.current;
-
-    if (!video) return;
-
-    video.muted = !video.muted;
-    setIsMuted(video.muted);
-
-    // Make sure video is playing after user interaction
-    if (video.paused) {
-      video.play().catch(() => {});
+    if (modal) {
+      setDisplayModal({
+        login: false,
+        registration: false,
+        forgot_password: false,
+        change_password: false,
+        [form]: true
+      })
+      return
     }
+    setDisplayModal(prev => ({
+      ...prev,
+      [form]: false
+    }))
   };
+
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 800) {
-        setFadeTransition(false); // mobile → scroll
-      } else {
-        setFadeTransition(true); // desktop → fade
-      }
-    };
-
-    handleResize(); // run on mount
-    setMounted(true);
-    window.addEventListener('resize', handleResize);
-
     const successMessage = sessionStorage.getItem('successMessage');
     if (successMessage) {
         setMessage(successMessage);
@@ -79,269 +59,86 @@ const LandingPage = () => {
             sessionStorage.removeItem('successMessage');
         }, 5000)
     }
-    return () => window.removeEventListener('resize', handleResize);
   }, []);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const video = videoRef.current;
+    if (!router.isReady) return
+    if (router.query.token) {
+      toggleModal(true, 'change_password')
+      router.replace('/', undefined, { shallow: true })
+    }
+  }, [router.isReady, router.query.token]);
 
-    if (!video) return;
+  const [verifyToken, setVerifyToken] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    if (!router.isReady) return
+    if (router.query.verify_token) {
+      setVerifyToken(String(router.query.verify_token))
+      router.replace('/', undefined, { shallow: true })
+    }
+  }, [router.isReady, router.query.verify_token]);
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          video.play().catch(() => {
-            // Autoplay may be blocked by the browser
-          });
-        } else {
-          video.pause();
-        }
-      },
-      {
-        threshold: 0.5,
-      }
-    );
+  useEffect(() => {
+    const header = document.querySelector('header')
+    if (!header) return
 
-    observer.observe(video);
+    const setHeaderHeight = () => {
+      document.documentElement.style.setProperty('--header-height', `${header.getBoundingClientRect().height}px`)
+    }
 
-    return () => observer.disconnect();
+    setHeaderHeight()
+    const observer = new ResizeObserver(setHeaderHeight)
+    observer.observe(header)
+
+    return () => observer.disconnect()
   }, []);
+
   return (
     <>
       <Head>
         <title>TaxHelp Accounting Firm</title>
         <meta name="description" content="Professional accounting and tax services for small businesses and families." />
       </Head>
-      
-      <div className={scss.app}>
-        <header>
-          <div className={scss.topbar}>
-            {/* Logo */}
-            <Link href='/' className={scss.logo}>
-              <Image src='/images/logo.png' alt='TaxHelp Logo' priority width={20} height={20} unoptimized={true} style={{width: '100%'}} />
-            </Link>
-            
-            <Login_V toggleModal={toggleModal} />
-            {
-                message &&
-                <SuccessMessage message={message} />
-            }
-          </div>
-        </header>
-        {/* Hero Section */}
-        
-        <section className={scss.banners}>
-          {
-            mounted && (
-            <Slider {...settings} ref={sliderRef}>
-              <div className={scss.banner}>
-                <div className={scss.bannerLeft}>
-                  <h1>
-                    Trusted Accounting & Tax Solutions
-                  </h1>
-                  <p>
-                    Empowering your business and family with expert financial guidance, tax compliance, and peace of mind.
-                  </p>
-                  <Link href="#contactus">
-                    Get a Free Consultation
-                  </Link>
-                </div>
-                <div className={scss.bannerRight}>
-                  <Image src='/images/taxhelp_image4_.JPG' alt="Trusted Accounting & Tax Solutions" width={100} height={100} />
-                </div>
-              </div>
-              <div className={scss.banner}>
-                <div className={scss.bannerLeft}>
-                  <h1>
-                    BIR Compliance Made Simple
-                  </h1>
-                  <p>
-                    Stay fully compliant with BIR regulations. We handle filings, reports, and deadlines so you can focus on growing your business.
-                  </p>
-                  <Link href="#contactus">
-                    Get a Free Consultation
-                  </Link>
-                </div>
-                <div className={scss.bannerRight}>
-                  <Image src='/images/taxhelp_image_.JPG' alt="BIR Compliance Made Simple" width={400} height={200} />
-                </div>
-              </div>
-              <div className={scss.banner}>
-                <div className={scss.bannerLeft}>
-                  <h1>
-                    Smart Tax Solutions for Every Business
-                  </h1>
-                  <p>
-                    Minimize liabilities and maximize savings with expert tax planning, preparation, and compliance tailored to your needs.
-                  </p>
-                  <Link href="#contactus">
-                    Get a Free Consultation
-                  </Link>
-                </div>
-                <div className={scss.bannerRight}>
-                  <Image src='/images/taxhelp_image2_.JPG' alt="Smart Tax Solutions for Every Business" width={400} height={200} />
-                </div>
-              </div>
-              <div className={scss.banner}>
-                <div className={scss.bannerLeft}>
-                  <h1>
-                    Accurate Bookkeeping for Your Business
-                  </h1>
-                  <p>
-                    Let us handle the numbers so you can focus on growing your business.
-                  </p>
-                  <Link href="#contactus">
-                    Get a Free Consultation
-                  </Link>
-                </div>
-                <div className={scss.bannerRight}>
-                  <Image src='/images/taxhelp_image3_.JPG' alt="Accurate Bookkeeping for Your Business" width={400} height={200} />
-                </div>
-              </div>
-            </Slider>
-            )
-          }
-        </section>
-        {/* Services Section */}
-        <section className={scss.services}>
-          <h2 className={scss.serviceTitle}>Our Services</h2>
-          <div className={scss.serviceBox}>
-            <div className={scss.service}>
-              <Image src="https://img.icons8.com/ios-filled/100/4f8ef7/accounting.png" alt="Bookkeeping" width={20} height={20} unoptimized={true} />
-              <h3>Bookkeeping</h3>
-              <p>Accurate, timely, and secure record-keeping for your business.</p>
-            </div>
-            <div className={scss.service}>
-              <Image src="https://img.icons8.com/ios-filled/100/4f8ef7/tax.png" alt="Tax Preparation" width={20} height={20} unoptimized={true} />
-              <h3>Tax Preparation</h3>
-              <p>Expert tax filing and compliance for individuals and businesses.</p>
-            </div>
-            <div className={scss.service}>
-              <Image src="https://img.icons8.com/ios-filled/100/4f8ef7/financial-growth-analysis.png" alt="Advisory" width={20} height={20} unoptimized={true} />
-              <h3>Financial Advisory</h3>
-              <p>Strategic planning and advice to help you grow and protect your assets.</p>
-            </div>
-          </div>
-        </section>
 
-        {/* About Section */}
-        <section className={scss.about}>
-            <div className={scss.about_box}>
-              <div className={scss.video_wrapper}>
-                  <video
-                    ref={videoRef}
-                    src="/images/taxhelp_vid.mp4"
-                    muted
-                    playsInline
-                    preload="metadata"
-                    width={450}
-                    style={{
-                      marginTop: '-200px',
-                      width: '450px',
-                      height: 'auto',
-                      display: 'block',
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={toggleMute}
-                  className={scss.mute_button}
-                  aria-label={isMuted ? 'Unmute video' : 'Mute video'}
-                >
-                  {isMuted ? 'Unmute' : 'Mute'}
-                </button>
-              </div>
-              <div style={{flex: 1}}>
-                  <h2>About TaxHelp</h2>
-                  <p style={{fontSize: '16px'}}>
-                    <strong>TaxHelp</strong> is a digital solution by <strong>Pintek</strong> that helps businesses and entrepreneurs navigate their tax and compliance needs with greater ease.
-                    <br /><br />
-                    Designed with businesses in mind, TaxHelp provides practical digital tools and resources that simplify essential tax requirements, helping users manage their obligations more efficiently while staying focused on running and growing their businesses.
-                    <br /><br />
-                    TaxHelp is registered with the Bureau of Internal Revenue (BIR), with Registration Seal Number <strong>RSN 024RC20260000003722</strong>. Our BIR Registration Seal Badge is displayed for public verification and transparency.
-                  </p>
-                  <br />
-                  <Image src='/images/bir_registered_seal.png' alt="Registered Seal Badge" width={450} height={200} />
-              </div>
-            </div>
-        </section>
-        {/* SUBSCRIPTION PLANS */}
+      <div className={scss.app+' '+manrope.className}>
+        <Header_V scss={scss} message={message} toggleModal={toggleModal} />
+        <div className={scss.heroPanel}>
+          <Hero_V scss={scss} />
+          <Services_V scss={scss} />
+        </div>
+        <About_V scss={scss} />
         <SubscriptionPlans
             title="Simple Plans. Powerful Business Tools."
             caption="Choose the right TaxHelp subscription for your business. Start for free and upgrade as your operations grow."
             scss={scss}
+            hideCustomSolutions
         />
-        {/* Promotions Section */}
-        {/* <section className={scss.promos}>
-          <h2 className={scss.promoTitle}>Special Offers</h2>
-
-          <div className={scss.promoBox}>
-            <div className={scss.promo}>
-              <h3>Free Initial Consultation</h3>
-              <p>Get a 30-minute free consultation for new clients. Let’s discuss your accounting needs.</p>
-              <span>Limited Time Offer</span>
-            </div>
-
-            <div className={scss.promo}>
-              <h3>20% Off Tax Filing</h3>
-              <p>Enjoy 20% off on individual tax preparation services this season.</p>
-              <span>Until April 30</span>
-            </div>
-
-            <div className={scss.promo}>
-              <h3>Startup Package</h3>
-              <p>Special discounted bundle for new businesses: bookkeeping + tax + advisory.</p>
-              <span>Best for Entrepreneurs</span>
-            </div>
-          </div>
-        </section> */}
-        {/* Testimonials Section */}
-        <section className={scss.testimonials}>
-            <h2>What Our Clients Say</h2>
-            <div className={scss.testimonial_boxes}>
-                <div className={scss.testimonial_box}>
-                    <p>“TaxHelp made tax season stress-free. Their team is knowledgeable and always available to answer my questions.”</p>
-                    <strong>— Maria S., Small Business Owner</strong>
-                </div>
-                <div className={scss.testimonial_box}>
-                    <p>“Professional, reliable, and friendly service. I highly recommend TaxHelp for all your accounting needs.”</p>
-                    <strong>— John D., Freelancer</strong>
-                </div>
-            </div>
-        </section>
-
-        {/* Contact Section */}
-        <ContactUs_V scss={scss} />
-
-        {/* Footer */}
-        <footer className={scss.footer}>
-          <p>
-            &copy; {new Date().getFullYear()} TaxHelp Accounting Firm. All rights reserved.
-          </p>
-
-          <div className={scss.footer_links}>
-            <Link href="/refund-policy">
-              Refund Policies
-            </Link>
-
-            <Link href="/terms-of-service">
-              Terms of Service
-            </Link>
-
-            <Link href="/privacy-policy">
-              Privacy Policies
-            </Link>
-          </div>
-        </footer>
+        <div className={scss.closingPanel}>
+          <Testimonials_V scss={scss} />
+          <ContactUs_V scss={scss} />
+        </div>
+        <Footer_V scss={scss} />
       </div>
-      <Register_V
+      <LandingLoginModal
         displayModal={displayModal}
         toggleModal={toggleModal}
       />
-      <ForgotPassword_V
+      <LandingSignupModal
         displayModal={displayModal}
         toggleModal={toggleModal}
+      />
+      <LandingForgotPasswordModal
+        displayModal={displayModal}
+        toggleModal={toggleModal}
+      />
+      <LandingChangePasswordModal
+        displayModal={displayModal}
+        toggleModal={toggleModal}
+      />
+      <LandingEmailVerificationModal
+        open={!!verifyToken}
+        token={verifyToken}
+        onClose={() => setVerifyToken(undefined)}
       />
     </>
   );

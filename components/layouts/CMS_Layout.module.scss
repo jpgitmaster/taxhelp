@@ -5,25 +5,109 @@
 body, html{
     overflow-x: hidden;
 }
+@mixin sublinksOpenVisual{
+    border: 0;
+    border-radius: 10px;
+    height: auto !important;
+    width: 14rem;
+    top: 0;
+    left: calc(100% - 0.25rem);
+    @apply block absolute p-2.5 pb-5 overflow-visible bg-app-blue z-50;
+    li{
+        border-left: 1px solid rgba(#8ba3e8, .7);
+        @apply relative pt-2 w-full pl-3 py-0.5 mb-px;
+        &::before{
+            content: "";
+            display: inherit;
+            border-left: 1px solid rgba(#8ba3e8, .7);
+            border-bottom: 1px solid rgba(#8ba3e8, .7);
+            @apply top-0.75 -left-px rounded-bl-[10px] w-3.75 h-5 absolute;
+        }
+        &:last-child{
+            border: 0;
+            &::before{
+                @apply left-0 h-6.25 -mt-1.5;
+                content: "";
+                border-left: 1px solid rgba(#8ba3e8, .7);
+            }
+        }
+        a{
+            transition: color .2s ease;
+            @apply block w-full py-1.5 px-2.5 text-[13px] rounded-[10px] relative z-[1];
+            &::before{
+                content: '';
+                background-color: $transparent;
+                transition: background-color .2s ease;
+                @apply absolute -inset-y-1 inset-x-0 rounded-[10px] -z-1;
+            }
+            &.isActive, &:hover{
+                color: $btnBlue;
+                @apply font-semibold;
+                &::before{
+                    background-color: #e6e6ed;
+                }
+            }
+        }
+    }
+}
 .app{
     @apply h-screen flex flex-row overflow-hidden;
     .appSidebar{
-        @apply w-52 bg-app-blue relative px-2.5 h-full shrink-0 flex flex-col;
-        img{
-            filter: invert(97%) sepia(15%) saturate(303%) hue-rotate(250deg) brightness(119%) contrast(100%);
+        @apply w-64 bg-app-blue relative px-2.5 h-full shrink-0 flex flex-col;
+        .sidebarBrand{
+            @apply flex items-center justify-center min-h-17.5 shrink-0;
+            .sidebarBrandFull{
+                @apply relative inline-block w-36 max-w-full;
+                aspect-ratio: 1424 / 396;
+                img{
+                    @apply absolute inset-0 w-full h-full object-contain;
+                }
+                .sidebarBrandFullMono{
+                    filter: brightness(0) invert(1);
+                    clip-path: inset(0 41% 0 0);
+                }
+                .sidebarBrandFullColor{
+                    filter: none;
+                    clip-path: inset(0 0 0 59%);
+                }
+            }
+            .sidebarBrandIcon{
+                background-image: url('/images/logo.png');
+                background-repeat: no-repeat;
+                background-size: 165px 46px;
+                background-position: -2px -3px;
+                filter: brightness(0) invert(1);
+                width: 36px;
+                height: 41px;
+                @apply hidden;
+            }
         }
-        .sidebarArrow{
-            background-color: $lightBlue;
-            @apply absolute cursor-pointer rounded-[5px] top-5.5 h-6.25 w-6.25 p-1.5 -right-2.5;
+        &.mobileDrawer{
+            transition: transform .3s ease;
+            box-shadow: 0 0 24px rgba($pintekNavy, .35);
+            @apply fixed top-0 left-0 z-50;
+            &.drawerClosed{
+                transform: translateX(-100%);
+            }
+            &.drawerOpen{
+                transform: translateX(0);
+            }
+            &.noTransition{
+                transition: none !important;
+            }
         }
         &.slideRight{
             transition: width .3s ease;
-            .sidebarArrow{
-                transform: rotate(90deg);
-                transition: transform .4s ease-out;
+            .sidebarBrand{
+                .sidebarBrandFull{
+                    @apply block;
+                }
+                .sidebarBrandIcon{
+                    @apply hidden;
+                }
             }
             .mainLink{
-                @apply w-45;
+                @apply w-full;
             }
             .mainLink, .sublinks{
                 @apply block;
@@ -37,118 +121,78 @@ body, html{
         &.slideLeft{
             @apply w-15;
             transition: width .3s ease;
-            .sidebarArrow{
-                transform: rotate(270deg);
-                transition: transform .4s ease-out;
+            .sidebarBrand{
+                .sidebarBrandFull{
+                    @apply hidden;
+                }
+                .sidebarBrandIcon{
+                    @apply block;
+                }
             }
             .appSidebarLinks{
+                @apply overflow-visible;
                 .mainLink{
-                    border: 1px dotted $white !important;
                     transition-delay: .2s;
                     @apply w-auto;
-                    span, .linkArrow{
-                        @apply hidden;
+                    .linkLabel, .linkArrow{
+                        @apply hidden!;
                     }
                 }
             }
             
             .links{
+                > li{
+                    &::after{
+                        content: "";
+                        @apply absolute top-0 left-full w-2 h-full;
+                    }
+                }
+                li:hover{
+                    .sublinks:not(.open){
+                        @include sublinksOpenVisual;
+                    }
+                }
+                &:has(> li:hover) > li:not(:hover) .sublinks.open{
+                    @apply hidden!;
+                }
                 .sublinks{
                     animation: flipInY .8s;
                     @apply hidden opacity-[1] z-1;
                     -webkit-animation: flipInY .8s;
-                    border: 1px solid $lightGray2;
-                    &::after {
-                        @apply block w-3 h-3 -left-4 relative;
-                        background-color: $lightBlue;
-                        content: "\00a0";
-                        transform:             rotate( 45deg );
-                            -moz-transform:    rotate( 45deg );
-                            -ms-transform:     rotate( 45deg );
-                            -o-transform:      rotate( 45deg );
-                            -webkit-transform: rotate( 45deg );
-                    }
                     &.open{
-                        border: 0;
-                        border-radius: 10px;
-                        border-top-left-radius: 0;
-                        border-bottom-left-radius: 0;
-                        background-color: $lightBlue;
-                        @apply block absolute p-2.5 pb-5 -top-5 left-8 overflow-visible;
-                        &.hasOne{
-                            height: 55px !important;
-                            @apply -top-2;
-                            &::after{
-                                @apply -top-5;
-                            }
-                        }
-                        &.hasTwo{
-                            height: 96px !important;
-                            @apply -top-6.25;
-                            &::after{
-                                @apply -top-10;
-                            }
-                        }
-                        &.hasThree{
-                            height: 130px !important;
-                            @apply -top-8.75;
-                            &::after{
-                                @apply -top-15;
-                            }
-                        }
-                        &.hasFour{
-                            height: 150px !important;
-                            @apply -top-10.5;
-                            &::after{
-                                @apply -top-20;
-                            }
-                        }
-                        &.hasFive{
-                            height: 180px !important;
-                            @apply -top-11.25;
-                            &::after{
-                                @apply -top-27.5;
-                            }
-                        }
-                        li{
-                            border: 0 !important;
-                            @apply p-0;
-                            &::before, &:hover::before{
-                                @apply hidden;
-                            }
-                            a{
-                                color: $white;
-                                border-color: $white;
-                                background-color: $transparent !important;
-                                @apply rounded-none;
-                                &:hover{
-                                    color: $activeColor;
-                                }
-                                &.isActive{
-                                    color: $activeColor;
-                                }
-                            }
-                        }
+                        @include sublinksOpenVisual;
                     }
                 }
             }
         }
         .appSidebarLinks{
-            @apply my-18 flex-1 overflow-y-auto overflow-x-hidden;
+            @apply mt-6 mb-4 flex-1 overflow-y-auto overflow-x-hidden;
             .links{
-                li{
-                    @apply relative mb-1.5;
+                > li{
+                    @apply relative mb-2;
+                    &:not(:last-child){
+                        @apply pb-2;
+                        border-bottom: 1px solid rgba($white, .12);
+                    }
                     .mainLink{
-                        border-top: 1px solid $transparent;
-                        border-bottom: 1px dotted $white;
-                        &.isActive{
-                            @apply bg-app-blue-dark cursor-pointer;
+                        transition: background-color .2s ease;
+                        @apply flex flex-row items-center rounded-[10px] cursor-pointer;
+                        &.isActive, &:hover{
+                            background-color: $white;
+                            @apply cursor-pointer font-semibold;
+                            .link{
+                                color: $btnBlue;
+                            }
+                            .mainLinkIcon .mainLinkIconMask, .linkArrow .linkArrowMask{
+                                background-color: $btnBlue;
+                            }
                         }
-                        @apply flex flex-row hover:bg-app-blue-dark rounded-[10px] cursor-pointer;
                         .linkArrow{
-                            @apply w-4 h-9 py-2.75 -mt-3.5 right-2.5 top-4.5 float-right relative cursor-pointer;
-                            img{
-                                @apply w-full;
+                            @apply w-4 h-4 flex items-center justify-center shrink-0 ml-auto mr-2.5 cursor-pointer relative;
+                            .linkArrowMask{
+                                background-color: $white;
+                                transition: background-color .2s ease;
+                                @apply w-full h-full;
                             }
                             &.linkArrowOpen{
                                 transform: rotate(180deg);
@@ -161,17 +205,28 @@ body, html{
                         }
                     }
                 }
-                
+
                 .link{
-                    text-shadow: 1px 1px 0 $lightBlack;
+                    transition: color .2s ease;
                     @apply text-app-white text-left inline-block w-full p-2.5 text-[13px];
                     .mainLinkIcon{
                         @apply cursor-pointer float-left h-5 mr-1 ml-0 flex;
-                        img{
-                            @apply w-full;
+                        .mainLinkIconMask{
+                            background-color: $white;
+                            transition: background-color .2s ease;
+                            @apply w-full h-full;
                         }
                     }
-                    
+
+                }
+                .mainLinkIconMask, .linkArrowMask{
+                    -webkit-mask-size: contain;
+                    mask-size: contain;
+                    -webkit-mask-repeat: no-repeat;
+                    mask-repeat: no-repeat;
+                    -webkit-mask-position: center;
+                    mask-position: center;
+                    @apply inline-block;
                 }
                 .sublinks{
                     @apply ml-4.5 h-0 overflow-hidden;
@@ -201,13 +256,13 @@ body, html{
                         }
                     }
                     li{
-                        border-left: 1px dotted $white;
-                        @apply relative pt-2 w-35 pl-3 py-0.5 mb-px;
+                        border-left: 1px solid rgba(#8ba3e8, .7);
+                        @apply relative pt-2 w-full pl-3 py-0.5 mb-px;
                         &::before{
                             content: "";
                             display: inherit;
-                            border-left: 1px dotted $white;
-                            border-bottom: 1px dotted $white;
+                            border-left: 1px solid rgba(#8ba3e8, .7);
+                            border-bottom: 1px solid rgba(#8ba3e8, .7);
                             @apply top-0.75 -left-px rounded-bl-[10px] w-3.75 h-5 absolute;
                         }
                         &:last-child{
@@ -215,15 +270,25 @@ body, html{
                             &::before{
                                 @apply left-0 h-6.25 -mt-1.5;
                                 content: "";
-                                border-left: 1px dotted $white;
+                                border-left: 1px solid rgba(#8ba3e8, .7);
                             }
                         }
                         a{
-                            border-bottom: 1px dotted $white;
-                            &.isActive{
-                                @apply bg-app-blue-dark;
+                            transition: color .2s ease;
+                            @apply block w-full py-1.5 px-2.5 text-[13px] rounded-[10px] relative z-[1];
+                            &::before{
+                                content: '';
+                                background-color: $transparent;
+                                transition: background-color .2s ease;
+                                @apply absolute -inset-y-1 inset-x-0 rounded-[10px] -z-1;
                             }
-                            @apply py-1.5 px-2.5 text-[13px] hover:bg-app-blue-dark rounded-[10px];
+                            &.isActive, &:hover{
+                                color: $btnBlue;
+                                @apply font-semibold;
+                                &::before{
+                                    background-color: #e6e6ed;
+                                }
+                            }
                         }
                     }
                 }
@@ -235,117 +300,86 @@ body, html{
         @apply flex-1 flex flex-col h-full overflow-hidden;
         .appHeader{
             background-color: $white;
-            border-bottom: .5px solid rgba($gray, .8);
-            @apply px-5 pt-2.5 pb-1.25 min-h-17.5 justify-between flex flex-row items-center w-full shrink-0;
-            .logo{
-                @apply w-45 m-1 block float-left;
-                img{
-                    @apply w-full h-full;
+            box-shadow: 0 1px 0 rgba($pintekNavy, .08), 0 2px 8px rgba($pintekNavy, .04);
+            @apply px-5 py-2 min-h-17.5 justify-between flex flex-row items-center w-full shrink-0 relative z-10;
+            .headerLeft{
+                @apply flex flex-row items-center gap-4;
+                .hamburger{
+                    transition: background-color .2s ease;
+                    @apply flex flex-col justify-center gap-1 cursor-pointer rounded-[8px] border border-solid p-2.5 w-9.5 h-9.5;
+                    border-color: rgba($btnBlue, .25);
+                    &:hover{
+                        background-color: rgba($btnBlue, .06);
+                    }
+                    span{
+                        background-color: $btnBlue;
+                        @apply block w-full h-0.5 rounded-full;
+                    }
+                }
+                .breadcrumbTrail{
+                    @apply flex flex-row items-center gap-3 text-[15px] font-semibold capitalize;
+                    .breadcrumbIcon{
+                        background-color: $btnBlue;
+                        -webkit-mask-size: contain;
+                        mask-size: contain;
+                        -webkit-mask-repeat: no-repeat;
+                        mask-repeat: no-repeat;
+                        -webkit-mask-position: center;
+                        mask-position: center;
+                        @apply inline-block w-4.5 h-4.5 shrink-0;
+                    }
+                    .breadcrumbItem{
+                        @apply flex flex-row items-center gap-3;
+                    }
+                    .breadcrumbSep{
+                        color: rgba($pintekNavy, .3);
+                        @apply text-[13px] font-normal;
+                    }
+                    .breadcrumbLink{
+                        color: $btnBlue;
+                        transition: color .15s ease;
+                        @apply no-underline;
+                        &:hover{
+                            color: $btnBlueHover;
+                        }
+                    }
+                    .breadcrumbCurrent{
+                        color: $pintekNavy;
+                    }
                 }
             }
             .headerRight{
-                @apply flex flex-col;
-                .sessionUser{
-                    @apply flex flex-row min-h-12.5;
-                    .avatar{
-                        background-color: $lightGray;
-                        @apply w-11.25 h-11.25 mt-1 p-2 rounded-[50%] cursor-pointer;
-                    }
-                    .sessionUserDetails{
-                        @apply pl-2.5 min-w-75;
-                        h2{
-                            color: $blue;
-                            border-bottom: .5px solid;
-                            @apply text-[15px] mt-1.5;
+                @apply flex flex-row items-center gap-3;
+                .headerIcon{
+                    @apply flex justify-center items-center;
+                    .icon{
+                        transition: transform .15s ease;
+                        @apply w-4.5 cursor-pointer;
+                        filter: invert(64%) sepia(1%) saturate(0%) hue-rotate(28deg) brightness(98%) contrast(95%);
+                        &:hover{
+                            transform: scale(1.1);
                         }
-                        .subscriptionStatus{
-                            color: $orange;
-                            @apply text-[11px] block font-bold capitalize;
+                        &.hasUnread{
+                            filter: invert(53%) sepia(86%) saturate(1071%) hue-rotate(343deg) brightness(100%) contrast(96%);
                         }
-                        strong{
-                            @apply text-[12px] block;
-                        }
-                        .headerIcons{
-                            // use w-55 if chat and notification are enabled
-                            @apply flex flex-row w-45 mt-2;
-                            .headerIcon{
-                                @apply flex-1 flex justify-center items-center;
-                                &:first-child::before{
-                                    @apply hidden;
-                                }
-                                &.active{
-                                    .icon{
-                                        filter: invert(34%) sepia(86%) saturate(5128%) hue-rotate(186deg) brightness(93%) contrast(101%);
-                                    }
-                                }
-                                &::before{
-                                    content: "";
-                                    border-left: 1px dashed $lightBlue;
-                                    @apply relative -left-1.5 h-3.5;
-                                }
-                                &.notif .hasUnread{
-                                    filter: invert(53%) sepia(86%) saturate(1071%) hue-rotate(343deg) brightness(100%) contrast(96%);
-                                }
-                                &.logout .icon{
-                                    filter: invert(14%) sepia(68%) saturate(6951%) hue-rotate(358deg) brightness(101%) contrast(113%);
-                                }
-                                .icon{
-                                    @apply w-4.5 cursor-pointer;
-                                    filter: invert(64%) sepia(1%) saturate(0%) hue-rotate(28deg) brightness(98%) contrast(95%);
-                                    &.subscriptionStatus{
-                                        filter: inherit;
-                                        color: $white;
-                                        @apply text-[10px] min-w-10 text-center px-1.25 py-0.5 rounded-[10px];
-                                        &.basic{
-                                            background-color: $blue;
-                                        }
-                                        &.pro{
-                                            background-color: $orange;
-                                        }
-                                        &.enterprise{
-                                            background-color: $green;
-                                            @apply min-w-16 relative -left-1.5;
-                                        }
-                                    }
-                                    img{
-                                        @apply w-full ml-1.25;
-                                    }
-                                }
-                            }
+                        img{
+                            @apply w-full;
                         }
                     }
                 }
-            }
-        }
-        .breadcrumbs{
-            @apply px-5 pt-2.5 shrink-0;
-            ol{
-                @apply flex flex-row flex-wrap;
-                li{
-                    list-style: none;
-                    &::before {
-                        @apply inline-block mx-1 text-[10px];
-                        content: '/';
+                .profileTrigger{
+                    transition: background-color .2s ease;
+                    @apply flex flex-row items-center gap-1.5 rounded-full py-1 pl-1 pr-2 cursor-pointer;
+                    &:hover{
+                        background-color: rgba($btnBlue, .06);
                     }
-                    &:nth-child(1){
-                        &::before {
-                            content: '';
-                            @apply hidden;
-                        }
-                        a{
-                            @apply pl-0;
-                        }
+                    .avatarInitials{
+                        background-color: $btnBlue;
+                        @apply w-8.5 h-8.5 rounded-[50%] text-white text-[12px] font-bold flex items-center justify-center;
                     }
-                    &.active{
-                        a{
-                            color: $darkgray;
-                            cursor: not-allowed;
-                            pointer-events: none;
-                        }
-                    }
-                    a{
-                        color: $blue;
-                        @apply text-[11px] p-1.25 uppercase no-underline;
+                    .chevron{
+                        opacity: .5;
+                        @apply w-3 h-3;
                     }
                 }
             }
@@ -357,11 +391,120 @@ body, html{
                 @apply pt-5 pb-15;
             }
         }
+        .appBodyContent{
+            @apply min-h-full;
+        }
+        .appFooter{
+            background-color: #eaf2ff;
+            @apply text-sm px-10 py-8 mt-10 -mx-5 -mb-5;
+            .appFooterTop{
+                gap: clamp(24px, 4vw, 48px);
+                @apply max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4;
+            }
+            .appFooterBrand{
+                @apply col-span-2;
+                .appFooterLogo{
+                    @apply w-36 h-auto mb-3;
+                }
+                p{
+                    max-width: 320px;
+                    @apply text-gray-500 m-0;
+                }
+                .appFooterCopyright{
+                    max-width: none;
+                    @apply text-gray-400 text-xs mt-4;
+                }
+            }
+            .appFooterCol{
+                @apply md:col-start-4;
+                h4{
+                    color: $pintekNavy;
+                    letter-spacing: .5px;
+                    @apply text-xs font-bold uppercase mb-3;
+                }
+                a{
+                    color: inherit;
+                    text-decoration: none;
+                    transition: color .2s ease;
+                    @apply block text-gray-500 mb-2;
+                    &:hover{
+                        color: $btnBlue;
+                    }
+                }
+            }
+        }
         .cards{
             .cardBox{
                 // border: 1px solid $blue;
                 @apply min-h-30 rounded-[10px] p-2.5 border-app-blue-light;
             }
+        }
+    }
+}
+
+.drawerBackdrop{
+    background-color: rgba($pintekNavy, .45);
+    @apply fixed inset-0 z-40;
+}
+
+.profileCard{
+    background-color: $white;
+    box-shadow: 0 12px 32px rgba($pintekNavy, .18);
+    @apply rounded-2xl p-2 w-66;
+
+    .profileCardHeader{
+        @apply flex flex-row items-center gap-2.5 px-2.5 py-2;
+        .avatarInitials{
+            background-color: $btnBlue;
+            @apply w-10 h-10 shrink-0 rounded-[50%] text-white text-[14px] font-bold flex items-center justify-center;
+        }
+        .profileCardInfo{
+            @apply flex flex-col min-w-0;
+            strong{
+                color: $pintekNavy;
+                @apply text-[14px] font-semibold truncate;
+            }
+            small{
+                color: $darkgray;
+                @apply text-[12px] truncate;
+            }
+            .planBadge{
+                color: $white;
+                background-color: $blue;
+                width: fit-content;
+                @apply text-[10px] font-bold capitalize mt-1 px-2 py-0.5 rounded-[10px];
+                &.basic{
+                    background-color: $accentOrange;
+                }
+                &.pro{
+                    background-color: $orange;
+                }
+                &.enterprise{
+                    background-color: $green;
+                }
+            }
+        }
+    }
+
+    .profileCardDivider{
+        border: 0;
+        border-top: 1px solid $lightGray2;
+        @apply my-1.5;
+    }
+
+    .profileCardItem{
+        color: $pintekNavy;
+        transition: background-color .15s ease;
+        @apply flex flex-row items-center gap-2.5 w-full text-left text-[13px] rounded-[10px] px-2.5 py-2 cursor-pointer;
+        img, svg{
+            opacity: .55;
+            @apply w-4 h-4 shrink-0;
+        }
+        &:hover{
+            background-color: $lightGray;
+        }
+        &.logoutItem{
+            color: $red;
         }
     }
 }
@@ -399,78 +542,18 @@ body, html{
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .app {
     .appSidebar{
         @apply px-2;
-        &.slideLeft{
-            @apply w-12.5 px-1.5;
-            :global(.ant-skeleton) {
-                width: 100% !important;
-            }
-            :global(.ant-skeleton-input) {
-                width: 100% !important;
-                min-width: inherit !important;
-            }
-            .links{
-                li{
-                    .mainLink{
-                        .link{
-                            @apply flex items-center justify-center;
-                            .mainLinkIcon{
-                                @apply m-0!;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        &.slideRight {
-            @apply w-38;
-            .appSidebarLinks{
-                .links{
-                    .sublinks{
-                        &.open.hasTwo{
-                            @apply h-30;
-                        }
-                        li{
-                            @apply w-28 text-center;
-                        }
-                    }
-                }
-            }
-        }
-        .appSidebarLinks{
-            .links{
-                li{
-                    .mainLink{
-                        .link{
-                            @apply px-2;
-                            .mainLinkIcon{
-                                @apply w-4! h-4! m-0 mt-0.5 mr-1;
-                            }
-                            span{
-                                @apply text-[12px];
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
     .appContent{
         @apply w-full;
         .appHeader{
-            @apply flex-col min-h-auto px-4 shrink-0;
-            .logo{
-                @apply w-50 h-18 mt-2;
-            }
-            .headerRight{
-                .sessionUser{
-                    @apply my-4;
-                    .sessionUserDetails{
-                        @apply min-w-50;
-                    }
+            @apply px-4 shrink-0;
+            .headerLeft{
+                .breadcrumbTrail{
+                    @apply text-[13px];
                 }
             }
         }

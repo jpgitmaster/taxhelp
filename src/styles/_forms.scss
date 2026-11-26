@@ -98,10 +98,9 @@
   text-decoration: none;
   @apply rounded-[10px] w-full text-[12px] cursor-pointer uppercase py-2 px-2.5;
   &.btnblue{
-    // background-color: rgba($blue, .6);
-    background-color: $blue;
+    background-color: $btnBlue;
     color: $white;
-    border-color: $border_blue;
+    border-color: $btnBlue;
   }
   &.btngreen{
     background-color: $green;
@@ -116,7 +115,7 @@
   &.btnorange{
     background-color: $orange;
     color: $white;
-    border-color: $border_orange;
+    border-color: $orange;
   }
   &.btnred{
     background-color: $red;

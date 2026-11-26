@@ -1,45 +1,70 @@
 @use '@/styles/forms';
 @use '@/styles/helpers';
 @use '@/styles/colors' as *;
+@use '@/components/pages/landing/styles/landingFields' as *;
 @reference 'tailwindcss';
 .modelTitle{
   @apply px-2 mt-4;
+  .modelTitleHeading{
+    @apply flex flex-col items-center text-center;
+  }
+  .modelTitleLogo{
+    @apply w-24 h-auto mb-3;
+  }
   strong{
-    @apply text-[20px];
+    color: #071b3b;
+    letter-spacing: -.5px;
+    @apply block text-xl font-extrabold;
+
+    &:after{
+      content: '';
+      background-color: $btnBlue;
+      @apply block w-10 h-1 rounded-full mt-2 mb-5 mx-auto;
+    }
   }
   p{
-    @apply -mt-0.5 mb-4;
+    @apply text-gray-500 text-sm mb-4 mt-0;
   }
 }
 .features{
-  @apply flex flex-row mt-3;
+  @apply flex flex-row mt-3 mb-5 gap-3;
   li{
-    @apply w-[50%] p-2 relative;
+    @apply w-[50%] p-0 relative;
     .feature{
-      border: 1px solid rgba($darkgray, .6);
-      @apply flex flex-row w-full relative rounded-[20px] p-5 cursor-pointer;
+      border: 1px solid #e3e9f1;
+      background-color: $white;
+      transition: border-color .2s ease, background-color .2s ease;
+      @apply flex flex-col w-full relative rounded-2xl p-4 cursor-pointer;
+      .featureHeader{
+        @apply flex items-center gap-2 mb-1.5;
+      }
+      strong{
+        color: #071b3b;
+        @apply block text-xs font-semibold;
+      }
       p{
         color: $darkgray;
-        @apply text-[10px] leading-3;
+        @apply text-xs leading-4 m-0;
       }
       img{
-        @apply w-12 mr-2.5;
-        filter: invert(73%) sepia(24%) saturate(13%) hue-rotate(344deg) brightness(106%) contrast(95%);
+        @apply w-5 h-5 shrink-0;
+        filter: invert(23%) sepia(45%) saturate(2000%) hue-rotate(205deg) brightness(90%) contrast(95%);
+        opacity: .55;
       }
       &:hover, &.checked{
-        border-color: $lightBlue;
-        background-color: rgba($lightBlue, .1);
+        border-color: $btnBlue;
+        background-color: #f2f7ff;
         img{
-          filter: invert(45%) sepia(15%) saturate(6682%) hue-rotate(179deg) brightness(102%) contrast(106%);
+          opacity: 1;
         }
         .checkmark {
-          background-color: rgba($lightBlue, .8);
+          background-color: rgba($btnBlue, .8);
         }
       }
       &.checked{
         input[type=checkbox]{
           &:checked ~ .checkmark {
-            background-color: $lightBlue;
+            background-color: $btnBlue;
             &:after {
               @apply block;
             }
@@ -55,8 +80,8 @@
         }
       }
       .checkmark {
-        background-color: $gray;
-        @apply top-3 right-3 w-4 h-4 rounded-sm absolute;
+        background-color: #e3e9f1;
+        @apply top-3 right-3 w-4.5 h-4.5 rounded-full absolute;
         &:after {
           content: "";
           border: solid $white;
@@ -64,18 +89,18 @@
           -webkit-transform: rotate(45deg);
           -ms-transform: rotate(45deg);
           transform: rotate(45deg);
-          @apply hidden absolute top-0.5 left-1.5 w-1.25 h-2.5;
+          @apply hidden absolute top-1 left-1.75 w-1.25 h-2.5;
         }
       }
-      
+
       &.disabled {
         @apply cursor-not-allowed pointer-events-none;
 
         opacity: .4;
 
         &:hover {
-          border-color: rgba($darkgray, .6);
-          background: transparent;
+          border-color: #e3e9f1;
+          background: $white;
 
           img {
             filter: grayscale(100%);
@@ -87,60 +112,72 @@
       color: $white;
       transform: rotate(35deg);
       background-color: $orange;
-      @apply w-25 -right-4.5 absolute z-2 font-bold text-xs rounded-[10px] top-2.5 py-1 text-center;      
+      @apply w-25 -right-4.5 absolute z-2 font-bold text-xs rounded-[10px] top-2.5 py-1 text-center;
     }
   }
 }
 .registerUser{
-  @apply p-2;
-  .npt.err.longErr{
-    .errmsg{
-      @apply -bottom-0.5;
+  @apply p-2 pb-6;
+  .registerFields{
+    gap: 14px;
+    @apply w-full grid grid-cols-1 text-left;
+  }
+  .field{
+    @apply relative;
+    label{
+      @include landingLabel;
+    }
+    input[type=text], input[type=email], input[type=password]{
+      @include landingInput;
+
+      &:disabled{
+        background-color: $lightGray;
+        border-color: #e3e9f1;
+        @apply cursor-not-allowed;
+      }
+    }
+    small{
+      @include landingErrMsg;
+      @apply block mt-1 text-xs;
+    }
+    &.err input[type=text], &.err input[type=email], &.err input[type=password]{
+      @include landingInputErr;
     }
   }
   .btnblue{
-    @apply max-w-70 mx-auto block;
+    @include landingButton;
+  }
+  .registerLinks{
+    @apply flex flex-col items-center gap-2 text-gray-500 mt-1;
+    button{
+      @apply cursor-pointer text-xs;
+    }
+    span{
+      color: $btnBlue;
+      @apply font-semibold;
+    }
   }
   .loader{
     @apply top-[40%];
   }
   .eyecon{
-    @apply absolute top-2.25 right-2.5 w-5 cursor-pointer;
-    filter: invert(91%) sepia(26%) saturate(1%) hue-rotate(347deg) brightness(87%) contrast(40%);
-    &.show{
-        filter: inherit;
+    @include landingEyeIcon;
+    &:disabled{
+      @apply opacity-40;
     }
   }
   .pwdCheck{
-      border: 1px solid $gray;
-      background-color: $lightGray;
-      @apply absolute w-56.25 p-2.5 z-1 mt-11 rounded-[10px];
-    
-      p {
-          color: $blue;
-          @apply text-[12px];
-      }
-    
-      ul {
-          @apply ml-2.5;
-          li {
-              @apply text-[12px] block;
-              &.meet_requirement {
-                  color: $border_green;
-              }
-          }
-      }
-    
+      @include landingPwdCheck;
   }
 }
 .success {
-  @apply flex items-center justify-center rounded-[20px] w-120;
+  @apply flex flex-col items-center justify-center text-center w-full px-4 py-6;
 
   .successCheck {
-    @apply mr-2.5;
+    @apply mb-4;
 
     svg {
-      @apply block float-left w-20;
+      @apply block mx-auto w-16;
     }
 
     .path {
@@ -165,17 +202,19 @@
   }
 
   .successMessage {
-    @apply text-[14px] mt-0.5 text-center;
+    @apply w-full;
     h4{
-      color: $blue;
-      @apply text-[22px] font-semibold;
+      color: #071b3b;
+      letter-spacing: -.5px;
+      @apply text-xl font-extrabold mb-2;
     }
     p{
-      color: $black;
-      @apply text-[13px] mb-4 italic leading-4.5;
+      color: $darkgray;
+      @apply text-sm mb-6 leading-5;
     }
-    .button{
-      @apply w-30 mx-auto block;
+    .successClose{
+      @include landingButton;
+      @apply w-full;
     }
   }
 
@@ -221,26 +260,6 @@
     @apply flex-col;
     li{
       @apply w-full;
-    }
-  }
-  .success{
-    @apply w-full;
-    .successCheck {
-      @apply mr-2;
-
-      svg {
-        @apply w-15;
-      }
-    }
-    .successMessage {
-      h4{
-        color: $blue;
-        @apply text-[18px];
-      }
-      p{
-        color: $black;
-        @apply text-[12px];
-      }
     }
   }
 }

@@ -19,6 +19,10 @@ const CustomSolutions = ({ scss }: PropsDefinition) => {
                         If your business requires custom workflows, specialized reports, unique document formats, or third-party integrations, we can build a solution tailored to your operations.
                     </p>
 
+                    <ul className={scss.customFeaturesHighlight}>
+                        <li>Custom invoice & receipt printing (logo, layout, VAT/BIR-ready formats)</li>
+                    </ul>
+
                     <div className={scss.customFeatures}>
                         <ul className="space-y-2">
                             <li>Tailored workflows based on your operations</li>
@@ -29,7 +33,6 @@ const CustomSolutions = ({ scss }: PropsDefinition) => {
                             <li>Priority feature development</li>
                             <li>Dedicated onboarding & support</li>
                             <li>Custom reports & document formats</li>
-                            <li>Custom invoice & receipt printing (logo, layout, VAT/BIR-ready formats)</li>
                         </ul>
                     </div>
 
